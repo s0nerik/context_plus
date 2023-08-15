@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'inherited_context_watch.dart';
@@ -23,5 +24,22 @@ class InheritedListenableContextWatch
   @override
   void unwatch(Listenable observable, VoidCallback subscription) {
     observable.removeListener(subscription);
+  }
+}
+
+extension ListenableContextWatchExtension on Listenable {
+  void watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>(
+      aspect: this,
+    );
+  }
+}
+
+extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
+  T watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>(
+      aspect: this,
+    );
+    return value;
   }
 }

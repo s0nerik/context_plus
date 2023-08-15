@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
+import 'package:rxdart/streams.dart';
 
 import 'inherited_context_watch.dart';
 
@@ -21,5 +22,14 @@ class InheritedStreamContextWatch
   @override
   void unwatch(Stream observable, StreamSubscription subscription) {
     subscription.cancel();
+  }
+}
+
+extension StreamContextWatchExtension<T> on ValueStream<T> {
+  T watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
+      aspect: this,
+    );
+    return value;
   }
 }

@@ -1,49 +1,8 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-
-class InheritedStreamContextWatch
-    extends InheritedContextWatch<Stream, StreamSubscription> {
-  const InheritedStreamContextWatch({
-    Key? key,
-    required super.child,
-  }) : super(key: key);
-
-  @override
-  StreamSubscription watch(Stream observable, void Function() callback) {
-    return observable.listen((_) => callback());
-  }
-
-  @override
-  void unwatch(Stream observable, StreamSubscription subscription) {
-    subscription.cancel();
-  }
-}
-
-class InheritedListenableContextWatch
-    extends InheritedContextWatch<Listenable, VoidCallback> {
-  const InheritedListenableContextWatch({
-    Key? key,
-    required super.child,
-  }) : super(key: key);
-
-  @override
-  VoidCallback watch(
-    Listenable observable,
-    VoidCallback callback,
-  ) {
-    observable.addListener(callback);
-    return callback;
-  }
-
-  @override
-  void unwatch(Listenable observable, VoidCallback subscription) {
-    observable.removeListener(subscription);
-  }
-}
 
 @internal
 abstract class InheritedContextWatch<TObservable extends Object,

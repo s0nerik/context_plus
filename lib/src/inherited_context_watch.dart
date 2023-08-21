@@ -106,8 +106,9 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return;
     }
 
-    for (final entry in observableSubs.entries) {
-      unwatch(entry.key, entry.value);
+    for (final observable in observableSubs.keys) {
+      final sub = observableSubs[observable]!;
+      unwatch(observable, sub);
     }
     _elementSubs.remove(dependent);
   }

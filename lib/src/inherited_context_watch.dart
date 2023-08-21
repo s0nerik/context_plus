@@ -13,21 +13,15 @@ abstract class InheritedContextWatch<TObservable extends Object,
   }) : super(key: key);
 
   @override
-  InheritedElement createElement() =>
-      ObservableNotifierInheritedElement<TObservable, TSubscription>(this);
+  ObservableNotifierInheritedElement<TObservable, TSubscription>
+      createElement();
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
-
-  @protected
-  TSubscription watch(TObservable observable, void Function() callback);
-
-  @protected
-  void unwatch(TObservable observable, TSubscription subscription);
 }
 
 @internal
-class ObservableNotifierInheritedElement<TObservable extends Object,
+abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     TSubscription extends Object> extends InheritedElement {
   ObservableNotifierInheritedElement(super.widget);
 
@@ -37,6 +31,12 @@ class ObservableNotifierInheritedElement<TObservable extends Object,
   final _manuallyUnwatchedElements = HashSet<Element>();
 
   bool _isFirstFrame = true;
+
+  @protected
+  TSubscription watch(TObservable observable, void Function() callback);
+
+  @protected
+  void unwatch(TObservable observable, TSubscription subscription);
 
   @override
   void mount(Element? parent, Object? newSlot) {
@@ -76,8 +76,7 @@ class ObservableNotifierInheritedElement<TObservable extends Object,
       for (final observable in observableSubs.keys) {
         if (!frameObservableSubs.containsKey(observable)) {
           final sub = observableSubs[observable]!;
-          (widget as InheritedContextWatch<TObservable, TSubscription>)
-              .unwatch(observable, sub);
+          unwatch(observable, sub);
         }
       }
       _elementSubs[element] = frameObservableSubs;
@@ -108,8 +107,7 @@ class ObservableNotifierInheritedElement<TObservable extends Object,
     }
 
     for (final entry in observableSubs.entries) {
-      (widget as InheritedContextWatch<TObservable, TSubscription>)
-          .unwatch(entry.key, entry.value);
+      unwatch(entry.key, entry.value);
     }
     _elementSubs.remove(dependent);
   }
@@ -120,8 +118,7 @@ class ObservableNotifierInheritedElement<TObservable extends Object,
 
     for (final observableSubs in _elementSubs.values) {
       for (final entry in observableSubs.entries) {
-        (widget as InheritedContextWatch<TObservable, TSubscription>)
-            .unwatch(entry.key, entry.value);
+        unwatch(entry.key, entry.value);
       }
     }
     _elementSubs.clear();
@@ -152,8 +149,7 @@ class ObservableNotifierInheritedElement<TObservable extends Object,
     _elementSubs[dependent] ??= HashMap<TObservable, TSubscription>();
     final observableSubs = _elementSubs[dependent]!;
     observableSubs[observable] ??=
-        (widget as InheritedContextWatch<TObservable, TSubscription>)
-            .watch(observable, () => dependent.markNeedsBuild());
+        watch(observable, () => dependent.markNeedsBuild());
 
     _frameElementSubs[dependent] ??= HashMap<TObservable, TSubscription>();
     final frameObservableSubs = _frameElementSubs[dependent]!;

@@ -15,6 +15,15 @@ class InheritedStreamContextWatch
   }) : super(key: key);
 
   @override
+  ObservableNotifierInheritedElement<Stream, StreamSubscription>
+      createElement() => InheritedStreamContextWatchElement(this);
+}
+
+class InheritedStreamContextWatchElement
+    extends ObservableNotifierInheritedElement<Stream, StreamSubscription> {
+  InheritedStreamContextWatchElement(super.widget);
+
+  @override
   StreamSubscription watch(Stream observable, void Function() callback) {
     return observable.listen((_) => callback());
   }

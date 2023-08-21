@@ -147,10 +147,11 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
     final observable = aspect as TObservable;
 
-    final observableSubs = (_elementSubs[dependent] ??= HashMap());
+    final observableSubs = _elementSubs.putIfAbsent(dependent, HashMap.new);
     observableSubs[observable] ??= watch(observable, dependent.markNeedsBuild);
 
-    final frameObservableSubs = (_frameElementSubs[dependent] ??= HashMap());
+    final frameObservableSubs =
+        _frameElementSubs.putIfAbsent(dependent, HashMap.new);
     frameObservableSubs[observable] = observableSubs[observable]!;
   }
 }

@@ -34,7 +34,15 @@ class InheritedStreamContextWatchElement
   }
 }
 
-extension StreamContextWatchExtension<T> on ValueStream<T> {
+extension StreamContextWatchExtension<T> on Stream<T> {
+  void watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
+      aspect: this,
+    );
+  }
+}
+
+extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
   T watch(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
       aspect: this,

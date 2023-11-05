@@ -19,6 +19,7 @@ class InheritedStreamContextWatch
       createElement() => InheritedStreamContextWatchElement(this);
 }
 
+@internal
 class InheritedStreamContextWatchElement
     extends ObservableNotifierInheritedElement<Stream, StreamSubscription> {
   InheritedStreamContextWatchElement(super.widget);

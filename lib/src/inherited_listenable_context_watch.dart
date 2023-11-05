@@ -20,6 +20,7 @@ class InheritedListenableContextWatch
       createElement() => InheritedListenableContextWatchElement(this);
 }
 
+@internal
 class InheritedListenableContextWatchElement
     extends ObservableNotifierInheritedElement<Listenable, StreamSubscription> {
   InheritedListenableContextWatchElement(super.widget);

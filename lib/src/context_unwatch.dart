@@ -11,7 +11,7 @@ extension ContextUnwatchExtension on BuildContext {
   /// `context.watch()` down the line.
   ///
   /// Please note that calling this method is quite expensive (measurements
-  /// show ~40-50% slowdown compared to not using it), so use it only if you
+  /// show ~40% slowdown compared to not using it), so use it only if you
   /// absolutely need it.
   ///
   /// The worst thing that can happen if you don't use it is that your widget

@@ -59,6 +59,13 @@ class InheritedListenableContextWatchElement
 }
 
 extension ListenableContextWatchExtension on Listenable {
+  /// Watch this [Listenable] for changes.
+  ///
+  /// Whenever this [Listenable] notifies of a change, the [context] will be
+  /// rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   void watch(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>(
       aspect: this,
@@ -67,6 +74,15 @@ extension ListenableContextWatchExtension on Listenable {
 }
 
 extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
+  /// Watch this [ValueListenable] for changes.
+  ///
+  /// Whenever this [ValueListenable] notifies of a change, the [context] will
+  /// be rebuilt.
+  ///
+  /// Returns the current value of the [ValueListenable].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   T watch(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>(
       aspect: this,

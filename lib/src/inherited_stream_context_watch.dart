@@ -36,6 +36,13 @@ class InheritedStreamContextWatchElement
 }
 
 extension StreamContextWatchExtension<T> on Stream<T> {
+  /// Watch this [Stream] for changes.
+  ///
+  /// Whenever this [Stream] emits new value, the [context] will be
+  /// rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   void watch(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
       aspect: this,
@@ -44,6 +51,15 @@ extension StreamContextWatchExtension<T> on Stream<T> {
 }
 
 extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
+  /// Watch this [ValueStream] for changes.
+  ///
+  /// Whenever this [ValueStream] emits new value (except for initial value),
+  /// the [context] will be rebuilt.
+  ///
+  /// Returns the current value of the [ValueStream].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   T watch(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
       aspect: this,

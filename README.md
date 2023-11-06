@@ -1,18 +1,4 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Listen to `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
 
 ## Features
 
@@ -20,20 +6,46 @@ TODO: List what your package can do. Maybe include images, gifs, or videos.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Wrap your app in a `ContextWatchRoot`
+```dart
+ContextWatchRoot(
+  child: MaterialApp(...),
+);
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+final counterNotifier = ValueNotifier(0);
+
+class Example extends StatelessWidget {
+  const Example({
+    super.key,
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final counter = counter.watch(context);
+    return Text('Counter: $counter');
+  }
+}
 ```
+
+That's it! No builders, no custom base classes.
+
+Just call `watch()` on your observable value and you've got a reactive widget. `watch()`'ing a `ValueListenable` or a
+`ValueStream` will also give you the current value as a result.
+
+It doesn't matter where you call `watch()` from or how many times you call it. While in a build phase, it will
+always register the `context` as a listener to the observable value. Whenever the observable notifies of a change,
+the `context` will be marked as needing a rebuild.
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+Sounds too good to be true? It's not! But it comes at a slight performance cost. My tests show ~2-10% slowdown compared
+to the equivalent `ValueListenableBuilder`. Still, it's fast enough for most use cases. Also, as the benchmark shows,
+the same performance cost applies to other observability solutions like `Riverpod` or `MobX`, so it shouldn't be a
+problem.

@@ -1,8 +1,17 @@
 # context_watch
 
+[![context_watch](https://img.shields.io/pub/v/context_watch)](https://pub.dev/packages/context_watch)
+[![context_watch](https://img.shields.io/pub/likes/context_watch)](https://pub.dev/packages/context_watch)
+[![context_watch](https://img.shields.io/pub/points/context_watch)](https://pub.dev/packages/context_watch)
+[![context_watch](https://img.shields.io/pub/popularity/context_watch)](https://pub.dev/packages/context_watch)
+
 Listen to `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
 
 ## Getting started
+
+```shell
+flutter pub add context_watch
+```
 
 Wrap your app in a `ContextWatchRoot`
 ```dart

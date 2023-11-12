@@ -1,3 +1,4 @@
-## 0.0.1
+## 1.0.0
 
-* TODO: Describe initial release.
+* Initial release.
+* `Listenable.watch(context)`, `Stream.watch(context)` extensions.

@@ -1,7 +1,7 @@
 name: context_watch
-description: A new Flutter package project.
-version: 0.0.1
-homepage:
+description: A hassle-free way to watch for observable value changes within the `build` method.
+version: 1.0.0
+homepage: https://github.com/s0nerik/context_watch
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

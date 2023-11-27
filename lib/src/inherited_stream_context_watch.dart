@@ -10,9 +10,9 @@ import 'inherited_context_watch.dart';
 class InheritedStreamContextWatch
     extends InheritedContextWatch<Stream, StreamSubscription> {
   const InheritedStreamContextWatch({
-    Key? key,
+    super.key,
     required super.child,
-  }) : super(key: key);
+  });
 
   @override
   ObservableNotifierInheritedElement<Stream, StreamSubscription>

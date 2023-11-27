@@ -11,9 +11,9 @@ import 'inherited_context_watch.dart';
 class InheritedListenableContextWatch
     extends InheritedContextWatch<Listenable, StreamSubscription> {
   const InheritedListenableContextWatch({
-    Key? key,
+    super.key,
     required super.child,
-  }) : super(key: key);
+  });
 
   @override
   ObservableNotifierInheritedElement<Listenable, StreamSubscription>

@@ -8,9 +8,9 @@ import 'package:meta/meta.dart';
 abstract class InheritedContextWatch<TObservable extends Object,
     TSubscription extends Object> extends InheritedWidget {
   const InheritedContextWatch({
-    Key? key,
+    super.key,
     required super.child,
-  }) : super(key: key);
+  });
 
   @override
   ObservableNotifierInheritedElement<TObservable, TSubscription>

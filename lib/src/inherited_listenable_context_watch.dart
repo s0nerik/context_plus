@@ -33,6 +33,7 @@ class InheritedListenableContextWatchElement
     Listenable observable,
     VoidCallback callback,
   ) {
+    // ignore: cancel_subscriptions
     late final StreamController ctrl;
     if (!_streamControllers.containsKey(observable)) {
       ctrl = StreamController.broadcast();

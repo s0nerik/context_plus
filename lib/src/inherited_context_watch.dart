@@ -32,6 +32,12 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
   bool _isFirstFrame = true;
 
+  TSubscription? getElementSubscription(
+    Element element,
+    TObservable observable,
+  ) =>
+      _elementSubs[element]?[observable];
+
   @protected
   TSubscription watch(TObservable observable, void Function() callback);
 

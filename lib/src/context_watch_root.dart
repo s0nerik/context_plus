@@ -1,3 +1,4 @@
+import 'package:context_watch/src/inherited_future_context_watch.dart';
 import 'package:context_watch/src/inherited_listenable_context_watch.dart';
 import 'package:context_watch/src/inherited_stream_context_watch.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +19,9 @@ class ContextWatchRoot extends StatelessWidget {
   Widget build(BuildContext context) {
     return InheritedListenableContextWatch(
       child: InheritedStreamContextWatch(
-        child: child,
+        child: InheritedFutureContextWatch(
+          child: child,
+        ),
       ),
     );
   }

@@ -20,6 +20,7 @@ void main() {
           },
         ),
       );
+      await widgetTester.pumpWidget(widget);
 
       await widgetTester.pump();
       expect(snapshots, [
@@ -27,14 +28,14 @@ void main() {
       ]);
 
       streamController.add(0);
-      await widgetTester.pump();
+      await widgetTester.pumpAndSettle();
       expect(snapshots, [
         const AsyncSnapshot.waiting(),
         const AsyncSnapshot.withData(ConnectionState.active, 0),
       ]);
 
       streamController.add(1);
-      await widgetTester.pump();
+      await widgetTester.pumpAndSettle();
       expect(snapshots, [
         const AsyncSnapshot.waiting(),
         const AsyncSnapshot.withData(ConnectionState.active, 0),
@@ -42,7 +43,7 @@ void main() {
       ]);
 
       streamController.close();
-      await widgetTester.pump();
+      await widgetTester.pumpAndSettle();
       expect(snapshots, [
         const AsyncSnapshot.waiting(),
         const AsyncSnapshot.withData(ConnectionState.active, 0),

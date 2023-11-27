@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/streams.dart';
 
+import 'async_snapshot_converter.dart';
 import 'inherited_context_watch.dart';
 
 @internal
@@ -83,7 +84,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
     final subscription =
         watchRoot.getElementSubscription(context as Element, this);
     final snapshot = watchRoot.snapshots[subscription];
-    return _convertSnapshot(snapshot);
+    return convertAsyncSnapshot(snapshot);
   }
 }
 
@@ -126,29 +127,6 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
         );
       }
     }
-    return _convertSnapshot(snapshot);
+    return convertAsyncSnapshot(snapshot);
   }
-}
-
-AsyncSnapshot<T> _convertSnapshot<T>(AsyncSnapshot? snapshot) {
-  if (snapshot == null) {
-    return AsyncSnapshot<T>.waiting();
-  }
-  if (snapshot.data != null) {
-    return AsyncSnapshot<T>.withData(snapshot.connectionState, snapshot.data);
-  }
-  if (snapshot.error != null) {
-    if (snapshot.stackTrace != null) {
-      return AsyncSnapshot<T>.withError(
-        snapshot.connectionState,
-        snapshot.error!,
-        snapshot.stackTrace!,
-      );
-    }
-    return AsyncSnapshot<T>.withError(
-      snapshot.connectionState,
-      snapshot.error!,
-    );
-  }
-  return AsyncSnapshot<T>.nothing().inState(snapshot.connectionState);
 }

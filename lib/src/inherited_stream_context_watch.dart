@@ -74,6 +74,10 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
+    if (this is ValueStream<T>) {
+      return (this as ValueStream<T>).watch(context);
+    }
+
     context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
       aspect: this,
     );

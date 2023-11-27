@@ -56,7 +56,8 @@ void main() {
     'ValueStream.watch(context) gives AsyncSnapshot.withData right away if it has value',
     (widgetTester) async {
       final streamController = BehaviorSubject<int>.seeded(0);
-      final stream = streamController.stream;
+
+      final Stream<int> stream = streamController.stream;
       final snapshots = <AsyncSnapshot<int>>[];
       final widget = ContextWatchRoot(
         child: Builder(
@@ -89,7 +90,7 @@ void main() {
       final streamController = BehaviorSubject<int>();
       streamController.addError(error);
 
-      final stream = streamController.stream;
+      final Stream<int> stream = streamController.stream;
       final snapshots = <AsyncSnapshot<int>>[];
       final widget = ContextWatchRoot(
         child: Builder(

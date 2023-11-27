@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rxdart/rxdart.dart';
 
 void main() {
   testWidgets(
@@ -21,8 +22,6 @@ void main() {
         ),
       );
       await widgetTester.pumpWidget(widget);
-
-      await widgetTester.pump();
       expect(snapshots, [
         const AsyncSnapshot.waiting(),
       ]);

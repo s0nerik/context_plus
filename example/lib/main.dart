@@ -1,3 +1,4 @@
+import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -11,8 +12,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomePage(),
+    return const ContextWatchRoot(
+      child: MaterialApp(
+        home: HomePage(),
+      ),
     );
   }
 }

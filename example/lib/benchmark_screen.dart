@@ -4,7 +4,20 @@ import 'package:flutter/rendering.dart';
 import 'package:rxdart/streams.dart';
 
 class BenchmarkScreen extends StatefulWidget {
-  const BenchmarkScreen({super.key});
+  BenchmarkScreen({
+    super.key,
+    this.sideCount = 20,
+    this.availableSideCounts = const {10, 15, 20, 25, 30, 50},
+    this.useStreamBuilder = false,
+    this.useValueStream = true,
+    this.runOnStart = true,
+  }) : assert(availableSideCounts.contains(sideCount));
+
+  final int sideCount;
+  final Set<int> availableSideCounts;
+  final bool useStreamBuilder;
+  final bool useValueStream;
+  final bool runOnStart;
 
   @override
   State<BenchmarkScreen> createState() => _BenchmarkScreenState();
@@ -12,9 +25,10 @@ class BenchmarkScreen extends StatefulWidget {
 
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
-  var _sideCount = 20;
-  var _useStreamBuilder = false;
-  var _useValueStream = true;
+  late var _sideCount = widget.sideCount;
+  late var _useStreamBuilder = false;
+  late var _useValueStream = true;
+  late var _runBenchmark = widget.runOnStart;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +38,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       appBar: AppBar(
         title: const Text('Benchmark'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(180),
+          preferredSize: const Size.fromHeight(200),
           child: Column(
             children: [
               Row(
@@ -39,7 +53,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                       _gridKey = UniqueKey();
                     }),
                     items: [
-                      for (final sideCount in const [10, 15, 20, 25, 30, 50])
+                      for (final sideCount in widget.availableSideCounts)
                         DropdownMenuItem(
                           value: sideCount,
                           child: Text(sideCount.toString()),
@@ -108,6 +122,35 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   const SizedBox(width: 16),
                 ],
               ),
+              Row(
+                children: [
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: !_runBenchmark
+                        ? () {
+                            setState(() {
+                              _gridKey = UniqueKey();
+                              _runBenchmark = true;
+                            });
+                          }
+                        : null,
+                    child: const Text('Start'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _runBenchmark
+                        ? () {
+                            setState(() {
+                              _gridKey = UniqueKey();
+                              _runBenchmark = false;
+                            });
+                          }
+                        : null,
+                    child: const Text('Stop'),
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              ),
             ],
           ),
         ),
@@ -120,36 +163,39 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             Expanded(
               child: AspectRatio(
                 aspectRatio: 1,
-                child: GridView.builder(
-                  key: _gridKey,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _sideCount,
-                  ),
-                  itemBuilder: (context, index) => _StreamsProvider(
-                    key: ValueKey(index),
-                    useValueStream: _useValueStream,
-                    initialDelay: Duration(milliseconds: 4 * index),
-                    delay: const Duration(milliseconds: 48),
-                    builder: (context, colorIndexStream, scaleIndexStream) {
-                      if (!_useStreamBuilder) {
-                        return ItemContextWatch(
-                          colorIndexStream: colorIndexStream,
-                          scaleIndexStream: scaleIndexStream,
-                        );
-                      }
-                      return ItemStreamBuilder(
-                        initialColorIndex: _useValueStream
-                            ? (colorIndexStream as ValueStream<int>).value
-                            : null,
-                        colorIndexStream: colorIndexStream,
-                        initialScaleIndex: _useValueStream
-                            ? (scaleIndexStream as ValueStream<int>).value
-                            : null,
-                        scaleIndexStream: scaleIndexStream,
-                      );
-                    },
-                  ),
-                ),
+                child: _runBenchmark
+                    ? GridView.builder(
+                        key: _gridKey,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: _sideCount,
+                        ),
+                        itemBuilder: (context, index) => _StreamsProvider(
+                          key: ValueKey(index),
+                          useValueStream: _useValueStream,
+                          initialDelay: Duration(milliseconds: 4 * index),
+                          delay: const Duration(milliseconds: 48),
+                          builder:
+                              (context, colorIndexStream, scaleIndexStream) {
+                            if (!_useStreamBuilder) {
+                              return ItemContextWatch(
+                                colorIndexStream: colorIndexStream,
+                                scaleIndexStream: scaleIndexStream,
+                              );
+                            }
+                            return ItemStreamBuilder(
+                              initialColorIndex: _useValueStream
+                                  ? (colorIndexStream as ValueStream<int>).value
+                                  : null,
+                              colorIndexStream: colorIndexStream,
+                              initialScaleIndex: _useValueStream
+                                  ? (scaleIndexStream as ValueStream<int>).value
+                                  : null,
+                              scaleIndexStream: scaleIndexStream,
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ),
             ),
             const SizedBox(height: 16),

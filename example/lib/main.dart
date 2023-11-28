@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         routes: {
           '/': (_) => const HomeScreen(),
-          '/benchmark': (_) => const BenchmarkScreen(),
+          '/benchmark': (_) => BenchmarkScreen(),
         },
       ),
     );

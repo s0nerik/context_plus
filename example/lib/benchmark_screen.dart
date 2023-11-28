@@ -245,10 +245,12 @@ class _StreamsProviderState extends State<_StreamsProvider> {
   @override
   void initState() {
     super.initState();
-    colorIndexStream = Stream.fromFuture(Future.delayed(widget.initialDelay))
-        .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
-    scaleIndexStream = Stream.fromFuture(Future.delayed(widget.initialDelay))
-        .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+    final initialDelay = widget.initialDelay;
+    final delay = widget.delay;
+    colorIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
+        .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+    scaleIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
+        .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
     if (widget.useValueStream) {
       colorIndexStream = colorIndexStream.shareValueSeeded(0);
       scaleIndexStream = scaleIndexStream.shareValueSeeded(0);

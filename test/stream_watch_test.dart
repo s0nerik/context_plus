@@ -114,4 +114,55 @@ void main() {
       ]);
     },
   );
+
+  testWidgets(
+    'Single-subscription stream can be observed by multiple widgets',
+    (widgetTester) async {
+      final streamController = StreamController<int>();
+      final stream = streamController.stream;
+      final snapshots1 = <AsyncSnapshot<int>>[];
+      final snapshots2 = <AsyncSnapshot<int>>[];
+      final widget = ContextWatchRoot(
+        child: Column(
+          children: [
+            Builder(
+              key: const Key('widget1'),
+              builder: (context) {
+                final snapshot = stream.watch(context);
+                snapshots1.add(snapshot);
+                return const SizedBox.shrink();
+              },
+            ),
+            Builder(
+              key: const Key('widget2'),
+              builder: (context) {
+                final snapshot = stream.watch(context);
+                snapshots2.add(snapshot);
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      );
+
+      await widgetTester.pumpWidget(widget);
+      expect(snapshots1, [
+        const AsyncSnapshot.waiting(),
+      ]);
+      expect(snapshots2, [
+        const AsyncSnapshot.waiting(),
+      ]);
+
+      streamController.add(0);
+      await widgetTester.pumpAndSettle();
+      expect(snapshots1, [
+        const AsyncSnapshot.waiting(),
+        const AsyncSnapshot.withData(ConnectionState.active, 0),
+      ]);
+      expect(snapshots2, [
+        const AsyncSnapshot.waiting(),
+        const AsyncSnapshot.withData(ConnectionState.active, 0),
+      ]);
+    },
+  );
 }

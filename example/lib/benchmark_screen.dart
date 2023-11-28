@@ -14,31 +14,46 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final totalSubscriptions = _sideCount * _sideCount * 2;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Benchmark'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
-          child: Row(
+          preferredSize: const Size.fromHeight(64),
+          child: Column(
             children: [
-              const SizedBox(width: 16),
-              const Text('Side count:'),
-              const SizedBox(width: 16),
-              DropdownButton<int>(
-                value: _sideCount,
-                onChanged: (value) => setState(() {
-                  _sideCount = value!;
-                  _gridKey = UniqueKey();
-                }),
-                items: [
-                  for (final sideCount in const [10, 15, 20, 30, 40, 50, 100])
-                    DropdownMenuItem(
-                      value: sideCount,
-                      child: Text(sideCount.toString()),
-                    ),
+              Row(
+                children: [
+                  const SizedBox(width: 16),
+                  const Text('Side count:'),
+                  const SizedBox(width: 16),
+                  DropdownButton<int>(
+                    value: _sideCount,
+                    onChanged: (value) => setState(() {
+                      _sideCount = value!;
+                      _gridKey = UniqueKey();
+                    }),
+                    items: [
+                      for (final sideCount in const [10, 15, 20, 30, 50, 100])
+                        DropdownMenuItem(
+                          value: sideCount,
+                          child: Text(sideCount.toString()),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
                 ],
               ),
-              const SizedBox(width: 16),
+              Row(
+                children: [
+                  const SizedBox(width: 16),
+                  const Text('Total subscriptions:'),
+                  const SizedBox(width: 16),
+                  Text(totalSubscriptions.toString()),
+                  const SizedBox(width: 16),
+                ],
+              ),
             ],
           ),
         ),

@@ -99,8 +99,7 @@ extension FutureContextWatchExtension<T> on Future<T> {
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedFutureContextWatch>() as InheritedFutureContextWatchElement;
 
-    final subscription =
-        watchRoot.getElementSubscription(context as Element, this);
+    final subscription = watchRoot.getSubscription(context, this);
     final snapshot = watchRoot.snapshots[subscription];
     return convertAsyncSnapshot(snapshot);
   }

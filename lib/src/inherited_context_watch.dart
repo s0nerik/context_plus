@@ -25,18 +25,19 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     TSubscription extends Object> extends InheritedElement {
   ObservableNotifierInheritedElement(super.widget);
 
-  final _elementSubs = HashMap<Element, HashMap<TObservable, TSubscription>>();
-  final _frameElementSubs =
-      HashMap<Element, HashMap<TObservable, TSubscription>>();
-  final _manuallyUnwatchedElements = HashSet<Element>();
+  final _contextSubs =
+      HashMap<BuildContext, HashMap<TObservable, TSubscription>>();
+  final _contextSubsLastFrame =
+      HashMap<BuildContext, HashMap<TObservable, TSubscription>>();
+  final _manuallyUnwatchedContexts = HashSet<BuildContext>();
 
   bool _isFirstFrame = true;
 
-  TSubscription? getElementSubscription(
-    Element element,
+  TSubscription? getSubscription(
+    BuildContext context,
     TObservable observable,
   ) =>
-      _elementSubs[element]?[observable];
+      _contextSubs[context]?[observable];
 
   @protected
   TSubscription watch(
@@ -73,9 +74,9 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   void _onPostFrame(_) {
     if (!mounted) return;
     _isFirstFrame = false;
-    _manuallyUnwatchedElements.clear();
+    _manuallyUnwatchedContexts.clear();
     _clearSubscriptionsForUnwatchedObservables();
-    _clearSubscriptionsForUnmountedElements();
+    _clearSubscriptionsForUnmountedContexts();
     SchedulerBinding.instance.addPostFrameCallback(_onPostFrame);
   }
 
@@ -83,62 +84,62 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   void _clearSubscriptionsForUnwatchedObservables() {
     // dispose all subscriptions that are no longer present in the frame
     // subscriptions map, but only for elements that are present within the
-    // frame element subscriptions map
-    for (final element in _frameElementSubs.keys) {
-      final frameObservableSubs = _frameElementSubs[element]!;
-      final observableSubs = _elementSubs[element]!;
+    // frame context subscriptions map
+    for (final context in _contextSubsLastFrame.keys) {
+      final frameObservableSubs = _contextSubsLastFrame[context]!;
+      final observableSubs = _contextSubs[context]!;
       for (final observable in observableSubs.keys) {
         if (!frameObservableSubs.containsKey(observable)) {
           final sub = observableSubs[observable]!;
-          unwatch(element, observable, sub);
+          unwatch(context, observable, sub);
         }
       }
-      _elementSubs[element] = frameObservableSubs;
+      _contextSubs[context] = frameObservableSubs;
       if (observableSubs.isEmpty) {
-        _elementSubs.remove(element);
+        _contextSubs.remove(context);
       }
     }
-    _frameElementSubs.clear();
+    _contextSubsLastFrame.clear();
   }
 
   // Workaround for https://github.com/flutter/flutter/issues/128432
-  void _clearSubscriptionsForUnmountedElements() {
-    final unmountedElements = <Element>[];
-    for (final element in _elementSubs.keys) {
-      if (!element.mounted) {
-        unmountedElements.add(element);
+  void _clearSubscriptionsForUnmountedContexts() {
+    final unmountedContexts = <BuildContext>[];
+    for (final context in _contextSubs.keys) {
+      if (!context.mounted) {
+        unmountedContexts.add(context);
       }
     }
-    for (final element in unmountedElements) {
-      _disposeDependentSubscriptions(element);
+    for (final context in unmountedContexts) {
+      _disposeSubscriptionsFor(context);
     }
   }
 
-  void _disposeDependentSubscriptions(Element dependent) {
-    final observableSubs = _elementSubs[dependent];
+  void _disposeSubscriptionsFor(BuildContext context) {
+    final observableSubs = _contextSubs[context];
     if (observableSubs == null) {
       return;
     }
 
     for (final MapEntry(key: observable, value: sub)
         in observableSubs.entries) {
-      unwatch(dependent, observable, sub);
+      unwatch(context, observable, sub);
     }
-    _elementSubs.remove(dependent);
+    _contextSubs.remove(context);
   }
 
   void _clearAllSubscriptions() {
-    _frameElementSubs.clear();
-    _manuallyUnwatchedElements.clear();
+    _contextSubsLastFrame.clear();
+    _manuallyUnwatchedContexts.clear();
 
     for (final MapEntry(key: element, value: observableSubs)
-        in _elementSubs.entries) {
+        in _contextSubs.entries) {
       for (final MapEntry(key: observable, value: subscription)
           in observableSubs.entries) {
         unwatch(element, observable, subscription);
       }
     }
-    _elementSubs.clear();
+    _contextSubs.clear();
   }
 
   @override
@@ -153,22 +154,22 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     }
 
     if (aspect == null) {
-      if (_manuallyUnwatchedElements.contains(dependent)) {
+      if (_manuallyUnwatchedContexts.contains(dependent)) {
         return;
       }
-      _disposeDependentSubscriptions(dependent);
-      _manuallyUnwatchedElements.add(dependent);
+      _disposeSubscriptionsFor(dependent);
+      _manuallyUnwatchedContexts.add(dependent);
       return;
     }
 
     final observable = aspect as TObservable;
 
-    final observableSubs = _elementSubs.putIfAbsent(dependent, HashMap.new);
+    final observableSubs = _contextSubs.putIfAbsent(dependent, HashMap.new);
     observableSubs[observable] ??=
         watch(dependent, observable, dependent.markNeedsBuild);
 
     final frameObservableSubs =
-        _frameElementSubs.putIfAbsent(dependent, HashMap.new);
+        _contextSubsLastFrame.putIfAbsent(dependent, HashMap.new);
     frameObservableSubs[observable] = observableSubs[observable]!;
   }
 }

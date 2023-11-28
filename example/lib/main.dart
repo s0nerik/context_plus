@@ -1,7 +1,7 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
+import 'benchmark_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ContextWatchRoot(
       child: MaterialApp(
-        home: HomePage(),
+        home: BenchmarkPage(),
       ),
     );
   }

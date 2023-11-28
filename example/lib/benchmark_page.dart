@@ -1,14 +1,14 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class BenchmarkPage extends StatelessWidget {
+  const BenchmarkPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('context_watch'),
+        title: const Text('Benchmark'),
       ),
       body: Container(
         alignment: Alignment.center,

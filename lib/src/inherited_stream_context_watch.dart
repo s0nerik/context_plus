@@ -38,8 +38,8 @@ class InheritedStreamContextWatchElement
   ) {
     watchersCount[observable] = (watchersCount[observable] ?? 0) + 1;
 
-    final stream =
-        streamToBroadcastStream[observable] ??= observable.asBroadcastStream();
+    final stream = streamToBroadcastStream[observable] ??=
+        observable.isBroadcast ? observable : observable.asBroadcastStream();
 
     late final StreamSubscription subscription;
     subscription = stream.listen((data) {

@@ -128,12 +128,12 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               delay: const Duration(milliseconds: 48),
               builder: (context, colorIndexStream, scaleIndexStream) {
                 if (!_useStreamBuilder) {
-                  return StreamItem(
+                  return ItemContextWatch(
                     colorIndexStream: colorIndexStream,
                     scaleIndexStream: scaleIndexStream,
                   );
                 }
-                return StreamItemBuilder(
+                return ItemStreamBuilder(
                   initialColorIndex: _useValueStream
                       ? (colorIndexStream as ValueStream<int>).value
                       : null,
@@ -152,8 +152,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   }
 }
 
-class StreamItem extends StatelessWidget {
-  const StreamItem({
+class ItemContextWatch extends StatelessWidget {
+  const ItemContextWatch({
     super.key,
     required this.colorIndexStream,
     required this.scaleIndexStream,
@@ -171,8 +171,8 @@ class StreamItem extends StatelessWidget {
   }
 }
 
-class StreamItemBuilder extends StatelessWidget {
-  const StreamItemBuilder({
+class ItemStreamBuilder extends StatelessWidget {
+  const ItemStreamBuilder({
     super.key,
     required this.initialColorIndex,
     required this.colorIndexStream,

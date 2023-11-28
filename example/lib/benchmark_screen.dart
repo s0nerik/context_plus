@@ -1,5 +1,6 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:rxdart/streams.dart';
 
 class BenchmarkScreen extends StatefulWidget {
@@ -114,38 +115,51 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       body: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(32),
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: GridView.builder(
-            key: _gridKey,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _sideCount,
+        child: Column(
+          children: [
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: GridView.builder(
+                  key: _gridKey,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _sideCount,
+                  ),
+                  itemBuilder: (context, index) => _StreamsProvider(
+                    key: ValueKey(index),
+                    useValueStream: _useValueStream,
+                    initialDelay: Duration(milliseconds: 4 * index),
+                    delay: const Duration(milliseconds: 48),
+                    builder: (context, colorIndexStream, scaleIndexStream) {
+                      if (!_useStreamBuilder) {
+                        return ItemContextWatch(
+                          colorIndexStream: colorIndexStream,
+                          scaleIndexStream: scaleIndexStream,
+                        );
+                      }
+                      return ItemStreamBuilder(
+                        initialColorIndex: _useValueStream
+                            ? (colorIndexStream as ValueStream<int>).value
+                            : null,
+                        colorIndexStream: colorIndexStream,
+                        initialScaleIndex: _useValueStream
+                            ? (scaleIndexStream as ValueStream<int>).value
+                            : null,
+                        scaleIndexStream: scaleIndexStream,
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
-            itemBuilder: (context, index) => _StreamsProvider(
-              key: ValueKey(index),
-              useValueStream: _useValueStream,
-              initialDelay: Duration(milliseconds: 4 * index),
-              delay: const Duration(milliseconds: 48),
-              builder: (context, colorIndexStream, scaleIndexStream) {
-                if (!_useStreamBuilder) {
-                  return ItemContextWatch(
-                    colorIndexStream: colorIndexStream,
-                    scaleIndexStream: scaleIndexStream,
-                  );
-                }
-                return ItemStreamBuilder(
-                  initialColorIndex: _useValueStream
-                      ? (colorIndexStream as ValueStream<int>).value
-                      : null,
-                  colorIndexStream: colorIndexStream,
-                  initialScaleIndex: _useValueStream
-                      ? (scaleIndexStream as ValueStream<int>).value
-                      : null,
-                  scaleIndexStream: scaleIndexStream,
-                );
-              },
+            const SizedBox(height: 16),
+            PerformanceOverlay(
+              optionsMask: 1 <<
+                      PerformanceOverlayOption
+                          .displayRasterizerStatistics.index |
+                  1 << PerformanceOverlayOption.displayEngineStatistics.index,
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -251,6 +265,8 @@ Widget _build({
   required AsyncSnapshot<int> colorIndexSnapshot,
   required AsyncSnapshot<int> scaleIndexSnapshot,
 }) {
+  // return const SizedBox.shrink();
+
   final child = switch (colorIndexSnapshot) {
     AsyncSnapshot(hasData: true, requireData: final colorIndex) =>
       ColoredBox(color: _colors[colorIndex % _colors.length]),

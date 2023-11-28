@@ -40,40 +40,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _StreamsProvider extends StatefulWidget {
-  const _StreamsProvider({
-    super.key,
-    required this.builder,
-    required this.initialDelay,
-    required this.delay,
-  });
-
-  final Widget Function(
-    BuildContext context,
-    Stream<int> colorIndexStream,
-    Stream<int> scaleIndexStream,
-  ) builder;
-  final Duration initialDelay;
-  final Duration delay;
-
-  @override
-  State<_StreamsProvider> createState() => _StreamsProviderState();
-}
-
-class _StreamsProviderState extends State<_StreamsProvider> {
-  late final colorIndexStream =
-      Stream.fromFuture(Future.delayed(widget.initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
-  late final scaleIndexStream =
-      Stream.fromFuture(Future.delayed(widget.initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context, colorIndexStream, scaleIndexStream);
-  }
-}
-
 class StreamItem extends StatelessWidget {
   const StreamItem({
     super.key,
@@ -121,6 +87,40 @@ class StreamItemBuilder extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _StreamsProvider extends StatefulWidget {
+  const _StreamsProvider({
+    super.key,
+    required this.builder,
+    required this.initialDelay,
+    required this.delay,
+  });
+
+  final Widget Function(
+    BuildContext context,
+    Stream<int> colorIndexStream,
+    Stream<int> scaleIndexStream,
+  ) builder;
+  final Duration initialDelay;
+  final Duration delay;
+
+  @override
+  State<_StreamsProvider> createState() => _StreamsProviderState();
+}
+
+class _StreamsProviderState extends State<_StreamsProvider> {
+  late final colorIndexStream =
+      Stream.fromFuture(Future.delayed(widget.initialDelay))
+          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+  late final scaleIndexStream =
+      Stream.fromFuture(Future.delayed(widget.initialDelay))
+          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, colorIndexStream, scaleIndexStream);
   }
 }
 

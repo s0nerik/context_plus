@@ -14,7 +14,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   var _sideCount = 20;
   var _useStreamBuilder = false;
-  var _useValueStream = false;
+  var _useValueStream = true;
 
   @override
   Widget build(BuildContext context) {

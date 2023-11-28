@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/streams.dart';
 
-import 'async_snapshot_converter.dart';
 import 'inherited_context_watch.dart';
 
 @internal
@@ -28,7 +27,12 @@ class InheritedStreamContextWatchElement
 
   final watchersCount = HashMap<Stream, int>();
   final streamToBroadcastStream = HashMap<Stream, Stream>();
-  final snapshots = HashMap<StreamSubscription, AsyncSnapshot>();
+
+  final subscriptionConnectionState =
+      HashMap<StreamSubscription, ConnectionState>();
+  final subscriptionData = HashMap<StreamSubscription, dynamic>();
+  final subscriptionError = HashMap<StreamSubscription, Object>();
+  final subscriptionErrorTrace = HashMap<StreamSubscription, StackTrace?>();
 
   @override
   StreamSubscription watch(
@@ -43,27 +47,20 @@ class InheritedStreamContextWatchElement
 
     late final StreamSubscription subscription;
     subscription = stream.listen((data) {
-      snapshots[subscription] =
-          AsyncSnapshot.withData(ConnectionState.active, data);
+      subscriptionConnectionState[subscription] = ConnectionState.active;
+      subscriptionData[subscription] = data;
       callback();
     }, onError: (error, trace) {
+      subscriptionData.remove(subscription);
+
+      subscriptionConnectionState[subscription] = ConnectionState.active;
+      subscriptionError[subscription] = error;
       if (trace != null) {
-        snapshots[subscription] =
-            AsyncSnapshot.withError(ConnectionState.active, error, trace);
-      } else {
-        snapshots[subscription] =
-            AsyncSnapshot.withError(ConnectionState.active, error);
+        subscriptionErrorTrace[subscription] = trace;
       }
       callback();
     }, onDone: () {
-      final data = snapshots[subscription]!.data;
-      if (data != null) {
-        snapshots[subscription] =
-            AsyncSnapshot.withData(ConnectionState.done, data);
-      } else {
-        snapshots[subscription] =
-            const AsyncSnapshot.nothing().inState(ConnectionState.done);
-      }
+      subscriptionConnectionState[subscription] = ConnectionState.done;
       callback();
     });
     return subscription;
@@ -80,7 +77,10 @@ class InheritedStreamContextWatchElement
       streamToBroadcastStream.remove(observable);
       watchersCount.remove(observable);
     }
-    snapshots.remove(subscription);
+    subscriptionConnectionState.remove(subscription);
+    subscriptionData.remove(subscription);
+    subscriptionError.remove(subscription);
+    subscriptionErrorTrace.remove(subscription);
     subscription.cancel();
   }
 }
@@ -106,8 +106,12 @@ extension StreamContextWatchExtension<T> on Stream<T> {
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
 
     final subscription = watchRoot.getSubscription(context, this);
-    final snapshot = watchRoot.snapshots[subscription];
-    return convertAsyncSnapshot(snapshot);
+    return _buildAsyncSnapshot(
+      connectionState: watchRoot.subscriptionConnectionState[subscription],
+      data: watchRoot.subscriptionData[subscription],
+      error: watchRoot.subscriptionError[subscription],
+      stackTrace: watchRoot.subscriptionErrorTrace[subscription],
+    );
   }
 }
 
@@ -130,8 +134,8 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
 
     final subscription = watchRoot.getSubscription(context, this);
-    final snapshot = watchRoot.snapshots[subscription];
-    if (snapshot == null) {
+    final connectionState = watchRoot.subscriptionConnectionState[subscription];
+    if (connectionState == null) {
       if (hasValue) {
         return AsyncSnapshot<T>.withData(ConnectionState.waiting, value);
       }
@@ -149,6 +153,39 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
         );
       }
     }
-    return convertAsyncSnapshot(snapshot);
+    return _buildAsyncSnapshot(
+      connectionState: connectionState,
+      data: watchRoot.subscriptionData[subscription],
+      error: watchRoot.subscriptionError[subscription],
+      stackTrace: watchRoot.subscriptionErrorTrace[subscription],
+    );
   }
+}
+
+AsyncSnapshot<T> _buildAsyncSnapshot<T>({
+  required ConnectionState? connectionState,
+  T? data,
+  Object? error,
+  StackTrace? stackTrace,
+}) {
+  if (connectionState == null) {
+    return AsyncSnapshot<T>.waiting();
+  }
+  if (data != null) {
+    return AsyncSnapshot<T>.withData(connectionState, data);
+  }
+  if (error != null) {
+    if (stackTrace != null) {
+      return AsyncSnapshot<T>.withError(
+        connectionState,
+        error,
+        stackTrace,
+      );
+    }
+    return AsyncSnapshot<T>.withError(
+      connectionState,
+      error,
+    );
+  }
+  return AsyncSnapshot<T>.nothing().inState(connectionState);
 }

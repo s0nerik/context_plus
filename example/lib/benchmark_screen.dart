@@ -11,6 +11,7 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   var _sideCount = 20;
+  var _useStreamBuilder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       appBar: AppBar(
         title: const Text('Benchmark'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(64),
+          preferredSize: const Size.fromHeight(96),
           child: Column(
             children: [
               Row(
@@ -54,6 +55,31 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   const SizedBox(width: 16),
                 ],
               ),
+              Row(
+                children: [
+                  const SizedBox(width: 16),
+                  const Text('Subscribe using:'),
+                  const SizedBox(width: 16),
+                  DropdownButton<bool>(
+                    value: _useStreamBuilder,
+                    onChanged: (value) => setState(() {
+                      _useStreamBuilder = value!;
+                      _gridKey = UniqueKey();
+                    }),
+                    items: const [
+                      DropdownMenuItem(
+                        value: false,
+                        child: Text('Stream.watch(context)'),
+                      ),
+                      DropdownMenuItem(
+                        value: true,
+                        child: Text('StreamBuilder'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              ),
             ],
           ),
         ),
@@ -73,13 +99,18 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               initialDelay: Duration(milliseconds: 4 * index),
               delay: const Duration(milliseconds: 48),
               builder: (context, colorIndexStream, scaleIndexStream) {
+                if (!_useStreamBuilder) {
+                  return StreamItem(
+                    colorIndexStream: colorIndexStream,
+                    scaleIndexStream: scaleIndexStream,
+                  );
+                }
                 return StreamItemBuilder(
                   initialColorIndex: 0,
                   colorIndexStream: colorIndexStream,
                   initialScaleIndex: 0,
                   scaleIndexStream: scaleIndexStream,
                 );
-                // return StreamItem(stream: stream);
               },
             ),
           ),

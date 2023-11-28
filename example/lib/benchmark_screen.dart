@@ -1,5 +1,6 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/streams.dart';
 
 class BenchmarkScreen extends StatefulWidget {
   const BenchmarkScreen({super.key});
@@ -11,7 +12,8 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   var _sideCount = 20;
-  var _useStreamBuilder = false;
+  var _useStreamBuilder = true;
+  var _useValueStream = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       appBar: AppBar(
         title: const Text('Benchmark'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(96),
+          preferredSize: const Size.fromHeight(180),
           child: Column(
             children: [
               Row(
@@ -80,6 +82,31 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   const SizedBox(width: 16),
                 ],
               ),
+              Row(
+                children: [
+                  const SizedBox(width: 16),
+                  const Text('Stream type:'),
+                  const SizedBox(width: 16),
+                  DropdownButton<bool>(
+                    value: _useValueStream,
+                    onChanged: (value) => setState(() {
+                      _useValueStream = value!;
+                      _gridKey = UniqueKey();
+                    }),
+                    items: const [
+                      DropdownMenuItem(
+                        value: false,
+                        child: Text('Stream'),
+                      ),
+                      DropdownMenuItem(
+                        value: true,
+                        child: Text('ValueStream'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              ),
             ],
           ),
         ),
@@ -96,6 +123,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             ),
             itemBuilder: (context, index) => _StreamsProvider(
               key: ValueKey(index),
+              useValueStream: _useValueStream,
               initialDelay: Duration(milliseconds: 4 * index),
               delay: const Duration(milliseconds: 48),
               builder: (context, colorIndexStream, scaleIndexStream) {
@@ -106,9 +134,13 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   );
                 }
                 return StreamItemBuilder(
-                  initialColorIndex: 0,
+                  initialColorIndex: _useValueStream
+                      ? (colorIndexStream as ValueStream<int>).value
+                      : null,
                   colorIndexStream: colorIndexStream,
-                  initialScaleIndex: 0,
+                  initialScaleIndex: _useValueStream
+                      ? (scaleIndexStream as ValueStream<int>).value
+                      : null,
                   scaleIndexStream: scaleIndexStream,
                 );
               },
@@ -148,9 +180,9 @@ class StreamItemBuilder extends StatelessWidget {
     required this.scaleIndexStream,
   });
 
-  final int initialColorIndex;
+  final int? initialColorIndex;
   final Stream<int> colorIndexStream;
-  final int initialScaleIndex;
+  final int? initialScaleIndex;
   final Stream<int> scaleIndexStream;
 
   @override
@@ -176,6 +208,7 @@ class _StreamsProvider extends StatefulWidget {
     required this.builder,
     required this.initialDelay,
     required this.delay,
+    required this.useValueStream,
   });
 
   final Widget Function(
@@ -185,18 +218,28 @@ class _StreamsProvider extends StatefulWidget {
   ) builder;
   final Duration initialDelay;
   final Duration delay;
+  final bool useValueStream;
 
   @override
   State<_StreamsProvider> createState() => _StreamsProviderState();
 }
 
 class _StreamsProviderState extends State<_StreamsProvider> {
-  late final colorIndexStream =
-      Stream.fromFuture(Future.delayed(widget.initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
-  late final scaleIndexStream =
-      Stream.fromFuture(Future.delayed(widget.initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+  late Stream<int> colorIndexStream;
+  late Stream<int> scaleIndexStream;
+
+  @override
+  void initState() {
+    super.initState();
+    colorIndexStream = Stream.fromFuture(Future.delayed(widget.initialDelay))
+        .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+    scaleIndexStream = Stream.fromFuture(Future.delayed(widget.initialDelay))
+        .asyncExpand((_) => Stream<int>.periodic(widget.delay, (i) => i));
+    if (widget.useValueStream) {
+      colorIndexStream = colorIndexStream.shareValueSeeded(0);
+      scaleIndexStream = scaleIndexStream.shareValueSeeded(0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

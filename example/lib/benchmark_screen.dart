@@ -9,6 +9,7 @@ class BenchmarkScreen extends StatefulWidget {
 }
 
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
+  var _gridKey = UniqueKey();
   var _sideCount = 20;
 
   @override
@@ -25,9 +26,12 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               const SizedBox(width: 16),
               DropdownButton<int>(
                 value: _sideCount,
-                onChanged: (value) => setState(() => _sideCount = value!),
+                onChanged: (value) => setState(() {
+                  _sideCount = value!;
+                  _gridKey = UniqueKey();
+                }),
                 items: [
-                  for (final sideCount in [10, 20, 30, 40, 50, 100])
+                  for (final sideCount in const [10, 15, 20, 30, 40, 50, 100])
                     DropdownMenuItem(
                       value: sideCount,
                       child: Text(sideCount.toString()),
@@ -45,6 +49,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         child: AspectRatio(
           aspectRatio: 1,
           child: GridView.builder(
+            key: _gridKey,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _sideCount,
             ),

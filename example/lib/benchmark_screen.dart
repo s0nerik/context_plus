@@ -26,8 +26,8 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   late var _sideCount = widget.sideCount;
-  late var _useStreamBuilder = false;
-  late var _useValueStream = true;
+  late var _useStreamBuilder = widget.useStreamBuilder;
+  late var _useValueStream = widget.useValueStream;
   late var _runBenchmark = widget.runOnStart;
 
   @override

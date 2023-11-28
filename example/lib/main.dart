@@ -1,7 +1,8 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
-import 'benchmark_page.dart';
+import 'benchmark_screen.dart';
+import 'home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,9 +13,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ContextWatchRoot(
+    return ContextWatchRoot(
       child: MaterialApp(
-        home: BenchmarkPage(),
+        routes: {
+          '/': (_) => const HomeScreen(),
+          '/benchmark': (_) => const BenchmarkScreen(),
+        },
       ),
     );
   }

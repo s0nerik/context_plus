@@ -1,8 +1,8 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
-class BenchmarkPage extends StatelessWidget {
-  const BenchmarkPage({super.key});
+class BenchmarkScreen extends StatelessWidget {
+  const BenchmarkScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

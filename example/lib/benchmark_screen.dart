@@ -12,7 +12,7 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   var _sideCount = 20;
-  var _useStreamBuilder = true;
+  var _useStreamBuilder = false;
   var _useValueStream = false;
 
   @override
@@ -38,7 +38,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                       _gridKey = UniqueKey();
                     }),
                     items: [
-                      for (final sideCount in const [10, 15, 20, 30, 50, 100])
+                      for (final sideCount in const [10, 15, 20, 25, 30, 50])
                         DropdownMenuItem(
                           value: sideCount,
                           child: Text(sideCount.toString()),

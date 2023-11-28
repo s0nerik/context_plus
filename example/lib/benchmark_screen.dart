@@ -126,6 +126,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                 children: [
                   const SizedBox(width: 16),
                   ElevatedButton(
+                    key: const Key('start'),
                     onPressed: !_runBenchmark
                         ? () {
                             setState(() {
@@ -138,6 +139,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton(
+                    key: const Key('stop'),
                     onPressed: _runBenchmark
                         ? () {
                             setState(() {

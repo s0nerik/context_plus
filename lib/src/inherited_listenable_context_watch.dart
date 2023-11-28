@@ -30,6 +30,7 @@ class InheritedListenableContextWatchElement
 
   @override
   StreamSubscription watch(
+    BuildContext context,
     Listenable observable,
     VoidCallback callback,
   ) {
@@ -48,7 +49,11 @@ class InheritedListenableContextWatchElement
   }
 
   @override
-  void unwatch(Listenable observable, StreamSubscription subscription) {
+  void unwatch(
+    BuildContext context,
+    Listenable observable,
+    StreamSubscription subscription,
+  ) {
     subscription.cancel();
     if (_streamControllers[observable]?.hasListener == false) {
       observable.removeListener(_actualListeners[observable]!);

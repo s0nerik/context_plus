@@ -39,10 +39,18 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       _elementSubs[element]?[observable];
 
   @protected
-  TSubscription watch(TObservable observable, void Function() callback);
+  TSubscription watch(
+    BuildContext context,
+    TObservable observable,
+    void Function() callback,
+  );
 
   @protected
-  void unwatch(TObservable observable, TSubscription subscription);
+  void unwatch(
+    BuildContext context,
+    TObservable observable,
+    TSubscription subscription,
+  );
 
   @override
   void mount(Element? parent, Object? newSlot) {
@@ -82,7 +90,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       for (final observable in observableSubs.keys) {
         if (!frameObservableSubs.containsKey(observable)) {
           final sub = observableSubs[observable]!;
-          unwatch(observable, sub);
+          unwatch(element, observable, sub);
         }
       }
       _elementSubs[element] = frameObservableSubs;
@@ -112,9 +120,9 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return;
     }
 
-    for (final observable in observableSubs.keys) {
-      final sub = observableSubs[observable]!;
-      unwatch(observable, sub);
+    for (final MapEntry(key: observable, value: sub)
+        in observableSubs.entries) {
+      unwatch(dependent, observable, sub);
     }
     _elementSubs.remove(dependent);
   }
@@ -123,9 +131,11 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _frameElementSubs.clear();
     _manuallyUnwatchedElements.clear();
 
-    for (final observableSubs in _elementSubs.values) {
-      for (final entry in observableSubs.entries) {
-        unwatch(entry.key, entry.value);
+    for (final MapEntry(key: element, value: observableSubs)
+        in _elementSubs.entries) {
+      for (final MapEntry(key: observable, value: subscription)
+          in observableSubs.entries) {
+        unwatch(element, observable, subscription);
       }
     }
     _elementSubs.clear();
@@ -154,7 +164,8 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     final observable = aspect as TObservable;
 
     final observableSubs = _elementSubs.putIfAbsent(dependent, HashMap.new);
-    observableSubs[observable] ??= watch(observable, dependent.markNeedsBuild);
+    observableSubs[observable] ??=
+        watch(dependent, observable, dependent.markNeedsBuild);
 
     final frameObservableSubs =
         _frameElementSubs.putIfAbsent(dependent, HashMap.new);

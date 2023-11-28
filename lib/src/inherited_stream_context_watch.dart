@@ -26,12 +26,23 @@ class InheritedStreamContextWatchElement
     extends ObservableNotifierInheritedElement<Stream, StreamSubscription> {
   InheritedStreamContextWatchElement(super.widget);
 
+  final watchersCount = HashMap<Stream, int>();
+  final streamToBroadcastStream = HashMap<Stream, Stream>();
   final snapshots = HashMap<StreamSubscription, AsyncSnapshot>();
 
   @override
-  StreamSubscription watch(Stream observable, void Function() callback) {
+  StreamSubscription watch(
+    BuildContext context,
+    Stream observable,
+    void Function() callback,
+  ) {
+    watchersCount[observable] = (watchersCount[observable] ?? 0) + 1;
+
+    final stream =
+        streamToBroadcastStream[observable] ??= observable.asBroadcastStream();
+
     late final StreamSubscription subscription;
-    subscription = observable.listen((data) {
+    subscription = stream.listen((data) {
       snapshots[subscription] =
           AsyncSnapshot.withData(ConnectionState.active, data);
       callback();
@@ -59,7 +70,16 @@ class InheritedStreamContextWatchElement
   }
 
   @override
-  void unwatch(Stream observable, StreamSubscription subscription) {
+  void unwatch(
+    BuildContext context,
+    Stream observable,
+    StreamSubscription subscription,
+  ) {
+    watchersCount[observable] = (watchersCount[observable] ?? 0) - 1;
+    if (watchersCount[observable]! <= 0) {
+      streamToBroadcastStream.remove(observable);
+      watchersCount.remove(observable);
+    }
     snapshots.remove(subscription);
     subscription.cancel();
   }

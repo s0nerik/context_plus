@@ -36,7 +36,11 @@ class InheritedFutureContextWatchElement
   final snapshots = HashMap<FutureSubscription, AsyncSnapshot>();
 
   @override
-  FutureSubscription watch(Future observable, void Function() callback) {
+  FutureSubscription watch(
+    BuildContext context,
+    Future observable,
+    void Function() callback,
+  ) {
     final subscription = FutureSubscription();
 
     observable.then((data) {
@@ -64,7 +68,11 @@ class InheritedFutureContextWatchElement
   }
 
   @override
-  void unwatch(Future observable, FutureSubscription subscription) {
+  void unwatch(
+    BuildContext context,
+    Future observable,
+    FutureSubscription subscription,
+  ) {
     subscription.isCanceled = true;
     snapshots.remove(subscription);
   }

@@ -6,7 +6,7 @@ import 'package:rxdart/streams.dart';
 class BenchmarkScreen extends StatefulWidget {
   BenchmarkScreen({
     super.key,
-    this.sideCount = 20,
+    this.sideCount = 15,
     this.availableSideCounts = const {10, 15, 20, 25, 30, 50},
     this.useStreamBuilder = false,
     this.useValueStream = true,

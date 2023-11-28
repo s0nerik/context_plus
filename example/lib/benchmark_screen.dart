@@ -1,14 +1,43 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
-class BenchmarkScreen extends StatelessWidget {
+class BenchmarkScreen extends StatefulWidget {
   const BenchmarkScreen({super.key});
+
+  @override
+  State<BenchmarkScreen> createState() => _BenchmarkScreenState();
+}
+
+class _BenchmarkScreenState extends State<BenchmarkScreen> {
+  var _sideCount = 20;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Benchmark'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Row(
+            children: [
+              const SizedBox(width: 16),
+              const Text('Side count:'),
+              const SizedBox(width: 16),
+              DropdownButton<int>(
+                value: _sideCount,
+                onChanged: (value) => setState(() => _sideCount = value!),
+                items: [
+                  for (final sideCount in [10, 20, 30, 40, 50, 100])
+                    DropdownMenuItem(
+                      value: sideCount,
+                      child: Text(sideCount.toString()),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+        ),
       ),
       body: Container(
         alignment: Alignment.center,
@@ -16,8 +45,8 @@ class BenchmarkScreen extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: 1,
           child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 20,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _sideCount,
             ),
             itemBuilder: (context, index) => _StreamsProvider(
               key: ValueKey(index),

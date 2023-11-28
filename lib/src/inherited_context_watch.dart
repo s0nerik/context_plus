@@ -32,6 +32,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   final _manuallyUnwatchedContexts = HashSet<BuildContext>();
 
   bool _isFirstFrame = true;
+  bool _didReassemble = false;
 
   TSubscription? getSubscription(
     BuildContext context,
@@ -67,8 +68,8 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
   @override
   void reassemble() {
-    _clearAllSubscriptions();
     super.reassemble();
+    _didReassemble = true;
   }
 
   void _onPostFrame(_) {
@@ -105,6 +106,17 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
         _contextSubs.remove(context);
       }
     }
+
+    if (_didReassemble) {
+      _didReassemble = false;
+      final allWatchedContexts = _contextSubs.keys.toSet();
+      final lastFrameWatchedContexts = _contextSubsLastFrame.keys.toSet();
+      final toDispose = allWatchedContexts.difference(lastFrameWatchedContexts);
+      for (final context in toDispose) {
+        _disposeSubscriptionsFor(context);
+      }
+    }
+
     _contextSubsLastFrame.clear();
   }
 

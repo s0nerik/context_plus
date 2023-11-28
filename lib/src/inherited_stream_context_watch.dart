@@ -29,7 +29,7 @@ class InheritedStreamContextWatchElement
   final watchersCount = HashMap<Stream, int>();
   final streamToBroadcastStream = HashMap<Stream, Stream>();
 
-  final asyncSnapshotGenerator = AsyncSnapshotGenerator<StreamSubscription>();
+  final snapshotGenerator = AsyncSnapshotGenerator<StreamSubscription>();
 
   @override
   StreamSubscription watch(
@@ -44,18 +44,17 @@ class InheritedStreamContextWatchElement
 
     late final StreamSubscription subscription;
     subscription = stream.listen((data) {
-      asyncSnapshotGenerator.setConnectionState(
+      snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
-      asyncSnapshotGenerator.setData(subscription, data);
+      snapshotGenerator.setData(subscription, data);
       callback();
     }, onError: (error, trace) {
-      asyncSnapshotGenerator.setConnectionState(
+      snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
-      asyncSnapshotGenerator.setError(subscription, error, trace);
+      snapshotGenerator.setError(subscription, error, trace);
       callback();
     }, onDone: () {
-      asyncSnapshotGenerator.setConnectionState(
-          subscription, ConnectionState.done);
+      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
       callback();
     });
     return subscription;
@@ -72,7 +71,7 @@ class InheritedStreamContextWatchElement
       streamToBroadcastStream.remove(observable);
       watchersCount.remove(observable);
     }
-    asyncSnapshotGenerator.clear(subscription);
+    snapshotGenerator.clear(subscription);
     subscription.cancel();
   }
 }
@@ -98,7 +97,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
 
     final subscription = watchRoot.getSubscription(context, this);
-    return watchRoot.asyncSnapshotGenerator.buildAsyncSnapshot(subscription);
+    return watchRoot.snapshotGenerator.generate(subscription);
   }
 }
 
@@ -122,7 +121,7 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
 
     final subscription = watchRoot.getSubscription(context, this);
     final connectionState =
-        watchRoot.asyncSnapshotGenerator.getConnectionState(subscription);
+        watchRoot.snapshotGenerator.getConnectionState(subscription);
     if (connectionState == null) {
       if (hasValue) {
         return AsyncSnapshot<T>.withData(ConnectionState.waiting, value);
@@ -141,6 +140,6 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
         );
       }
     }
-    return watchRoot.asyncSnapshotGenerator.buildAsyncSnapshot(subscription);
+    return watchRoot.snapshotGenerator.generate(subscription);
   }
 }

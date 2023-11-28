@@ -40,7 +40,7 @@ final class AsyncSnapshotGenerator<TKey> {
     _errorTrace.remove(key);
   }
 
-  AsyncSnapshot<T> buildAsyncSnapshot<T>(TKey? key) {
+  AsyncSnapshot<T> generate<T>(TKey? key) {
     if (key == null) {
       return AsyncSnapshot<T>.waiting();
     }

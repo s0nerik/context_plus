@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'async_snapshot_converter.dart';
+import 'async_snapshot_generator.dart';
 import 'inherited_context_watch.dart';
 
 @internal
@@ -33,7 +32,7 @@ class InheritedFutureContextWatchElement
     extends ObservableNotifierInheritedElement<Future, FutureSubscription> {
   InheritedFutureContextWatchElement(super.widget);
 
-  final snapshots = HashMap<FutureSubscription, AsyncSnapshot>();
+  final snapshotGenerator = AsyncSnapshotGenerator<FutureSubscription>();
 
   @override
   FutureSubscription watch(
@@ -47,20 +46,15 @@ class InheritedFutureContextWatchElement
       if (subscription.isCanceled) {
         return;
       }
-      snapshots[subscription] =
-          AsyncSnapshot.withData(ConnectionState.done, data);
+      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
+      snapshotGenerator.setData(subscription, data);
       callback();
     }, onError: (error, trace) {
       if (subscription.isCanceled) {
         return;
       }
-      if (trace != null) {
-        snapshots[subscription] =
-            AsyncSnapshot.withError(ConnectionState.done, error, trace);
-      } else {
-        snapshots[subscription] =
-            AsyncSnapshot.withError(ConnectionState.done, error);
-      }
+      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
+      snapshotGenerator.setError(subscription, error, trace);
       callback();
     });
 
@@ -74,7 +68,7 @@ class InheritedFutureContextWatchElement
     FutureSubscription subscription,
   ) {
     subscription.isCanceled = true;
-    snapshots.remove(subscription);
+    snapshotGenerator.clear(subscription);
   }
 }
 
@@ -100,8 +94,7 @@ extension FutureContextWatchExtension<T> on Future<T> {
         InheritedFutureContextWatch>() as InheritedFutureContextWatchElement;
 
     final subscription = watchRoot.getSubscription(context, this);
-    final snapshot = watchRoot.snapshots[subscription];
-    return convertAsyncSnapshot(snapshot);
+    return watchRoot.snapshotGenerator.generate(subscription);
   }
 }
 

@@ -11,6 +11,7 @@ class BenchmarkScreen extends StatefulWidget {
     this.useStreamBuilder = false,
     this.useValueStream = true,
     this.runOnStart = true,
+    this.showPerformanceOverlay = true,
   }) : assert(availableSideCounts.contains(sideCount));
 
   final int sideCount;
@@ -18,6 +19,7 @@ class BenchmarkScreen extends StatefulWidget {
   final bool useStreamBuilder;
   final bool useValueStream;
   final bool runOnStart;
+  final bool showPerformanceOverlay;
 
   @override
   State<BenchmarkScreen> createState() => _BenchmarkScreenState();
@@ -201,12 +203,13 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            PerformanceOverlay(
-              optionsMask: 1 <<
-                      PerformanceOverlayOption
-                          .displayRasterizerStatistics.index |
-                  1 << PerformanceOverlayOption.displayEngineStatistics.index,
-            ),
+            if (widget.showPerformanceOverlay)
+              PerformanceOverlay(
+                optionsMask: 1 <<
+                        PerformanceOverlayOption
+                            .displayRasterizerStatistics.index |
+                    1 << PerformanceOverlayOption.displayEngineStatistics.index,
+              ),
           ],
         ),
       ),

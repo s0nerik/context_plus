@@ -17,7 +17,9 @@ main() async {
     };
     Future<void> benchmark({
       required String name,
-      required bool useValueStream,
+      bool useValueStream = true,
+      int frames = 1000,
+      int sideCount = 15,
     }) async {
       await tester.pumpWidget(
         ContextWatchRoot(
@@ -28,6 +30,7 @@ main() async {
               useStreamBuilder: name == 'StreamBuilder',
               runOnStart: false,
               showPerformanceOverlay: false,
+              sideCount: sideCount,
             ),
           ),
         ),
@@ -38,7 +41,7 @@ main() async {
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
       timers[name]!.start();
-      for (int i = 0; i < 100000; i++) {
+      for (int i = 0; i < frames; i++) {
         await tester.pumpBenchmark(Duration.zero);
       }
       timers[name]!.stop();
@@ -48,22 +51,10 @@ main() async {
       await tester.pumpAndSettle();
     }
 
-    await benchmark(
-      name: 'Stream.watch(context)',
-      useValueStream: false,
-    );
-    await benchmark(
-      name: 'StreamBuilder',
-      useValueStream: false,
-    );
-    await benchmark(
-      name: 'Stream.watch(context)',
-      useValueStream: false,
-    );
-    await benchmark(
-      name: 'StreamBuilder',
-      useValueStream: false,
-    );
+    for (var i = 0; i < 2; i++) {
+      await benchmark(name: 'Stream.watch(context)');
+      await benchmark(name: 'StreamBuilder');
+    }
 
     final contextWatchTime =
         timers['Stream.watch(context)']!.elapsedMilliseconds;

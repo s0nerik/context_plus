@@ -265,12 +265,12 @@ Widget _build({
   required AsyncSnapshot<int> colorIndexSnapshot,
   required AsyncSnapshot<int> scaleIndexSnapshot,
 }) {
-  // return const SizedBox.shrink();
+  const loadingColor = Color(0xFFFFFACA);
 
   final child = switch (colorIndexSnapshot) {
     AsyncSnapshot(hasData: true, requireData: final colorIndex) =>
       ColoredBox(color: _colors[colorIndex % _colors.length]),
-    AsyncSnapshot(hasError: false) => const ColoredBox(color: Colors.yellow),
+    AsyncSnapshot(hasError: false) => const ColoredBox(color: loadingColor),
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
   };
 
@@ -280,7 +280,7 @@ Widget _build({
         scale: _scales[scaleIndex % _scales.length],
         child: child,
       ),
-    AsyncSnapshot(hasError: false) => const ColoredBox(color: Colors.yellow),
+    AsyncSnapshot(hasError: false) => const ColoredBox(color: loadingColor),
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
   };
 

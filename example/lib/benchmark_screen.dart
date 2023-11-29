@@ -3,21 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/streams.dart';
 
+enum BenchmarkDataType {
+  valueListenable,
+  future,
+  stream,
+  valueStream,
+}
+
+enum BenchmarkListenerType {
+  contextWatch,
+  streamBuilder,
+}
+
 class BenchmarkScreen extends StatefulWidget {
   BenchmarkScreen({
     super.key,
     this.sideCount = 15,
     this.availableSideCounts = const {10, 15, 20, 25, 30, 50},
-    this.useStreamBuilder = false,
-    this.useValueStream = true,
+    this.dataType = BenchmarkDataType.valueStream,
+    this.listenerType = BenchmarkListenerType.contextWatch,
     this.runOnStart = true,
     this.showPerformanceOverlay = true,
   }) : assert(availableSideCounts.contains(sideCount));
 
   final int sideCount;
   final Set<int> availableSideCounts;
-  final bool useStreamBuilder;
-  final bool useValueStream;
+  final BenchmarkDataType dataType;
+  final BenchmarkListenerType listenerType;
   final bool runOnStart;
   final bool showPerformanceOverlay;
 
@@ -28,8 +40,8 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _gridKey = UniqueKey();
   late var _sideCount = widget.sideCount;
-  late var _useStreamBuilder = widget.useStreamBuilder;
-  late var _useValueStream = widget.useValueStream;
+  late var _dataType = widget.dataType;
+  late var _listenerType = widget.listenerType;
   late var _runBenchmark = widget.runOnStart;
 
   @override
@@ -77,22 +89,22 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               Row(
                 children: [
                   const SizedBox(width: 16),
-                  const Text('Subscribe using:'),
+                  const Text('Data type:'),
                   const SizedBox(width: 16),
-                  DropdownButton<bool>(
-                    value: _useStreamBuilder,
+                  DropdownButton<BenchmarkDataType>(
+                    value: _dataType,
                     onChanged: (value) => setState(() {
-                      _useStreamBuilder = value!;
+                      _dataType = value!;
                       _gridKey = UniqueKey();
                     }),
                     items: const [
                       DropdownMenuItem(
-                        value: false,
-                        child: Text('Stream.watch(context)'),
+                        value: BenchmarkDataType.stream,
+                        child: Text('Stream'),
                       ),
                       DropdownMenuItem(
-                        value: true,
-                        child: Text('StreamBuilder'),
+                        value: BenchmarkDataType.valueStream,
+                        child: Text('ValueStream'),
                       ),
                     ],
                   ),
@@ -102,23 +114,26 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               Row(
                 children: [
                   const SizedBox(width: 16),
-                  const Text('Stream type:'),
+                  const Text('Listen using:'),
                   const SizedBox(width: 16),
-                  DropdownButton<bool>(
-                    value: _useValueStream,
+                  DropdownButton<BenchmarkListenerType>(
+                    value: _listenerType,
                     onChanged: (value) => setState(() {
-                      _useValueStream = value!;
+                      _listenerType = value!;
                       _gridKey = UniqueKey();
                     }),
-                    items: const [
-                      DropdownMenuItem(
-                        value: false,
-                        child: Text('Stream'),
-                      ),
-                      DropdownMenuItem(
-                        value: true,
-                        child: Text('ValueStream'),
-                      ),
+                    items: [
+                      if (_dataType == BenchmarkDataType.stream ||
+                          _dataType == BenchmarkDataType.valueStream) ...const [
+                        DropdownMenuItem(
+                          value: BenchmarkListenerType.contextWatch,
+                          child: Text('Stream.watch(context)'),
+                        ),
+                        DropdownMenuItem(
+                          value: BenchmarkListenerType.streamBuilder,
+                          child: Text('StreamBuilder'),
+                        ),
+                      ],
                     ],
                   ),
                   const SizedBox(width: 16),
@@ -173,30 +188,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: _sideCount,
                         ),
-                        itemBuilder: (context, index) => _StreamsProvider(
+                        itemBuilder: (context, index) => _GridItem(
                           key: ValueKey(index),
-                          useValueStream: _useValueStream,
-                          initialDelay: Duration(milliseconds: 4 * index),
-                          delay: const Duration(milliseconds: 48),
-                          builder:
-                              (context, colorIndexStream, scaleIndexStream) {
-                            if (!_useStreamBuilder) {
-                              return ItemContextWatch(
-                                colorIndexStream: colorIndexStream,
-                                scaleIndexStream: scaleIndexStream,
-                              );
-                            }
-                            return ItemStreamBuilder(
-                              initialColorIndex: _useValueStream
-                                  ? (colorIndexStream as ValueStream<int>).value
-                                  : null,
-                              colorIndexStream: colorIndexStream,
-                              initialScaleIndex: _useValueStream
-                                  ? (scaleIndexStream as ValueStream<int>).value
-                                  : null,
-                              scaleIndexStream: scaleIndexStream,
-                            );
-                          },
+                          index: index,
+                          dataType: _dataType,
+                          listenerType: _listenerType,
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -214,6 +210,53 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         ),
       ),
     );
+  }
+}
+
+class _GridItem extends StatelessWidget {
+  const _GridItem({
+    super.key,
+    required this.index,
+    required BenchmarkDataType dataType,
+    required BenchmarkListenerType listenerType,
+  })  : _dataType = dataType,
+        _listenerType = listenerType;
+
+  final int index;
+  final BenchmarkDataType _dataType;
+  final BenchmarkListenerType _listenerType;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_dataType == BenchmarkDataType.stream ||
+        _dataType == BenchmarkDataType.valueStream) {
+      return _StreamsProvider(
+        key: ValueKey(index),
+        useValueStream: _dataType == BenchmarkDataType.valueStream,
+        initialDelay: Duration(milliseconds: 4 * index),
+        delay: const Duration(milliseconds: 48),
+        builder: (context, colorIndexStream, scaleIndexStream) {
+          if (_listenerType == BenchmarkListenerType.contextWatch) {
+            return ItemContextWatch(
+              colorIndexStream: colorIndexStream,
+              scaleIndexStream: scaleIndexStream,
+            );
+          }
+          return ItemStreamBuilder(
+            initialColorIndex: _dataType == BenchmarkDataType.valueStream
+                ? (colorIndexStream as ValueStream<int>).value
+                : null,
+            colorIndexStream: colorIndexStream,
+            initialScaleIndex: _dataType == BenchmarkDataType.valueStream
+                ? (scaleIndexStream as ValueStream<int>).value
+                : null,
+            scaleIndexStream: scaleIndexStream,
+          );
+        },
+      );
+    }
+
+    return const Placeholder();
   }
 }
 

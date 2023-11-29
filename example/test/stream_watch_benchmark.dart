@@ -26,8 +26,12 @@ main() async {
           key: Key(name),
           child: MaterialApp(
             home: BenchmarkScreen(
-              useValueStream: useValueStream,
-              useStreamBuilder: name == 'StreamBuilder',
+              dataType: useValueStream
+                  ? BenchmarkDataType.valueStream
+                  : BenchmarkDataType.stream,
+              listenerType: name == 'StreamBuilder'
+                  ? BenchmarkListenerType.streamBuilder
+                  : BenchmarkListenerType.contextWatch,
               runOnStart: false,
               showPerformanceOverlay: false,
               sideCount: sideCount,

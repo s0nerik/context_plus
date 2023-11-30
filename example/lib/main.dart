@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'benchmark_screen.dart';
 import 'home_screen.dart';
+import 'hot_reload_test_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -18,6 +19,7 @@ class MainApp extends StatelessWidget {
         routes: {
           '/': (_) => const HomeScreen(),
           '/benchmark': (_) => BenchmarkScreen(),
+          '/hot_reload_test': (_) => const HotReloadTestScreen(),
         },
       ),
     );

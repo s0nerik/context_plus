@@ -10,12 +10,20 @@ class HomeScreen extends StatelessWidget {
         title: const Text('context_watch'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          direction: Axis.vertical,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             OutlinedButton(
               onPressed: () => Navigator.of(context).pushNamed('/benchmark'),
               child: const Text('Benchmark'),
+            ),
+            OutlinedButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed('/hot_reload_test'),
+              child: const Text('Hot Reload Test'),
             ),
           ],
         ),

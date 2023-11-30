@@ -91,10 +91,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
 
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
-    final subscription = watchRoot.getSubscription(context, this);
-    if (subscription == null) {
-      watchRoot.subscribe(context as Element, this);
-    }
+    final subscription = watchRoot.subscribe(context as Element, this);
     return watchRoot.snapshotGenerator.generate(subscription);
   }
 }
@@ -112,10 +109,7 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
   AsyncSnapshot<T> watch(BuildContext context) {
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
-    final subscription = watchRoot.getSubscription(context, this);
-    if (subscription == null) {
-      watchRoot.subscribe(context as Element, this);
-    }
+    final subscription = watchRoot.subscribe(context as Element, this);
     final connectionState =
         watchRoot.snapshotGenerator.getConnectionState(subscription);
     if (connectionState == null) {

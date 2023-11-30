@@ -34,12 +34,6 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   bool _isFirstFrame = true;
   bool _didReassemble = false;
 
-  TSubscription? getSubscription(
-    BuildContext context,
-    TObservable observable,
-  ) =>
-      _contextSubs[context]?[observable];
-
   @protected
   TSubscription watch(
     BuildContext context,
@@ -158,23 +152,25 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _contextSubs.clear();
   }
 
-  void subscribe(Element dependent, TObservable observable) {
+  TSubscription? subscribe(Element dependent, TObservable observable) {
     final phase = SchedulerBinding.instance.schedulerPhase;
     final isBuildPhase = phase == SchedulerPhase.persistentCallbacks ||
         _isFirstFrame && phase == SchedulerPhase.idle;
 
     if (!isBuildPhase) {
       // Don't update subscriptions outside the build phase
-      return;
+      return null;
     }
 
     final observableSubs = _contextSubs.putIfAbsent(dependent, HashMap.new);
-    observableSubs[observable] ??=
+    final subscription = observableSubs[observable] ??=
         watch(dependent, observable, dependent.markNeedsBuild);
 
     final frameObservableSubs =
         _contextSubsLastFrame.putIfAbsent(dependent, HashMap.new);
-    frameObservableSubs[observable] = observableSubs[observable]!;
+    frameObservableSubs[observable] = subscription;
+
+    return subscription;
   }
 
   void unsubscribe(Element dependent) {

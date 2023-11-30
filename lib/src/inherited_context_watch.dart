@@ -160,8 +160,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _contextSubs.clear();
   }
 
-  @override
-  void updateDependencies(Element dependent, Object? aspect) {
+  void subscribe(Element dependent, TObservable observable) {
     final phase = SchedulerBinding.instance.schedulerPhase;
     final isBuildPhase = phase == SchedulerPhase.persistentCallbacks ||
         _isFirstFrame && phase == SchedulerPhase.idle;
@@ -171,17 +170,6 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return;
     }
 
-    if (aspect == null) {
-      if (_manuallyUnwatchedContexts.contains(dependent)) {
-        return;
-      }
-      _disposeSubscriptionsFor(dependent);
-      _manuallyUnwatchedContexts.add(dependent);
-      return;
-    }
-
-    final observable = aspect as TObservable;
-
     final observableSubs = _contextSubs.putIfAbsent(dependent, HashMap.new);
     observableSubs[observable] ??=
         watch(dependent, observable, dependent.markNeedsBuild);
@@ -189,5 +177,20 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     final frameObservableSubs =
         _contextSubsLastFrame.putIfAbsent(dependent, HashMap.new);
     frameObservableSubs[observable] = observableSubs[observable]!;
+  }
+
+  void unsubscribe(Element dependent) {
+    final phase = SchedulerBinding.instance.schedulerPhase;
+    final isBuildPhase = phase == SchedulerPhase.persistentCallbacks ||
+        _isFirstFrame && phase == SchedulerPhase.idle;
+
+    if (!isBuildPhase) {
+      // Don't update subscriptions outside the build phase
+      return;
+    }
+
+    if (_manuallyUnwatchedContexts.add(dependent)) {
+      _disposeSubscriptionsFor(dependent);
+    }
   }
 }

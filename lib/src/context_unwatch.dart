@@ -2,6 +2,8 @@ import 'package:context_watch/src/inherited_listenable_context_watch.dart';
 import 'package:context_watch/src/inherited_stream_context_watch.dart';
 import 'package:flutter/widgets.dart';
 
+import 'inherited_future_context_watch.dart';
+
 extension ContextUnwatchExtension on BuildContext {
   /// Use this on the first line of your build method if you specify
   /// conditional observable watchers.
@@ -32,11 +34,19 @@ extension ContextUnwatchExtension on BuildContext {
   /// }
   /// ```
   void unwatch() {
-    dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>(
-      aspect: null,
-    );
-    dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>(
-      aspect: null,
-    );
+    final listenableWatchRoot = getElementForInheritedWidgetOfExactType<
+            InheritedListenableContextWatch>()
+        as InheritedListenableContextWatchElement;
+    listenableWatchRoot.unsubscribe(this as Element);
+
+    final futureWatchRoot =
+        getElementForInheritedWidgetOfExactType<InheritedFutureContextWatch>()
+            as InheritedFutureContextWatchElement;
+    futureWatchRoot.unsubscribe(this as Element);
+
+    final streamWatchRoot =
+        getElementForInheritedWidgetOfExactType<InheritedStreamContextWatch>()
+            as InheritedStreamContextWatchElement;
+    streamWatchRoot.unsubscribe(this as Element);
   }
 }

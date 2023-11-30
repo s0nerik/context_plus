@@ -44,21 +44,23 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   late var _listenerType = widget.listenerType;
   late var _runBenchmark = widget.runOnStart;
 
+  final _stream = Stream.periodic(const Duration(milliseconds: 1), (i) => i)
+      .asBroadcastStream();
+
   @override
   Widget build(BuildContext context) {
-    final totalSubscriptions = _sideCount * _sideCount * 2;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Benchmark'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(200),
+          preferredSize: const Size.fromHeight(240),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   const SizedBox(width: 16),
-                  const Text('Side count:'),
+                  const Text('Grid rows/columns:'),
                   const SizedBox(width: 16),
                   DropdownButton<int>(
                     value: _sideCount,
@@ -74,15 +76,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(width: 16),
-                ],
-              ),
-              Row(
-                children: [
-                  const SizedBox(width: 16),
-                  const Text('Total subscriptions:'),
-                  const SizedBox(width: 16),
-                  Text(totalSubscriptions.toString()),
                   const SizedBox(width: 16),
                 ],
               ),
@@ -139,18 +132,25 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   const SizedBox(width: 16),
                 ],
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                child: Text(
+                  'Total subscriptions: ${_sideCount * _sideCount * 2 + _sideCount * _sideCount}\n'
+                  '${_sideCount * _sideCount} tiles, watching own 2 data sources\n'
+                  '+ ${_sideCount * _sideCount} widgets watching a single data source',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
               Row(
                 children: [
                   const SizedBox(width: 16),
                   ElevatedButton(
                     key: const Key('start'),
                     onPressed: !_runBenchmark
-                        ? () {
-                            setState(() {
+                        ? () => setState(() {
                               _gridKey = UniqueKey();
                               _runBenchmark = true;
-                            });
-                          }
+                            })
                         : null,
                     child: const Text('Start'),
                   ),
@@ -158,12 +158,10 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   ElevatedButton(
                     key: const Key('stop'),
                     onPressed: _runBenchmark
-                        ? () {
-                            setState(() {
+                        ? () => setState(() {
                               _gridKey = UniqueKey();
                               _runBenchmark = false;
-                            });
-                          }
+                            })
                         : null,
                     child: const Text('Stop'),
                   ),
@@ -199,6 +197,21 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            for (var i = 0; i < _sideCount * _sideCount; i++)
+              if (_listenerType == BenchmarkListenerType.contextWatch)
+                Builder(
+                  key: ValueKey(i),
+                  builder: (context) {
+                    _stream.watch(context);
+                    return const SizedBox.shrink();
+                  },
+                )
+              else if (_listenerType == BenchmarkListenerType.streamBuilder)
+                StreamBuilder(
+                  key: ValueKey(i),
+                  stream: _stream,
+                  builder: (context, _) => const SizedBox.shrink(),
+                ),
             if (widget.showPerformanceOverlay)
               PerformanceOverlay(
                 optionsMask: 1 <<

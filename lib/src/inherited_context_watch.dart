@@ -83,8 +83,8 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
   // Workaround for https://github.com/flutter/flutter/issues/106549
   void _clearSubscriptionsForUnwatchedObservables() {
-    // - Iterate through all contexts that called `updateDependencies` during
-    //   the last frame.
+    // - Iterate through all contexts that called `subscribe` or `unsubscribe`
+    //   during the last frame.
     // - For each such context, get sets of subscriptions made during the last
     //   frame and total subscriptions set for the context.
     // - Dispose of subscriptions for observables that were not subscribed to

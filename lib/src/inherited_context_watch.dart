@@ -32,7 +32,6 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   final _manuallyUnwatchedContexts = HashSet<BuildContext>();
 
   bool _isFirstFrame = true;
-  bool _didReassemble = false;
 
   @protected
   TSubscription watch(
@@ -60,12 +59,6 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     super.unmount();
   }
 
-  @override
-  void reassemble() {
-    super.reassemble();
-    _didReassemble = true;
-  }
-
   void _onPostFrame(_) {
     if (!mounted) return;
     _isFirstFrame = false;
@@ -73,18 +66,11 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _clearSubscriptionsForUnwatchedObservables();
     _updateContextSubscriptions();
     _clearSubscriptionsForUnmountedContexts();
-    _didReassemble = false;
     SchedulerBinding.instance.addPostFrameCallback(_onPostFrame);
   }
 
   // Workaround for https://github.com/flutter/flutter/issues/106549
   void _clearSubscriptionsForUnwatchedObservables() {
-    if (_didReassemble) {
-      // Don't clear subscriptions for unwatched observables during reassemble
-      // frame.
-      return;
-    }
-
     // - Iterate through all contexts that called `subscribe` or `unsubscribe`
     //   during the last frame.
     // - For each such context, get sets of subscriptions made during the last

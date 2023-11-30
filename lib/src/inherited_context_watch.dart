@@ -117,9 +117,9 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return;
     }
 
-    for (final MapEntry(key: observable, value: sub)
-        in observableSubs.entries) {
-      unwatch(context, observable, sub);
+    for (final observable in observableSubs.keys) {
+      final subscription = observableSubs[observable]!;
+      unwatch(context, observable, subscription);
     }
     _contextSubs.remove(context);
   }
@@ -128,10 +128,10 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _contextSubsLastFrame.clear();
     _manuallyUnwatchedContexts.clear();
 
-    for (final MapEntry(key: element, value: observableSubs)
-        in _contextSubs.entries) {
-      for (final MapEntry(key: observable, value: subscription)
-          in observableSubs.entries) {
+    for (final element in _contextSubs.keys) {
+      final observableSubs = _contextSubs[element]!;
+      for (final observable in observableSubs.keys) {
+        final subscription = observableSubs[observable]!;
         unwatch(element, observable, subscription);
       }
     }

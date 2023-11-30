@@ -77,12 +77,20 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _isFirstFrame = false;
     _manuallyUnwatchedContexts.clear();
     _clearSubscriptionsForUnwatchedObservables();
+    _updateContextSubscriptions();
     _clearSubscriptionsForUnmountedContexts();
+    _didReassemble = false;
     SchedulerBinding.instance.addPostFrameCallback(_onPostFrame);
   }
 
   // Workaround for https://github.com/flutter/flutter/issues/106549
   void _clearSubscriptionsForUnwatchedObservables() {
+    if (_didReassemble) {
+      // Don't clear subscriptions for unwatched observables during reassemble
+      // frame.
+      return;
+    }
+
     // - Iterate through all contexts that called `subscribe` or `unsubscribe`
     //   during the last frame.
     // - For each such context, get sets of subscriptions made during the last
@@ -95,21 +103,18 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     for (final context in _contextSubsLastFrame.keys) {
       final lastFrameSubscriptions = _contextSubsLastFrame[context]!;
       final allSubscriptions = _contextSubs[context]!;
-      if (!_didReassemble) {
-        for (final observable in allSubscriptions.keys) {
-          if (!lastFrameSubscriptions.containsKey(observable)) {
-            final sub = allSubscriptions[observable]!;
-            unwatch(context, observable, sub);
-          }
+      for (final observable in allSubscriptions.keys) {
+        if (!lastFrameSubscriptions.containsKey(observable)) {
+          final sub = allSubscriptions[observable]!;
+          unwatch(context, observable, sub);
         }
       }
-      _contextSubs[context] = lastFrameSubscriptions;
-      if (allSubscriptions.isEmpty) {
-        _contextSubs.remove(context);
-      }
     }
+  }
 
-    _didReassemble = false;
+  void _updateContextSubscriptions() {
+    _contextSubs.addAll(_contextSubsLastFrame);
+    _contextSubs.removeWhere((_, subscriptions) => subscriptions.isEmpty);
     _contextSubsLastFrame.clear();
   }
 

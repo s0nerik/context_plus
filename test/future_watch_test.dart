@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -60,26 +58,6 @@ void main() {
       expect(snapshots, [
         const AsyncSnapshot.waiting(),
         AsyncSnapshot.withError(ConnectionState.done, error, trace!),
-      ]);
-    },
-  );
-  testWidgets(
-    'FutureOr<T>.watch(context) gives new AsyncSnapshot<T> with data right away if FutureOr<T> is T',
-    (widgetTester) async {
-      const FutureOr<int> future = 0;
-      final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
-        child: Builder(
-          builder: (context) {
-            final snapshot = future.watch(context);
-            snapshots.add(snapshot);
-            return const SizedBox.shrink();
-          },
-        ),
-      );
-      await widgetTester.pumpWidget(widget);
-      expect(snapshots, [
-        const AsyncSnapshot.withData(ConnectionState.done, 0),
       ]);
     },
   );

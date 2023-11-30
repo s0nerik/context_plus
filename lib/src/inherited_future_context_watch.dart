@@ -95,18 +95,3 @@ extension FutureContextWatchExtension<T> on Future<T> {
     return watchRoot.snapshotGenerator.generate(subscription);
   }
 }
-
-extension FutureOrContextWatchExtension<T extends Object> on FutureOr<T> {
-  /// Watch this [FutureOr] for changes.
-  ///
-  /// When this [FutureOr] completes, the [context] will be rebuilt.
-  ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  AsyncSnapshot<T> watch(BuildContext context) {
-    if (this is Future<T>) {
-      return (this as Future<T>).watch(context);
-    }
-    return AsyncSnapshot<T>.withData(ConnectionState.done, this as T);
-  }
-}

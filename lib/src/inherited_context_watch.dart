@@ -95,10 +95,12 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     for (final context in _contextSubsLastFrame.keys) {
       final lastFrameSubscriptions = _contextSubsLastFrame[context]!;
       final allSubscriptions = _contextSubs[context]!;
-      for (final observable in allSubscriptions.keys) {
-        if (!lastFrameSubscriptions.containsKey(observable)) {
-          final sub = allSubscriptions[observable]!;
-          unwatch(context, observable, sub);
+      if (!_didReassemble) {
+        for (final observable in allSubscriptions.keys) {
+          if (!lastFrameSubscriptions.containsKey(observable)) {
+            final sub = allSubscriptions[observable]!;
+            unwatch(context, observable, sub);
+          }
         }
       }
       _contextSubs[context] = lastFrameSubscriptions;
@@ -107,16 +109,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       }
     }
 
-    if (_didReassemble) {
-      _didReassemble = false;
-      final allWatchedContexts = _contextSubs.keys.toSet();
-      final lastFrameWatchedContexts = _contextSubsLastFrame.keys.toSet();
-      final toDispose = allWatchedContexts.difference(lastFrameWatchedContexts);
-      for (final context in toDispose) {
-        _disposeSubscriptionsFor(context);
-      }
-    }
-
+    _didReassemble = false;
     _contextSubsLastFrame.clear();
   }
 

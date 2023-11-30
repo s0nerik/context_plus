@@ -93,16 +93,16 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     //   context.
     // - Clear last frame subscriptions set.
     for (final context in _contextSubsLastFrame.keys) {
-      final frameObservableSubs = _contextSubsLastFrame[context]!;
-      final observableSubs = _contextSubs[context]!;
-      for (final observable in observableSubs.keys) {
-        if (!frameObservableSubs.containsKey(observable)) {
-          final sub = observableSubs[observable]!;
+      final lastFrameSubscriptions = _contextSubsLastFrame[context]!;
+      final allSubscriptions = _contextSubs[context]!;
+      for (final observable in allSubscriptions.keys) {
+        if (!lastFrameSubscriptions.containsKey(observable)) {
+          final sub = allSubscriptions[observable]!;
           unwatch(context, observable, sub);
         }
       }
-      _contextSubs[context] = frameObservableSubs;
-      if (observableSubs.isEmpty) {
+      _contextSubs[context] = lastFrameSubscriptions;
+      if (allSubscriptions.isEmpty) {
         _contextSubs.remove(context);
       }
     }

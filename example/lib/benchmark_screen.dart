@@ -4,7 +4,6 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/streams.dart';
 
 enum BenchmarkDataType {
   valueListenable,

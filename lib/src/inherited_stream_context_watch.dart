@@ -44,16 +44,25 @@ class InheritedStreamContextWatchElement
 
     late final StreamSubscription subscription;
     subscription = stream.listen((data) {
+      if (!canNotify(context, observable)) {
+        return;
+      }
       snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
       snapshotGenerator.setData(subscription, data);
       callback();
     }, onError: (error, trace) {
+      if (!canNotify(context, observable)) {
+        return;
+      }
       snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
       snapshotGenerator.setError(subscription, error, trace);
       callback();
     }, onDone: () {
+      if (!canNotify(context, observable)) {
+        return;
+      }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
       callback();
     });

@@ -46,11 +46,17 @@ class InheritedFutureContextWatchElement
       if (subscription.isCanceled) {
         return;
       }
+      if (!canNotify(context, observable)) {
+        return;
+      }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
       snapshotGenerator.setData(subscription, data);
       callback();
     }, onError: (error, trace) {
       if (subscription.isCanceled) {
+        return;
+      }
+      if (!canNotify(context, observable)) {
         return;
       }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);

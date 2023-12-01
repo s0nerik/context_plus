@@ -37,16 +37,16 @@ extension ContextUnwatchExtension on BuildContext {
     final listenableWatchRoot = getElementForInheritedWidgetOfExactType<
             InheritedListenableContextWatch>()
         as InheritedListenableContextWatchElement;
-    listenableWatchRoot.unsubscribe(this as Element);
+    listenableWatchRoot.updateContextLastFrame(this as Element);
 
     final futureWatchRoot =
         getElementForInheritedWidgetOfExactType<InheritedFutureContextWatch>()
             as InheritedFutureContextWatchElement;
-    futureWatchRoot.unsubscribe(this as Element);
+    futureWatchRoot.updateContextLastFrame(this as Element);
 
     final streamWatchRoot =
         getElementForInheritedWidgetOfExactType<InheritedStreamContextWatch>()
             as InheritedStreamContextWatchElement;
-    streamWatchRoot.unsubscribe(this as Element);
+    streamWatchRoot.updateContextLastFrame(this as Element);
   }
 }

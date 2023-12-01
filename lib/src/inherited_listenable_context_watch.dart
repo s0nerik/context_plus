@@ -39,7 +39,12 @@ class InheritedListenableContextWatchElement
     if (!_streamControllers.containsKey(observable)) {
       ctrl = StreamController.broadcast();
       _streamControllers[observable] = ctrl;
-      _actualListeners[observable] = () => ctrl.add(null);
+      _actualListeners[observable] = () {
+        if (!canNotify(context, observable)) {
+          return;
+        }
+        ctrl.add(null);
+      };
       observable.addListener(_actualListeners[observable]!);
     } else {
       ctrl = _streamControllers[observable]!;

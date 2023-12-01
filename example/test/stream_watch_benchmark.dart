@@ -7,35 +7,44 @@ import 'package:example/benchmark_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Run this with `flutter run --release test/stream_watch_benchmark.dart`
+class _Benchmark {
+  _Benchmark({
+    required BenchmarkDataType dataType,
+    required BenchmarkListenerType listenerType,
+    int singleObservableSubscriptionsCount = 500,
+    int tilesCount = 500,
+    int observablesPerTile = 2,
+    int subscriptionsPerTileObservable = 2,
+    this.frames = 1000,
+  }) : benchmark = BenchmarkScreen(
+          dataType: dataType,
+          listenerType: listenerType,
+          singleObservableSubscriptionsCount:
+              singleObservableSubscriptionsCount,
+          tilesCount: tilesCount,
+          observablesPerTile: observablesPerTile,
+          subscriptionsPerTileObservable: subscriptionsPerTileObservable,
+          runOnStart: false,
+          showPerformanceOverlay: false,
+          visualize: false,
+        );
+
+  final BenchmarkScreen benchmark;
+  final int frames;
+
+  final stopwatch = Stopwatch();
+}
+
+// Run this with `flutter run --profile test/stream_watch_benchmark.dart`
 main() async {
   assert(false); // fail in debug mode
   await benchmarkWidgets((WidgetTester tester) async {
-    final timers = {
-      'Stream.watch(context)': Stopwatch(),
-      'StreamBuilder': Stopwatch(),
-    };
-    Future<void> benchmark({
-      required String name,
-      bool useValueStream = true,
-      int frames = 1000,
-      int sideCount = 15,
-    }) async {
+    Future<void> runBenchmark(_Benchmark benchmark) async {
       await tester.pumpWidget(
         ContextWatchRoot(
-          key: Key(name),
+          key: UniqueKey(),
           child: MaterialApp(
-            home: BenchmarkScreen(
-              dataType: useValueStream
-                  ? BenchmarkDataType.valueStream
-                  : BenchmarkDataType.stream,
-              listenerType: name == 'StreamBuilder'
-                  ? BenchmarkListenerType.streamBuilder
-                  : BenchmarkListenerType.contextWatch,
-              runOnStart: false,
-              showPerformanceOverlay: false,
-              sideCount: sideCount,
-            ),
+            home: benchmark.benchmark,
           ),
         ),
       );
@@ -44,37 +53,98 @@ main() async {
       await tester.pumpAndSettle();
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
-      timers[name]!.start();
-      for (int i = 0; i < frames; i++) {
-        await tester.pumpBenchmark(Duration.zero);
+      benchmark.stopwatch.start();
+      for (int i = 0; i < benchmark.frames; i++) {
+        await tester.pumpBenchmark(
+          const Duration(milliseconds: 16, microseconds: 683),
+        );
       }
-      timers[name]!.stop();
+      benchmark.stopwatch.stop();
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
       await tester.tap(find.byKey(const Key('stop')));
       await tester.pumpAndSettle();
     }
 
-    for (var i = 0; i < 2; i++) {
-      await benchmark(name: 'Stream.watch(context)');
-      await benchmark(name: 'StreamBuilder');
+    final benchmarks = [1, 10, 100, 1000, 10000, 20000]
+        .expand((tilesCount) => [
+              _Benchmark(
+                dataType: BenchmarkDataType.stream,
+                listenerType: BenchmarkListenerType.contextWatch,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+              _Benchmark(
+                dataType: BenchmarkDataType.stream,
+                listenerType: BenchmarkListenerType.streamBuilder,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+            ])
+        .toList();
+
+    for (final benchmark in benchmarks) {
+      await runBenchmark(benchmark);
     }
 
-    final contextWatchTime =
-        timers['Stream.watch(context)']!.elapsedMilliseconds;
-    final streamBuilderTime = timers['StreamBuilder']!.elapsedMilliseconds;
+    // Stream.watch(context) -> StreamBuilder
+    final comparisons = <_Benchmark, _Benchmark>{};
+    for (int i = 0; i < benchmarks.length; i += 2) {
+      final contextWatchBenchmark = benchmarks[i];
+      final streamBuilderBenchmark = benchmarks[i + 1];
+      comparisons[contextWatchBenchmark] = streamBuilderBenchmark;
+    }
 
-    print('Stream.watch(context): ${contextWatchTime}ms');
-    print('StreamBuilder: ${streamBuilderTime}ms');
+    for (final contextWatchBenchmark in comparisons.keys) {
+      final streamBuilderBenchmark = comparisons[contextWatchBenchmark]!;
+      final contextWatchTime =
+          contextWatchBenchmark.stopwatch.elapsedMicroseconds;
+      final streamBuilderTime =
+          streamBuilderBenchmark.stopwatch.elapsedMicroseconds;
 
-    final results = [
-      ('Stream.watch(context)', contextWatchTime),
-      ('StreamBuilder', streamBuilderTime),
-    ]..sort((a, b) => a.$2.compareTo(b.$2));
-    final (fasterName, fasterTime) = results.first;
-    final (slowerName, slowerTime) = results.last;
-    final slowerPercent = (slowerTime / fasterTime).toStringAsFixed(2);
-    print('$slowerName is ${slowerPercent}x slower than $fasterName');
+      final fasterName = contextWatchTime <= streamBuilderTime
+          ? 'Stream.watch(context)'
+          : 'StreamBuilder';
+      final fasterTime = contextWatchTime <= streamBuilderTime
+          ? contextWatchTime
+          : streamBuilderTime;
+
+      final slowerName = contextWatchTime > streamBuilderTime
+          ? 'Stream.watch(context)'
+          : 'StreamBuilder';
+      final slowerTime = contextWatchTime > streamBuilderTime
+          ? contextWatchTime
+          : streamBuilderTime;
+
+      final tilesCount = contextWatchBenchmark.benchmark.tilesCount;
+      final observablesPerTile =
+          contextWatchBenchmark.benchmark.observablesPerTile;
+      final subscriptionsPerTileObservable =
+          contextWatchBenchmark.benchmark.subscriptionsPerTileObservable;
+      final singleObservableSubscriptionsCount =
+          contextWatchBenchmark.benchmark.singleObservableSubscriptionsCount;
+      final totalSubscriptionsCount =
+          tilesCount * observablesPerTile * subscriptionsPerTileObservable +
+              singleObservableSubscriptionsCount;
+
+      final String benchmarkDescription;
+      if (tilesCount == 0 && singleObservableSubscriptionsCount > 0) {
+        benchmarkDescription =
+            '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount subscriptions';
+      } else if (tilesCount > 0 && singleObservableSubscriptionsCount == 0) {
+        benchmarkDescription =
+            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables * $subscriptionsPerTileObservable subs';
+      } else {
+        benchmarkDescription =
+            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables * $subscriptionsPerTileObservable subs + $singleObservableSubscriptionsCount subscription';
+      }
+
+      final slowerPercent =
+          ((slowerTime / fasterTime - 1) * 100).toStringAsFixed(2);
+      print(
+        '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime / 1000}ms] is $slowerPercent% slower than $fasterName[${fasterTime / 1000}ms]',
+      );
+    }
   });
   exit(0);
 }

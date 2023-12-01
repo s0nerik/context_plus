@@ -73,12 +73,8 @@ main() async {
     ]..sort((a, b) => a.$2.compareTo(b.$2));
     final (fasterName, fasterTime) = results.first;
     final (slowerName, slowerTime) = results.last;
-    final fasterPercent =
-        ((1 - fasterTime / slowerTime) * 100).toStringAsFixed(2);
-    final slowerPercent =
-        ((slowerTime / fasterTime - 1) * 100).toStringAsFixed(2);
-    print('$fasterName is $fasterPercent% faster than $slowerName');
-    print('$slowerName is $slowerPercent% slower than $fasterName');
+    final slowerPercent = (slowerTime / fasterTime).toStringAsFixed(2);
+    print('$slowerName is ${slowerPercent}x slower than $fasterName');
   });
   exit(0);
 }

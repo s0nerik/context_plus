@@ -293,8 +293,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       spacing: 16,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        ElevatedButton(
+        OutlinedButton(
           key: const Key('start'),
+          style: OutlinedButton.styleFrom(
+            splashFactory: NoSplash.splashFactory,
+          ),
           onPressed: !_runBenchmark
               ? () => setState(() {
                     _gridKey = UniqueKey();
@@ -303,8 +306,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               : null,
           child: const Text('Start'),
         ),
-        ElevatedButton(
+        OutlinedButton(
           key: const Key('stop'),
+          style: OutlinedButton.styleFrom(
+            splashFactory: NoSplash.splashFactory,
+          ),
           onPressed: _runBenchmark
               ? () => setState(() {
                     _gridKey = UniqueKey();

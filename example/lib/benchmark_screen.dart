@@ -440,10 +440,8 @@ class ItemContextWatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _build(
-      colorIndexSnapshot:
-          colorIndexStream?.watch(context) ?? const AsyncSnapshot.nothing(),
-      scaleIndexSnapshot:
-          scaleIndexStream?.watch(context) ?? const AsyncSnapshot.nothing(),
+      colorIndexSnapshot: colorIndexStream?.watch(context),
+      scaleIndexSnapshot: scaleIndexStream?.watch(context),
       visualize: visualize,
     );
   }
@@ -467,18 +465,47 @@ class ItemStreamBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      initialData: initialColorIndex,
-      stream: colorIndexStream,
-      builder: (context, colorIndexSnapshot) => StreamBuilder(
+    if (colorIndexStream != null && scaleIndexStream != null) {
+      return StreamBuilder(
+        initialData: initialColorIndex,
+        stream: colorIndexStream,
+        builder: (context, colorIndexSnapshot) => StreamBuilder(
+          initialData: initialScaleIndex,
+          stream: scaleIndexStream,
+          builder: (context, scaleIndexSnapshot) => _build(
+            colorIndexSnapshot: colorIndexSnapshot,
+            scaleIndexSnapshot: scaleIndexSnapshot,
+            visualize: visualize,
+          ),
+        ),
+      );
+    }
+    if (colorIndexStream != null) {
+      return StreamBuilder(
+        initialData: initialColorIndex,
+        stream: colorIndexStream,
+        builder: (context, colorIndexSnapshot) => _build(
+          colorIndexSnapshot: colorIndexSnapshot,
+          scaleIndexSnapshot: null,
+          visualize: visualize,
+        ),
+      );
+    }
+    if (scaleIndexStream != null) {
+      return StreamBuilder(
         initialData: initialScaleIndex,
         stream: scaleIndexStream,
         builder: (context, scaleIndexSnapshot) => _build(
-          colorIndexSnapshot: colorIndexSnapshot,
+          colorIndexSnapshot: null,
           scaleIndexSnapshot: scaleIndexSnapshot,
           visualize: visualize,
         ),
-      ),
+      );
+    }
+    return _build(
+      colorIndexSnapshot: null,
+      scaleIndexSnapshot: null,
+      visualize: visualize,
     );
   }
 }
@@ -537,8 +564,8 @@ class _StreamsProviderState extends State<_StreamsProvider> {
 }
 
 Widget _build({
-  required AsyncSnapshot<int> colorIndexSnapshot,
-  required AsyncSnapshot<int> scaleIndexSnapshot,
+  required AsyncSnapshot<int>? colorIndexSnapshot,
+  required AsyncSnapshot<int>? scaleIndexSnapshot,
   required bool visualize,
 }) {
   if (!visualize) {
@@ -552,6 +579,7 @@ Widget _build({
       ColoredBox(color: _colors[colorIndex % _colors.length]),
     AsyncSnapshot(hasError: false) => const ColoredBox(color: loadingColor),
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
+    null => ColoredBox(color: Colors.grey.shade300),
   };
 
   final scaledChild = switch (scaleIndexSnapshot) {
@@ -562,6 +590,7 @@ Widget _build({
       ),
     AsyncSnapshot(hasError: false) => child,
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
+    null => child,
   };
 
   return scaledChild;

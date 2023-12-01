@@ -32,8 +32,9 @@ class InheritedListenableContextWatchElement
   StreamSubscription watch(
     BuildContext context,
     Listenable observable,
-    VoidCallback callback,
   ) {
+    final element = context as Element;
+
     // ignore: cancel_subscriptions
     late final StreamController ctrl;
     if (!_streamControllers.containsKey(observable)) {
@@ -50,7 +51,7 @@ class InheritedListenableContextWatchElement
       ctrl = _streamControllers[observable]!;
     }
 
-    return ctrl.stream.listen((_) => callback());
+    return ctrl.stream.listen((_) => element.markNeedsBuild());
   }
 
   @override

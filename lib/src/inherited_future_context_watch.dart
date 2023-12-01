@@ -38,10 +38,9 @@ class InheritedFutureContextWatchElement
   FutureSubscription watch(
     BuildContext context,
     Future observable,
-    void Function() callback,
   ) {
+    final element = context as Element;
     final subscription = FutureSubscription();
-
     observable.then((data) {
       if (subscription.isCanceled) {
         return;
@@ -51,7 +50,7 @@ class InheritedFutureContextWatchElement
       }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
       snapshotGenerator.setData(subscription, data);
-      callback();
+      element.markNeedsBuild();
     }, onError: (error, trace) {
       if (subscription.isCanceled) {
         return;
@@ -61,7 +60,7 @@ class InheritedFutureContextWatchElement
       }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
       snapshotGenerator.setError(subscription, error, trace);
-      callback();
+      element.markNeedsBuild();
     });
 
     return subscription;
@@ -94,7 +93,7 @@ extension FutureContextWatchExtension<T> on Future<T> {
 
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedFutureContextWatch>() as InheritedFutureContextWatchElement;
-    final subscription = watchRoot.subscribe(context as Element, this);
+    final subscription = watchRoot.subscribe(context, this);
     return watchRoot.snapshotGenerator.generate(subscription);
   }
 }

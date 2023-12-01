@@ -35,8 +35,9 @@ class InheritedStreamContextWatchElement
   StreamSubscription watch(
     BuildContext context,
     Stream observable,
-    void Function() callback,
   ) {
+    final element = context as Element;
+
     watchersCount[observable] = (watchersCount[observable] ?? 0) + 1;
 
     final stream = streamToBroadcastStream[observable] ??=
@@ -50,7 +51,7 @@ class InheritedStreamContextWatchElement
       snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
       snapshotGenerator.setData(subscription, data);
-      callback();
+      element.markNeedsBuild();
     }, onError: (error, trace) {
       if (!canNotify(context, observable)) {
         return;
@@ -58,13 +59,13 @@ class InheritedStreamContextWatchElement
       snapshotGenerator.setConnectionState(
           subscription, ConnectionState.active);
       snapshotGenerator.setError(subscription, error, trace);
-      callback();
+      element.markNeedsBuild();
     }, onDone: () {
       if (!canNotify(context, observable)) {
         return;
       }
       snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
-      callback();
+      element.markNeedsBuild();
     });
     return subscription;
   }
@@ -100,7 +101,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
 
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
-    final subscription = watchRoot.subscribe(context as Element, this);
+    final subscription = watchRoot.subscribe(context, this);
     return watchRoot.snapshotGenerator.generate(subscription);
   }
 }

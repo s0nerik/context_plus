@@ -78,24 +78,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Benchmark'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(260),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTilesCountSelector(),
-              _buildDataTypeSelector(),
-              _buildListenerSelector(),
-              _buildTotalSubscriptionsInfo(),
-              _buildControlButtons(),
-            ],
-          ),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Benchmark')),
       body: Container(
-        alignment: Alignment.center,
         padding: EdgeInsets.only(
           left: 16,
           top: 16,
@@ -103,15 +87,31 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           bottom: 16 + MediaQuery.paddingOf(context).bottom,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: _runBenchmark
-                  ? _buildBenchmarkTilesGrid()
-                  : const SizedBox.shrink(),
+            Wrap(
+              spacing: 16,
+              alignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                _buildSingleObservableSubscriptionsSelector(),
+                _buildTilesCountSelector(),
+                _buildObservablesPerTileSelector(),
+                _buildSubscriptionsPerTileObservableSelector(),
+                _buildDataTypeSelector(),
+                _buildListenerSelector(),
+              ],
             ),
+            _buildTotalSubscriptionsInfo(),
+            _buildControlButtons(),
             const SizedBox(height: 16),
+            Expanded(
+              child: _runBenchmark ? _buildGrid() : const SizedBox.shrink(),
+            ),
             for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
               _buildSingleObservableObserver(i),
+            const SizedBox(height: 32),
             if (widget.showPerformanceOverlay) _buildPerformanceOverlay(),
           ],
         ),
@@ -119,10 +119,9 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     );
   }
 
-  Widget _buildBenchmarkTilesGrid() {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: LayoutBuilder(builder: (context, constraints) {
+  Widget _buildGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
         int tileSize = 24;
         var tilesPerRow = constraints.maxWidth ~/ tileSize;
         var rowsCount = _tilesCount ~/ tilesPerRow;
@@ -143,94 +142,118 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             for (var i = 0; i < _tilesCount; i++) _buildTile(i, tileSize),
           ],
         );
-      }),
+      },
+    );
+  }
+
+  Widget _buildSingleObservableSubscriptionsSelector() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Single observable subscriptions:'),
+        const SizedBox(width: 8),
+        DropdownButton<int>(
+          isDense: true,
+          value: _singleObservableSubscriptionsCount,
+          onChanged: (value) => setState(() {
+            _singleObservableSubscriptionsCount = value!;
+            _tilesContainerKey = UniqueKey();
+          }),
+          items: [
+            for (final singleObservableSubscriptionsCount
+                in widget.singleObservableSubscriptionCountOptions)
+              DropdownMenuItem(
+                value: singleObservableSubscriptionsCount,
+                child: Text(singleObservableSubscriptionsCount.toString()),
+              ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildTilesCountSelector() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Wrap(
-        spacing: 16,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          const Text('Tiles count:'),
-          DropdownButton<int>(
-            isDense: true,
-            value: _tilesCount,
-            onChanged: (value) => setState(() {
-              _tilesCount = value!;
-              _tilesContainerKey = UniqueKey();
-            }),
-            items: [
-              for (final tilesCount in widget.tileCountOptions)
-                DropdownMenuItem(
-                  value: tilesCount,
-                  child: Text(tilesCount.toString()),
-                ),
-            ],
-          ),
-          const Text('Single observable subscriptions:'),
-          DropdownButton<int>(
-            isDense: true,
-            value: _singleObservableSubscriptionsCount,
-            onChanged: (value) => setState(() {
-              _singleObservableSubscriptionsCount = value!;
-              _tilesContainerKey = UniqueKey();
-            }),
-            items: [
-              for (final singleObservableSubscriptionsCount
-                  in widget.singleObservableSubscriptionCountOptions)
-                DropdownMenuItem(
-                  value: singleObservableSubscriptionsCount,
-                  child: Text(singleObservableSubscriptionsCount.toString()),
-                ),
-            ],
-          ),
-          const Text('Observables per tile:'),
-          DropdownButton<int>(
-            isDense: true,
-            value: _observablesPerTile,
-            onChanged: (value) => setState(() {
-              _observablesPerTile = value!;
-              _tilesContainerKey = UniqueKey();
-            }),
-            items: [
-              for (final observablesPerTile in widget.observablesPerTileOptions)
-                DropdownMenuItem(
-                  value: observablesPerTile,
-                  child: Text(observablesPerTile.toString()),
-                ),
-            ],
-          ),
-          const Text('Subscriptions per tile observable:'),
-          DropdownButton<int>(
-            isDense: true,
-            value: _subscriptionsPerTileObservable,
-            onChanged: (value) => setState(() {
-              _subscriptionsPerTileObservable = value!;
-              _tilesContainerKey = UniqueKey();
-            }),
-            items: [
-              for (final subscriptionsPerTileObservable
-                  in widget.subscriptionsPerTileObservableOptions)
-                DropdownMenuItem(
-                  value: subscriptionsPerTileObservable,
-                  child: Text(subscriptionsPerTileObservable.toString()),
-                ),
-            ],
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Tiles count:'),
+        const SizedBox(width: 8),
+        DropdownButton<int>(
+          isDense: true,
+          value: _tilesCount,
+          onChanged: (value) => setState(() {
+            _tilesCount = value!;
+            _tilesContainerKey = UniqueKey();
+          }),
+          items: [
+            for (final tilesCount in widget.tileCountOptions)
+              DropdownMenuItem(
+                value: tilesCount,
+                child: Text(tilesCount.toString()),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildObservablesPerTileSelector() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Observables per tile:'),
+        const SizedBox(width: 8),
+        DropdownButton<int>(
+          isDense: true,
+          value: _observablesPerTile,
+          onChanged: (value) => setState(() {
+            _observablesPerTile = value!;
+            _tilesContainerKey = UniqueKey();
+          }),
+          items: [
+            for (final observablesPerTile in widget.observablesPerTileOptions)
+              DropdownMenuItem(
+                value: observablesPerTile,
+                child: Text(observablesPerTile.toString()),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubscriptionsPerTileObservableSelector() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Subscriptions per tile observable:'),
+        const SizedBox(width: 8),
+        DropdownButton<int>(
+          isDense: true,
+          value: _subscriptionsPerTileObservable,
+          onChanged: (value) => setState(() {
+            _subscriptionsPerTileObservable = value!;
+            _tilesContainerKey = UniqueKey();
+          }),
+          items: [
+            for (final subscriptionsPerTileObservable
+                in widget.subscriptionsPerTileObservableOptions)
+              DropdownMenuItem(
+                value: subscriptionsPerTileObservable,
+                child: Text(subscriptionsPerTileObservable.toString()),
+              ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildDataTypeSelector() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(width: 16),
         const Text('Data type:'),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         DropdownButton<BenchmarkDataType>(
           isDense: true,
           value: _dataType,
@@ -249,17 +272,16 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             ),
           ],
         ),
-        const SizedBox(width: 16),
       ],
     );
   }
 
   Widget _buildListenerSelector() {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(width: 16),
         const Text('Listen using:'),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         DropdownButton<BenchmarkListenerType>(
           isDense: true,
           value: _listenerType,
@@ -281,32 +303,27 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             ],
           ],
         ),
-        const SizedBox(width: 16),
       ],
     );
   }
 
   Widget _buildTotalSubscriptionsInfo() {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 8,
-        bottom: 8,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
-        'Total subscriptions: ${_singleObservableSubscriptionsCount + _tilesCount * _observablesPerTile * _subscriptionsPerTileObservable}\n'
-        '$_singleObservableSubscriptionsCount single observable subscriptions\n'
-        '+ $_tilesCount tiles x $_observablesPerTile observables x $_subscriptionsPerTileObservable subscriptions',
+        'Total\u{00A0}subscriptions:\u{00A0}${_singleObservableSubscriptionsCount + _tilesCount * _observablesPerTile * _subscriptionsPerTileObservable}\n'
+        '$_singleObservableSubscriptionsCount\u{00A0}single\u{00A0}observable\u{00A0}subscriptions '
+        '+ $_tilesCount\u{00A0}tiles\u{00A0}*\u{00A0}$_observablesPerTile\u{00A0}observables\u{00A0}*\u{00A0}$_subscriptionsPerTileObservable\u{00A0}subscriptions',
         style: const TextStyle(fontSize: 12),
       ),
     );
   }
 
   Widget _buildControlButtons() {
-    return Row(
+    return Wrap(
+      spacing: 16,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        const SizedBox(width: 16),
         ElevatedButton(
           key: const Key('start'),
           onPressed: !_runBenchmark
@@ -317,7 +334,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               : null,
           child: const Text('Start'),
         ),
-        const SizedBox(width: 16),
         ElevatedButton(
           key: const Key('stop'),
           onPressed: _runBenchmark
@@ -328,16 +344,19 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               : null,
           child: const Text('Stop'),
         ),
-        const SizedBox(width: 16),
-        Checkbox(
-          value: _visualize,
-          onChanged: (value) => setState(() {
-            _visualize = value!;
-            _tilesContainerKey = UniqueKey();
-          }),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Checkbox(
+              value: _visualize,
+              onChanged: (value) => setState(() {
+                _visualize = value!;
+                _tilesContainerKey = UniqueKey();
+              }),
+            ),
+            const Text('Visualize'),
+          ],
         ),
-        const Text('Visualize'),
-        const SizedBox(width: 16),
       ],
     );
   }

@@ -104,8 +104,9 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             Expanded(
               child: _runBenchmark ? _buildGrid() : const SizedBox.shrink(),
             ),
-            for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
-              _buildSingleObservableObserver(i),
+            if (_runBenchmark)
+              for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
+                _buildSingleObservableObserver(i),
             const SizedBox(height: 32),
             if (widget.showPerformanceOverlay) _buildPerformanceOverlay(),
           ],

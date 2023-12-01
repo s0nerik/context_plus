@@ -66,7 +66,7 @@ main() async {
       await tester.pumpAndSettle();
     }
 
-    final benchmarks = [1, 10, 100, 1000, 10000, 20000]
+    final tileBenchmarks = [1, 10, 100, 1000, 10000, 20000]
         .expand((tilesCount) => [
               _Benchmark(
                 dataType: BenchmarkDataType.stream,
@@ -82,6 +82,28 @@ main() async {
               ),
             ])
         .toList();
+    final singleObservableBenchmarks = [1, 10, 100, 1000]
+        .expand((singleObservableSubscriptionsCount) => [
+              _Benchmark(
+                dataType: BenchmarkDataType.stream,
+                listenerType: BenchmarkListenerType.contextWatch,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+              _Benchmark(
+                dataType: BenchmarkDataType.stream,
+                listenerType: BenchmarkListenerType.streamBuilder,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+            ])
+        .toList();
+    final benchmarks = [
+      ...tileBenchmarks,
+      ...singleObservableBenchmarks,
+    ];
 
     for (final benchmark in benchmarks) {
       await runBenchmark(benchmark);

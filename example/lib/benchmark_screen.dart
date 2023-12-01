@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/streams.dart';
 
 enum BenchmarkDataType {
@@ -535,25 +538,52 @@ class _StreamsProvider extends StatefulWidget {
 }
 
 class _StreamsProviderState extends State<_StreamsProvider> {
+  StreamController<int>? colorIndexController;
+  StreamController<int>? scaleIndexController;
+
   Stream<int>? colorIndexStream;
   Stream<int>? scaleIndexStream;
 
   @override
   void initState() {
     super.initState();
-    final initialDelay = widget.initialDelay;
-    final delay = widget.delay;
     if (widget.observablesPerTile > 0) {
-      colorIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+      colorIndexController = widget.useValueStream
+          ? BehaviorSubject<int>.seeded(0)
+          : StreamController<int>();
+      colorIndexStream = colorIndexController!.stream;
     }
     if (widget.observablesPerTile > 1) {
-      scaleIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
-          .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+      scaleIndexController = widget.useValueStream
+          ? BehaviorSubject<int>.seeded(0)
+          : StreamController<int>();
+      scaleIndexStream = scaleIndexController!.stream;
     }
-    if (widget.useValueStream) {
-      colorIndexStream = colorIndexStream?.shareValueSeeded(0);
-      scaleIndexStream = scaleIndexStream?.shareValueSeeded(0);
+    _notifyValuesWhileMounted();
+  }
+
+  @override
+  void dispose() {
+    colorIndexController?.close();
+    scaleIndexController?.close();
+    super.dispose();
+  }
+
+  Future<void> _notifyValuesWhileMounted() async {
+    await Future.delayed(widget.initialDelay);
+    var index = 0;
+    while (mounted) {
+      await Future.delayed(widget.delay);
+      if (!mounted) {
+        break;
+      }
+      if (widget.observablesPerTile > 0) {
+        colorIndexController?.add(index);
+      }
+      if (widget.observablesPerTile > 1) {
+        scaleIndexController?.add(index);
+      }
+      index++;
     }
   }
 

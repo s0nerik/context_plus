@@ -24,8 +24,6 @@ class BenchmarkScreen extends StatefulWidget {
     this.tileCountOptions = const {0, 1, 10, 100, 500, 1000, 10000, 20000},
     this.observablesPerTile = 2,
     this.observablesPerTileOptions = const {0, 1, 2, 3, 5, 10, 20},
-    this.subscriptionsPerTileObservable = 1,
-    this.subscriptionsPerTileObservableOptions = const {0, 1, 2, 3, 5, 10, 20},
     this.dataType = BenchmarkDataType.valueStream,
     this.listenerType = BenchmarkListenerType.contextWatch,
     this.runOnStart = true,
@@ -41,9 +39,6 @@ class BenchmarkScreen extends StatefulWidget {
 
   final int observablesPerTile;
   final Set<int> observablesPerTileOptions;
-
-  final int subscriptionsPerTileObservable;
-  final Set<int> subscriptionsPerTileObservableOptions;
 
   final BenchmarkDataType dataType;
   final BenchmarkListenerType listenerType;
@@ -63,8 +58,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
       widget.singleObservableSubscriptionsCount;
   late var _tilesCount = widget.tilesCount;
   late var _observablesPerTile = widget.observablesPerTile;
-  late var _subscriptionsPerTileObservable =
-      widget.subscriptionsPerTileObservable;
 
   late var _dataType = widget.dataType;
   late var _listenerType = widget.listenerType;
@@ -98,7 +91,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                 _buildSingleObservableSubscriptionsSelector(),
                 _buildTilesCountSelector(),
                 _buildObservablesPerTileSelector(),
-                _buildSubscriptionsPerTileObservableSelector(),
                 _buildDataTypeSelector(),
                 _buildListenerSelector(),
               ],
@@ -222,32 +214,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     );
   }
 
-  Widget _buildSubscriptionsPerTileObservableSelector() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('Subscriptions per tile observable:'),
-        const SizedBox(width: 8),
-        DropdownButton<int>(
-          isDense: true,
-          value: _subscriptionsPerTileObservable,
-          onChanged: (value) => setState(() {
-            _subscriptionsPerTileObservable = value!;
-            _gridKey = UniqueKey();
-          }),
-          items: [
-            for (final subscriptionsPerTileObservable
-                in widget.subscriptionsPerTileObservableOptions)
-              DropdownMenuItem(
-                value: subscriptionsPerTileObservable,
-                child: Text(subscriptionsPerTileObservable.toString()),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildDataTypeSelector() {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -311,9 +277,9 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
-        'Total\u{00A0}subscriptions:\u{00A0}${_singleObservableSubscriptionsCount + _tilesCount * _observablesPerTile * _subscriptionsPerTileObservable}\n'
+        'Total\u{00A0}subscriptions:\u{00A0}${_singleObservableSubscriptionsCount + _tilesCount * _observablesPerTile}\n'
         '$_singleObservableSubscriptionsCount\u{00A0}single\u{00A0}observable\u{00A0}subscriptions '
-        '+ $_tilesCount\u{00A0}tiles\u{00A0}*\u{00A0}$_observablesPerTile\u{00A0}observables\u{00A0}*\u{00A0}$_subscriptionsPerTileObservable\u{00A0}subscriptions',
+        '+ $_tilesCount\u{00A0}tiles\u{00A0}*\u{00A0}$_observablesPerTile\u{00A0}observables\u{00A0}',
         style: const TextStyle(fontSize: 12),
       ),
     );
@@ -373,7 +339,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         listenerType: _listenerType,
         visualize: _visualize,
         observablesPerTile: _observablesPerTile,
-        subscriptionsPerTileObservable: _subscriptionsPerTileObservable,
       ),
     );
   }
@@ -414,7 +379,6 @@ class _Tile extends StatelessWidget {
     required this.dataType,
     required this.listenerType,
     required this.observablesPerTile,
-    required this.subscriptionsPerTileObservable,
     required this.visualize,
   });
 
@@ -422,7 +386,6 @@ class _Tile extends StatelessWidget {
   final BenchmarkDataType dataType;
   final BenchmarkListenerType listenerType;
   final int observablesPerTile;
-  final int subscriptionsPerTileObservable;
   final bool visualize;
 
   @override
@@ -432,7 +395,6 @@ class _Tile extends StatelessWidget {
       return _StreamsProvider(
         key: ValueKey(index),
         observablesPerTile: observablesPerTile,
-        subscriptionsPerTileObservable: subscriptionsPerTileObservable,
         useValueStream: dataType == BenchmarkDataType.valueStream,
         initialDelay: Duration(milliseconds: 4 * index),
         delay: const Duration(milliseconds: 48),
@@ -529,7 +491,6 @@ class _StreamsProvider extends StatefulWidget {
     required this.delay,
     required this.useValueStream,
     required this.observablesPerTile,
-    required this.subscriptionsPerTileObservable,
   });
 
   final Widget Function(
@@ -541,7 +502,6 @@ class _StreamsProvider extends StatefulWidget {
   final Duration delay;
   final bool useValueStream;
   final int observablesPerTile;
-  final int subscriptionsPerTileObservable;
 
   @override
   State<_StreamsProvider> createState() => _StreamsProviderState();

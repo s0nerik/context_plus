@@ -14,7 +14,6 @@ class _Benchmark {
     int singleObservableSubscriptionsCount = 500,
     int tilesCount = 500,
     int observablesPerTile = 2,
-    int subscriptionsPerTileObservable = 2,
     this.frames = 1000,
   }) : benchmark = BenchmarkScreen(
           dataType: dataType,
@@ -23,7 +22,6 @@ class _Benchmark {
               singleObservableSubscriptionsCount,
           tilesCount: tilesCount,
           observablesPerTile: observablesPerTile,
-          subscriptionsPerTileObservable: subscriptionsPerTileObservable,
           runOnStart: false,
           showPerformanceOverlay: false,
           visualize: false,
@@ -141,24 +139,21 @@ main() async {
       final tilesCount = contextWatchBenchmark.benchmark.tilesCount;
       final observablesPerTile =
           contextWatchBenchmark.benchmark.observablesPerTile;
-      final subscriptionsPerTileObservable =
-          contextWatchBenchmark.benchmark.subscriptionsPerTileObservable;
       final singleObservableSubscriptionsCount =
           contextWatchBenchmark.benchmark.singleObservableSubscriptionsCount;
       final totalSubscriptionsCount =
-          tilesCount * observablesPerTile * subscriptionsPerTileObservable +
-              singleObservableSubscriptionsCount;
+          tilesCount * observablesPerTile + singleObservableSubscriptionsCount;
 
       final String benchmarkDescription;
       if (tilesCount == 0 && singleObservableSubscriptionsCount > 0) {
         benchmarkDescription =
-            '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount subscriptions';
+            '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount global subscriptions';
       } else if (tilesCount > 0 && singleObservableSubscriptionsCount == 0) {
         benchmarkDescription =
-            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables * $subscriptionsPerTileObservable subs';
+            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables';
       } else {
         benchmarkDescription =
-            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables * $subscriptionsPerTileObservable subs + $singleObservableSubscriptionsCount subscription';
+            '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables + $singleObservableSubscriptionsCount global subscriptions';
       }
 
       final slowerPercent =

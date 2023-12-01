@@ -57,7 +57,7 @@ class BenchmarkScreen extends StatefulWidget {
 }
 
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
-  var _tilesContainerKey = UniqueKey();
+  var _gridKey = UniqueKey();
 
   late var _singleObservableSubscriptionsCount =
       widget.singleObservableSubscriptionsCount;
@@ -137,7 +137,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         }
 
         return Wrap(
-          key: _tilesContainerKey,
+          key: _gridKey,
           children: [
             for (var i = 0; i < _tilesCount; i++) _buildTile(i, tileSize),
           ],
@@ -157,7 +157,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _singleObservableSubscriptionsCount,
           onChanged: (value) => setState(() {
             _singleObservableSubscriptionsCount = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: [
             for (final singleObservableSubscriptionsCount
@@ -183,7 +183,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _tilesCount,
           onChanged: (value) => setState(() {
             _tilesCount = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: [
             for (final tilesCount in widget.tileCountOptions)
@@ -208,7 +208,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _observablesPerTile,
           onChanged: (value) => setState(() {
             _observablesPerTile = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: [
             for (final observablesPerTile in widget.observablesPerTileOptions)
@@ -233,7 +233,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _subscriptionsPerTileObservable,
           onChanged: (value) => setState(() {
             _subscriptionsPerTileObservable = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: [
             for (final subscriptionsPerTileObservable
@@ -259,7 +259,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _dataType,
           onChanged: (value) => setState(() {
             _dataType = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: const [
             DropdownMenuItem(
@@ -287,7 +287,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _listenerType,
           onChanged: (value) => setState(() {
             _listenerType = value!;
-            _tilesContainerKey = UniqueKey();
+            _gridKey = UniqueKey();
           }),
           items: [
             if (_dataType == BenchmarkDataType.stream ||
@@ -328,7 +328,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           key: const Key('start'),
           onPressed: !_runBenchmark
               ? () => setState(() {
-                    _tilesContainerKey = UniqueKey();
+                    _gridKey = UniqueKey();
                     _runBenchmark = true;
                   })
               : null,
@@ -338,7 +338,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           key: const Key('stop'),
           onPressed: _runBenchmark
               ? () => setState(() {
-                    _tilesContainerKey = UniqueKey();
+                    _gridKey = UniqueKey();
                     _runBenchmark = false;
                   })
               : null,
@@ -351,7 +351,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               value: _visualize,
               onChanged: (value) => setState(() {
                 _visualize = value!;
-                _tilesContainerKey = UniqueKey();
+                _gridKey = UniqueKey();
               }),
             ),
             const Text('Visualize'),
@@ -372,6 +372,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         dataType: _dataType,
         listenerType: _listenerType,
         visualize: _visualize,
+        observablesPerTile: _observablesPerTile,
+        subscriptionsPerTileObservable: _subscriptionsPerTileObservable,
       ),
     );
   }
@@ -411,12 +413,16 @@ class _Tile extends StatelessWidget {
     required this.index,
     required this.dataType,
     required this.listenerType,
+    required this.observablesPerTile,
+    required this.subscriptionsPerTileObservable,
     required this.visualize,
   });
 
   final int index;
   final BenchmarkDataType dataType;
   final BenchmarkListenerType listenerType;
+  final int observablesPerTile;
+  final int subscriptionsPerTileObservable;
   final bool visualize;
 
   @override
@@ -425,6 +431,8 @@ class _Tile extends StatelessWidget {
         dataType == BenchmarkDataType.valueStream) {
       return _StreamsProvider(
         key: ValueKey(index),
+        observablesPerTile: observablesPerTile,
+        subscriptionsPerTileObservable: subscriptionsPerTileObservable,
         useValueStream: dataType == BenchmarkDataType.valueStream,
         initialDelay: Duration(milliseconds: 4 * index),
         delay: const Duration(milliseconds: 48),
@@ -438,11 +446,11 @@ class _Tile extends StatelessWidget {
           }
           return ItemStreamBuilder(
             initialColorIndex: dataType == BenchmarkDataType.valueStream
-                ? (colorIndexStream as ValueStream<int>).value
+                ? (colorIndexStream as ValueStream<int>?)?.value
                 : null,
             colorIndexStream: colorIndexStream,
             initialScaleIndex: dataType == BenchmarkDataType.valueStream
-                ? (scaleIndexStream as ValueStream<int>).value
+                ? (scaleIndexStream as ValueStream<int>?)?.value
                 : null,
             scaleIndexStream: scaleIndexStream,
             visualize: visualize,
@@ -463,15 +471,17 @@ class ItemContextWatch extends StatelessWidget {
     required this.visualize,
   });
 
-  final Stream<int> colorIndexStream;
-  final Stream<int> scaleIndexStream;
+  final Stream<int>? colorIndexStream;
+  final Stream<int>? scaleIndexStream;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
     return _build(
-      colorIndexSnapshot: colorIndexStream.watch(context),
-      scaleIndexSnapshot: scaleIndexStream.watch(context),
+      colorIndexSnapshot:
+          colorIndexStream?.watch(context) ?? const AsyncSnapshot.nothing(),
+      scaleIndexSnapshot:
+          scaleIndexStream?.watch(context) ?? const AsyncSnapshot.nothing(),
       visualize: visualize,
     );
   }
@@ -488,9 +498,9 @@ class ItemStreamBuilder extends StatelessWidget {
   });
 
   final int? initialColorIndex;
-  final Stream<int> colorIndexStream;
+  final Stream<int>? colorIndexStream;
   final int? initialScaleIndex;
-  final Stream<int> scaleIndexStream;
+  final Stream<int>? scaleIndexStream;
   final bool visualize;
 
   @override
@@ -518,37 +528,45 @@ class _StreamsProvider extends StatefulWidget {
     required this.initialDelay,
     required this.delay,
     required this.useValueStream,
+    required this.observablesPerTile,
+    required this.subscriptionsPerTileObservable,
   });
 
   final Widget Function(
     BuildContext context,
-    Stream<int> colorIndexStream,
-    Stream<int> scaleIndexStream,
+    Stream<int>? colorIndexStream,
+    Stream<int>? scaleIndexStream,
   ) builder;
   final Duration initialDelay;
   final Duration delay;
   final bool useValueStream;
+  final int observablesPerTile;
+  final int subscriptionsPerTileObservable;
 
   @override
   State<_StreamsProvider> createState() => _StreamsProviderState();
 }
 
 class _StreamsProviderState extends State<_StreamsProvider> {
-  late Stream<int> colorIndexStream;
-  late Stream<int> scaleIndexStream;
+  Stream<int>? colorIndexStream;
+  Stream<int>? scaleIndexStream;
 
   @override
   void initState() {
     super.initState();
     final initialDelay = widget.initialDelay;
     final delay = widget.delay;
-    colorIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
-        .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
-    scaleIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
-        .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+    if (widget.observablesPerTile > 0) {
+      colorIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
+          .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+    }
+    if (widget.observablesPerTile > 1) {
+      scaleIndexStream = Stream.fromFuture(Future.delayed(initialDelay))
+          .asyncExpand((_) => Stream<int>.periodic(delay, (i) => i));
+    }
     if (widget.useValueStream) {
-      colorIndexStream = colorIndexStream.shareValueSeeded(0);
-      scaleIndexStream = scaleIndexStream.shareValueSeeded(0);
+      colorIndexStream = colorIndexStream?.shareValueSeeded(0);
+      scaleIndexStream = scaleIndexStream?.shareValueSeeded(0);
     }
   }
 
@@ -582,7 +600,7 @@ Widget _build({
         scale: _scales[scaleIndex % _scales.length],
         child: child,
       ),
-    AsyncSnapshot(hasError: false) => const ColoredBox(color: loadingColor),
+    AsyncSnapshot(hasError: false) => child,
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
   };
 

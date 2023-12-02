@@ -67,8 +67,32 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
 
   late var _visualize = widget.visualize;
 
-  final _stream = Stream.periodic(const Duration(milliseconds: 1), (i) => i)
-      .asBroadcastStream();
+  final _streamController = StreamController<int>.broadcast();
+  late final Stream<int> _stream = _streamController.stream;
+
+  @override
+  void initState() {
+    super.initState();
+    _publishToStreamWhileMounted();
+  }
+
+  Future<void> _publishToStreamWhileMounted() async {
+    var index = 0;
+    while (mounted) {
+      await Future.delayed(const Duration(milliseconds: 1));
+      if (!mounted) {
+        break;
+      }
+      _streamController.add(index);
+      index++;
+    }
+  }
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

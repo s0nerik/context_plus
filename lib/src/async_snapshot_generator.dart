@@ -5,10 +5,10 @@ import 'package:meta/meta.dart';
 
 @internal
 final class AsyncSnapshotGenerator<TKey> {
-  final _connectionState = HashMap<TKey, ConnectionState>();
-  final _data = HashMap<TKey, dynamic>();
-  final _error = HashMap<TKey, Object>();
-  final _errorTrace = HashMap<TKey, StackTrace?>();
+  final _connectionState = HashMap<TKey, ConnectionState>.identity();
+  final _data = HashMap<TKey, dynamic>.identity();
+  final _error = HashMap<TKey, Object>.identity();
+  final _errorTrace = HashMap<TKey, StackTrace?>.identity();
 
   ConnectionState? getConnectionState(TKey? key) {
     if (key == null) {

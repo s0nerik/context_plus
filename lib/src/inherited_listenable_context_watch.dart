@@ -79,6 +79,8 @@ extension ListenableContextWatchExtension on Listenable {
   /// It is safe to call this method multiple times within the same build
   /// method.
   void watch(BuildContext context) {
+    context
+        .dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
             InheritedListenableContextWatch>()
         as InheritedListenableContextWatchElement;
@@ -97,6 +99,8 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
+    context
+        .dependOnInheritedWidgetOfExactType<InheritedListenableContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
             InheritedListenableContextWatch>()
         as InheritedListenableContextWatchElement;

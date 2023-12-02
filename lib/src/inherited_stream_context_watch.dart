@@ -99,6 +99,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
       return (this as ValueStream<T>).watch(context);
     }
 
+    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
     final subscription = watchRoot.subscribe(context, this);
@@ -117,6 +118,7 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
     final subscription = watchRoot.subscribe(context as Element, this);

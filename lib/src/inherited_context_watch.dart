@@ -88,6 +88,12 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   }
 
   @override
+  void removeDependent(Element dependent) {
+    super.removeDependent(dependent);
+    _unsubscribe(dependent);
+  }
+
+  @override
   void unmount() {
     final contextSubs = _contextSubs.keys.toList();
     for (final element in contextSubs) {

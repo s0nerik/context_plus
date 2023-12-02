@@ -25,7 +25,7 @@ class BenchmarkScreen extends StatefulWidget {
     this.tilesCount = 500,
     this.tileCountOptions = const {0, 1, 10, 100, 500, 1000, 10000, 20000},
     this.observablesPerTile = 2,
-    this.observablesPerTileOptions = const {0, 1, 2, 3, 5, 10, 20},
+    this.observablesPerTileOptions = const {0, 1, 2, 3, 5, 10, 20, 50, 100},
     this.dataType = BenchmarkDataType.valueStream,
     this.listenerType = BenchmarkListenerType.contextWatch,
     this.runOnStart = true,
@@ -431,11 +431,12 @@ class _Tile extends StatelessWidget {
         useValueStream: dataType == BenchmarkDataType.valueStream,
         initialDelay: Duration(milliseconds: 4 * index),
         delay: const Duration(milliseconds: 48),
-        builder: (context, colorIndexStream, scaleIndexStream) {
+        builder: (context, colorIndexStream, scaleIndexStream, otherStreams) {
           if (listenerType == BenchmarkListenerType.contextWatch) {
             return ItemContextWatch(
               colorIndexStream: colorIndexStream,
               scaleIndexStream: scaleIndexStream,
+              otherStreams: otherStreams,
               visualize: visualize,
             );
           }
@@ -448,6 +449,7 @@ class _Tile extends StatelessWidget {
                 ? (scaleIndexStream as ValueStream<int>?)?.value
                 : null,
             scaleIndexStream: scaleIndexStream,
+            otherStreams: otherStreams,
             visualize: visualize,
           );
         },
@@ -463,15 +465,20 @@ class ItemContextWatch extends StatelessWidget {
     super.key,
     required this.colorIndexStream,
     required this.scaleIndexStream,
+    required this.otherStreams,
     required this.visualize,
   });
 
   final Stream<int>? colorIndexStream;
   final Stream<int>? scaleIndexStream;
+  final List<Stream<int>> otherStreams;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
+    for (final otherStream in otherStreams) {
+      otherStream.watch(context);
+    }
     return _build(
       colorIndexSnapshot: colorIndexStream?.watch(context),
       scaleIndexSnapshot: scaleIndexStream?.watch(context),
@@ -487,6 +494,7 @@ class ItemStreamBuilder extends StatelessWidget {
     required this.colorIndexStream,
     required this.initialScaleIndex,
     required this.scaleIndexStream,
+    required this.otherStreams,
     required this.visualize,
   });
 
@@ -494,12 +502,14 @@ class ItemStreamBuilder extends StatelessWidget {
   final Stream<int>? colorIndexStream;
   final int? initialScaleIndex;
   final Stream<int>? scaleIndexStream;
+  final List<Stream<int>> otherStreams;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
+    Widget child;
     if (colorIndexStream != null && scaleIndexStream != null) {
-      return StreamBuilder(
+      child = StreamBuilder(
         initialData: initialColorIndex,
         stream: colorIndexStream,
         builder: (context, colorIndexSnapshot) => StreamBuilder(
@@ -512,9 +522,8 @@ class ItemStreamBuilder extends StatelessWidget {
           ),
         ),
       );
-    }
-    if (colorIndexStream != null) {
-      return StreamBuilder(
+    } else if (colorIndexStream != null) {
+      child = StreamBuilder(
         initialData: initialColorIndex,
         stream: colorIndexStream,
         builder: (context, colorIndexSnapshot) => _build(
@@ -523,9 +532,8 @@ class ItemStreamBuilder extends StatelessWidget {
           visualize: visualize,
         ),
       );
-    }
-    if (scaleIndexStream != null) {
-      return StreamBuilder(
+    } else if (scaleIndexStream != null) {
+      child = StreamBuilder(
         initialData: initialScaleIndex,
         stream: scaleIndexStream,
         builder: (context, scaleIndexSnapshot) => _build(
@@ -534,12 +542,22 @@ class ItemStreamBuilder extends StatelessWidget {
           visualize: visualize,
         ),
       );
+    } else {
+      child = _build(
+        colorIndexSnapshot: null,
+        scaleIndexSnapshot: null,
+        visualize: visualize,
+      );
     }
-    return _build(
-      colorIndexSnapshot: null,
-      scaleIndexSnapshot: null,
-      visualize: visualize,
-    );
+
+    for (final otherStream in otherStreams) {
+      final prevChild = child;
+      child = StreamBuilder(
+        stream: otherStream,
+        builder: (context, _) => prevChild,
+      );
+    }
+    return child;
   }
 }
 
@@ -557,6 +575,7 @@ class _StreamsProvider extends StatefulWidget {
     BuildContext context,
     Stream<int>? colorIndexStream,
     Stream<int>? scaleIndexStream,
+    List<Stream<int>> otherStreams,
   ) builder;
   final Duration initialDelay;
   final Duration delay;
@@ -570,9 +589,11 @@ class _StreamsProvider extends StatefulWidget {
 class _StreamsProviderState extends State<_StreamsProvider> {
   StreamController<int>? colorIndexController;
   StreamController<int>? scaleIndexController;
+  List<StreamController<int>> otherStreamControllers = [];
 
   Stream<int>? colorIndexStream;
   Stream<int>? scaleIndexStream;
+  List<Stream<int>> otherStreams = [];
 
   @override
   void initState() {
@@ -589,6 +610,12 @@ class _StreamsProviderState extends State<_StreamsProvider> {
           : StreamController<int>();
       scaleIndexStream = scaleIndexController!.stream;
     }
+    for (var i = 2; i < widget.observablesPerTile; i++) {
+      otherStreamControllers.add(widget.useValueStream
+          ? BehaviorSubject<int>.seeded(0)
+          : StreamController<int>());
+      otherStreams.add(otherStreamControllers.last.stream);
+    }
     _notifyValuesWhileMounted();
   }
 
@@ -596,6 +623,9 @@ class _StreamsProviderState extends State<_StreamsProvider> {
   void dispose() {
     colorIndexController?.close();
     scaleIndexController?.close();
+    for (final otherStreamController in otherStreamControllers) {
+      otherStreamController.close();
+    }
     super.dispose();
   }
 
@@ -613,13 +643,17 @@ class _StreamsProviderState extends State<_StreamsProvider> {
       if (widget.observablesPerTile > 1) {
         scaleIndexController?.add(index);
       }
+      for (var i = 2; i < widget.observablesPerTile; i++) {
+        otherStreamControllers[i - 2].add(index);
+      }
       index++;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, colorIndexStream, scaleIndexStream);
+    return widget.builder(
+        context, colorIndexStream, scaleIndexStream, otherStreams);
   }
 }
 

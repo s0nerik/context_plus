@@ -27,7 +27,7 @@ class InheritedStreamContextWatchElement
   InheritedStreamContextWatchElement(super.widget);
 
   final _contextStreamSubscriptions =
-      HashMap<BuildContext, HashMap<Stream, StreamSubscription>>();
+      HashMap<BuildContext, HashMap<Stream, StreamSubscription>>.identity();
 
   final snapshotGenerator = AsyncSnapshotGenerator<StreamSubscription>();
 

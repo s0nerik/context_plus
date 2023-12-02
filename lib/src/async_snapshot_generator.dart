@@ -10,10 +10,7 @@ final class AsyncSnapshotGenerator<TKey> {
   final _error = HashMap<TKey, Object>.identity();
   final _errorTrace = HashMap<TKey, StackTrace?>.identity();
 
-  ConnectionState? getConnectionState(TKey? key) {
-    if (key == null) {
-      return null;
-    }
+  ConnectionState? getConnectionState(TKey key) {
     return _connectionState[key];
   }
 
@@ -40,11 +37,7 @@ final class AsyncSnapshotGenerator<TKey> {
     _errorTrace.remove(key);
   }
 
-  AsyncSnapshot<T> generate<T>(TKey? key) {
-    if (key == null) {
-      return AsyncSnapshot<T>.waiting();
-    }
-
+  AsyncSnapshot<T> generate<T>(TKey key) {
     final connectionState = _connectionState[key];
     final data = _data[key];
     final error = _error[key];

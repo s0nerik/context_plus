@@ -116,7 +116,7 @@ void main() {
   );
 
   testWidgets(
-    'Single-subscription stream can be observed by multiple widgets',
+    'Any stream (including single-subscription) can be observed multiple times for the same context',
     (widgetTester) async {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
@@ -126,18 +126,9 @@ void main() {
         child: Column(
           children: [
             Builder(
-              key: const Key('widget1'),
               builder: (context) {
-                final snapshot = stream.watch(context);
-                snapshots1.add(snapshot);
-                return const SizedBox.shrink();
-              },
-            ),
-            Builder(
-              key: const Key('widget2'),
-              builder: (context) {
-                final snapshot = stream.watch(context);
-                snapshots2.add(snapshot);
+                snapshots1.add(stream.watch(context));
+                snapshots2.add(stream.watch(context));
                 return const SizedBox.shrink();
               },
             ),
@@ -155,6 +146,7 @@ void main() {
 
       streamController.add(0);
       await widgetTester.pumpAndSettle();
+      expect(snapshots1, equals(snapshots2));
       expect(snapshots1, [
         const AsyncSnapshot.waiting(),
         const AsyncSnapshot.withData(ConnectionState.active, 0),

@@ -124,18 +124,18 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
         watchRoot.snapshotGenerator.getConnectionState(subscription);
     if (connectionState == null) {
       if (hasValue) {
-        return AsyncSnapshot<T>.withData(ConnectionState.waiting, value);
+        return AsyncSnapshot<T>.withData(ConnectionState.none, value);
       }
       if (hasError) {
         if (stackTrace != null) {
           return AsyncSnapshot<T>.withError(
-            ConnectionState.waiting,
+            ConnectionState.none,
             error,
             stackTrace!,
           );
         }
         return AsyncSnapshot<T>.withError(
-          ConnectionState.waiting,
+          ConnectionState.none,
           error,
         );
       }

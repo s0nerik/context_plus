@@ -71,12 +71,12 @@ void main() {
 
       await widgetTester.pumpWidget(widget);
       expect(snapshots, [
-        const AsyncSnapshot.withData(ConnectionState.none, 0),
+        const AsyncSnapshot.withData(ConnectionState.waiting, 0),
       ]);
 
       await widgetTester.pumpAndSettle();
       expect(snapshots, [
-        const AsyncSnapshot.withData(ConnectionState.none, 0),
+        const AsyncSnapshot.withData(ConnectionState.waiting, 0),
         const AsyncSnapshot.withData(ConnectionState.active, 0),
       ]);
     },
@@ -104,12 +104,12 @@ void main() {
 
       await widgetTester.pumpWidget(widget);
       expect(snapshots, [
-        AsyncSnapshot.withError(ConnectionState.none, error),
+        AsyncSnapshot.withError(ConnectionState.waiting, error),
       ]);
 
       await widgetTester.pumpAndSettle();
       expect(snapshots, [
-        AsyncSnapshot.withError(ConnectionState.none, error),
+        AsyncSnapshot.withError(ConnectionState.waiting, error),
         AsyncSnapshot.withError(ConnectionState.active, error),
       ]);
     },

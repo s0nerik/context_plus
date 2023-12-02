@@ -9,19 +9,19 @@ extension ContextUnwatchExtension on BuildContext {
   /// conditional observable watchers.
   ///
   /// This will ensure that any previously-specified observable subscriptions
-  /// are canceled before the new subscriptions are created via
-  /// `context.watch()` down the line.
+  /// don't cause your widget to rebuild after you remove the calls to watch()
+  /// from the build method. Actual observable subscriptions for unwatch()'ed
+  /// context will be removed when the widget is unmounted or when observable
+  /// notifies next event.
   ///
-  /// Please note that calling this method is quite expensive (measurements
-  /// show ~40% slowdown compared to not using it), so use it only if you
-  /// absolutely need it.
-  ///
-  /// The worst thing that can happen if you don't use it is that your widget
-  /// will get rebuilt each time a no-longer-watched listenable notifies of a
-  /// change after all calls to `watch()` has been removed from the `build()`
-  /// method. If this scares you, please thumbs-up
-  /// [this Flutter issue](https://github.com/flutter/flutter/issues/106549),
-  /// as the same exact behavior is observed using any [InheritedWidget].
+  /// Please note, that not calling unwatch() even if you have conditional
+  /// watch()'es is totally fine. The worst thing that can happen if you don't
+  /// call the unwatch() in this case, is that your widget will get rebuilt each
+  /// time a no-longer-watched observable notifies of a change after ALL calls
+  /// to `watch()` have been removed from the `build()` method. If this scares
+  /// you, please thumbs-up [this Flutter issue](https://github.com/flutter/flutter/issues/106549),
+  /// as the same exact behavior is observed using any [InheritedWidget], and
+  /// is itself a performance optimization technique used in Flutter.
   ///
   /// Example usage:
   ///
@@ -29,7 +29,7 @@ extension ContextUnwatchExtension on BuildContext {
   /// Widget build(BuildContext context) {
   ///   context.unwatch();
   ///   if (condition) {
-  ///     listenable.watch(context);
+  ///     observable.watch(context);
   ///   }
   /// }
   /// ```

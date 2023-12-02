@@ -29,7 +29,7 @@ class InheritedListenableContextWatchElement
   final _actualListeners = HashMap<Listenable, VoidCallback>();
 
   @override
-  StreamSubscription watch(
+  StreamSubscription watch<T>(
     BuildContext context,
     Listenable observable,
   ) {
@@ -104,7 +104,7 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
             InheritedListenableContextWatch>()
         as InheritedListenableContextWatchElement;
-    watchRoot.subscribe(context as Element, this);
+    watchRoot.subscribe<T>(context as Element, this);
     return value;
   }
 }

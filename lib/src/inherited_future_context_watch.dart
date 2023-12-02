@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'async_snapshot_generator.dart';
 import 'inherited_context_watch.dart';
 
 @internal
@@ -32,15 +32,27 @@ class InheritedFutureContextWatchElement
     extends ObservableNotifierInheritedElement<Future, FutureSubscription> {
   InheritedFutureContextWatchElement(super.widget);
 
-  final snapshotGenerator = AsyncSnapshotGenerator<FutureSubscription>();
+  final _contextFutureSubscriptions =
+      HashMap<BuildContext, HashMap<Future, FutureSubscription>>.identity();
+
+  final snapshots = HashMap<FutureSubscription, AsyncSnapshot>.identity();
 
   @override
-  FutureSubscription watch(
+  FutureSubscription watch<T>(
     BuildContext context,
     Future observable,
   ) {
     final element = context as Element;
+    final subscriptions =
+        _contextFutureSubscriptions[context] ??= HashMap.identity();
+
+    final existingSubscription = subscriptions[observable];
+    if (existingSubscription != null) {
+      return existingSubscription;
+    }
+
     final subscription = FutureSubscription();
+    snapshots[subscription] = AsyncSnapshot<T>.nothing();
     observable.then((data) {
       if (subscription.isCanceled) {
         return;
@@ -48,20 +60,26 @@ class InheritedFutureContextWatchElement
       if (!canNotify(context, observable)) {
         return;
       }
-      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
-      snapshotGenerator.setData(subscription, data);
+      snapshots[subscription] =
+          AsyncSnapshot<T>.withData(ConnectionState.done, data);
       element.markNeedsBuild();
-    }, onError: (error, trace) {
+    }, onError: (Object error, StackTrace stackTrace) {
       if (subscription.isCanceled) {
         return;
       }
       if (!canNotify(context, observable)) {
         return;
       }
-      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
-      snapshotGenerator.setError(subscription, error, trace);
+      snapshots[subscription] =
+          AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
       element.markNeedsBuild();
     });
+    // An implementation like `SynchronousFuture` may have already called the
+    // .then closure. Do not overwrite it in that case.
+    if (snapshots[subscription]!.connectionState != ConnectionState.done) {
+      snapshots[subscription] =
+          snapshots[subscription]!.inState(ConnectionState.waiting);
+    }
 
     return subscription;
   }
@@ -73,7 +91,7 @@ class InheritedFutureContextWatchElement
     FutureSubscription subscription,
   ) {
     subscription.isCanceled = true;
-    snapshotGenerator.clear(subscription);
+    snapshots.remove(subscription);
   }
 }
 
@@ -94,10 +112,10 @@ extension FutureContextWatchExtension<T> on Future<T> {
     context.dependOnInheritedWidgetOfExactType<InheritedFutureContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedFutureContextWatch>() as InheritedFutureContextWatchElement;
-    final subscription = watchRoot.subscribe(context, this);
+    final subscription = watchRoot.subscribe<T>(context, this);
     if (subscription == null) {
       return AsyncSnapshot<T>.nothing();
     }
-    return watchRoot.snapshotGenerator.generate(subscription);
+    return watchRoot.snapshots[subscription] as AsyncSnapshot<T>;
   }
 }

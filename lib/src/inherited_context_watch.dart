@@ -43,7 +43,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
   @protected
   @useResult
-  TSubscription watch(
+  TSubscription watch<T>(
     BuildContext context,
     TObservable observable,
   );
@@ -125,14 +125,14 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     _contextLastFrame[context] = _currentFrame;
   }
 
-  TSubscription? subscribe(BuildContext context, TObservable observable) {
+  TSubscription? subscribe<T>(BuildContext context, TObservable observable) {
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method
       return null;
     }
 
     final subscription = _contextSubs.putIfAbsent(
-        context, HashMap.new)[observable] ??= watch(context, observable);
+        context, HashMap.new)[observable] ??= watch<T>(context, observable);
 
     _contextLastFrame[context] = _currentFrame;
     _contextObservableLastFrame.putIfAbsent(context, HashMap.new)[observable] =

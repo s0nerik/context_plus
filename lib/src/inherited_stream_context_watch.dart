@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/streams.dart';
 
-import 'async_snapshot_generator.dart';
 import 'inherited_context_watch.dart';
 
 @internal
@@ -29,10 +28,10 @@ class InheritedStreamContextWatchElement
   final _contextStreamSubscriptions =
       HashMap<BuildContext, HashMap<Stream, StreamSubscription>>.identity();
 
-  final snapshotGenerator = AsyncSnapshotGenerator<StreamSubscription>();
+  final snapshots = HashMap<StreamSubscription, AsyncSnapshot>.identity();
 
   @override
-  StreamSubscription watch(
+  StreamSubscription watch<T>(
     BuildContext context,
     Stream observable,
   ) {
@@ -50,25 +49,52 @@ class InheritedStreamContextWatchElement
       if (!canNotify(context, observable)) {
         return;
       }
-      snapshotGenerator.setConnectionState(
-          subscription, ConnectionState.active);
-      snapshotGenerator.setData(subscription, data);
+      snapshots[subscription] =
+          AsyncSnapshot<T>.withData(ConnectionState.active, data);
       element.markNeedsBuild();
-    }, onError: (error, trace) {
+    }, onError: (Object error, StackTrace stackTrace) {
       if (!canNotify(context, observable)) {
         return;
       }
-      snapshotGenerator.setConnectionState(
-          subscription, ConnectionState.active);
-      snapshotGenerator.setError(subscription, error, trace);
+      snapshots[subscription] =
+          AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
       element.markNeedsBuild();
     }, onDone: () {
       if (!canNotify(context, observable)) {
         return;
       }
-      snapshotGenerator.setConnectionState(subscription, ConnectionState.done);
+      snapshots[subscription] = (snapshots[subscription]! as AsyncSnapshot<T>)
+          .inState(ConnectionState.done);
       element.markNeedsBuild();
     });
+
+    if (observable is ValueStream<T>) {
+      if (observable.hasValue) {
+        snapshots[subscription] = AsyncSnapshot<T>.withData(
+          ConnectionState.waiting,
+          observable.value,
+        );
+      } else if (observable.hasError) {
+        if (observable.stackTrace != null) {
+          snapshots[subscription] = AsyncSnapshot<T>.withError(
+            ConnectionState.waiting,
+            observable.error,
+            observable.stackTrace!,
+          );
+        }
+        snapshots[subscription] = AsyncSnapshot<T>.withError(
+          ConnectionState.waiting,
+          observable.error,
+        );
+      } else {
+        snapshots[subscription] =
+            AsyncSnapshot<T>.nothing().inState(ConnectionState.waiting);
+      }
+    } else {
+      snapshots[subscription] =
+          AsyncSnapshot<T>.nothing().inState(ConnectionState.waiting);
+    }
+
     return subscription;
   }
 
@@ -78,7 +104,7 @@ class InheritedStreamContextWatchElement
     Stream observable,
     StreamSubscription subscription,
   ) {
-    snapshotGenerator.clear(subscription);
+    snapshots.remove(subscription);
     subscription.cancel();
     _contextStreamSubscriptions[context]?.remove(observable);
   }
@@ -90,31 +116,8 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   /// Whenever this [Stream] emits new value, the [context] will be
   /// rebuilt.
   ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  AsyncSnapshot<T> watch(BuildContext context) {
-    if (this is ValueStream<T>) {
-      return (this as ValueStream<T>).watch(context);
-    }
-
-    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>();
-    final watchRoot = context.getElementForInheritedWidgetOfExactType<
-        InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
-    final subscription = watchRoot.subscribe(context, this);
-    if (subscription == null) {
-      return AsyncSnapshot<T>.nothing();
-    }
-    return watchRoot.snapshotGenerator.generate(subscription);
-  }
-}
-
-extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
-  /// Watch this [ValueStream] for changes.
-  ///
-  /// Whenever this [ValueStream] emits new value (except for initial value),
-  /// the [context] will be rebuilt.
-  ///
-  /// Returns the current value of the [ValueStream].
+  /// If this [Stream] is a [ValueStream], the initial value will be used
+  /// as the initial value of the [AsyncSnapshot].
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
@@ -122,30 +125,10 @@ extension ValueStreamContextWatchExtension<T> on ValueStream<T> {
     context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
-    final subscription = watchRoot.subscribe(context as Element, this);
+    final subscription = watchRoot.subscribe<T>(context, this);
     if (subscription == null) {
       return AsyncSnapshot<T>.nothing();
     }
-    final connectionState =
-        watchRoot.snapshotGenerator.getConnectionState(subscription);
-    if (connectionState == null) {
-      if (hasValue) {
-        return AsyncSnapshot<T>.withData(ConnectionState.none, value);
-      }
-      if (hasError) {
-        if (stackTrace != null) {
-          return AsyncSnapshot<T>.withError(
-            ConnectionState.none,
-            error,
-            stackTrace!,
-          );
-        }
-        return AsyncSnapshot<T>.withError(
-          ConnectionState.none,
-          error,
-        );
-      }
-    }
-    return watchRoot.snapshotGenerator.generate(subscription);
+    return watchRoot.snapshots[subscription] as AsyncSnapshot<T>;
   }
 }

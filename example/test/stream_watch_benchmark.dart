@@ -147,7 +147,7 @@ main() async {
       final String benchmarkDescription;
       if (tilesCount == 0 && singleObservableSubscriptionsCount > 0) {
         benchmarkDescription =
-            '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount global subscriptions';
+            '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount single stream subscriptions';
       } else if (tilesCount > 0 && singleObservableSubscriptionsCount == 0) {
         benchmarkDescription =
             '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables';

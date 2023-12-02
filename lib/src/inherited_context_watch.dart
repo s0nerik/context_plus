@@ -60,7 +60,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   bool canNotify(BuildContext context, TObservable observable) {
     final contextFrame = _contextLastFrame[context];
     final observableFrame = _contextObservableLastFrame[context]?[observable];
-    if (observableFrame == contextFrame) {
+    if (observableFrame == contextFrame && context.mounted) {
       // The observable was watch()'ed to during the last frame when the
       // context was rebuilt. Widget is still interested in the observable
       // changes.

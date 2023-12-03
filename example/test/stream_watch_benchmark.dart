@@ -89,7 +89,7 @@ main() async {
     });
   }
 
-  final tileBenchmarks = [1, 10, 100, 1000, 10000, 20000]
+  final tileBenchmarks = [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
       .expand((tilesCount) => [
             _Benchmark(
               dataType: BenchmarkDataType.stream,
@@ -105,7 +105,7 @@ main() async {
             ),
           ])
       .toList();
-  final singleObservableBenchmarks = [1, 10, 100, 1000]
+  final singleObservableBenchmarks = [1, 10, 100, 200, 500, 750, 1000]
       .expand((singleObservableSubscriptionsCount) => [
             _Benchmark(
               dataType: BenchmarkDataType.stream,
@@ -179,10 +179,12 @@ main() async {
           '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables + $singleObservableSubscriptionsCount global subscriptions';
     }
 
-    final slowerPercent =
-        ((slowerTime / fasterTime - 1) * 100).toStringAsFixed(2);
+    final slowerPercent = (slowerTime / fasterTime - 1) * 100;
+    final slowerPercentStr = '${slowerPercent.toStringAsFixed(2)}%';
+    final slowerTimeStr = '${slowerTime.toStringAsFixed(2)}μs';
+    final fasterTimeStr = '${fasterTime.toStringAsFixed(2)}μs';
     print(
-      '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime.toStringAsFixed(2)}μs / frame] is $slowerPercent% slower than $fasterName[${fasterTime.toStringAsFixed(2)}μs / frame]',
+      '${benchmarkDescription.padRight(60)} | ${'$slowerName[$slowerTimeStr / frame]'.padLeft(50)} is ${slowerPercentStr.padRight(8)} slower than $fasterName[$fasterTimeStr / frame]',
     );
   }
   exit(0);

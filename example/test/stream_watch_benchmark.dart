@@ -140,24 +140,15 @@ main() async {
     comparisons[contextWatchBenchmark] = streamBuilderBenchmark;
   }
 
+  _printRow(
+    summary: 'Summary',
+    totalSubscriptions: 'Total subscriptions',
+    subscriptionsDescription: 'Subscriptions description',
+    frameTimes: 'Frame times',
+    result: 'Result',
+  );
   for (final contextWatchBenchmark in comparisons.keys) {
-    final streamBuilderBenchmark = comparisons[contextWatchBenchmark]!;
-    final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
-    final streamBuilderTime = streamBuilderBenchmark.resultMicroseconds;
-
-    final fasterName = contextWatchTime <= streamBuilderTime
-        ? 'Stream.watch(context)'
-        : 'StreamBuilder';
-    final fasterTime = contextWatchTime <= streamBuilderTime
-        ? contextWatchTime
-        : streamBuilderTime;
-
-    final slowerName = contextWatchTime > streamBuilderTime
-        ? 'Stream.watch(context)'
-        : 'StreamBuilder';
-    final slowerTime = contextWatchTime > streamBuilderTime
-        ? contextWatchTime
-        : streamBuilderTime;
+    final otherBenchmark = comparisons[contextWatchBenchmark]!;
 
     final tilesCount = contextWatchBenchmark.benchmark.tilesCount;
     final observablesPerTile =
@@ -170,22 +161,56 @@ main() async {
     final String benchmarkDescription;
     if (tilesCount == 0 && singleObservableSubscriptionsCount > 0) {
       benchmarkDescription =
-          '($totalSubscriptionsCount subs total) $singleObservableSubscriptionsCount single stream subscriptions';
+          '$singleObservableSubscriptionsCount single stream subscriptions';
     } else if (tilesCount > 0 && singleObservableSubscriptionsCount == 0) {
       benchmarkDescription =
-          '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables';
+          '$tilesCount tiles * $observablesPerTile observables';
     } else {
       benchmarkDescription =
-          '($totalSubscriptionsCount subs total) $tilesCount tiles * $observablesPerTile observables + $singleObservableSubscriptionsCount global subscriptions';
+          '$tilesCount tiles * $observablesPerTile observables + $singleObservableSubscriptionsCount global subscriptions';
     }
+    final totalSubsSummary = '$totalSubscriptionsCount total subs';
 
-    final slowerPercent = (slowerTime / fasterTime - 1) * 100;
-    final slowerPercentStr = '${slowerPercent.toStringAsFixed(2)}%';
-    final slowerTimeStr = '${slowerTime.toStringAsFixed(2)}μs';
-    final fasterTimeStr = '${fasterTime.toStringAsFixed(2)}μs';
-    print(
-      '${benchmarkDescription.padRight(60)} | ${'$slowerName[$slowerTimeStr / frame]'.padLeft(50)} is ${slowerPercentStr.padRight(8)} slower than $fasterName[$fasterTimeStr / frame]',
+    final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
+    final otherTime = otherBenchmark.resultMicroseconds;
+
+    const contextWatchName = 'Stream.watch(context)';
+    const otherName = 'StreamBuilder';
+
+    final ratio = contextWatchTime / otherTime;
+    final ratioStr = '${ratio.toStringAsFixed(2)}x';
+    final contextWatchTimeStr = '${contextWatchTime.toStringAsFixed(2)}μs';
+    final otherTimeStr = '${otherTime.toStringAsFixed(2)}μs';
+    final frameTimesStr = '$contextWatchTimeStr/frame vs $otherTimeStr/frame';
+    final comparison = contextWatchTimeStr == otherTimeStr
+        ? 'equal to'
+        : contextWatchTime < otherTime
+            ? 'faster than'
+            : 'slower than';
+
+    _printRow(
+      summary: '$contextWatchName vs $otherName: $ratioStr',
+      totalSubscriptions: totalSubsSummary,
+      subscriptionsDescription: benchmarkDescription,
+      frameTimes: frameTimesStr,
+      result: '$contextWatchName is $comparison $otherName',
     );
   }
   exit(0);
+}
+
+void _printRow({
+  required String summary,
+  required String totalSubscriptions,
+  required String subscriptionsDescription,
+  required String frameTimes,
+  required String result,
+}) {
+  print([
+    summary.padRight(50),
+    totalSubscriptions.padRight(20),
+    subscriptionsDescription.padRight(32),
+    frameTimes.padRight(42),
+    result,
+  ].join('    '));
 }

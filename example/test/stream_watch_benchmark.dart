@@ -23,6 +23,7 @@ class _Benchmark {
               singleObservableSubscriptionsCount,
           tilesCount: tilesCount,
           observablesPerTile: observablesPerTile,
+          tileObservableNotifyInterval: const Duration(milliseconds: 10),
           runOnStart: false,
           showPerformanceOverlay: false,
           visualize: false,

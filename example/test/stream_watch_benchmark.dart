@@ -14,7 +14,8 @@ class _Benchmark {
     int singleObservableSubscriptionsCount = 500,
     int tilesCount = 500,
     int observablesPerTile = 2,
-    this.frames = 1000,
+    this.minimumMillis = 2000, // ignore: unused_element
+    this.warmupMillis = 100, // ignore: unused_element
   }) : benchmark = BenchmarkScreen(
           dataType: dataType,
           listenerType: listenerType,
@@ -28,9 +29,10 @@ class _Benchmark {
         );
 
   final BenchmarkScreen benchmark;
-  final int frames;
+  final int minimumMillis;
+  final int warmupMillis;
 
-  final stopwatch = Stopwatch();
+  late double resultMicroseconds;
 }
 
 // Run this with `flutter run --profile test/stream_watch_benchmark.dart`
@@ -38,7 +40,10 @@ main() async {
   assert(false); // fail in debug mode
 
   Future<void> runBenchmark(_Benchmark benchmark) async {
+    const frameDuration = Duration(milliseconds: 16, microseconds: 683);
+
     await benchmarkWidgets((WidgetTester tester) async {
+      // Setup
       await tester.pumpWidget(
         ContextWatchRoot(
           key: UniqueKey(),
@@ -52,13 +57,30 @@ main() async {
       await tester.pumpAndSettle();
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
-      benchmark.stopwatch.start();
-      for (int i = 0; i < benchmark.frames; i++) {
+
+      // Warmup
+      var elapsedWarmup = 0;
+      final warmupStopwatch = Stopwatch()..start();
+      while (elapsedWarmup < benchmark.warmupMillis * 1000) {
+        await tester.pumpBenchmark(frameDuration);
+        elapsedWarmup = warmupStopwatch.elapsedMicroseconds;
+      }
+
+      // Benchmark
+      final minimumMicros = benchmark.minimumMillis * 1000;
+      var iter = 0;
+      var elapsed = 0;
+      final stopwatch = Stopwatch()..start();
+      while (elapsed < minimumMicros) {
         await tester.pumpBenchmark(
           const Duration(milliseconds: 16, microseconds: 683),
         );
+        elapsed = stopwatch.elapsedMicroseconds;
+        iter++;
       }
-      benchmark.stopwatch.stop();
+      benchmark.resultMicroseconds = elapsed / iter;
+
+      // Teardown
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
       await tester.tap(find.byKey(const Key('stop')));
@@ -119,10 +141,8 @@ main() async {
 
   for (final contextWatchBenchmark in comparisons.keys) {
     final streamBuilderBenchmark = comparisons[contextWatchBenchmark]!;
-    final contextWatchTime =
-        contextWatchBenchmark.stopwatch.elapsedMicroseconds;
-    final streamBuilderTime =
-        streamBuilderBenchmark.stopwatch.elapsedMicroseconds;
+    final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
+    final streamBuilderTime = streamBuilderBenchmark.resultMicroseconds;
 
     final fasterName = contextWatchTime <= streamBuilderTime
         ? 'Stream.watch(context)'
@@ -161,7 +181,7 @@ main() async {
     final slowerPercent =
         ((slowerTime / fasterTime - 1) * 100).toStringAsFixed(2);
     print(
-      '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime / 1000}ms] is $slowerPercent% slower than $fasterName[${fasterTime / 1000}ms]',
+      '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime.toStringAsFixed(2)}us / frame] is $slowerPercent% slower than $fasterName[${fasterTime.toStringAsFixed(2)}us / frame]',
     );
   }
   exit(0);

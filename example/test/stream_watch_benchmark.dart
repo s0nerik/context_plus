@@ -182,7 +182,7 @@ main() async {
     final slowerPercent =
         ((slowerTime / fasterTime - 1) * 100).toStringAsFixed(2);
     print(
-      '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime.toStringAsFixed(2)}us / frame] is $slowerPercent% slower than $fasterName[${fasterTime.toStringAsFixed(2)}us / frame]',
+      '${benchmarkDescription.padRight(60)} | $slowerName[${slowerTime.toStringAsFixed(2)}μs / frame] is $slowerPercent% slower than $fasterName[${fasterTime.toStringAsFixed(2)}μs / frame]',
     );
   }
   exit(0);

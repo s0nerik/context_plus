@@ -39,6 +39,8 @@ class _Benchmark {
 main() async {
   assert(false); // fail in debug mode
 
+  LiveTestWidgetsFlutterBinding.ensureInitialized();
+
   Future<void> runBenchmark(_Benchmark benchmark) async {
     const frameDuration = Duration(milliseconds: 16, microseconds: 683);
 
@@ -72,9 +74,7 @@ main() async {
       var elapsed = 0;
       final stopwatch = Stopwatch()..start();
       while (elapsed < minimumMicros) {
-        await tester.pumpBenchmark(
-          const Duration(milliseconds: 16, microseconds: 683),
-        );
+        await tester.pumpBenchmark(frameDuration);
         elapsed = stopwatch.elapsedMicroseconds;
         iter++;
       }

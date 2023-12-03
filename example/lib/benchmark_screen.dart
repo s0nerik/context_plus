@@ -31,6 +31,7 @@ class BenchmarkScreen extends StatefulWidget {
     this.runOnStart = true,
     this.showPerformanceOverlay = true,
     this.visualize = true,
+    this.tileObservableNotifyInterval = const Duration(milliseconds: 48),
   });
 
   final int singleObservableSubscriptionsCount;
@@ -48,6 +49,8 @@ class BenchmarkScreen extends StatefulWidget {
   final bool runOnStart;
   final bool showPerformanceOverlay;
   final bool visualize;
+
+  final Duration tileObservableNotifyInterval;
 
   @override
   State<BenchmarkScreen> createState() => _BenchmarkScreenState();
@@ -372,6 +375,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         listenerType: _listenerType,
         visualize: _visualize,
         observablesPerTile: _observablesPerTile,
+        observableNotifyInterval: widget.tileObservableNotifyInterval,
       ),
     );
   }
@@ -413,6 +417,7 @@ class _Tile extends StatelessWidget {
     required this.listenerType,
     required this.observablesPerTile,
     required this.visualize,
+    required this.observableNotifyInterval,
   });
 
   final int index;
@@ -420,6 +425,7 @@ class _Tile extends StatelessWidget {
   final BenchmarkListenerType listenerType;
   final int observablesPerTile;
   final bool visualize;
+  final Duration observableNotifyInterval;
 
   @override
   Widget build(BuildContext context) {
@@ -429,8 +435,9 @@ class _Tile extends StatelessWidget {
         key: ValueKey(index),
         observablesPerTile: observablesPerTile,
         useValueStream: dataType == BenchmarkDataType.valueStream,
-        initialDelay: Duration(milliseconds: 4 * index),
-        delay: const Duration(milliseconds: 48),
+        initialDelay:
+            visualize ? Duration(milliseconds: 4 * index) : Duration.zero,
+        observableNotifyInterval: observableNotifyInterval,
         builder: (context, colorIndexStream, scaleIndexStream, otherStreams) {
           if (listenerType == BenchmarkListenerType.contextWatch) {
             return ItemContextWatch(
@@ -566,7 +573,7 @@ class _StreamsProvider extends StatefulWidget {
     super.key,
     required this.builder,
     required this.initialDelay,
-    required this.delay,
+    required this.observableNotifyInterval,
     required this.useValueStream,
     required this.observablesPerTile,
   });
@@ -578,7 +585,7 @@ class _StreamsProvider extends StatefulWidget {
     List<Stream<int>> otherStreams,
   ) builder;
   final Duration initialDelay;
-  final Duration delay;
+  final Duration observableNotifyInterval;
   final bool useValueStream;
   final int observablesPerTile;
 
@@ -633,7 +640,7 @@ class _StreamsProviderState extends State<_StreamsProvider> {
     await Future.delayed(widget.initialDelay);
     var index = 0;
     while (mounted) {
-      await Future.delayed(widget.delay);
+      await Future.delayed(widget.observableNotifyInterval);
       if (!mounted) {
         break;
       }

@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum BenchmarkDataType {
   valueListenable,
-  future,
   stream,
   valueStream,
 }
@@ -15,6 +15,7 @@ enum BenchmarkDataType {
 enum BenchmarkListenerType {
   contextWatch,
   streamBuilder,
+  valueListenableBuilder,
 }
 
 class BenchmarkScreen extends StatefulWidget {
@@ -93,6 +94,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
 
   final _streamController = StreamController<int>.broadcast();
   late final Stream<int> _stream = _streamController.stream;
+  final _valueNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -108,6 +110,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         break;
       }
       _streamController.add(index);
+      _valueNotifier.value = index;
       index++;
     }
   }
@@ -115,6 +118,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   @override
   void dispose() {
     _streamController.close();
+    _valueNotifier.dispose();
     super.dispose();
   }
 
@@ -287,6 +291,10 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               value: BenchmarkDataType.valueStream,
               child: Text('ValueStream'),
             ),
+            DropdownMenuItem(
+              value: BenchmarkDataType.valueListenable,
+              child: Text('ValueListenable'),
+            ),
           ],
         ),
       ],
@@ -316,6 +324,19 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               DropdownMenuItem(
                 value: BenchmarkListenerType.streamBuilder,
                 child: Text('StreamBuilder'),
+              ),
+            ],
+            if (_dataType == BenchmarkDataType.valueListenable) ...const [
+              DropdownMenuItem(
+                value: BenchmarkListenerType.contextWatch,
+                child: Text(
+                  'ValueListenable.watch(context)',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              DropdownMenuItem(
+                value: BenchmarkListenerType.valueListenableBuilder,
+                child: Text('ValueListenableBuilder'),
               ),
             ],
           ],
@@ -403,15 +424,29 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
 
   Widget _buildSingleObservableObserver(int index) {
     return switch (_listenerType) {
-      BenchmarkListenerType.contextWatch => Builder(
-          key: ValueKey(index),
-          builder: (context) {
-            _stream.watch(context);
-            return const SizedBox.shrink();
-          },
+      BenchmarkListenerType.contextWatch => switch (_dataType) {
+          BenchmarkDataType.stream || BenchmarkDataType.valueStream => Builder(
+              key: ValueKey('stream_$index'),
+              builder: (context) {
+                _stream.watch(context);
+                return const SizedBox.shrink();
+              },
+            ),
+          BenchmarkDataType.valueListenable => Builder(
+              key: ValueKey('valueListenable_$index'),
+              builder: (context) {
+                _valueNotifier.watch(context);
+                return const SizedBox.shrink();
+              },
+            ),
+        },
+      BenchmarkListenerType.valueListenableBuilder => ValueListenableBuilder(
+          key: ValueKey('valueListenableBuilder_$index'),
+          valueListenable: _valueNotifier,
+          builder: (context, value, child) => const SizedBox.shrink(),
         ),
       BenchmarkListenerType.streamBuilder => StreamBuilder(
-          key: ValueKey(index),
+          key: ValueKey('streamBuilder_$index'),
           stream: _stream,
           builder: (context, _) => const SizedBox.shrink(),
         ),
@@ -450,46 +485,59 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dataType == BenchmarkDataType.stream ||
-        dataType == BenchmarkDataType.valueStream) {
-      return _StreamsProvider(
-        key: ValueKey(index),
-        observablesPerTile: observablesPerTile,
-        useValueStream: dataType == BenchmarkDataType.valueStream,
-        initialDelay:
-            visualize ? Duration(milliseconds: 4 * index) : Duration.zero,
-        observableNotifyInterval: observableNotifyInterval,
-        builder: (context, colorIndexStream, scaleIndexStream, otherStreams) {
-          if (listenerType == BenchmarkListenerType.contextWatch) {
-            return ItemContextWatch(
-              colorIndexStream: colorIndexStream,
-              scaleIndexStream: scaleIndexStream,
-              otherStreams: otherStreams,
-              visualize: visualize,
-            );
-          }
-          return ItemStreamBuilder(
-            initialColorIndex: dataType == BenchmarkDataType.valueStream
-                ? (colorIndexStream as ValueStream<int>?)?.value
-                : null,
+    return _ObservablesProvider(
+      key: ValueKey(index),
+      observablesPerTile: observablesPerTile,
+      dataType: dataType,
+      initialDelay:
+          visualize ? Duration(milliseconds: 4 * index) : Duration.zero,
+      observableNotifyInterval: observableNotifyInterval,
+      streamBuilder:
+          (context, colorIndexStream, scaleIndexStream, otherStreams) {
+        if (listenerType == BenchmarkListenerType.contextWatch) {
+          return ItemStreamContextWatch(
             colorIndexStream: colorIndexStream,
-            initialScaleIndex: dataType == BenchmarkDataType.valueStream
-                ? (scaleIndexStream as ValueStream<int>?)?.value
-                : null,
             scaleIndexStream: scaleIndexStream,
             otherStreams: otherStreams,
             visualize: visualize,
           );
-        },
-      );
-    }
-
-    return const Placeholder();
+        }
+        return ItemStreamBuilder(
+          initialColorIndex: dataType == BenchmarkDataType.valueStream
+              ? (colorIndexStream as ValueStream<int>?)?.value
+              : null,
+          colorIndexStream: colorIndexStream,
+          initialScaleIndex: dataType == BenchmarkDataType.valueStream
+              ? (scaleIndexStream as ValueStream<int>?)?.value
+              : null,
+          scaleIndexStream: scaleIndexStream,
+          otherStreams: otherStreams,
+          visualize: visualize,
+        );
+      },
+      valueListenableBuilder: (context, colorIndexListenable,
+          scaleIndexListenable, otherListenables) {
+        if (listenerType == BenchmarkListenerType.contextWatch) {
+          return ItemValueListenableContextWatch(
+            colorIndexListenable: colorIndexListenable,
+            scaleIndexListenable: scaleIndexListenable,
+            otherListenables: otherListenables,
+            visualize: visualize,
+          );
+        }
+        return ItemValueListenableBuilder(
+          colorIndexListenable: colorIndexListenable,
+          scaleIndexListenable: scaleIndexListenable,
+          otherListenables: otherListenables,
+          visualize: visualize,
+        );
+      },
+    );
   }
 }
 
-class ItemContextWatch extends StatelessWidget {
-  const ItemContextWatch({
+class ItemStreamContextWatch extends StatelessWidget {
+  const ItemStreamContextWatch({
     super.key,
     required this.colorIndexStream,
     required this.scaleIndexStream,
@@ -507,9 +555,36 @@ class ItemContextWatch extends StatelessWidget {
     for (final otherStream in otherStreams) {
       otherStream.watch(context);
     }
-    return _build(
+    return _buildAsyncSnapshot(
       colorIndexSnapshot: colorIndexStream?.watch(context),
       scaleIndexSnapshot: scaleIndexStream?.watch(context),
+      visualize: visualize,
+    );
+  }
+}
+
+class ItemValueListenableContextWatch extends StatelessWidget {
+  const ItemValueListenableContextWatch({
+    super.key,
+    required this.colorIndexListenable,
+    required this.scaleIndexListenable,
+    required this.otherListenables,
+    required this.visualize,
+  });
+
+  final ValueListenable<int>? colorIndexListenable;
+  final ValueListenable<int>? scaleIndexListenable;
+  final List<ValueListenable<int>> otherListenables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    for (final otherListenable in otherListenables) {
+      otherListenable.watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndexListenable?.watch(context),
+      scaleIndex: scaleIndexListenable?.watch(context),
       visualize: visualize,
     );
   }
@@ -543,7 +618,7 @@ class ItemStreamBuilder extends StatelessWidget {
         builder: (context, colorIndexSnapshot) => StreamBuilder(
           initialData: initialScaleIndex,
           stream: scaleIndexStream,
-          builder: (context, scaleIndexSnapshot) => _build(
+          builder: (context, scaleIndexSnapshot) => _buildAsyncSnapshot(
             colorIndexSnapshot: colorIndexSnapshot,
             scaleIndexSnapshot: scaleIndexSnapshot,
             visualize: visualize,
@@ -554,7 +629,7 @@ class ItemStreamBuilder extends StatelessWidget {
       child = StreamBuilder(
         initialData: initialColorIndex,
         stream: colorIndexStream,
-        builder: (context, colorIndexSnapshot) => _build(
+        builder: (context, colorIndexSnapshot) => _buildAsyncSnapshot(
           colorIndexSnapshot: colorIndexSnapshot,
           scaleIndexSnapshot: null,
           visualize: visualize,
@@ -564,14 +639,14 @@ class ItemStreamBuilder extends StatelessWidget {
       child = StreamBuilder(
         initialData: initialScaleIndex,
         stream: scaleIndexStream,
-        builder: (context, scaleIndexSnapshot) => _build(
+        builder: (context, scaleIndexSnapshot) => _buildAsyncSnapshot(
           colorIndexSnapshot: null,
           scaleIndexSnapshot: scaleIndexSnapshot,
           visualize: visualize,
         ),
       );
     } else {
-      child = _build(
+      child = _buildAsyncSnapshot(
         colorIndexSnapshot: null,
         scaleIndexSnapshot: null,
         visualize: visualize,
@@ -589,13 +664,80 @@ class ItemStreamBuilder extends StatelessWidget {
   }
 }
 
-class _StreamsProvider extends StatefulWidget {
-  const _StreamsProvider({
+class ItemValueListenableBuilder extends StatelessWidget {
+  const ItemValueListenableBuilder({
     super.key,
-    required this.builder,
+    required this.colorIndexListenable,
+    required this.scaleIndexListenable,
+    required this.otherListenables,
+    required this.visualize,
+  });
+
+  final ValueListenable<int>? colorIndexListenable;
+  final ValueListenable<int>? scaleIndexListenable;
+  final List<ValueListenable<int>> otherListenables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child;
+    if (colorIndexListenable != null && scaleIndexListenable != null) {
+      child = ValueListenableBuilder(
+        valueListenable: colorIndexListenable!,
+        builder: (context, colorIndex, _) => ValueListenableBuilder(
+          valueListenable: scaleIndexListenable!,
+          builder: (context, scaleIndex, _) => _buildFromValues(
+            colorIndex: colorIndex,
+            scaleIndex: scaleIndex,
+            visualize: visualize,
+          ),
+        ),
+      );
+    } else if (colorIndexListenable != null) {
+      child = ValueListenableBuilder(
+        valueListenable: colorIndexListenable!,
+        builder: (context, colorIndex, _) => _buildFromValues(
+          colorIndex: colorIndex,
+          scaleIndex: null,
+          visualize: visualize,
+        ),
+      );
+    } else if (scaleIndexListenable != null) {
+      child = ValueListenableBuilder(
+        valueListenable: scaleIndexListenable!,
+        builder: (context, scaleIndex, _) => _buildFromValues(
+          colorIndex: null,
+          scaleIndex: scaleIndex,
+          visualize: visualize,
+        ),
+      );
+    } else {
+      child = _buildFromValues(
+        colorIndex: null,
+        scaleIndex: null,
+        visualize: visualize,
+      );
+    }
+
+    for (final otherListenable in otherListenables) {
+      final prevChild = child;
+      child = ValueListenableBuilder(
+        valueListenable: otherListenable,
+        builder: (context, _, __) => prevChild,
+      );
+    }
+    return child;
+  }
+}
+
+class _ObservablesProvider extends StatefulWidget {
+  const _ObservablesProvider({
+    super.key,
+    required this.streamBuilder,
+    required this.valueListenableBuilder,
     required this.initialDelay,
     required this.observableNotifyInterval,
-    required this.useValueStream,
+    required this.dataType,
     required this.observablesPerTile,
   });
 
@@ -604,45 +746,75 @@ class _StreamsProvider extends StatefulWidget {
     Stream<int>? colorIndexStream,
     Stream<int>? scaleIndexStream,
     List<Stream<int>> otherStreams,
-  ) builder;
+  ) streamBuilder;
+  final Widget Function(
+    BuildContext context,
+    ValueListenable<int>? colorIndexListenable,
+    ValueListenable<int>? scaleIndexListenable,
+    List<ValueListenable<int>> otherListenables,
+  ) valueListenableBuilder;
   final Duration initialDelay;
   final Duration observableNotifyInterval;
-  final bool useValueStream;
+  final BenchmarkDataType dataType;
   final int observablesPerTile;
 
   @override
-  State<_StreamsProvider> createState() => _StreamsProviderState();
+  State<_ObservablesProvider> createState() => _ObservablesProviderState();
 }
 
-class _StreamsProviderState extends State<_StreamsProvider> {
+class _ObservablesProviderState extends State<_ObservablesProvider> {
+  late final _dataType = widget.dataType;
+
   StreamController<int>? colorIndexController;
   StreamController<int>? scaleIndexController;
-  List<StreamController<int>> otherStreamControllers = [];
+  final List<StreamController<int>> otherStreamControllers = [];
 
   Stream<int>? colorIndexStream;
   Stream<int>? scaleIndexStream;
-  List<Stream<int>> otherStreams = [];
+  final List<Stream<int>> otherStreams = [];
+
+  ValueNotifier<int>? colorIndexNotifier;
+  ValueNotifier<int>? scaleIndexNotifier;
+  final List<ValueNotifier<int>> otherNotifiers = [];
 
   @override
   void initState() {
     super.initState();
     if (widget.observablesPerTile > 0) {
-      colorIndexController = widget.useValueStream
-          ? BehaviorSubject<int>.seeded(0)
-          : StreamController<int>();
-      colorIndexStream = colorIndexController!.stream;
+      switch (_dataType) {
+        case BenchmarkDataType.valueListenable:
+          colorIndexNotifier = ValueNotifier<int>(0);
+        case BenchmarkDataType.stream:
+          colorIndexController = StreamController<int>();
+          colorIndexStream = colorIndexController!.stream;
+        case BenchmarkDataType.valueStream:
+          colorIndexController = BehaviorSubject<int>.seeded(0);
+          colorIndexStream = colorIndexController!.stream;
+      }
     }
     if (widget.observablesPerTile > 1) {
-      scaleIndexController = widget.useValueStream
-          ? BehaviorSubject<int>.seeded(0)
-          : StreamController<int>();
-      scaleIndexStream = scaleIndexController!.stream;
+      switch (_dataType) {
+        case BenchmarkDataType.valueListenable:
+          scaleIndexNotifier = ValueNotifier<int>(0);
+        case BenchmarkDataType.stream:
+          scaleIndexController = StreamController<int>();
+          scaleIndexStream = scaleIndexController!.stream;
+        case BenchmarkDataType.valueStream:
+          scaleIndexController = BehaviorSubject<int>.seeded(0);
+          scaleIndexStream = scaleIndexController!.stream;
+      }
     }
     for (var i = 2; i < widget.observablesPerTile; i++) {
-      otherStreamControllers.add(widget.useValueStream
-          ? BehaviorSubject<int>.seeded(0)
-          : StreamController<int>());
-      otherStreams.add(otherStreamControllers.last.stream);
+      switch (_dataType) {
+        case BenchmarkDataType.valueListenable:
+          otherNotifiers.add(ValueNotifier<int>(0));
+        case BenchmarkDataType.stream:
+          otherStreamControllers.add(StreamController<int>());
+          otherStreams.add(otherStreamControllers.last.stream);
+        case BenchmarkDataType.valueStream:
+          otherStreamControllers.add(BehaviorSubject<int>.seeded(0));
+          otherStreams.add(otherStreamControllers.last.stream);
+      }
     }
     _notifyValuesWhileMounted();
   }
@@ -666,13 +838,31 @@ class _StreamsProviderState extends State<_StreamsProvider> {
         break;
       }
       if (widget.observablesPerTile > 0) {
-        colorIndexController?.add(index);
+        switch (_dataType) {
+          case BenchmarkDataType.valueListenable:
+            colorIndexNotifier?.value = index;
+          case BenchmarkDataType.stream:
+          case BenchmarkDataType.valueStream:
+            colorIndexController?.add(index);
+        }
       }
       if (widget.observablesPerTile > 1) {
-        scaleIndexController?.add(index);
+        switch (_dataType) {
+          case BenchmarkDataType.valueListenable:
+            scaleIndexNotifier?.value = index;
+          case BenchmarkDataType.stream:
+          case BenchmarkDataType.valueStream:
+            scaleIndexController?.add(index);
+        }
       }
       for (var i = 2; i < widget.observablesPerTile; i++) {
-        otherStreamControllers[i - 2].add(index);
+        switch (_dataType) {
+          case BenchmarkDataType.valueListenable:
+            otherNotifiers[i - 2].value = index;
+          case BenchmarkDataType.stream:
+          case BenchmarkDataType.valueStream:
+            otherStreamControllers[i - 2].add(index);
+        }
       }
       index++;
     }
@@ -680,12 +870,26 @@ class _StreamsProviderState extends State<_StreamsProvider> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(
-        context, colorIndexStream, scaleIndexStream, otherStreams);
+    return switch (_dataType) {
+      BenchmarkDataType.stream ||
+      BenchmarkDataType.valueStream =>
+        widget.streamBuilder(
+          context,
+          colorIndexStream,
+          scaleIndexStream,
+          otherStreams,
+        ),
+      BenchmarkDataType.valueListenable => widget.valueListenableBuilder(
+          context,
+          colorIndexNotifier,
+          scaleIndexNotifier,
+          otherNotifiers,
+        ),
+    };
   }
 }
 
-Widget _build({
+Widget _buildAsyncSnapshot({
   required AsyncSnapshot<int>? colorIndexSnapshot,
   required AsyncSnapshot<int>? scaleIndexSnapshot,
   required bool visualize,
@@ -712,6 +916,31 @@ Widget _build({
       ),
     AsyncSnapshot(hasError: false) => child,
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
+    null => child,
+  };
+
+  return scaledChild;
+}
+
+Widget _buildFromValues({
+  required int? colorIndex,
+  required int? scaleIndex,
+  required bool visualize,
+}) {
+  if (!visualize) {
+    return const SizedBox.shrink();
+  }
+
+  final child = switch (colorIndex) {
+    int() => ColoredBox(color: _colors[colorIndex % _colors.length]),
+    null => ColoredBox(color: Colors.grey.shade300),
+  };
+
+  final scaledChild = switch (scaleIndex) {
+    int() => Transform.scale(
+        scale: _scales[scaleIndex % _scales.length],
+        child: child,
+      ),
     null => child,
   };
 

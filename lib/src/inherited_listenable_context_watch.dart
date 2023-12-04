@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
@@ -9,49 +8,48 @@ import 'inherited_context_watch.dart';
 
 @internal
 class InheritedListenableContextWatch
-    extends InheritedContextWatch<Listenable, StreamSubscription> {
+    extends InheritedContextWatch<Listenable, VoidCallback> {
   const InheritedListenableContextWatch({
     super.key,
     required super.child,
   });
 
   @override
-  ObservableNotifierInheritedElement<Listenable, StreamSubscription>
+  ObservableNotifierInheritedElement<Listenable, VoidCallback>
       createElement() => InheritedListenableContextWatchElement(this);
 }
 
 @internal
 class InheritedListenableContextWatchElement
-    extends ObservableNotifierInheritedElement<Listenable, StreamSubscription> {
+    extends ObservableNotifierInheritedElement<Listenable, VoidCallback> {
   InheritedListenableContextWatchElement(super.widget);
 
-  final _streamControllers = HashMap<Listenable, StreamController>();
-  final _actualListeners = HashMap<Listenable, VoidCallback>();
+  final _contextListenableListeners =
+      HashMap<BuildContext, HashMap<Listenable, VoidCallback>>.identity();
 
   @override
-  StreamSubscription watch<T>(
+  VoidCallback watch<T>(
     BuildContext context,
     Listenable observable,
   ) {
     final element = context as Element;
+    final listeners =
+        _contextListenableListeners[context] ??= HashMap.identity();
 
-    // ignore: cancel_subscriptions
-    late final StreamController ctrl;
-    if (!_streamControllers.containsKey(observable)) {
-      ctrl = StreamController.broadcast();
-      _streamControllers[observable] = ctrl;
-      _actualListeners[observable] = () {
-        if (!canNotify(context, observable)) {
-          return;
-        }
-        ctrl.add(null);
-      };
-      observable.addListener(_actualListeners[observable]!);
-    } else {
-      ctrl = _streamControllers[observable]!;
+    final existingListener = listeners[observable];
+    if (existingListener != null) {
+      return existingListener;
     }
 
-    return ctrl.stream.listen((_) => element.markNeedsBuild());
+    final listener = listeners[observable] = () {
+      if (!canNotify(context, observable)) {
+        return;
+      }
+      element.markNeedsBuild();
+    };
+    observable.addListener(listener);
+
+    return listener;
   }
 
   @override
@@ -59,22 +57,38 @@ class InheritedListenableContextWatchElement
     BuildContext context,
     Listenable observable,
   ) {
-    if (_streamControllers[observable]?.hasListener == false) {
-      observable.removeListener(_actualListeners[observable]!);
-      _streamControllers[observable]!.close();
-      _streamControllers.remove(observable);
-      _actualListeners.remove(observable);
+    final listeners = _contextListenableListeners[context];
+    if (listeners == null) {
+      return;
     }
+    final listener = listeners.remove(observable);
+    if (listener == null) {
+      return;
+    }
+    observable.removeListener(listener);
   }
 
   @override
   void unwatchContext(BuildContext context) {
-    // TODO: implement unwatchContext
+    final listeners = _contextListenableListeners.remove(context);
+    if (listeners == null) {
+      return;
+    }
+    for (final MapEntry(key: listenable, value: listener)
+        in listeners.entries) {
+      listenable.removeListener(listener);
+    }
   }
 
   @override
   void unwatchAllContexts() {
-    // TODO: implement unwatchAllContexts
+    for (final listeners in _contextListenableListeners.values) {
+      for (final MapEntry(key: listenable, value: listener)
+          in listeners.entries) {
+        listenable.removeListener(listener);
+      }
+    }
+    _contextListenableListeners.clear();
   }
 }
 

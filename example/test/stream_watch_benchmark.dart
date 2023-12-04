@@ -103,6 +103,18 @@ main() async {
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
+            _Benchmark(
+              dataType: BenchmarkDataType.valueListenable,
+              listenerType: BenchmarkListenerType.contextWatch,
+              singleObservableSubscriptionsCount: 0,
+              tilesCount: tilesCount,
+            ),
+            _Benchmark(
+              dataType: BenchmarkDataType.valueListenable,
+              listenerType: BenchmarkListenerType.valueListenableBuilder,
+              singleObservableSubscriptionsCount: 0,
+              tilesCount: tilesCount,
+            ),
           ])
       .toList();
   final singleObservableBenchmarks = [1, 10, 100, 200, 500, 750, 1000]
@@ -117,6 +129,20 @@ main() async {
             _Benchmark(
               dataType: BenchmarkDataType.stream,
               listenerType: BenchmarkListenerType.streamBuilder,
+              singleObservableSubscriptionsCount:
+                  singleObservableSubscriptionsCount,
+              tilesCount: 0,
+            ),
+            _Benchmark(
+              dataType: BenchmarkDataType.valueListenable,
+              listenerType: BenchmarkListenerType.contextWatch,
+              singleObservableSubscriptionsCount:
+                  singleObservableSubscriptionsCount,
+              tilesCount: 0,
+            ),
+            _Benchmark(
+              dataType: BenchmarkDataType.valueListenable,
+              listenerType: BenchmarkListenerType.valueListenableBuilder,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
@@ -142,10 +168,10 @@ main() async {
 
   _printRow(
     summary: 'Summary',
+    ratio: 'Ratio',
     totalSubscriptions: 'Total subscriptions',
     subscriptionsDescription: 'Subscriptions description',
     frameTimes: 'Frame times',
-    result: 'Result',
   );
   for (final contextWatchBenchmark in comparisons.keys) {
     final otherBenchmark = comparisons[contextWatchBenchmark]!;
@@ -174,26 +200,29 @@ main() async {
     final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
     final otherTime = otherBenchmark.resultMicroseconds;
 
-    const contextWatchName = 'Stream.watch(context)';
-    const otherName = 'StreamBuilder';
+    final contextWatchName = switch (contextWatchBenchmark.benchmark.dataType) {
+      BenchmarkDataType.valueListenable => 'ValueListenable.watch(context)',
+      BenchmarkDataType.stream => 'Stream.watch(context)',
+      BenchmarkDataType.valueStream => 'Stream.watch(context)',
+    };
+    final otherName = switch (otherBenchmark.benchmark.dataType) {
+      BenchmarkDataType.valueListenable => 'ValueListenableBuilder',
+      BenchmarkDataType.stream => 'StreamBuilder',
+      BenchmarkDataType.valueStream => 'StreamBuilder',
+    };
 
     final ratio = contextWatchTime / otherTime;
     final ratioStr = '${ratio.toStringAsFixed(2)}x';
     final contextWatchTimeStr = '${contextWatchTime.toStringAsFixed(2)}μs';
     final otherTimeStr = '${otherTime.toStringAsFixed(2)}μs';
     final frameTimesStr = '$contextWatchTimeStr/frame vs $otherTimeStr/frame';
-    final comparison = contextWatchTimeStr == otherTimeStr
-        ? 'equal to'
-        : contextWatchTime < otherTime
-            ? 'faster than'
-            : 'slower than';
 
     _printRow(
-      summary: '$contextWatchName vs $otherName: $ratioStr',
+      summary: '$contextWatchName vs $otherName',
+      ratio: ratioStr,
       totalSubscriptions: totalSubsSummary,
       subscriptionsDescription: benchmarkDescription,
       frameTimes: frameTimesStr,
-      result: '$contextWatchName is $comparison $otherName',
     );
   }
   exit(0);
@@ -201,16 +230,16 @@ main() async {
 
 void _printRow({
   required String summary,
+  required String ratio,
   required String totalSubscriptions,
   required String subscriptionsDescription,
   required String frameTimes,
-  required String result,
 }) {
   print([
-    summary.padRight(50),
+    summary.padRight(60),
+    ratio.padRight(7),
     totalSubscriptions.padRight(20),
     subscriptionsDescription.padRight(32),
     frameTimes.padRight(42),
-    result,
   ].join('    '));
 }

@@ -159,9 +159,9 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
-    context.dependOnInheritedWidgetOfExactType<InheritedStreamContextWatch>();
     final watchRoot = context.getElementForInheritedWidgetOfExactType<
         InheritedStreamContextWatch>() as InheritedStreamContextWatchElement;
+    context.dependOnInheritedElement(watchRoot);
     final subscription = watchRoot.subscribe<T>(context, this);
     if (subscription == null) {
       return AsyncSnapshot<T>.nothing();

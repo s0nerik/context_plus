@@ -30,37 +30,29 @@ class InheritedStreamContextWatchElement
 
   final snapshots = HashMap<StreamSubscription, AsyncSnapshot>.identity();
 
-  @override
-  StreamSubscription watch<T>(
+  StreamSubscription _createSubscription<T>(
     BuildContext context,
-    Stream observable,
+    Stream stream,
   ) {
     final element = context as Element;
-    final subscriptions =
-        _contextStreamSubscriptions[context] ??= HashMap.identity();
-
-    final existingSubscription = subscriptions[observable];
-    if (existingSubscription != null) {
-      return existingSubscription;
-    }
 
     late final StreamSubscription subscription;
-    subscription = subscriptions[observable] = observable.listen((data) {
-      if (!canNotify(context, observable)) {
+    subscription = stream.listen((data) {
+      if (!canNotify(context, stream)) {
         return;
       }
       snapshots[subscription] =
           AsyncSnapshot<T>.withData(ConnectionState.active, data);
       element.markNeedsBuild();
     }, onError: (Object error, StackTrace stackTrace) {
-      if (!canNotify(context, observable)) {
+      if (!canNotify(context, stream)) {
         return;
       }
       snapshots[subscription] =
           AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
       element.markNeedsBuild();
     }, onDone: () {
-      if (!canNotify(context, observable)) {
+      if (!canNotify(context, stream)) {
         return;
       }
       snapshots[subscription] = (snapshots[subscription]! as AsyncSnapshot<T>)
@@ -68,23 +60,23 @@ class InheritedStreamContextWatchElement
       element.markNeedsBuild();
     });
 
-    if (observable is ValueStream<T>) {
-      if (observable.hasValue) {
+    if (stream is ValueStream<T>) {
+      if (stream.hasValue) {
         snapshots[subscription] = AsyncSnapshot<T>.withData(
           ConnectionState.waiting,
-          observable.value,
+          stream.value,
         );
-      } else if (observable.hasError) {
-        if (observable.stackTrace != null) {
+      } else if (stream.hasError) {
+        if (stream.stackTrace != null) {
           snapshots[subscription] = AsyncSnapshot<T>.withError(
             ConnectionState.waiting,
-            observable.error,
-            observable.stackTrace!,
+            stream.error,
+            stream.stackTrace!,
           );
         }
         snapshots[subscription] = AsyncSnapshot<T>.withError(
           ConnectionState.waiting,
-          observable.error,
+          stream.error,
         );
       } else {
         snapshots[subscription] =
@@ -94,6 +86,25 @@ class InheritedStreamContextWatchElement
       snapshots[subscription] =
           AsyncSnapshot<T>.nothing().inState(ConnectionState.waiting);
     }
+
+    return subscription;
+  }
+
+  @override
+  StreamSubscription watch<T>(
+    BuildContext context,
+    Stream observable,
+  ) {
+    final subscriptions =
+        _contextStreamSubscriptions[context] ??= HashMap.identity();
+
+    final existingSubscription = subscriptions[observable];
+    if (existingSubscription != null) {
+      return existingSubscription;
+    }
+
+    final subscription = _createSubscription<T>(context, observable);
+    subscriptions[observable] = subscription;
 
     return subscription;
   }

@@ -102,11 +102,37 @@ class InheritedStreamContextWatchElement
   void unwatch(
     BuildContext context,
     Stream observable,
-    StreamSubscription subscription,
   ) {
+    final subscription =
+        _contextStreamSubscriptions[context]?.remove(observable);
+    if (subscription == null) {
+      return;
+    }
     snapshots.remove(subscription);
     subscription.cancel();
-    _contextStreamSubscriptions[context]?.remove(observable);
+  }
+
+  @override
+  void unwatchContext(BuildContext context) {
+    final subscriptions = _contextStreamSubscriptions.remove(context);
+    if (subscriptions == null) {
+      return;
+    }
+    for (final subscription in subscriptions.values) {
+      snapshots.remove(subscription);
+      subscription.cancel();
+    }
+  }
+
+  @override
+  void unwatchAllContexts() {
+    for (final subscriptions in _contextStreamSubscriptions.values) {
+      for (final subscription in subscriptions.values) {
+        snapshots.remove(subscription);
+        subscription.cancel();
+      }
+    }
+    _contextStreamSubscriptions.clear();
   }
 }
 

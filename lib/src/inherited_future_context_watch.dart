@@ -51,23 +51,23 @@ class InheritedFutureContextWatchElement
       return existingSubscription;
     }
 
-    final subscription = FutureSubscription();
+    final subscription = subscriptions[observable] = FutureSubscription();
     snapshots[subscription] = AsyncSnapshot<T>.nothing();
     observable.then((data) {
-      if (subscription.isCanceled) {
+      if (!canNotify(context, observable)) {
         return;
       }
-      if (!canNotify(context, observable)) {
+      if (subscription.isCanceled) {
         return;
       }
       snapshots[subscription] =
           AsyncSnapshot<T>.withData(ConnectionState.done, data);
       element.markNeedsBuild();
     }, onError: (Object error, StackTrace stackTrace) {
-      if (subscription.isCanceled) {
+      if (!canNotify(context, observable)) {
         return;
       }
-      if (!canNotify(context, observable)) {
+      if (subscription.isCanceled) {
         return;
       }
       snapshots[subscription] =
@@ -88,10 +88,37 @@ class InheritedFutureContextWatchElement
   void unwatch(
     BuildContext context,
     Future observable,
-    FutureSubscription subscription,
   ) {
+    final subscription =
+        _contextFutureSubscriptions[context]?.remove(observable);
+    if (subscription == null) {
+      return;
+    }
     subscription.isCanceled = true;
     snapshots.remove(subscription);
+  }
+
+  @override
+  void unwatchContext(BuildContext context) {
+    final subscriptions = _contextFutureSubscriptions.remove(context);
+    if (subscriptions == null) {
+      return;
+    }
+    for (final subscription in subscriptions.values) {
+      subscription.isCanceled = true;
+      snapshots.remove(subscription);
+    }
+  }
+
+  @override
+  void unwatchAllContexts() {
+    for (final subscriptions in _contextFutureSubscriptions.values) {
+      for (final subscription in subscriptions.values) {
+        subscription.isCanceled = true;
+        snapshots.remove(subscription);
+      }
+    }
+    _contextFutureSubscriptions.clear();
   }
 }
 

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
-    'Future.watch(context) gives new AsyncSnapshot after after future completes with data',
+    'Future.watch(context) gives new AsyncSnapshot after future completes with data',
     (widgetTester) async {
       final future = Future.value(0);
       final snapshots = <AsyncSnapshot<int>>[];
@@ -31,7 +31,7 @@ void main() {
     },
   );
   testWidgets(
-    'Future.watch(context) gives new AsyncSnapshot after after future completes with error',
+    'Future.watch(context) gives new AsyncSnapshot after future completes with error',
     (widgetTester) async {
       final error = Exception('error');
 

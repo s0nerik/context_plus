@@ -25,9 +25,6 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
     TSubscription extends Object> extends InheritedElement {
   ObservableNotifierInheritedElement(super.widget);
 
-  final _contextSubs =
-      HashMap<BuildContext, HashMap<TObservable, TSubscription>>();
-
   final _contextLastFrame = HashMap<BuildContext, Duration>();
   final _contextObservableLastFrame =
       HashMap<BuildContext, HashMap<TObservable, Duration>>();
@@ -52,8 +49,13 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
   void unwatch(
     BuildContext context,
     TObservable observable,
-    TSubscription subscription,
   );
+
+  @protected
+  void unwatchContext(BuildContext context);
+
+  @protected
+  void unwatchAllContexts();
 
   @protected
   @useResult
@@ -67,8 +69,7 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return true;
     }
     _contextObservableLastFrame[context]!.remove(observable);
-    final subscription = _contextSubs[context]!.remove(observable)!;
-    unwatch(context, observable, subscription);
+    unwatch(context, observable);
     return false;
   }
 
@@ -95,24 +96,12 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
 
   @override
   void unmount() {
-    final contextSubs = _contextSubs.keys.toList();
-    for (final element in contextSubs) {
-      _unsubscribe(element);
-    }
+    unwatchAllContexts();
     super.unmount();
   }
 
   void _unsubscribe(BuildContext context) {
-    final observableSubs = _contextSubs[context];
-    if (observableSubs == null) {
-      return;
-    }
-
-    for (final observable in observableSubs.keys) {
-      final subscription = observableSubs[observable]!;
-      unwatch(context, observable, subscription);
-    }
-    _contextSubs.remove(context);
+    unwatchContext(context);
     _contextLastFrame.remove(context);
     _contextObservableLastFrame.remove(context);
   }
@@ -131,13 +120,11 @@ abstract class ObservableNotifierInheritedElement<TObservable extends Object,
       return null;
     }
 
-    final subscription = _contextSubs.putIfAbsent(
-        context, HashMap.new)[observable] ??= watch<T>(context, observable);
-
     _contextLastFrame[context] = _currentFrame;
-    _contextObservableLastFrame.putIfAbsent(context, HashMap.new)[observable] =
-        _currentFrame;
+    final lastFrameContextObservables =
+        _contextObservableLastFrame[context] ??= HashMap.identity();
+    lastFrameContextObservables[observable] = _currentFrame;
 
-    return subscription;
+    return watch<T>(context, observable);
   }
 }

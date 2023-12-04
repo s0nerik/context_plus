@@ -58,15 +58,23 @@ class InheritedListenableContextWatchElement
   void unwatch(
     BuildContext context,
     Listenable observable,
-    StreamSubscription subscription,
   ) {
-    subscription.cancel();
     if (_streamControllers[observable]?.hasListener == false) {
       observable.removeListener(_actualListeners[observable]!);
       _streamControllers[observable]!.close();
       _streamControllers.remove(observable);
       _actualListeners.remove(observable);
     }
+  }
+
+  @override
+  void unwatchContext(BuildContext context) {
+    // TODO: implement unwatchContext
+  }
+
+  @override
+  void unwatchAllContexts() {
+    // TODO: implement unwatchAllContexts
   }
 }
 

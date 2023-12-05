@@ -1,3 +1,7 @@
+## 2.0.0-dev.3
+
+- Updated README.md
+
 ## 2.0.0-dev.2
 
 - Updated README.md

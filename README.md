@@ -1,6 +1,6 @@
 # context_watch
 
-![context_watch.png](doc/context_watch.png)
+![context_watch.png](https://github.com/s0nerik/context_watch/raw/main/doc/context_watch.png)
 
 [![context_watch](https://img.shields.io/pub/v/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/likes/context_watch)](https://pub.dev/packages/context_watch)
@@ -147,4 +147,4 @@ ValueListenable.watch(context) vs ValueListenableBuilder        1.46x      1000 
 `example` contains both a [live benchmark](example/lib/benchmark_screen.dart) and an [automated one](example/test/stream_watch_benchmark.dart), so feel free to run them and compare the results on your device.
 Don't forget to run them in `--profile` mode.
 
-![benchmark.gid](doc/benchmark.gif)
+![benchmark.gif](https://github.com/s0nerik/context_watch/raw/main/doc/benchmark.gif)

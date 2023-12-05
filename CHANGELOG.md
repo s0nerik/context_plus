@@ -1,3 +1,7 @@
+## 2.0.0-dev.2
+
+- Updated README.md
+
 ## 2.0.0-dev.1
 
 - `Stream.watch()` and `Future.watch()` now return `AsyncSnapshot`, just like `StreamBuilder` and `FutureBuilder` do

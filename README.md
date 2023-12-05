@@ -55,37 +55,6 @@ the `context` will be marked as needing a rebuild.
 
 ## Additional information
 
-### Performance
-
-Sounds too good to be true? It's not! But it comes at a slight performance cost.
-
-Here's some benchmark results I got on my device:
-```
-Summary                                               Total subscriptions     Subscriptions description           Frame times                                   Result
-Stream.watch(context) vs StreamBuilder: 0.99x         2 total subs            1 tiles * 2 observables             120.32μs/frame vs 121.99μs/frame              Stream.watch(context) is faster than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 0.97x         20 total subs           10 tiles * 2 observables            123.49μs/frame vs 127.68μs/frame              Stream.watch(context) is faster than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.00x         200 total subs          100 tiles * 2 observables           129.56μs/frame vs 129.43μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.01x         400 total subs          200 tiles * 2 observables           138.93μs/frame vs 137.55μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.06x         1000 total subs         500 tiles * 2 observables           174.76μs/frame vs 165.05μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.05x         1500 total subs         750 tiles * 2 observables           211.49μs/frame vs 201.05μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.17x         2000 total subs         1000 tiles * 2 observables          272.60μs/frame vs 232.19μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.29x         10000 total subs        5000 tiles * 2 observables          50861.28μs/frame vs 39294.43μs/frame          Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.28x         20000 total subs        10000 tiles * 2 observables         177639.00μs/frame vs 138427.80μs/frame        Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.25x         40000 total subs        20000 tiles * 2 observables         382832.00μs/frame vs 305834.57μs/frame        Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 0.99x         1 total subs            1 single stream subscriptions       123.57μs/frame vs 124.51μs/frame              Stream.watch(context) is faster than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.00x         10 total subs           10 single stream subscriptions      126.01μs/frame vs 126.49μs/frame              Stream.watch(context) is faster than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.03x         100 total subs          100 single stream subscriptions     130.68μs/frame vs 126.68μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.06x         200 total subs          200 single stream subscriptions     138.02μs/frame vs 130.04μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.24x         500 total subs          500 single stream subscriptions     173.43μs/frame vs 140.15μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 1.45x         750 total subs          750 single stream subscriptions     220.93μs/frame vs 151.88μs/frame              Stream.watch(context) is slower than StreamBuilder
-Stream.watch(context) vs StreamBuilder: 2.09x         1000 total subs         1000 single stream subscriptions    353.87μs/frame vs 168.92μs/frame              Stream.watch(context) is slower than StreamBuilder
-```
-
-`example` contains both a [live benchmark](example/lib/benchmark_screen.dart) and an [automated one](example/test/stream_watch_benchmark.dart), so feel free to run them and compare the results on your device.
-Don't forget to run them in `--profile` mode.
-
-![benchmark.gid](doc/benchmark.gif)
-
 ### `context.unwatch()`
 
 If you have conditional `watch()`'es in your `build` method, you might want to add an unconditional `context.unwatch()`
@@ -113,7 +82,7 @@ Widget build(BuildContext context) {
 }
 ```
 if widget transitions from `condition1 == true && condition2 == true` to `condition1 == false && condition2 == true` - it
-will be rebuilt only when `counter2` changes. But if widget transitions from `condition1 == true && condition2 == true` to 
+will be rebuilt only when `counter2` changes. But if widget transitions from `condition1 == true && condition2 == true` to
 `condition1 == false && condition2 == false` - it will be rebuilt when either `counter1` or `counter2` changes.
 
 To avoid this, you can unconditionally call `context.unwatch()` inside the `build` method:
@@ -131,3 +100,51 @@ Widget build(BuildContext context) {
 ```
 This will ensure that all conditional `watch()`'es are discarded each `build`. Calling `context.unwatch()` doesn't
 incur any performance penalty, so feel free to call it unconditionally in all your `build` methods whenever you need.
+
+### Performance
+
+Sounds too good to be true? It's not! But it comes at a slight performance cost.
+
+Here's some benchmark results I got on my test device (Xiaomi Mi 9T Pro, Android 11):
+```
+Summary                                                         Ratio      Total subscriptions     Subscriptions description           Frame times                               
+Stream.watch(context) vs StreamBuilder                          1.05x      2 total subs            1 tiles * 2 observables             125.75μs/frame vs 119.59μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        0.99x      2 total subs            1 tiles * 2 observables             121.17μs/frame vs 121.83μs/frame          
+Stream.watch(context) vs StreamBuilder                          0.99x      20 total subs           10 tiles * 2 observables            122.13μs/frame vs 122.84μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.02x      20 total subs           10 tiles * 2 observables            125.49μs/frame vs 122.70μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.02x      200 total subs          100 tiles * 2 observables           132.69μs/frame vs 130.19μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.04x      200 total subs          100 tiles * 2 observables           134.43μs/frame vs 129.11μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.05x      400 total subs          200 tiles * 2 observables           150.99μs/frame vs 143.31μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.02x      400 total subs          200 tiles * 2 observables           136.61μs/frame vs 133.89μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.04x      1000 total subs         500 tiles * 2 observables           178.28μs/frame vs 170.82μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.10x      1000 total subs         500 tiles * 2 observables           180.63μs/frame vs 163.78μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.06x      1500 total subs         750 tiles * 2 observables           221.11μs/frame vs 207.65μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.18x      1500 total subs         750 tiles * 2 observables           198.62μs/frame vs 168.99μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.20x      2000 total subs         1000 tiles * 2 observables          282.68μs/frame vs 235.82μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.22x      2000 total subs         1000 tiles * 2 observables          236.68μs/frame vs 194.15μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.17x      10000 total subs        5000 tiles * 2 observables          56236.86μs/frame vs 48076.33μs/frame      
+ValueListenable.watch(context) vs ValueListenableBuilder        1.65x      10000 total subs        5000 tiles * 2 observables          34541.57μs/frame vs 20967.51μs/frame      
+Stream.watch(context) vs StreamBuilder                          1.31x      20000 total subs        10000 tiles * 2 observables         193292.91μs/frame vs 147844.86μs/frame    
+ValueListenable.watch(context) vs ValueListenableBuilder        1.06x      20000 total subs        10000 tiles * 2 observables         100301.20μs/frame vs 94399.64μs/frame     
+Stream.watch(context) vs StreamBuilder                          1.36x      40000 total subs        20000 tiles * 2 observables         406689.40μs/frame vs 298047.43μs/frame    
+ValueListenable.watch(context) vs ValueListenableBuilder        1.37x      40000 total subs        20000 tiles * 2 observables         250308.56μs/frame vs 182833.27μs/frame    
+Stream.watch(context) vs StreamBuilder                          0.98x      1 total subs            1 single stream subscriptions       122.08μs/frame vs 123.96μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.03x      1 total subs            1 single stream subscriptions       126.48μs/frame vs 122.88μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.00x      10 total subs           10 single stream subscriptions      125.51μs/frame vs 125.95μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.02x      10 total subs           10 single stream subscriptions      125.07μs/frame vs 122.17μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.04x      100 total subs          100 single stream subscriptions     132.01μs/frame vs 127.47μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.03x      100 total subs          100 single stream subscriptions     128.34μs/frame vs 124.88μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.06x      200 total subs          200 single stream subscriptions     137.71μs/frame vs 130.06μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.14x      200 total subs          200 single stream subscriptions     143.15μs/frame vs 125.15μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.22x      500 total subs          500 single stream subscriptions     171.45μs/frame vs 140.18μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.16x      500 total subs          500 single stream subscriptions     151.27μs/frame vs 130.28μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.41x      750 total subs          750 single stream subscriptions     214.34μs/frame vs 151.94μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.30x      750 total subs          750 single stream subscriptions     171.82μs/frame vs 132.63μs/frame          
+Stream.watch(context) vs StreamBuilder                          1.86x      1000 total subs         1000 single stream subscriptions    315.06μs/frame vs 169.10μs/frame          
+ValueListenable.watch(context) vs ValueListenableBuilder        1.46x      1000 total subs         1000 single stream subscriptions    196.99μs/frame vs 135.27μs/frame
+```
+
+`example` contains both a [live benchmark](example/lib/benchmark_screen.dart) and an [automated one](example/test/stream_watch_benchmark.dart), so feel free to run them and compare the results on your device.
+Don't forget to run them in `--profile` mode.
+
+![benchmark.gid](doc/benchmark.gif)

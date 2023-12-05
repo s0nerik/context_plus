@@ -13,17 +13,16 @@ abstract class InheritedContextWatch<TObservable, TSubscription>
   });
 
   @override
-  ObservableNotifierInheritedElement<TObservable, TSubscription>
-      createElement();
+  InheritedContextWatchElement<TObservable, TSubscription> createElement();
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }
 
 @internal
-abstract class ObservableNotifierInheritedElement<TObservable, TSubscription>
+abstract class InheritedContextWatchElement<TObservable, TSubscription>
     extends InheritedElement {
-  ObservableNotifierInheritedElement(super.widget);
+  InheritedContextWatchElement(super.widget);
 
   final _contextLastFrame = HashMap<BuildContext, Duration>();
   final _contextObservableLastFrame =

@@ -16,13 +16,13 @@ class InheritedStreamContextWatch
   });
 
   @override
-  ObservableNotifierInheritedElement<Stream, StreamSubscription>
-      createElement() => InheritedStreamContextWatchElement(this);
+  InheritedContextWatchElement<Stream, StreamSubscription> createElement() =>
+      InheritedStreamContextWatchElement(this);
 }
 
 @internal
 class InheritedStreamContextWatchElement
-    extends ObservableNotifierInheritedElement<Stream, StreamSubscription> {
+    extends InheritedContextWatchElement<Stream, StreamSubscription> {
   InheritedStreamContextWatchElement(super.widget);
 
   final _contextStreamSubscriptions =

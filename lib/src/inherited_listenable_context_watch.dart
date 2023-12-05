@@ -15,13 +15,13 @@ class InheritedListenableContextWatch
   });
 
   @override
-  ObservableNotifierInheritedElement<Listenable, VoidCallback>
-      createElement() => InheritedListenableContextWatchElement(this);
+  InheritedContextWatchElement<Listenable, VoidCallback> createElement() =>
+      InheritedListenableContextWatchElement(this);
 }
 
 @internal
 class InheritedListenableContextWatchElement
-    extends ObservableNotifierInheritedElement<Listenable, VoidCallback> {
+    extends InheritedContextWatchElement<Listenable, VoidCallback> {
   InheritedListenableContextWatchElement(super.widget);
 
   final _contextListenableListeners =

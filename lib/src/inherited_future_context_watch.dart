@@ -23,13 +23,13 @@ class InheritedFutureContextWatch
   });
 
   @override
-  ObservableNotifierInheritedElement<Future, FutureSubscription>
-      createElement() => InheritedFutureContextWatchElement(this);
+  InheritedContextWatchElement<Future, FutureSubscription> createElement() =>
+      InheritedFutureContextWatchElement(this);
 }
 
 @internal
 class InheritedFutureContextWatchElement
-    extends ObservableNotifierInheritedElement<Future, FutureSubscription> {
+    extends InheritedContextWatchElement<Future, FutureSubscription> {
   InheritedFutureContextWatchElement(super.widget);
 
   final _contextFutureSubscriptions =

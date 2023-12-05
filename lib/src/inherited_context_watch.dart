@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 @internal
-abstract class InheritedContextWatch<TObservable extends Object,
-    TSubscription extends Object> extends InheritedWidget {
+abstract class InheritedContextWatch<TObservable, TSubscription>
+    extends InheritedWidget {
   const InheritedContextWatch({
     super.key,
     required super.child,
@@ -21,8 +21,8 @@ abstract class InheritedContextWatch<TObservable extends Object,
 }
 
 @internal
-abstract class ObservableNotifierInheritedElement<TObservable extends Object,
-    TSubscription extends Object> extends InheritedElement {
+abstract class ObservableNotifierInheritedElement<TObservable, TSubscription>
+    extends InheritedElement {
   ObservableNotifierInheritedElement(super.widget);
 
   final _contextLastFrame = HashMap<BuildContext, Duration>();

@@ -4,7 +4,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-@internal
 abstract class InheritedContextWatch<TObservable, TSubscription>
     extends InheritedWidget {
   const InheritedContextWatch({
@@ -19,7 +18,6 @@ abstract class InheritedContextWatch<TObservable, TSubscription>
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }
 
-@internal
 abstract class InheritedContextWatchElement<TObservable, TSubscription>
     extends InheritedElement {
   InheritedContextWatchElement(super.widget);
@@ -105,6 +103,7 @@ abstract class InheritedContextWatchElement<TObservable, TSubscription>
     _contextObservableLastFrame.remove(context);
   }
 
+  @nonVirtual
   void updateContextLastFrame(BuildContext context) {
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method
@@ -113,6 +112,7 @@ abstract class InheritedContextWatchElement<TObservable, TSubscription>
     _contextLastFrame[context] = _currentFrame;
   }
 
+  @nonVirtual
   TSubscription? subscribe<T>(BuildContext context, TObservable observable) {
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method

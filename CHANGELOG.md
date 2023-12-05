@@ -1,3 +1,9 @@
+## 2.0.0-dev.1
+
+- `Stream.watch()` and `Future.watch()` now return `AsyncSnapshot`, just like `StreamBuilder` and `FutureBuilder` do
+- Performance improvements
+- Added example app with benchmarks
+
 ## 1.0.2
 
 - Updated flutter_lints

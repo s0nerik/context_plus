@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:context_watch/context_watch.dart';
+import 'package:example/benchmark/benchmark_listener_type.dart';
 import 'package:example/benchmark_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

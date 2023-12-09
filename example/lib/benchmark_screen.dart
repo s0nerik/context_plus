@@ -1,21 +1,19 @@
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
+import 'package:example/benchmark/single_observable_observer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'benchmark/benchmark_listener_type.dart';
+import 'benchmark/single_observable_publisher.dart';
+
 enum BenchmarkDataType {
   valueListenable,
   stream,
   valueStream,
-}
-
-enum BenchmarkListenerType {
-  contextWatch,
-  streamBuilder,
-  valueListenableBuilder,
 }
 
 class BenchmarkScreen extends StatefulWidget {
@@ -79,7 +77,7 @@ class BenchmarkScreen extends StatefulWidget {
 }
 
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
-  var _gridKey = UniqueKey();
+  var _bodyKey = UniqueKey();
 
   late var _singleObservableSubscriptionsCount =
       widget.singleObservableSubscriptionsCount;
@@ -92,33 +90,23 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
 
   late var _visualize = widget.visualize;
 
-  final _streamController = StreamController<int>.broadcast();
-  late final Stream<int> _stream = _streamController.stream;
-  final _valueNotifier = ValueNotifier<int>(0);
+  late SingleObservablePublisher _singleObservablePublisher;
 
   @override
   void initState() {
     super.initState();
-    _publishToStreamWhileMounted();
-  }
-
-  Future<void> _publishToStreamWhileMounted() async {
-    var index = 0;
-    while (mounted) {
-      await Future.delayed(const Duration(milliseconds: 1));
-      if (!mounted) {
-        break;
-      }
-      _streamController.add(index);
-      _valueNotifier.value = index;
-      index++;
-    }
+    _singleObservablePublisher = switch (_dataType) {
+      BenchmarkDataType.stream ||
+      BenchmarkDataType.valueStream =>
+        SingleStreamPublisher(),
+      BenchmarkDataType.valueListenable => SingleValueNotifierPublisher(),
+    };
+    _singleObservablePublisher.publishWhileMounted(context);
   }
 
   @override
   void dispose() {
-    _streamController.close();
-    _valueNotifier.dispose();
+    _singleObservablePublisher.dispose();
     super.dispose();
   }
 
@@ -127,6 +115,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Benchmark')),
       body: Container(
+        key: _bodyKey,
         padding: EdgeInsets.only(
           left: 16,
           top: 16,
@@ -157,7 +146,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             ),
             if (_runBenchmark)
               for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
-                _buildSingleObservableObserver(i),
+                SingleObservableObserver(
+                  key: ValueKey(i),
+                  publisher: _singleObservablePublisher,
+                  listenerType: _listenerType,
+                ),
             const SizedBox(height: 32),
             if (widget.showPerformanceOverlay) _buildPerformanceOverlay(),
           ],
@@ -184,7 +177,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         }
 
         return Wrap(
-          key: _gridKey,
           children: [
             for (var i = 0; i < _tilesCount; i++) _buildTile(i, tileSize),
           ],
@@ -204,7 +196,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _singleObservableSubscriptionsCount,
           onChanged: (value) => setState(() {
             _singleObservableSubscriptionsCount = value!;
-            _gridKey = UniqueKey();
+            _bodyKey = UniqueKey();
           }),
           items: [
             for (final singleObservableSubscriptionsCount
@@ -230,7 +222,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _tilesCount,
           onChanged: (value) => setState(() {
             _tilesCount = value!;
-            _gridKey = UniqueKey();
+            _bodyKey = UniqueKey();
           }),
           items: [
             for (final tilesCount in widget.tileCountOptions)
@@ -255,7 +247,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _observablesPerTile,
           onChanged: (value) => setState(() {
             _observablesPerTile = value!;
-            _gridKey = UniqueKey();
+            _bodyKey = UniqueKey();
           }),
           items: [
             for (final observablesPerTile in widget.observablesPerTileOptions)
@@ -280,7 +272,17 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _dataType,
           onChanged: (value) => setState(() {
             _dataType = value!;
-            _gridKey = UniqueKey();
+            _singleObservablePublisher.dispose();
+            switch (value) {
+              case BenchmarkDataType.valueListenable:
+                _singleObservablePublisher = SingleValueNotifierPublisher();
+              case BenchmarkDataType.stream:
+                _singleObservablePublisher = SingleStreamPublisher();
+              case BenchmarkDataType.valueStream:
+                _singleObservablePublisher = SingleStreamPublisher();
+            }
+            _singleObservablePublisher.publishWhileMounted(context);
+            _bodyKey = UniqueKey();
           }),
           items: const [
             DropdownMenuItem(
@@ -312,7 +314,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           value: _listenerType,
           onChanged: (value) => setState(() {
             _listenerType = value!;
-            _gridKey = UniqueKey();
+            _bodyKey = UniqueKey();
           }),
           items: [
             if (_dataType == BenchmarkDataType.stream ||
@@ -369,7 +371,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           ),
           onPressed: !_runBenchmark
               ? () => setState(() {
-                    _gridKey = UniqueKey();
+                    _bodyKey = UniqueKey();
                     _runBenchmark = true;
                   })
               : null,
@@ -382,7 +384,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           ),
           onPressed: _runBenchmark
               ? () => setState(() {
-                    _gridKey = UniqueKey();
+                    _bodyKey = UniqueKey();
                     _runBenchmark = false;
                   })
               : null,
@@ -395,7 +397,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               value: _visualize,
               onChanged: (value) => setState(() {
                 _visualize = value!;
-                _gridKey = UniqueKey();
+                _bodyKey = UniqueKey();
               }),
             ),
             const Text('Visualize'),
@@ -420,37 +422,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         observableNotifyInterval: widget.tileObservableNotifyInterval,
       ),
     );
-  }
-
-  Widget _buildSingleObservableObserver(int index) {
-    return switch (_listenerType) {
-      BenchmarkListenerType.contextWatch => switch (_dataType) {
-          BenchmarkDataType.stream || BenchmarkDataType.valueStream => Builder(
-              key: ValueKey('stream_$index'),
-              builder: (context) {
-                _stream.watch(context);
-                return const SizedBox.shrink();
-              },
-            ),
-          BenchmarkDataType.valueListenable => Builder(
-              key: ValueKey('valueListenable_$index'),
-              builder: (context) {
-                _valueNotifier.watch(context);
-                return const SizedBox.shrink();
-              },
-            ),
-        },
-      BenchmarkListenerType.valueListenableBuilder => ValueListenableBuilder(
-          key: ValueKey('valueListenableBuilder_$index'),
-          valueListenable: _valueNotifier,
-          builder: (context, value, child) => const SizedBox.shrink(),
-        ),
-      BenchmarkListenerType.streamBuilder => StreamBuilder(
-          key: ValueKey('streamBuilder_$index'),
-          stream: _stream,
-          builder: (context, _) => const SizedBox.shrink(),
-        ),
-    };
   }
 
   Widget _buildPerformanceOverlay() {

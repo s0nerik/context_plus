@@ -44,18 +44,16 @@ packages:
   context_watch:
     dependency: "direct main"
     description:
-      name: context_watch
-      sha256: ec9c12354dcbf6e2d4ee5a6d591993b36cdd9f82e89d94191412420196db3f5b
-      url: "https://pub.dev"
-    source: hosted
+      path: "../packages/context_watch"
+      relative: true
+    source: path
     version: "2.0.0-dev.4"
   context_watch_base:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: context_watch_base
-      sha256: "54bd16f69c045d6fcf211b5e27feafc0c3ea448fff450b3e8c48d101e076945f"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../packages/context_watch_base"
+      relative: true
+    source: path
     version: "1.0.0-dev.1"
   context_watch_signals:
     dependency: "direct main"
@@ -240,5 +238,5 @@ packages:
     source: hosted
     version: "0.4.0"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
-  flutter: ">=3.17.0-1.0.pre.38"
+  dart: ">=3.2.0-194.0.dev <4.0.0"
+  flutter: ">=1.17.0"

@@ -44,10 +44,9 @@ packages:
   context_watch_base:
     dependency: "direct main"
     description:
-      name: context_watch_base
-      sha256: "54bd16f69c045d6fcf211b5e27feafc0c3ea448fff450b3e8c48d101e076945f"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../context_watch_base"
+      relative: true
+    source: path
     version: "1.0.0-dev.1"
   fake_async:
     dependency: transitive
@@ -217,5 +216,5 @@ packages:
     source: hosted
     version: "0.4.0"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
+  dart: ">=3.2.0-194.0.dev <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"

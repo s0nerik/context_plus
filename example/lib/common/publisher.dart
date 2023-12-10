@@ -22,29 +22,29 @@ sealed class Publisher {
     required Duration interval,
   }) {
     switch (observableType) {
-      case FutureObservableType.future:
-      case FutureObservableType.synchronousFuture:
+      case ObservableType.future:
+      case ObservableType.synchronousFuture:
         throw UnimplementedError();
-      case StreamObservableType.stream:
+      case ObservableType.stream:
         return StreamPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
         );
-      case StreamObservableType.valueStream:
+      case ObservableType.valueStream:
         return ValueStreamPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
         );
-      case ListenableObservableType.listenable:
-      case ListenableObservableType.valueListenable:
+      case ObservableType.listenable:
+      case ObservableType.valueListenable:
         return ValueNotifierPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
         );
-      case OtherObservableType.signal:
+      case ObservableType.signal:
         return SignalPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,

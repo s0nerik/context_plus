@@ -128,7 +128,9 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                 _buildListenerSelector(),
               ],
             ),
+            const SizedBox(height: 8),
             _buildTotalSubscriptionsInfo(),
+            const SizedBox(height: 8),
             _buildControlButtons(),
             const SizedBox(height: 16),
             Expanded(
@@ -286,8 +288,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   }
 
   Widget _buildListenerSelector() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
       children: [
         const Text('Listen using:'),
         const SizedBox(width: 8),

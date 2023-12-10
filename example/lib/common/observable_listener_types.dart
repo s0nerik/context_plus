@@ -70,8 +70,8 @@ enum ListenerType {
       ListenerType.streamBuilder => 'StreamBuilder',
       ListenerType.listenableBuilder => 'ListenableBuilder',
       ListenerType.valueListenableBuilder => 'ValueListenableBuilder',
-      ListenerType.signalsWatch => 'Watch',
-      ListenerType.signalsWatchExt => 'Signal.watch(context) (from signals)',
+      ListenerType.signalsWatch => 'signals: Watch',
+      ListenerType.signalsWatchExt => 'signals: Signal.watch(context)',
     };
   }
 }

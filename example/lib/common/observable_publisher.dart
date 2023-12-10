@@ -6,7 +6,31 @@ import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:signals/signals.dart' as sgnls;
 
+import 'observable_listener_types.dart';
+
 sealed class ObservablePublisher {
+  ObservablePublisher._();
+
+  factory ObservablePublisher({
+    required ObservableType observableType,
+    required int observableCount,
+  }) {
+    switch (observableType) {
+      case FutureObservableType.future:
+      case FutureObservableType.synchronousFuture:
+        throw UnimplementedError();
+      case StreamObservableType.stream:
+        return StreamPublisher(streamCount: observableCount);
+      case StreamObservableType.valueStream:
+        return ValueStreamPublisher(streamCount: observableCount);
+      case ListenableObservableType.listenable:
+      case ListenableObservableType.valueListenable:
+        return ValueNotifierPublisher(notifierCount: observableCount);
+      case OtherObservableType.signal:
+        return SignalPublisher(signalCount: observableCount);
+    }
+  }
+
   bool _isDisposed = false;
 
   @protected
@@ -32,7 +56,7 @@ sealed class ObservablePublisher {
 }
 
 final class StreamPublisher extends ObservablePublisher {
-  StreamPublisher({required int streamCount}) {
+  StreamPublisher({required int streamCount}) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < streamCount; i++) {
       final streamController = StreamController<int>.broadcast();
@@ -62,7 +86,7 @@ final class StreamPublisher extends ObservablePublisher {
 }
 
 final class ValueStreamPublisher extends ObservablePublisher {
-  ValueStreamPublisher({required int streamCount}) {
+  ValueStreamPublisher({required int streamCount}) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < streamCount; i++) {
       final subject = BehaviorSubject.seeded(0);
@@ -92,7 +116,7 @@ final class ValueStreamPublisher extends ObservablePublisher {
 }
 
 final class ValueNotifierPublisher extends ObservablePublisher {
-  ValueNotifierPublisher({required int notifierCount}) {
+  ValueNotifierPublisher({required int notifierCount}) : super._() {
     final valueListenables = <ValueListenable<int>>[];
     for (var i = 0; i < notifierCount; i++) {
       final valueNotifier = ValueNotifier<int>(0);
@@ -122,7 +146,7 @@ final class ValueNotifierPublisher extends ObservablePublisher {
 }
 
 final class SignalPublisher extends ObservablePublisher {
-  SignalPublisher({required int signalCount}) {
+  SignalPublisher({required int signalCount}) : super._() {
     final signals = <sgnls.Signal<int>>[];
     for (var i = 0; i < signalCount; i++) {
       final signal = sgnls.signal(0);

@@ -7,7 +7,7 @@ sealed class ListenerType {
 }
 
 // region Future
-enum FutureDataType implements ObservableType {
+enum FutureObservableType implements ObservableType {
   future,
   synchronousFuture;
 
@@ -25,7 +25,7 @@ enum FutureListenerType implements ListenerType {
 // endregion
 
 // region Stream
-enum StreamDataType implements ObservableType {
+enum StreamObservableType implements ObservableType {
   stream,
   valueStream;
 
@@ -43,14 +43,14 @@ enum StreamListenerType implements ListenerType {
 // endregion
 
 // region Listenable
-enum ListenableDataType implements ObservableType {
+enum ListenableObservableType implements ObservableType {
   listenable,
   valueListenable;
 
   @override
   List<ListenerType> get listenerTypes => switch (this) {
-        ListenableDataType.listenable => ListenableListenerType.values,
-        ListenableDataType.valueListenable =>
+        ListenableObservableType.listenable => ListenableListenerType.values,
+        ListenableObservableType.valueListenable =>
           ValueListenableListenerType.values,
       } as List<ListenerType>;
 }
@@ -74,12 +74,12 @@ enum ValueListenableListenerType implements ListenerType {
 // endregion
 
 // region Other
-enum OtherDataType implements ObservableType {
+enum OtherObservableType implements ObservableType {
   signal;
 
   @override
   List<ListenerType> get listenerTypes => switch (this) {
-        OtherDataType.signal => SignalListenerType.values,
+        OtherObservableType.signal => SignalListenerType.values,
       } as List<ListenerType>;
 }
 

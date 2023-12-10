@@ -1,6 +1,6 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
-import 'package:example/common/observable_publishers.dart';
+import 'package:example/common/observable_publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:signals/signals_flutter.dart' as signals;

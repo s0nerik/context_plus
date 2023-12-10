@@ -2,22 +2,22 @@
 
 import 'package:context_watch/context_watch.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
-import 'package:example/common/observable_publisher.dart';
+import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart' as sgnls;
 
 import 'observable_listener_types.dart';
 
-class ObservableObserver extends StatelessWidget {
-  const ObservableObserver({
+class Observer extends StatelessWidget {
+  const Observer({
     super.key,
     required this.publisher,
     required this.listenerType,
     required this.visualize,
   });
 
-  final ObservablePublisher publisher;
+  final Publisher publisher;
   final ListenerType listenerType;
   final bool visualize;
 

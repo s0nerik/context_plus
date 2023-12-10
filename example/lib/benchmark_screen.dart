@@ -36,8 +36,8 @@ class BenchmarkScreen extends StatefulWidget {
     },
     this.observablesPerTile = 2,
     this.observablesPerTileOptions = const {0, 1, 2, 3, 5, 10, 20, 50, 100},
-    this.observableType = StreamObservableType.valueStream,
-    this.listenerType = StreamListenerType.contextWatch,
+    this.observableType = ObservableType.valueStream,
+    this.listenerType = ListenerType.contextWatch,
     this.runOnStart = true,
     this.showPerformanceOverlay = true,
     this.visualize = true,
@@ -302,7 +302,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             for (final listenerType in _observableType.listenerTypes)
               DropdownMenuItem(
                 value: listenerType,
-                child: Text(listenerType.displayName),
+                child: Text(listenerType.displayName(_observableType)),
               ),
           ],
         ),
@@ -420,6 +420,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PublisherProvider(
+      key: ValueKey(index),
       initialDelay:
           visualize ? Duration(milliseconds: 4 * index) : Duration.zero,
       observableNotifyInterval: observableNotifyInterval,

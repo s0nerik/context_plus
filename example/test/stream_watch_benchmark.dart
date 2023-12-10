@@ -3,22 +3,22 @@
 import 'dart:io';
 
 import 'package:context_watch/context_watch.dart';
-import 'package:example/benchmark/benchmark_listener_type.dart';
 import 'package:example/benchmark_screen.dart';
+import 'package:example/common/observable_listener_types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Benchmark {
   _Benchmark({
-    required BenchmarkDataType dataType,
-    required BenchmarkListenerType listenerType,
+    required ObservableType dataType,
+    required ListenerType listenerType,
     int singleObservableSubscriptionsCount = 500,
     int tilesCount = 500,
     int observablesPerTile = 2,
     this.minimumMillis = 2000, // ignore: unused_element
     this.warmupMillis = 100, // ignore: unused_element
   }) : benchmark = BenchmarkScreen(
-          dataType: dataType,
+          observableType: dataType,
           listenerType: listenerType,
           singleObservableSubscriptionsCount:
               singleObservableSubscriptionsCount,
@@ -93,26 +93,26 @@ main() async {
   final tileBenchmarks = [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
       .expand((tilesCount) => [
             _Benchmark(
-              dataType: BenchmarkDataType.stream,
-              listenerType: BenchmarkListenerType.contextWatch,
+              dataType: StreamObservableType.stream,
+              listenerType: StreamListenerType.contextWatch,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.stream,
-              listenerType: BenchmarkListenerType.streamBuilder,
+              dataType: StreamObservableType.stream,
+              listenerType: StreamListenerType.streamBuilder,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.valueListenable,
-              listenerType: BenchmarkListenerType.contextWatch,
+              dataType: ListenableObservableType.valueListenable,
+              listenerType: ListenableListenerType.contextWatch,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.valueListenable,
-              listenerType: BenchmarkListenerType.valueListenableBuilder,
+              dataType: ListenableObservableType.valueListenable,
+              listenerType: ValueListenableListenerType.valueListenableBuilder,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
@@ -121,29 +121,29 @@ main() async {
   final singleObservableBenchmarks = [1, 10, 100, 200, 500, 750, 1000]
       .expand((singleObservableSubscriptionsCount) => [
             _Benchmark(
-              dataType: BenchmarkDataType.stream,
-              listenerType: BenchmarkListenerType.contextWatch,
+              dataType: StreamObservableType.stream,
+              listenerType: StreamListenerType.contextWatch,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.stream,
-              listenerType: BenchmarkListenerType.streamBuilder,
+              dataType: StreamObservableType.stream,
+              listenerType: StreamListenerType.streamBuilder,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.valueListenable,
-              listenerType: BenchmarkListenerType.contextWatch,
+              dataType: ListenableObservableType.valueListenable,
+              listenerType: ListenableListenerType.contextWatch,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: BenchmarkDataType.valueListenable,
-              listenerType: BenchmarkListenerType.valueListenableBuilder,
+              dataType: ListenableObservableType.valueListenable,
+              listenerType: ValueListenableListenerType.valueListenableBuilder,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
@@ -201,16 +201,9 @@ main() async {
     final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
     final otherTime = otherBenchmark.resultMicroseconds;
 
-    final contextWatchName = switch (contextWatchBenchmark.benchmark.dataType) {
-      BenchmarkDataType.valueListenable => 'ValueListenable.watch(context)',
-      BenchmarkDataType.stream => 'Stream.watch(context)',
-      BenchmarkDataType.valueStream => 'Stream.watch(context)',
-    };
-    final otherName = switch (otherBenchmark.benchmark.dataType) {
-      BenchmarkDataType.valueListenable => 'ValueListenableBuilder',
-      BenchmarkDataType.stream => 'StreamBuilder',
-      BenchmarkDataType.valueStream => 'StreamBuilder',
-    };
+    final contextWatchName =
+        contextWatchBenchmark.benchmark.observableType.displayName;
+    final otherName = otherBenchmark.benchmark.observableType.displayName;
 
     final ratio = contextWatchTime / otherTime;
     final ratioStr = '${ratio.toStringAsFixed(2)}x';

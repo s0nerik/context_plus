@@ -1,9 +1,11 @@
 sealed class ObservableType {
   List<ListenerType> get listenerTypes;
+  String get displayName;
 }
 
 sealed class ListenerType {
   bool get isContextWatch;
+  String get displayName;
 }
 
 // region Future
@@ -13,6 +15,12 @@ enum FutureObservableType implements ObservableType {
 
   @override
   List<ListenerType> get listenerTypes => FutureListenerType.values;
+
+  @override
+  String get displayName => switch (this) {
+        FutureObservableType.future => 'Future',
+        FutureObservableType.synchronousFuture => 'SynchronousFuture',
+      };
 }
 
 enum FutureListenerType implements ListenerType {
@@ -21,6 +29,12 @@ enum FutureListenerType implements ListenerType {
 
   @override
   bool get isContextWatch => this == FutureListenerType.contextWatch;
+
+  @override
+  String get displayName => switch (this) {
+        FutureListenerType.contextWatch => 'Future.watch(context)',
+        FutureListenerType.futureBuilder => 'FutureBuilder',
+      };
 }
 // endregion
 
@@ -31,6 +45,12 @@ enum StreamObservableType implements ObservableType {
 
   @override
   List<ListenerType> get listenerTypes => StreamListenerType.values;
+
+  @override
+  String get displayName => switch (this) {
+        StreamObservableType.stream => 'Stream',
+        StreamObservableType.valueStream => 'ValueStream',
+      };
 }
 
 enum StreamListenerType implements ListenerType {
@@ -39,6 +59,12 @@ enum StreamListenerType implements ListenerType {
 
   @override
   bool get isContextWatch => this == StreamListenerType.contextWatch;
+
+  @override
+  String get displayName => switch (this) {
+        StreamListenerType.contextWatch => 'Stream.watch(context)',
+        StreamListenerType.streamBuilder => 'StreamBuilder',
+      };
 }
 // endregion
 
@@ -53,6 +79,12 @@ enum ListenableObservableType implements ObservableType {
         ListenableObservableType.valueListenable =>
           ValueListenableListenerType.values,
       } as List<ListenerType>;
+
+  @override
+  String get displayName => switch (this) {
+        ListenableObservableType.listenable => 'Listenable',
+        ListenableObservableType.valueListenable => 'ValueListenable',
+      };
 }
 
 enum ListenableListenerType implements ListenerType {
@@ -61,6 +93,12 @@ enum ListenableListenerType implements ListenerType {
 
   @override
   bool get isContextWatch => this == ListenableListenerType.contextWatch;
+
+  @override
+  String get displayName => switch (this) {
+        ListenableListenerType.contextWatch => 'Listenable.watch(context)',
+        ListenableListenerType.listenableBuilder => 'ListenableBuilder',
+      };
 }
 
 enum ValueListenableListenerType implements ListenerType {
@@ -70,6 +108,15 @@ enum ValueListenableListenerType implements ListenerType {
 
   @override
   bool get isContextWatch => this == ValueListenableListenerType.contextWatch;
+
+  @override
+  String get displayName => switch (this) {
+        ValueListenableListenerType.contextWatch =>
+          'ValueListenable.watch(context)',
+        ValueListenableListenerType.listenableBuilder => 'ListenableBuilder',
+        ValueListenableListenerType.valueListenableBuilder =>
+          'ValueListenableBuilder',
+      };
 }
 // endregion
 
@@ -81,6 +128,11 @@ enum OtherObservableType implements ObservableType {
   List<ListenerType> get listenerTypes => switch (this) {
         OtherObservableType.signal => SignalListenerType.values,
       } as List<ListenerType>;
+
+  @override
+  String get displayName => switch (this) {
+        OtherObservableType.signal => 'Signal',
+      };
 }
 
 enum SignalListenerType implements ListenerType {
@@ -90,6 +142,15 @@ enum SignalListenerType implements ListenerType {
 
   @override
   bool get isContextWatch => this == SignalListenerType.contextWatch;
+
+  @override
+  String get displayName => switch (this) {
+        SignalListenerType.contextWatch =>
+          'Signal.watch(context) (from context_watch)',
+        SignalListenerType.signalsWatchExt =>
+          'Signal.watch(context) (from signals)',
+        SignalListenerType.signalsWatch => 'signals.watch',
+      };
 }
 
 // endregion

@@ -93,26 +93,26 @@ main() async {
   final tileBenchmarks = [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
       .expand((tilesCount) => [
             _Benchmark(
-              dataType: StreamObservableType.stream,
-              listenerType: StreamListenerType.contextWatch,
+              dataType: ObservableType.stream,
+              listenerType: ListenerType.contextWatch,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: StreamObservableType.stream,
-              listenerType: StreamListenerType.streamBuilder,
+              dataType: ObservableType.stream,
+              listenerType: ListenerType.streamBuilder,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: ListenableObservableType.valueListenable,
-              listenerType: ValueListenableListenerType.contextWatch,
+              dataType: ObservableType.valueListenable,
+              listenerType: ListenerType.contextWatch,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
             _Benchmark(
-              dataType: ListenableObservableType.valueListenable,
-              listenerType: ValueListenableListenerType.valueListenableBuilder,
+              dataType: ObservableType.valueListenable,
+              listenerType: ListenerType.valueListenableBuilder,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
@@ -121,29 +121,29 @@ main() async {
   final singleObservableBenchmarks = [1, 10, 100, 200, 500, 750, 1000]
       .expand((singleObservableSubscriptionsCount) => [
             _Benchmark(
-              dataType: StreamObservableType.stream,
-              listenerType: StreamListenerType.contextWatch,
+              dataType: ObservableType.stream,
+              listenerType: ListenerType.contextWatch,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: StreamObservableType.stream,
-              listenerType: StreamListenerType.streamBuilder,
+              dataType: ObservableType.stream,
+              listenerType: ListenerType.streamBuilder,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: ListenableObservableType.valueListenable,
-              listenerType: ValueListenableListenerType.contextWatch,
+              dataType: ObservableType.valueListenable,
+              listenerType: ListenerType.contextWatch,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
             ),
             _Benchmark(
-              dataType: ListenableObservableType.valueListenable,
-              listenerType: ValueListenableListenerType.valueListenableBuilder,
+              dataType: ObservableType.valueListenable,
+              listenerType: ListenerType.valueListenableBuilder,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,
@@ -174,14 +174,15 @@ main() async {
     subscriptionsDescription: 'Subscriptions description',
     frameTimes: 'Frame times',
   );
-  for (final contextWatchBenchmark in comparisons.keys) {
-    final otherBenchmark = comparisons[contextWatchBenchmark]!;
+  for (final contextWatchResult in comparisons.keys) {
+    final benchmark = contextWatchResult.benchmark;
+    final otherResult = comparisons[contextWatchResult]!;
+    final otherBenchmark = otherResult.benchmark;
 
-    final tilesCount = contextWatchBenchmark.benchmark.tilesCount;
-    final observablesPerTile =
-        contextWatchBenchmark.benchmark.observablesPerTile;
+    final tilesCount = benchmark.tilesCount;
+    final observablesPerTile = benchmark.observablesPerTile;
     final singleObservableSubscriptionsCount =
-        contextWatchBenchmark.benchmark.singleObservableSubscriptionsCount;
+        benchmark.singleObservableSubscriptionsCount;
     final totalSubscriptionsCount =
         tilesCount * observablesPerTile + singleObservableSubscriptionsCount;
 
@@ -198,12 +199,13 @@ main() async {
     }
     final totalSubsSummary = '$totalSubscriptionsCount total subs';
 
-    final contextWatchTime = contextWatchBenchmark.resultMicroseconds;
-    final otherTime = otherBenchmark.resultMicroseconds;
+    final contextWatchTime = contextWatchResult.resultMicroseconds;
+    final otherTime = otherResult.resultMicroseconds;
 
     final contextWatchName =
-        contextWatchBenchmark.benchmark.observableType.displayName;
-    final otherName = otherBenchmark.benchmark.observableType.displayName;
+        benchmark.listenerType.displayName(benchmark.observableType);
+    final otherName =
+        otherBenchmark.listenerType.displayName(otherBenchmark.observableType);
 
     final ratio = contextWatchTime / otherTime;
     final ratioStr = '${ratio.toStringAsFixed(2)}x';

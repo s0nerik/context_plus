@@ -19,6 +19,10 @@ class _Subscription implements ContextWatchSubscription {
 }
 
 class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
+  SignalContextWatcher._();
+
+  static final instance = SignalContextWatcher._();
+
   @override
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, ReadonlySignal<dynamic> observable) {

@@ -34,42 +34,50 @@ class Observer extends StatelessWidget {
   }
 
   Widget _buildStreamObserver(List<Stream<int>> streams) {
-    return switch (listenerType as StreamListenerType) {
-      StreamListenerType.contextWatch =>
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
         _ContextWatchStream(streams: streams, visualize: visualize),
-      StreamListenerType.streamBuilder =>
+      ListenerType.streamBuilder =>
         _StreamBuilder(streams: streams, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a Stream',
+        ),
     };
   }
 
   Widget _buildValueListenableObserver(
     List<ValueListenable<int>> valueListenables,
   ) {
-    return switch (listenerType as ValueListenableListenerType) {
-      ValueListenableListenerType.contextWatch => _ContextWatchValueListenable(
+    return switch (listenerType) {
+      ListenerType.contextWatch => _ContextWatchValueListenable(
           valueListenables: valueListenables,
           visualize: visualize,
         ),
-      ValueListenableListenerType.listenableBuilder => _ValueListenableBuilder(
+      ListenerType.listenableBuilder => _ValueListenableBuilder(
           valueListenables: valueListenables,
           visualize: visualize,
         ),
-      ValueListenableListenerType.valueListenableBuilder =>
-        _ValueListenableBuilder(
+      ListenerType.valueListenableBuilder => _ValueListenableBuilder(
           valueListenables: valueListenables,
           visualize: visualize,
+        ),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a ValueListenable',
         ),
     };
   }
 
   Widget _buildSignalObserver(List<sgnls.ReadonlySignal<int>> signals) {
-    return switch (listenerType as SignalListenerType) {
-      SignalListenerType.contextWatch =>
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
         _ContextWatchSignal(signals: signals, visualize: visualize),
-      SignalListenerType.signalsWatch =>
+      ListenerType.signalsWatch =>
         _SignalsWatch(signals: signals, visualize: visualize),
-      SignalListenerType.signalsWatchExt =>
+      ListenerType.signalsWatchExt =>
         _SignalsWatchExt(signals: signals, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a Signal',
+        ),
     };
   }
 }

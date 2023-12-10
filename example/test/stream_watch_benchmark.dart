@@ -106,7 +106,7 @@ main() async {
             ),
             _Benchmark(
               dataType: ListenableObservableType.valueListenable,
-              listenerType: ListenableListenerType.contextWatch,
+              listenerType: ValueListenableListenerType.contextWatch,
               singleObservableSubscriptionsCount: 0,
               tilesCount: tilesCount,
             ),
@@ -136,7 +136,7 @@ main() async {
             ),
             _Benchmark(
               dataType: ListenableObservableType.valueListenable,
-              listenerType: ListenableListenerType.contextWatch,
+              listenerType: ValueListenableListenerType.contextWatch,
               singleObservableSubscriptionsCount:
                   singleObservableSubscriptionsCount,
               tilesCount: 0,

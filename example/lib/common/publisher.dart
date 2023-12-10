@@ -49,10 +49,14 @@ sealed class Publisher {
     }
   }
 
-  @mustCallSuper
+  @nonVirtual
   void dispose() {
     _isDisposed = true;
+    _dispose();
   }
+
+  @protected
+  void _dispose();
 }
 
 final class StreamPublisher extends Publisher {
@@ -77,8 +81,7 @@ final class StreamPublisher extends Publisher {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void _dispose() {
     for (final controller in _streamControllers) {
       controller.close();
     }
@@ -107,8 +110,7 @@ final class ValueStreamPublisher extends Publisher {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void _dispose() {
     for (final subject in _subjects) {
       subject.close();
     }
@@ -137,8 +139,7 @@ final class ValueNotifierPublisher extends Publisher {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void _dispose() {
     for (final notifier in _valueNotifiers) {
       notifier.dispose();
     }
@@ -165,4 +166,7 @@ final class SignalPublisher extends Publisher {
       signal.value = index;
     }
   }
+
+  @override
+  void _dispose() {}
 }

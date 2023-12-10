@@ -9,27 +9,53 @@ import 'package:signals/signals.dart' as sgnls;
 import 'observable_listener_types.dart';
 
 sealed class Publisher {
-  Publisher._();
+  Publisher._({
+    required this.observableCount,
+    required this.initialDelay,
+    required this.interval,
+  });
 
   factory Publisher({
     required ObservableType observableType,
     required int observableCount,
+    required Duration initialDelay,
+    required Duration interval,
   }) {
     switch (observableType) {
       case FutureObservableType.future:
       case FutureObservableType.synchronousFuture:
         throw UnimplementedError();
       case StreamObservableType.stream:
-        return StreamPublisher(streamCount: observableCount);
+        return StreamPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
       case StreamObservableType.valueStream:
-        return ValueStreamPublisher(streamCount: observableCount);
+        return ValueStreamPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
       case ListenableObservableType.listenable:
       case ListenableObservableType.valueListenable:
-        return ValueNotifierPublisher(notifierCount: observableCount);
+        return ValueNotifierPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
       case OtherObservableType.signal:
-        return SignalPublisher(signalCount: observableCount);
+        return SignalPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
     }
   }
+
+  final int observableCount;
+  final Duration initialDelay;
+  final Duration interval;
 
   bool _isDisposed = false;
 
@@ -39,13 +65,13 @@ sealed class Publisher {
   @nonVirtual
   Future<void> publishWhileMounted(BuildContext context) async {
     var index = 0;
+    if (initialDelay > Duration.zero) {
+      await Future.delayed(initialDelay);
+    }
     while (context.mounted && !_isDisposed) {
-      await Future.delayed(const Duration(milliseconds: 1));
-      if (!context.mounted || _isDisposed) {
-        break;
-      }
       publish(index);
       index++;
+      await Future.delayed(interval);
     }
   }
 
@@ -60,9 +86,13 @@ sealed class Publisher {
 }
 
 final class StreamPublisher extends Publisher {
-  StreamPublisher({required int streamCount}) : super._() {
+  StreamPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
     final streams = <Stream<int>>[];
-    for (var i = 0; i < streamCount; i++) {
+    for (var i = 0; i < observableCount; i++) {
       final streamController = StreamController<int>.broadcast();
       _streamControllers.add(streamController);
       streams.add(streamController.stream);
@@ -89,9 +119,13 @@ final class StreamPublisher extends Publisher {
 }
 
 final class ValueStreamPublisher extends Publisher {
-  ValueStreamPublisher({required int streamCount}) : super._() {
+  ValueStreamPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
     final streams = <Stream<int>>[];
-    for (var i = 0; i < streamCount; i++) {
+    for (var i = 0; i < observableCount; i++) {
       final subject = BehaviorSubject.seeded(0);
       _subjects.add(subject);
       streams.add(subject.stream);
@@ -118,9 +152,13 @@ final class ValueStreamPublisher extends Publisher {
 }
 
 final class ValueNotifierPublisher extends Publisher {
-  ValueNotifierPublisher({required int notifierCount}) : super._() {
+  ValueNotifierPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
     final valueListenables = <ValueListenable<int>>[];
-    for (var i = 0; i < notifierCount; i++) {
+    for (var i = 0; i < observableCount; i++) {
       final valueNotifier = ValueNotifier<int>(0);
       _valueNotifiers.add(valueNotifier);
       valueListenables.add(valueNotifier);
@@ -147,9 +185,13 @@ final class ValueNotifierPublisher extends Publisher {
 }
 
 final class SignalPublisher extends Publisher {
-  SignalPublisher({required int signalCount}) : super._() {
+  SignalPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
     final signals = <sgnls.Signal<int>>[];
-    for (var i = 0; i < signalCount; i++) {
+    for (var i = 0; i < observableCount; i++) {
       final signal = sgnls.signal(0);
       _signals.add(signal);
       signals.add(signal);

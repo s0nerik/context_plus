@@ -37,7 +37,7 @@ class _Benchmark {
   late double resultMicroseconds;
 }
 
-// Run this with `flutter run --profile test/stream_watch_benchmark.dart`
+// Run this with `flutter run --profile test/benchmark.dart`
 main() async {
   assert(false); // fail in debug mode
 

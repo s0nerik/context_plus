@@ -8,10 +8,10 @@ import 'package:signals/signals.dart' as sgnls;
 
 import 'observable_listener_types.dart';
 
-sealed class ObservablePublisher {
-  ObservablePublisher._();
+sealed class Publisher {
+  Publisher._();
 
-  factory ObservablePublisher({
+  factory Publisher({
     required ObservableType observableType,
     required int observableCount,
   }) {
@@ -55,7 +55,7 @@ sealed class ObservablePublisher {
   }
 }
 
-final class StreamPublisher extends ObservablePublisher {
+final class StreamPublisher extends Publisher {
   StreamPublisher({required int streamCount}) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < streamCount; i++) {
@@ -85,7 +85,7 @@ final class StreamPublisher extends ObservablePublisher {
   }
 }
 
-final class ValueStreamPublisher extends ObservablePublisher {
+final class ValueStreamPublisher extends Publisher {
   ValueStreamPublisher({required int streamCount}) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < streamCount; i++) {
@@ -115,7 +115,7 @@ final class ValueStreamPublisher extends ObservablePublisher {
   }
 }
 
-final class ValueNotifierPublisher extends ObservablePublisher {
+final class ValueNotifierPublisher extends Publisher {
   ValueNotifierPublisher({required int notifierCount}) : super._() {
     final valueListenables = <ValueListenable<int>>[];
     for (var i = 0; i < notifierCount; i++) {
@@ -145,7 +145,7 @@ final class ValueNotifierPublisher extends ObservablePublisher {
   }
 }
 
-final class SignalPublisher extends ObservablePublisher {
+final class SignalPublisher extends Publisher {
   SignalPublisher({required int signalCount}) : super._() {
     final signals = <sgnls.Signal<int>>[];
     for (var i = 0; i < signalCount; i++) {

@@ -1,147 +1,84 @@
-sealed class ObservableType {
-  List<ListenerType> get listenerTypes;
-  String get displayName;
-
-  static List<ObservableType> get values => [
-        ...FutureObservableType.values,
-        ...StreamObservableType.values,
-        ...ListenableObservableType.values,
-        ...OtherObservableType.values,
-      ];
-}
-
-sealed class ListenerType {
-  String get displayName;
-}
-
-// region Future
-enum FutureObservableType implements ObservableType {
+enum ObservableType {
   future,
-  synchronousFuture;
-
-  @override
-  List<ListenerType> get listenerTypes => FutureListenerType.values;
-
-  @override
-  String get displayName => switch (this) {
-        FutureObservableType.future => 'Future',
-        FutureObservableType.synchronousFuture => 'SynchronousFuture',
-      };
-}
-
-enum FutureListenerType implements ListenerType {
-  contextWatch,
-  futureBuilder;
-
-  @override
-  String get displayName => switch (this) {
-        FutureListenerType.contextWatch => 'Future.watch(context)',
-        FutureListenerType.futureBuilder => 'FutureBuilder',
-      };
-}
-// endregion
-
-// region Stream
-enum StreamObservableType implements ObservableType {
+  synchronousFuture,
   stream,
-  valueStream;
-
-  @override
-  List<ListenerType> get listenerTypes => StreamListenerType.values;
-
-  @override
-  String get displayName => switch (this) {
-        StreamObservableType.stream => 'Stream',
-        StreamObservableType.valueStream => 'ValueStream',
-      };
-}
-
-enum StreamListenerType implements ListenerType {
-  contextWatch,
-  streamBuilder;
-
-  @override
-  String get displayName => switch (this) {
-        StreamListenerType.contextWatch => 'Stream.watch(context)',
-        StreamListenerType.streamBuilder => 'StreamBuilder',
-      };
-}
-// endregion
-
-// region Listenable
-enum ListenableObservableType implements ObservableType {
+  valueStream,
   listenable,
-  valueListenable;
-
-  @override
-  List<ListenerType> get listenerTypes => switch (this) {
-        ListenableObservableType.listenable => ListenableListenerType.values,
-        ListenableObservableType.valueListenable =>
-          ValueListenableListenerType.values,
-      } as List<ListenerType>;
-
-  @override
-  String get displayName => switch (this) {
-        ListenableObservableType.listenable => 'Listenable',
-        ListenableObservableType.valueListenable => 'ValueListenable',
-      };
-}
-
-enum ListenableListenerType implements ListenerType {
-  contextWatch,
-  listenableBuilder;
-
-  @override
-  String get displayName => switch (this) {
-        ListenableListenerType.contextWatch => 'Listenable.watch(context)',
-        ListenableListenerType.listenableBuilder => 'ListenableBuilder',
-      };
-}
-
-enum ValueListenableListenerType implements ListenerType {
-  contextWatch,
-  listenableBuilder,
-  valueListenableBuilder;
-
-  @override
-  String get displayName => switch (this) {
-        ValueListenableListenerType.contextWatch =>
-          'ValueListenable.watch(context)',
-        ValueListenableListenerType.listenableBuilder => 'ListenableBuilder',
-        ValueListenableListenerType.valueListenableBuilder =>
-          'ValueListenableBuilder',
-      };
-}
-// endregion
-
-// region Other
-enum OtherObservableType implements ObservableType {
+  valueListenable,
   signal;
 
-  @override
-  List<ListenerType> get listenerTypes => switch (this) {
-        OtherObservableType.signal => SignalListenerType.values,
-      } as List<ListenerType>;
-
-  @override
   String get displayName => switch (this) {
-        OtherObservableType.signal => 'Signal',
+        ObservableType.future => 'Future',
+        ObservableType.synchronousFuture => 'SynchronousFuture',
+        ObservableType.stream => 'Stream',
+        ObservableType.valueStream => 'ValueStream',
+        ObservableType.listenable => 'Listenable',
+        ObservableType.valueListenable => 'ValueListenable',
+        ObservableType.signal => 'Signal',
       };
+
+  List<ListenerType> get listenerTypes {
+    return switch (this) {
+      ObservableType.future => const [
+          ListenerType.contextWatch,
+          ListenerType.futureBuilder,
+        ],
+      ObservableType.synchronousFuture => const [
+          ListenerType.contextWatch,
+          ListenerType.futureBuilder,
+        ],
+      ObservableType.stream => const [
+          ListenerType.contextWatch,
+          ListenerType.streamBuilder,
+        ],
+      ObservableType.valueStream => const [
+          ListenerType.contextWatch,
+          ListenerType.streamBuilder,
+        ],
+      ObservableType.listenable => const [
+          ListenerType.contextWatch,
+          ListenerType.listenableBuilder,
+        ],
+      ObservableType.valueListenable => const [
+          ListenerType.contextWatch,
+          ListenerType.valueListenableBuilder,
+        ],
+      ObservableType.signal => const [
+          ListenerType.contextWatch,
+          ListenerType.signalsWatch,
+          ListenerType.signalsWatchExt,
+        ],
+    };
+  }
 }
 
-enum SignalListenerType implements ListenerType {
+enum ListenerType {
   contextWatch,
+  futureBuilder,
+  streamBuilder,
+  listenableBuilder,
+  valueListenableBuilder,
   signalsWatch,
   signalsWatchExt;
 
-  @override
-  String get displayName => switch (this) {
-        SignalListenerType.contextWatch =>
-          'Signal.watch(context) (from context_watch)',
-        SignalListenerType.signalsWatchExt =>
-          'Signal.watch(context) (from signals)',
-        SignalListenerType.signalsWatch => 'signals.watch',
-      };
+  String displayName(ObservableType observableType) {
+    return switch (this) {
+      ListenerType.contextWatch => switch (observableType) {
+          ObservableType.future => 'Future.watch(context)',
+          ObservableType.synchronousFuture =>
+            'SynchronousFuture.watch(context)',
+          ObservableType.stream => 'Stream.watch(context)',
+          ObservableType.valueStream => 'ValueStream.watch(context)',
+          ObservableType.listenable => 'Listenable.watch(context)',
+          ObservableType.valueListenable => 'ValueListenable.watch(context)',
+          ObservableType.signal => 'Signal.watch(context)',
+        },
+      ListenerType.futureBuilder => 'FutureBuilder',
+      ListenerType.streamBuilder => 'StreamBuilder',
+      ListenerType.listenableBuilder => 'ListenableBuilder',
+      ListenerType.valueListenableBuilder => 'ValueListenableBuilder',
+      ListenerType.signalsWatch => 'Watch',
+      ListenerType.signalsWatchExt => 'Signal.watch(context) (from signals)',
+    };
+  }
 }
-
-// endregion

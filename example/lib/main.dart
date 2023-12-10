@@ -1,4 +1,5 @@
 import 'package:context_watch/context_watch.dart';
+import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:flutter/material.dart';
 
 import 'benchmark_screen.dart';
@@ -15,6 +16,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ContextWatchRoot(
+      additionalWatchers: [
+        SignalContextWatcher.instance,
+      ],
       child: MaterialApp(
         routes: {
           '/': (_) => const HomeScreen(),

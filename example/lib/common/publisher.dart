@@ -37,7 +37,6 @@ sealed class Publisher {
           initialDelay: initialDelay,
           interval: interval,
         );
-      case ObservableType.listenable:
       case ObservableType.valueListenable:
         return ValueNotifierPublisher(
           observableCount: observableCount,

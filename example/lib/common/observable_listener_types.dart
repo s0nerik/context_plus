@@ -3,7 +3,6 @@ enum ObservableType {
   synchronousFuture,
   stream,
   valueStream,
-  listenable,
   valueListenable,
   signal;
 
@@ -12,7 +11,6 @@ enum ObservableType {
         ObservableType.synchronousFuture => 'SynchronousFuture',
         ObservableType.stream => 'Stream',
         ObservableType.valueStream => 'ValueStream',
-        ObservableType.listenable => 'Listenable',
         ObservableType.valueListenable => 'ValueListenable',
         ObservableType.signal => 'Signal',
       };
@@ -34,10 +32,6 @@ enum ObservableType {
       ObservableType.valueStream => const [
           ListenerType.contextWatch,
           ListenerType.streamBuilder,
-        ],
-      ObservableType.listenable => const [
-          ListenerType.contextWatch,
-          ListenerType.listenableBuilder,
         ],
       ObservableType.valueListenable => const [
           ListenerType.contextWatch,
@@ -69,7 +63,6 @@ enum ListenerType {
             'SynchronousFuture.watch(context)',
           ObservableType.stream => 'Stream.watch(context)',
           ObservableType.valueStream => 'ValueStream.watch(context)',
-          ObservableType.listenable => 'Listenable.watch(context)',
           ObservableType.valueListenable => 'ValueListenable.watch(context)',
           ObservableType.signal => 'Signal.watch(context)',
         },

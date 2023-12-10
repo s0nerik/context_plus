@@ -1,6 +1,13 @@
 sealed class ObservableType {
   List<ListenerType> get listenerTypes;
   String get displayName;
+
+  static List<ObservableType> get values => [
+        ...FutureObservableType.values,
+        ...StreamObservableType.values,
+        ...ListenableObservableType.values,
+        ...OtherObservableType.values,
+      ];
 }
 
 sealed class ListenerType {

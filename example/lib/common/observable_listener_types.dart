@@ -11,7 +11,6 @@ sealed class ObservableType {
 }
 
 sealed class ListenerType {
-  bool get isContextWatch;
   String get displayName;
 }
 
@@ -33,9 +32,6 @@ enum FutureObservableType implements ObservableType {
 enum FutureListenerType implements ListenerType {
   contextWatch,
   futureBuilder;
-
-  @override
-  bool get isContextWatch => this == FutureListenerType.contextWatch;
 
   @override
   String get displayName => switch (this) {
@@ -63,9 +59,6 @@ enum StreamObservableType implements ObservableType {
 enum StreamListenerType implements ListenerType {
   contextWatch,
   streamBuilder;
-
-  @override
-  bool get isContextWatch => this == StreamListenerType.contextWatch;
 
   @override
   String get displayName => switch (this) {
@@ -99,9 +92,6 @@ enum ListenableListenerType implements ListenerType {
   listenableBuilder;
 
   @override
-  bool get isContextWatch => this == ListenableListenerType.contextWatch;
-
-  @override
   String get displayName => switch (this) {
         ListenableListenerType.contextWatch => 'Listenable.watch(context)',
         ListenableListenerType.listenableBuilder => 'ListenableBuilder',
@@ -112,9 +102,6 @@ enum ValueListenableListenerType implements ListenerType {
   contextWatch,
   listenableBuilder,
   valueListenableBuilder;
-
-  @override
-  bool get isContextWatch => this == ValueListenableListenerType.contextWatch;
 
   @override
   String get displayName => switch (this) {
@@ -146,9 +133,6 @@ enum SignalListenerType implements ListenerType {
   contextWatch,
   signalsWatch,
   signalsWatchExt;
-
-  @override
-  bool get isContextWatch => this == SignalListenerType.contextWatch;
 
   @override
   String get displayName => switch (this) {

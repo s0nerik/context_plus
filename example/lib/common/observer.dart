@@ -3,12 +3,14 @@
 import 'package:context_watch/context_watch.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
+import 'package:context_watch_beacon/context_watch_beacon.dart';
 import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart' as sgnls;
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
+import 'package:state_beacon/state_beacon.dart' as bcn;
 
 import 'observable_listener_types.dart';
 
@@ -35,6 +37,7 @@ class Observer extends StatelessWidget {
       SignalPublisher(:final signals) => _buildSignalObserver(signals),
       MobxObservablePublisher(:final observables) =>
         _buildMobxObserver(observables),
+      BeaconPublisher(:final beacons) => _buildBeaconObserver(beacons),
     };
   }
 
@@ -82,6 +85,18 @@ class Observer extends StatelessWidget {
         _SignalsWatchExt(signals: signals, visualize: visualize),
       _ => throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Signal',
+        ),
+    };
+  }
+
+  Widget _buildBeaconObserver(List<bcn.ReadableBeacon<int>> beacons) {
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
+        _ContextWatchBeacon(beacons: beacons, visualize: visualize),
+      ListenerType.beaconWatchExt =>
+        _BeaconsWatchExt(beacons: beacons, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a Beacon',
         ),
     };
   }
@@ -169,6 +184,33 @@ class _ContextWatchSignal extends StatelessWidget {
         SignalContextWatchExtension(signals.secondOrNull)?.watch(context);
     for (final signal in signals.skip(2)) {
       SignalContextWatchExtension(signal).watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndex,
+      scaleIndex: scaleIndex,
+      visualize: visualize,
+    );
+  }
+}
+
+class _ContextWatchBeacon extends StatelessWidget {
+  const _ContextWatchBeacon({
+    super.key,
+    required this.beacons,
+    required this.visualize,
+  });
+
+  final List<bcn.ReadableBeacon<int>> beacons;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorIndex =
+        BeaconContextWatchExtension(beacons.firstOrNull)?.watch(context);
+    final scaleIndex =
+        BeaconContextWatchExtension(beacons.secondOrNull)?.watch(context);
+    for (final signal in beacons.skip(2)) {
+      BeaconContextWatchExtension(signal).watch(context);
     }
     return _buildFromValues(
       colorIndex: colorIndex,
@@ -367,6 +409,31 @@ class _SignalsWatchExt extends StatelessWidget {
         sgnls.ReadonlySignalUtils(signals.secondOrNull)?.watch(context);
     for (final signal in signals.skip(2)) {
       sgnls.ReadonlySignalUtils(signal).watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndex,
+      scaleIndex: scaleIndex,
+      visualize: visualize,
+    );
+  }
+}
+
+class _BeaconsWatchExt extends StatelessWidget {
+  const _BeaconsWatchExt({
+    super.key,
+    required this.beacons,
+    required this.visualize,
+  });
+
+  final List<bcn.ReadableBeacon<int>> beacons;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorIndex = beacons.firstOrNull?.watch(context);
+    final scaleIndex = beacons.secondOrNull?.watch(context);
+    for (final signal in beacons.skip(2)) {
+      signal.watch(context);
     }
     return _buildFromValues(
       colorIndex: colorIndex,

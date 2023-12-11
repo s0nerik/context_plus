@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:rxdart/rxdart.dart';
 import 'package:signals/signals.dart' as sgnls;
+import 'package:state_beacon/state_beacon.dart' as bcn;
 
 import 'observable_listener_types.dart';
 
@@ -52,6 +53,12 @@ sealed class Publisher {
         );
       case ObservableType.mobxObservable:
         return MobxObservablePublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
+      case ObservableType.beacon:
+        return BeaconPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
@@ -212,6 +219,35 @@ final class SignalPublisher extends Publisher {
   void publish(int index) {
     for (final signal in _signals) {
       signal.value = index;
+    }
+  }
+
+  @override
+  void _dispose() {}
+}
+
+final class BeaconPublisher extends Publisher {
+  BeaconPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
+    final beacons = <bcn.WritableBeacon<int>>[];
+    for (var i = 0; i < observableCount; i++) {
+      final beacon = bcn.Beacon.writable(0);
+      _beacons.add(beacon);
+      beacons.add(beacon);
+    }
+    this.beacons = UnmodifiableListView(beacons);
+  }
+
+  final _beacons = <bcn.WritableBeacon<int>>[];
+  late final List<bcn.ReadableBeacon<int>> beacons;
+
+  @override
+  void publish(int index) {
+    for (final beacon in _beacons) {
+      beacon.value = index;
     }
   }
 

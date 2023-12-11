@@ -276,7 +276,9 @@ final class MobxObservablePublisher extends Publisher {
   @override
   void publish(int index) {
     for (final observable in _observables) {
-      observable.value = index;
+      mobx.runInAction(() {
+        observable.value = index;
+      });
     }
   }
 

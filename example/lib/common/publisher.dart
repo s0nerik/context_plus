@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobx/mobx.dart' as mobx;
 import 'package:rxdart/rxdart.dart';
 import 'package:signals/signals.dart' as sgnls;
 
@@ -45,6 +46,12 @@ sealed class Publisher {
         );
       case ObservableType.signal:
         return SignalPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
+      case ObservableType.mobxObservable:
+        return MobxObservablePublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
@@ -205,6 +212,35 @@ final class SignalPublisher extends Publisher {
   void publish(int index) {
     for (final signal in _signals) {
       signal.value = index;
+    }
+  }
+
+  @override
+  void _dispose() {}
+}
+
+final class MobxObservablePublisher extends Publisher {
+  MobxObservablePublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
+    final observables = <mobx.Observable<int>>[];
+    for (var i = 0; i < observableCount; i++) {
+      final observable = mobx.Observable(0);
+      _observables.add(observable);
+      observables.add(observable);
+    }
+    this.observables = UnmodifiableListView(observables);
+  }
+
+  final _observables = <mobx.Observable<int>>[];
+  late final List<mobx.Observable<int>> observables;
+
+  @override
+  void publish(int index) {
+    for (final observable in _observables) {
+      observable.value = index;
     }
   }
 

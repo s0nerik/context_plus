@@ -1,11 +1,14 @@
 // ignore_for_file: unused_element
 
 import 'package:context_watch/context_watch.dart';
+import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart' as sgnls;
+import 'package:mobx/mobx.dart' as mobx;
+import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
 
 import 'observable_listener_types.dart';
 
@@ -30,6 +33,8 @@ class Observer extends StatelessWidget {
       ValueNotifierPublisher(:final valueListenables) =>
         _buildValueListenableObserver(valueListenables),
       SignalPublisher(:final signals) => _buildSignalObserver(signals),
+      MobxObservablePublisher(:final observables) =>
+        _buildMobxObserver(observables),
     };
   }
 
@@ -77,6 +82,18 @@ class Observer extends StatelessWidget {
         _SignalsWatchExt(signals: signals, visualize: visualize),
       _ => throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Signal',
+        ),
+    };
+  }
+
+  Widget _buildMobxObserver(List<mobx.Observable<int>> observables) {
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
+        _ContextWatchMobx(observables: observables, visualize: visualize),
+      ListenerType.mobxObserver =>
+        _MobxObserver(observables: observables, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a mobx.Observable',
         ),
     };
   }
@@ -152,6 +169,31 @@ class _ContextWatchSignal extends StatelessWidget {
         SignalContextWatchExtension(signals.secondOrNull)?.watch(context);
     for (final signal in signals.skip(2)) {
       SignalContextWatchExtension(signal).watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndex,
+      scaleIndex: scaleIndex,
+      visualize: visualize,
+    );
+  }
+}
+
+class _ContextWatchMobx extends StatelessWidget {
+  const _ContextWatchMobx({
+    super.key,
+    required this.observables,
+    required this.visualize,
+  });
+
+  final List<mobx.Observable<int>> observables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorIndex = observables.firstOrNull?.watch(context);
+    final scaleIndex = observables.secondOrNull?.watch(context);
+    for (final observable in observables.skip(2)) {
+      observable.watch(context);
     }
     return _buildFromValues(
       colorIndex: colorIndex,
@@ -330,6 +372,35 @@ class _SignalsWatchExt extends StatelessWidget {
       colorIndex: colorIndex,
       scaleIndex: scaleIndex,
       visualize: visualize,
+    );
+  }
+}
+
+class _MobxObserver extends StatelessWidget {
+  const _MobxObserver({
+    super.key,
+    required this.observables,
+    required this.visualize,
+  });
+
+  final List<mobx.Observable<int>> observables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    return mobx.Observer(
+      builder: (context) {
+        final colorIndex = observables.firstOrNull?.value;
+        final scaleIndex = observables.secondOrNull?.value;
+        for (final observable in observables.skip(2)) {
+          observable.value;
+        }
+        return _buildFromValues(
+          colorIndex: colorIndex,
+          scaleIndex: scaleIndex,
+          visualize: visualize,
+        );
+      },
     );
   }
 }

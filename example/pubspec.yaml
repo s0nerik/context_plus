@@ -10,9 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
   rxdart: ^0.27.7
-  signals: ^1.5.3+1
   context_watch: ^2.0.0-dev.4
+  signals: ^1.5.3+1
   context_watch_signals: ^1.0.0-dev.1
+  mobx: ^2.2.3
+  flutter_mobx: ^2.2.0+1
+  context_watch_mobx: ^1.0.0-dev.1
 
 dev_dependencies:
   flutter_test:

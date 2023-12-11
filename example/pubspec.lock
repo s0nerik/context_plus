@@ -55,6 +55,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0-dev.1"
+  context_watch_mobx:
+    dependency: "direct main"
+    description:
+      path: "../packages/context_watch_mobx"
+      relative: true
+    source: path
+    version: "1.0.0-dev.1"
   context_watch_signals:
     dependency: "direct main"
     description:
@@ -83,6 +90,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  flutter_mobx:
+    dependency: "direct main"
+    description:
+      name: flutter_mobx
+      sha256: "0f0463db8a1582ac88670bea6e4f58ab64a16d701bc7d2c27ea50c1dbe5aecdc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -136,6 +151,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  mobx:
+    dependency: "direct main"
+    description:
+      name: mobx
+      sha256: "537bee828f30a971ffd7d29d8e22bbdec5c9f5899ad4b01f3206a21eeb5c75de"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -144,6 +175,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      sha256: "9a96a0a19b594dbc5bf0f1f27d2bc67d5f95957359b461cd9feb44ed6ae75096"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
   rxdart:
     dependency: "direct main"
     description:

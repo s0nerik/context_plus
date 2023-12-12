@@ -1,6 +1,6 @@
-name: context_watch
-description: A hassle-free way to watch for observable value changes within the `build` method.
-version: 2.0.0-dev.4
+name: context_watch_beacon
+description: "context_watch adapter for state_beacon package"
+version: 1.0.0-dev.1
 homepage: https://github.com/s0nerik/context_watch
 repository: https://github.com/s0nerik/context_watch
 
@@ -11,9 +11,8 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
-    rxdart: ^0.27.7
-    meta: ^1.9.1
     context_watch_base: ^1.0.0-dev.1
+    state_beacon: ^0.13.5
 
 dev_dependencies:
     flutter_test:

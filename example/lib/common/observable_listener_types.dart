@@ -5,6 +5,7 @@ enum ObservableType {
   valueStream,
   valueListenable,
   signal,
+  beacon,
   mobxObservable;
 
   String get displayName => switch (this) {
@@ -14,6 +15,7 @@ enum ObservableType {
         ObservableType.valueStream => 'ValueStream',
         ObservableType.valueListenable => 'ValueListenable',
         ObservableType.signal => 'Signal',
+        ObservableType.beacon => 'Beacon',
         ObservableType.mobxObservable => 'mobx.Observable',
       };
 
@@ -44,6 +46,9 @@ enum ObservableType {
           ListenerType.signalsWatch,
           ListenerType.signalsWatchExt,
         ],
+      ObservableType.beacon => const [
+          ListenerType.beaconWatchExt,
+        ],
       ObservableType.mobxObservable => const [
           ListenerType.contextWatch,
           ListenerType.mobxObserver,
@@ -60,6 +65,7 @@ enum ListenerType {
   valueListenableBuilder,
   signalsWatch,
   signalsWatchExt,
+  beaconWatchExt,
   mobxObserver;
 
   String displayName(ObservableType observableType) {
@@ -73,6 +79,7 @@ enum ListenerType {
           ObservableType.valueListenable => 'ValueListenable.watch(context)',
           ObservableType.signal => 'Signal.watch(context)',
           ObservableType.mobxObservable => 'mobx.Observable.watch(context)',
+          ObservableType.beacon => 'Beacon.watch(context)',
         },
       ListenerType.futureBuilder => 'FutureBuilder',
       ListenerType.streamBuilder => 'StreamBuilder',
@@ -81,6 +88,7 @@ enum ListenerType {
       ListenerType.signalsWatch => 'signals: Watch',
       ListenerType.signalsWatchExt => 'signals: Signal.watch(context)',
       ListenerType.mobxObserver => 'mobx: Observer',
+      ListenerType.beaconWatchExt => 'beacon: Beacon.watch(context)',
     };
   }
 }

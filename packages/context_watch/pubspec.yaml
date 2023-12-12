@@ -5,19 +5,19 @@ homepage: https://github.com/s0nerik/context_watch
 repository: https://github.com/s0nerik/context_watch
 
 environment:
-    sdk: ">=3.0.6 <4.0.0"
-    flutter: ">=3.2.0 <4.0.0"
+  sdk: ">=3.0.6 <4.0.0"
+  flutter: ">=3.17.0-1.0.pre.38 <4.0.0"
 
 dependencies:
-    flutter:
-        sdk: flutter
-    rxdart: ^0.27.7
-    meta: ^1.9.1
-    context_watch_base: ^1.0.0-dev.1
+  flutter:
+    sdk: flutter
+  rxdart: ^0.27.7
+  meta: ^1.9.1
+  context_watch_base: ^1.0.0-dev.1
 
 dev_dependencies:
-    flutter_test:
-        sdk: flutter
-    flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
 
 flutter:

@@ -45,9 +45,9 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
 }
 
 extension BeaconContextWatchExtension<T> on ReadableBeacon<T> {
-  /// Watch this [Signal] for changes.
+  /// Watch this [Beacon] for changes.
   ///
-  /// Whenever this [Signal] emits new value, the [context] will be
+  /// Whenever this [Beacon] emits new value, the [context] will be
   /// rebuilt.
   ///
   /// It is safe to call this method multiple times within the same build

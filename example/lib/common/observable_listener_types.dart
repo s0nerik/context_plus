@@ -47,6 +47,7 @@ enum ObservableType {
           ListenerType.signalsWatchExt,
         ],
       ObservableType.beacon => const [
+          ListenerType.contextWatch,
           ListenerType.beaconWatchExt,
         ],
       ObservableType.mobxObservable => const [

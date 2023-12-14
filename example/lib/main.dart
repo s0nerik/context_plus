@@ -1,4 +1,5 @@
 import 'package:context_watch/context_watch.dart';
+import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class MainApp extends StatelessWidget {
       additionalWatchers: [
         SignalContextWatcher.instance,
         MobxObservableWatcher.instance,
+        BlocContextWatcher.instance,
       ],
       child: MaterialApp(
         routes: {

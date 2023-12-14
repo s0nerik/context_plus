@@ -25,6 +25,10 @@ dependencies:
   state_beacon: ^0.13.5
   context_watch_beacon: ^1.0.0-dev.1
 
+  # Bloc
+  flutter_bloc: ^8.1.2
+  context_watch_bloc: ^1.0.0-dev.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -7,6 +7,7 @@ import 'package:mobx/mobx.dart' as mobx;
 import 'package:rxdart/rxdart.dart';
 import 'package:signals/signals.dart' as sgnls;
 import 'package:state_beacon/state_beacon.dart' as bcn;
+import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 
 import 'observable_listener_types.dart';
 
@@ -59,6 +60,12 @@ sealed class Publisher {
         );
       case ObservableType.beacon:
         return BeaconPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
+      case ObservableType.cubit:
+        return CubitPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
@@ -284,4 +291,43 @@ final class MobxObservablePublisher extends Publisher {
 
   @override
   void _dispose() {}
+}
+
+class _IntCubit extends bloc.Cubit<int> {
+  _IntCubit(super.initialState);
+
+  void set(int i) => emit(i);
+}
+
+final class CubitPublisher extends Publisher {
+  CubitPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
+    final cubits = <_IntCubit>[];
+    for (var i = 0; i < observableCount; i++) {
+      final observable = _IntCubit(0);
+      _cubits.add(observable);
+      cubits.add(observable);
+    }
+    this.cubits = UnmodifiableListView(cubits);
+  }
+
+  final _cubits = <_IntCubit>[];
+  late final List<bloc.Cubit<int>> cubits;
+
+  @override
+  void publish(int index) {
+    for (final cubit in _cubits) {
+      cubit.set(index);
+    }
+  }
+
+  @override
+  void _dispose() {
+    for (final cubit in _cubits) {
+      cubit.close();
+    }
+  }
 }

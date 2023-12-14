@@ -4,6 +4,7 @@ import 'package:context_watch/context_watch.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:context_watch_beacon/context_watch_beacon.dart';
+import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:signals/signals_flutter.dart' as sgnls;
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
 import 'package:state_beacon/state_beacon.dart' as bcn;
+import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 
 import 'observable_listener_types.dart';
 
@@ -38,6 +40,7 @@ class Observer extends StatelessWidget {
       MobxObservablePublisher(:final observables) =>
         _buildMobxObserver(observables),
       BeaconPublisher(:final beacons) => _buildBeaconObserver(beacons),
+      CubitPublisher(:final cubits) => _buildCubitObserver(cubits),
     };
   }
 
@@ -109,6 +112,18 @@ class Observer extends StatelessWidget {
         _MobxObserver(observables: observables, visualize: visualize),
       _ => throw UnsupportedError(
           'ListenerType $listenerType is not supported for a mobx.Observable',
+        ),
+    };
+  }
+
+  Widget _buildCubitObserver(List<bloc.Cubit<int>> cubits) {
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
+        _ContextWatchCubit(cubits: cubits, visualize: visualize),
+      ListenerType.blocBuilder =>
+        _BlocBuilder(cubits: cubits, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a Cubit',
         ),
     };
   }
@@ -235,6 +250,31 @@ class _ContextWatchMobx extends StatelessWidget {
     final colorIndex = observables.firstOrNull?.watch(context);
     final scaleIndex = observables.secondOrNull?.watch(context);
     for (final observable in observables.skip(2)) {
+      observable.watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndex,
+      scaleIndex: scaleIndex,
+      visualize: visualize,
+    );
+  }
+}
+
+class _ContextWatchCubit extends StatelessWidget {
+  const _ContextWatchCubit({
+    super.key,
+    required this.cubits,
+    required this.visualize,
+  });
+
+  final List<bloc.Cubit<int>> cubits;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorIndex = cubits.firstOrNull?.watch(context);
+    final scaleIndex = cubits.secondOrNull?.watch(context);
+    for (final observable in cubits.skip(2)) {
       observable.watch(context);
     }
     return _buildFromValues(
@@ -466,6 +506,50 @@ class _MobxObserver extends StatelessWidget {
           colorIndex: colorIndex,
           scaleIndex: scaleIndex,
           visualize: visualize,
+        );
+      },
+    );
+  }
+}
+
+class _FallbackCubit extends bloc.Cubit<int> {
+  _FallbackCubit(super.initialState);
+
+  static final instance = _FallbackCubit(-1);
+}
+
+class _BlocBuilder extends StatelessWidget {
+  const _BlocBuilder({
+    super.key,
+    required this.cubits,
+    required this.visualize,
+  });
+
+  final List<bloc.Cubit<int>> cubits;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    return bloc.BlocBuilder<bloc.Cubit<int>, int>(
+      bloc: cubits.firstOrNull ?? _FallbackCubit.instance,
+      builder: (context, colorIndex) {
+        return bloc.BlocBuilder<bloc.Cubit<int>, int>(
+          bloc: cubits.secondOrNull ?? _FallbackCubit.instance,
+          builder: (context, scaleIndex) {
+            Widget child = _buildFromValues(
+              colorIndex: colorIndex,
+              scaleIndex: scaleIndex,
+              visualize: visualize,
+            );
+            for (final cubit in cubits.skip(2)) {
+              final currentChild = child;
+              child = bloc.BlocBuilder<bloc.Cubit<int>, int>(
+                bloc: cubit,
+                builder: (context, value) => currentChild,
+              );
+            }
+            return child;
+          },
         );
       },
     );

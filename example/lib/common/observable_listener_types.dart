@@ -18,7 +18,7 @@ enum ObservableType {
         ObservableType.signal => 'Signal',
         ObservableType.beacon => 'Beacon',
         ObservableType.mobxObservable => 'mobx.Observable',
-        ObservableType.cubit => 'Cubit (bloc)',
+        ObservableType.cubit => 'bloc.Cubit',
       };
 
   List<ListenerType> get listenerTypes {

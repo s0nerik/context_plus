@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:rxdart/rxdart.dart';
-import 'package:signals/signals.dart' as sgnls;
+import 'package:signals_flutter/signals_flutter.dart' as sgnls;
 import 'package:state_beacon/state_beacon.dart' as bcn;
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 

@@ -1,6 +1,6 @@
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
-import 'package:signals/signals.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 class _Subscription implements ContextWatchSubscription {
   _Subscription({

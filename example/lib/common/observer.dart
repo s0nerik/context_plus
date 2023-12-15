@@ -8,7 +8,7 @@ import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart' as sgnls;
+import 'package:signals_flutter/signals_flutter.dart' as sgnls;
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
 import 'package:state_beacon/state_beacon.dart' as bcn;
@@ -444,11 +444,11 @@ class _SignalsWatchExt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorIndex =
-        sgnls.ReadonlySignalUtils(signals.firstOrNull)?.watch(context);
+        sgnls.FlutterReadonlySignalUtils(signals.firstOrNull)?.watch(context);
     final scaleIndex =
-        sgnls.ReadonlySignalUtils(signals.secondOrNull)?.watch(context);
+        sgnls.FlutterReadonlySignalUtils(signals.secondOrNull)?.watch(context);
     for (final signal in signals.skip(2)) {
-      sgnls.ReadonlySignalUtils(signal).watch(context);
+      sgnls.FlutterReadonlySignalUtils(signal).watch(context);
     }
     return _buildFromValues(
       colorIndex: colorIndex,

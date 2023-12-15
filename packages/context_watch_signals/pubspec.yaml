@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   context_watch_base: ^1.0.0-dev.1
-  signals: ^1.5.3+1
+  signals_flutter: ^1.0.1
 
 dev_dependencies:
   flutter_test:

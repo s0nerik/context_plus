@@ -13,7 +13,7 @@ dependencies:
   context_watch: ^2.0.0-dev.4
 
   # Signals
-  signals: ^1.5.3+1
+  signals_flutter: ^1.0.1
   context_watch_signals: ^1.0.0-dev.1
 
   # MobX

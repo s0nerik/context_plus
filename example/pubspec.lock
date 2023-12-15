@@ -221,14 +221,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-  signals:
-    dependency: "direct main"
+  signals_core:
+    dependency: transitive
     description:
-      name: signals
-      sha256: ebf7d09c4a2108f49260caec9192c0a5f7cec9b6f410ccf6b827b34814d9b973
+      name: signals_core
+      sha256: "7fe87dbd786a6d0e25a24263cefe9ab7316d26364030fdb9985ced03fb7e8753"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.10"
+    version: "1.0.1"
+  signals_flutter:
+    dependency: "direct main"
+    description:
+      name: signals_flutter
+      sha256: "43f746f94cc21e7810ce93a047b61cbbb67aaf8ff1bcd5a3c71f16a8176f454f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   sky_engine:
     dependency: transitive
     description: flutter

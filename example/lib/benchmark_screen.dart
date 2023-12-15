@@ -38,7 +38,7 @@ class BenchmarkScreen extends StatefulWidget {
     this.observablesPerTileOptions = const {0, 1, 2, 3, 5, 10, 20, 50, 100},
     this.observableType = ObservableType.valueStream,
     this.listenerType = ListenerType.contextWatch,
-    this.runOnStart = true,
+    this.runOnStart = false,
     this.showPerformanceOverlay = true,
     this.visualize = true,
     this.tileObservableNotifyInterval = const Duration(milliseconds: 48),
@@ -134,7 +134,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             _buildControlButtons(),
             const SizedBox(height: 16),
             Expanded(
-              child: _runBenchmark ? _buildGrid() : const SizedBox.shrink(),
+              child: _runBenchmark
+                  ? _buildGrid()
+                  : const Center(
+                      child: Text('Press "Start" to run benchmark'),
+                    ),
             ),
             if (_runBenchmark)
               for (var i = 0; i < _singleObservableSubscriptionsCount; i++)

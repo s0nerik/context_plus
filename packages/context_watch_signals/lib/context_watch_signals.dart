@@ -1,1 +1,1 @@
-export 'src/signal_watcher.dart';
+export 'src/signal_context_watcher.dart';

@@ -45,7 +45,7 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
   }
 }
 
-extension ObservableContextWatchExtension<T> on Observable<T> {
+extension MobxObservableContextWatchExtension<T> on Observable<T> {
   /// Watch this [Observable] for changes.
   ///
   /// Whenever this [Observable] emits new value, the [context] will be

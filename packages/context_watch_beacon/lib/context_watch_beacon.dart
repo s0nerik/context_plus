@@ -1,1 +1,1 @@
-export 'src/beacon_watcher.dart';
+export 'src/beacon_context_watcher.dart';

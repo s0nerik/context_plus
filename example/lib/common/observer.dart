@@ -5,6 +5,7 @@ import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:context_watch_beacon/context_watch_beacon.dart';
 import 'package:context_watch_bloc/context_watch_bloc.dart';
+import 'package:context_watch_getx/context_watch_getx.dart';
 import 'package:example/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:mobx/mobx.dart' as mobx;
 import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
 import 'package:state_beacon/state_beacon.dart' as bcn;
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
+import 'package:get/get.dart' as getx;
 
 import 'observable_listener_types.dart';
 
@@ -41,6 +43,7 @@ class Observer extends StatelessWidget {
         _buildMobxObserver(observables),
       BeaconPublisher(:final beacons) => _buildBeaconObserver(beacons),
       CubitPublisher(:final cubits) => _buildCubitObserver(cubits),
+      GetxPublisher(:final observables) => _buildGetxObserver(observables),
     };
   }
 
@@ -124,6 +127,18 @@ class Observer extends StatelessWidget {
         _BlocBuilder(cubits: cubits, visualize: visualize),
       _ => throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Cubit',
+        ),
+    };
+  }
+
+  Widget _buildGetxObserver(List<getx.Rx<int>> observables) {
+    return switch (listenerType) {
+      ListenerType.contextWatch =>
+        _ContextWatchGetx(observables: observables, visualize: visualize),
+      ListenerType.getxObx =>
+        _GetxObx(observables: observables, visualize: visualize),
+      _ => throw UnsupportedError(
+          'ListenerType $listenerType is not supported for a getx.Rx',
         ),
     };
   }
@@ -275,6 +290,31 @@ class _ContextWatchCubit extends StatelessWidget {
     final colorIndex = cubits.firstOrNull?.watch(context);
     final scaleIndex = cubits.secondOrNull?.watch(context);
     for (final observable in cubits.skip(2)) {
+      observable.watch(context);
+    }
+    return _buildFromValues(
+      colorIndex: colorIndex,
+      scaleIndex: scaleIndex,
+      visualize: visualize,
+    );
+  }
+}
+
+class _ContextWatchGetx extends StatelessWidget {
+  const _ContextWatchGetx({
+    super.key,
+    required this.observables,
+    required this.visualize,
+  });
+
+  final List<getx.Rx<int>> observables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorIndex = observables.firstOrNull?.watch(context);
+    final scaleIndex = observables.secondOrNull?.watch(context);
+    for (final observable in observables.skip(2)) {
       observable.watch(context);
     }
     return _buildFromValues(
@@ -553,6 +593,33 @@ class _BlocBuilder extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _GetxObx extends StatelessWidget {
+  const _GetxObx({
+    super.key,
+    required this.observables,
+    required this.visualize,
+  });
+
+  final List<getx.Rx<int>> observables;
+  final bool visualize;
+
+  @override
+  Widget build(BuildContext context) {
+    return getx.Obx(() {
+      final colorIndex = observables.firstOrNull?.value;
+      final scaleIndex = observables.secondOrNull?.value;
+      for (final observable in observables.skip(2)) {
+        observable.value;
+      }
+      return _buildFromValues(
+        colorIndex: colorIndex,
+        scaleIndex: scaleIndex,
+        visualize: visualize,
+      );
+    });
   }
 }
 

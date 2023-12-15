@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:signals_flutter/signals_flutter.dart' as sgnls;
 import 'package:state_beacon/state_beacon.dart' as bcn;
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
+import 'package:get/get.dart' as getx;
 
 import 'observable_listener_types.dart';
 
@@ -66,6 +67,12 @@ sealed class Publisher {
         );
       case ObservableType.cubit:
         return CubitPublisher(
+          observableCount: observableCount,
+          initialDelay: initialDelay,
+          interval: interval,
+        );
+      case ObservableType.getRx:
+        return GetxPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
@@ -328,6 +335,39 @@ final class CubitPublisher extends Publisher {
   void _dispose() {
     for (final cubit in _cubits) {
       cubit.close();
+    }
+  }
+}
+
+final class GetxPublisher extends Publisher {
+  GetxPublisher({
+    required super.observableCount,
+    required super.initialDelay,
+    required super.interval,
+  }) : super._() {
+    final observables = <getx.Rx<int>>[];
+    for (var i = 0; i < observableCount; i++) {
+      final rxObservable = getx.Rx<int>(0);
+      _observables.add(rxObservable);
+      observables.add(rxObservable);
+    }
+    this.observables = UnmodifiableListView(observables);
+  }
+
+  final _observables = <getx.Rx<int>>[];
+  late final List<getx.Rx<int>> observables;
+
+  @override
+  void publish(int index) {
+    for (final rxObservable in _observables) {
+      rxObservable.value = index;
+    }
+  }
+
+  @override
+  void _dispose() {
+    for (final rxObservable in _observables) {
+      rxObservable.close();
     }
   }
 }

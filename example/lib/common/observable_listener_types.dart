@@ -7,7 +7,8 @@ enum ObservableType {
   signal,
   beacon,
   mobxObservable,
-  cubit;
+  cubit,
+  getRx;
 
   String get displayName => switch (this) {
         ObservableType.future => 'Future',
@@ -19,6 +20,7 @@ enum ObservableType {
         ObservableType.beacon => 'Beacon',
         ObservableType.mobxObservable => 'mobx.Observable',
         ObservableType.cubit => 'bloc.Cubit',
+        ObservableType.getRx => 'getx.Rx',
       };
 
   List<ListenerType> get listenerTypes {
@@ -60,6 +62,10 @@ enum ObservableType {
           ListenerType.contextWatch,
           ListenerType.blocBuilder,
         ],
+      ObservableType.getRx => const [
+          ListenerType.contextWatch,
+          ListenerType.getxObx,
+        ],
     };
   }
 }
@@ -74,7 +80,8 @@ enum ListenerType {
   signalsWatchExt,
   beaconWatchExt,
   mobxObserver,
-  blocBuilder;
+  blocBuilder,
+  getxObx;
 
   String displayName(ObservableType observableType) {
     return switch (this) {
@@ -89,6 +96,7 @@ enum ListenerType {
           ObservableType.mobxObservable => 'mobx.Observable.watch(context)',
           ObservableType.beacon => 'Beacon.watch(context)',
           ObservableType.cubit => 'Cubit.watch(context)',
+          ObservableType.getRx => 'getx.Rx.watch(context)',
         },
       ListenerType.futureBuilder => 'FutureBuilder',
       ListenerType.streamBuilder => 'StreamBuilder',
@@ -99,6 +107,7 @@ enum ListenerType {
       ListenerType.mobxObserver => 'mobx: Observer',
       ListenerType.beaconWatchExt => 'beacon: Beacon.watch(context)',
       ListenerType.blocBuilder => 'bloc: BlocBuilder',
+      ListenerType.getxObx => 'getx: Obx',
     };
   }
 }

@@ -1,16 +1,21 @@
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   late int rebuilds;
   late Widget widget;
+  late List<ValueListenable<int>> observedValueListenables;
+  late List<int> observedValueListenableValues;
   late List<Listenable> observedListenables;
   late List<Stream> observedStreams;
 
   setUp(() {
+    observedValueListenables = [];
+    observedValueListenableValues = [];
     observedListenables = [];
     observedStreams = [];
     rebuilds = 0;
@@ -25,6 +30,10 @@ void main() {
           for (final stream in observedStreams) {
             // watch the value to create a subscription
             stream.watch(context);
+          }
+          for (final valueListenable in observedValueListenables) {
+            // watch the value to create a subscription
+            observedValueListenableValues.add(valueListenable.watch(context));
           }
           rebuilds++;
           return const SizedBox.shrink();
@@ -104,4 +113,24 @@ void main() {
       expect(rebuilds, 5);
     },
   );
+
+  testWidgets('Observing a ValueListenable gives its current value',
+      (widgetTester) async {
+    final valueNotifier = ValueNotifier(0);
+    observedValueListenables = [valueNotifier];
+
+    await widgetTester.pumpWidget(widget);
+    expect(rebuilds, 1);
+    expect(observedValueListenableValues, [0]);
+
+    valueNotifier.value = 1;
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 2);
+    expect(observedValueListenableValues, [0, 1]);
+
+    valueNotifier.value = 2;
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 3);
+    expect(observedValueListenableValues, [0, 1, 2]);
+  });
 }

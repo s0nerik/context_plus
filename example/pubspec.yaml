@@ -22,7 +22,7 @@ dependencies:
   context_watch_mobx: ^1.0.0-dev.1
 
   # Beacon
-  state_beacon: ^0.13.5
+  state_beacon: ^0.14.5
   context_watch_beacon: ^1.0.0-dev.1
 
   # Bloc

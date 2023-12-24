@@ -10,28 +10,28 @@ dependencies:
   flutter:
     sdk: flutter
   rxdart: ^0.27.7
-  context_watch: ^2.0.0-dev.4
+  context_watch: ^2.0.0-dev.5
 
   # Signals
   signals_flutter: ^1.0.1
-  context_watch_signals: ^1.0.0-dev.1
+  context_watch_signals: ^1.0.0-dev.2
 
   # MobX
   mobx: ^2.2.3
   flutter_mobx: ^2.2.0+1
-  context_watch_mobx: ^1.0.0-dev.1
+  context_watch_mobx: ^1.0.0-dev.2
 
   # Beacon
   state_beacon: ^0.14.5
-  context_watch_beacon: ^1.0.0-dev.1
+  context_watch_beacon: ^1.0.0-dev.2
 
   # Bloc
   flutter_bloc: ^8.1.2
-  context_watch_bloc: ^1.0.0-dev.1
+  context_watch_bloc: ^1.0.0-dev.2
 
   # GetX
   get: ^4.6.6
-  context_watch_getx: ^1.0.0-dev.1
+  context_watch_getx: ^1.0.0-dev.2
 
 dev_dependencies:
   flutter_test:

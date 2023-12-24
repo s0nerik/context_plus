@@ -1,3 +1,7 @@
+## 2.0.0-dev.5
+
+ - Fixed initial frame handling
+
 ## 2.0.0-dev.4
 
 - `Stream.watch()` and `Future.watch()` now return `AsyncSnapshot`, just like `StreamBuilder` and `FutureBuilder` do

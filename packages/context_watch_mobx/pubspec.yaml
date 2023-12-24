@@ -1,6 +1,6 @@
 name: context_watch_mobx
 description: "context_watch adapter for mobx package"
-version: 1.0.0-dev.1
+version: 1.0.0-dev.2
 homepage:
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_watch_base: ^1.0.0-dev.1
+  context_watch_base: ^2.0.0-dev.5
   mobx: ^2.2.3
 
 dev_dependencies:

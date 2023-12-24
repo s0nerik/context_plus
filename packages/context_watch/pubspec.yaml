@@ -1,6 +1,6 @@
 name: context_watch
 description: A hassle-free way to watch for observable value changes within the `build` method.
-version: 2.0.0-dev.4
+version: 2.0.0-dev.5
 homepage: https://github.com/s0nerik/context_watch
 repository: https://github.com/s0nerik/context_watch
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   rxdart: ^0.27.7
   meta: ^1.9.1
-  context_watch_base: ^1.0.0-dev.1
+  context_watch_base: ^2.0.0-dev.5
 
 dev_dependencies:
   flutter_test:

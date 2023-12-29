@@ -1,0 +1,22 @@
+name: context_watch_bloc
+description: "context_watch adapter for bloc package"
+version: 1.0.0-dev.2
+homepage: https://github.com/s0nerik/context_watch
+repository: https://github.com/s0nerik/context_watch
+
+environment:
+  sdk: '>=3.0.6 <4.0.0'
+  flutter: ">=3.17.0-1.0.pre.38"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  context_watch_base: ^2.0.0-dev.5
+  bloc: ^8.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:

@@ -1,0 +1,6 @@
+name: context_plus
+sdkPath: .fvm/flutter_sdk
+
+packages:
+  - example
+  - packages/*

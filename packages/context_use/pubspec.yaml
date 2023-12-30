@@ -1,6 +1,6 @@
 name: context_use
 description: ""
-version: 1.0.0-dev.1
+version: 0.0.1-dev.1
 homepage:
 
 environment:
@@ -15,5 +15,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  context_watch: ^2.0.0-dev.5
 
 flutter:

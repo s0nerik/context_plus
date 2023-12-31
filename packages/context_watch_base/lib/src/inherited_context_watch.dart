@@ -61,21 +61,18 @@ class InheritedContextWatchElement extends InheritedElement {
     for (final watcher in (widget as InheritedContextWatch).watchers) {
       watcher._canNotify = _canNotify;
     }
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _getCurrentFrameTimestamp =
-          () => SchedulerBinding.instance.currentFrameTimeStamp;
-    });
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => _isFirstFrame = false);
   }
 
-  Duration Function() _getCurrentFrameTimestamp = () => Duration.zero;
+  bool _isFirstFrame = true;
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
 
   bool get _isBuildPhase {
     final phase = SchedulerBinding.instance.schedulerPhase;
-    final frameTimestamp = _getCurrentFrameTimestamp();
     return phase == SchedulerPhase.persistentCallbacks ||
-        frameTimestamp == Duration.zero && phase == SchedulerPhase.idle;
+        _isFirstFrame && phase == SchedulerPhase.idle;
   }
 
   @override
@@ -100,7 +97,7 @@ class InheritedContextWatchElement extends InheritedElement {
     }
 
     final contextData = _contextData[context] ??= _ContextData();
-    final frame = _getCurrentFrameTimestamp();
+    final frame = SchedulerBinding.instance.currentFrameTimeStamp;
     contextData.lastFrame = frame;
     contextData.observableLastFrame[observable] = frame;
 
@@ -128,7 +125,7 @@ class InheritedContextWatchElement extends InheritedElement {
     }
 
     final contextData = _contextData[context] ??= _ContextData();
-    contextData.lastFrame = _getCurrentFrameTimestamp();
+    contextData.lastFrame = SchedulerBinding.instance.currentFrameTimeStamp;
   }
 
   @override

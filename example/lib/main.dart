@@ -1,6 +1,4 @@
-import 'package:context_ref/context_ref.dart';
-import 'package:context_use/context_use.dart';
-import 'package:context_watch/context_watch.dart';
+import 'package:context_plus/context_plus.dart';
 import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_getx/context_watch_getx.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
@@ -16,8 +14,8 @@ import 'home_screen.dart';
 import 'context_watch/hot_reload_test_screen.dart';
 
 void main() {
-  ErrorWidget.builder = ContextRef.errorWidgetBuilder(ErrorWidget.builder);
-  FlutterError.onError = ContextRef.onError(FlutterError.onError);
+  ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
+  FlutterError.onError = ContextPlus.onError(FlutterError.onError);
   signals.disableSignalsDevTools();
   runApp(const MainApp());
 }
@@ -38,28 +36,23 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ContextUse.root(
-      child: ContextRef.root(
-        child: ContextWatch.root(
-          additionalWatchers: [
-            SignalContextWatcher.instance,
-            MobxObservableWatcher.instance,
-            BlocContextWatcher.instance,
-            GetxContextWatcher.instance,
-          ],
-          child: MaterialApp(
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
-            routes: {
-              '/': (_) => const HomeScreen(),
-              '/benchmark': (_) => const BenchmarkScreen(),
-              '/hot_reload_test': (_) => const HotReloadTestScreen(),
-              '/nested_scopes_example': (_) =>
-                  const NestedScopesExampleScreen(),
-              '/bind_example': (_) => const BindExampleScreen(),
-            },
-          ),
-        ),
+    return ContextPlus.root(
+      additionalWatchers: [
+        SignalContextWatcher.instance,
+        MobxObservableWatcher.instance,
+        BlocContextWatcher.instance,
+        GetxContextWatcher.instance,
+      ],
+      child: MaterialApp(
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        routes: {
+          '/': (_) => const HomeScreen(),
+          '/benchmark': (_) => const BenchmarkScreen(),
+          '/hot_reload_test': (_) => const HotReloadTestScreen(),
+          '/nested_scopes_example': (_) => const NestedScopesExampleScreen(),
+          '/bind_example': (_) => const BindExampleScreen(),
+        },
       ),
     );
   }

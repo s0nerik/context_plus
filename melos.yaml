@@ -1,6 +1,10 @@
 name: context_plus
 sdkPath: .fvm/flutter_sdk
 
+ide:
+  intellij:
+    moduleNamePrefix: ""
+
 packages:
   - example
   - packages/*

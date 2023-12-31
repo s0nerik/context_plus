@@ -14,6 +14,7 @@ extension ContextUseExt on BuildContext {
   T use<T>(
     T Function() create, {
     void Function(T instance)? dispose,
+    Object? key,
   }) {
     final root = ContextUseRoot.of(this);
     dependOnInheritedElement(root);
@@ -22,6 +23,7 @@ extension ContextUseExt on BuildContext {
       create: create,
       dispose: dispose,
       lazy: false,
+      key: key,
     );
     return provider.value;
   }
@@ -29,6 +31,7 @@ extension ContextUseExt on BuildContext {
   T Function() useLazy<T>(
     T Function() create, {
     void Function(T instance)? dispose,
+    Object? key,
   }) {
     final root = ContextUseRoot.of(this);
     dependOnInheritedElement(root);
@@ -37,6 +40,7 @@ extension ContextUseExt on BuildContext {
       create: create,
       dispose: dispose,
       lazy: true,
+      key: key,
     );
     return () => provider.value;
   }

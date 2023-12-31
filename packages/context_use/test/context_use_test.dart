@@ -1,5 +1,4 @@
 import 'package:context_use/context_use.dart';
-import 'package:context_use/src/context_use_root.dart';
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,7 +17,7 @@ void main() {
     final valueGenerations = [0, 0, 0];
     await widgetTester.pumpWidget(
       ContextWatch.root(
-        child: ContextUseRoot(
+        child: ContextUse.root(
           child: Builder(
             builder: (context) {
               var (value1, value2, value3) = (null, null, null);
@@ -51,7 +50,7 @@ void main() {
     expect(valueRecords, [(null, null, null)]);
 
     useValue1.value = true;
-    await widgetTester.pump(const Duration(seconds: 1));
+    await widgetTester.pumpAndSettle();
     expect(valueGenerations, [1, 0, 0]);
     expect(valueRecords, [
       (null, null, null),
@@ -59,7 +58,7 @@ void main() {
     ]);
 
     useValue2.value = true;
-    await widgetTester.pump(const Duration(seconds: 1));
+    await widgetTester.pumpAndSettle();
     expect(valueGenerations, [1, 1, 0]);
     expect(valueRecords, [
       (null, null, null),
@@ -68,7 +67,7 @@ void main() {
     ]);
 
     useValue3.value = true;
-    await widgetTester.pump(const Duration(seconds: 1));
+    await widgetTester.pumpAndSettle();
     expect(valueGenerations, [1, 1, 1]);
     expect(valueRecords, [
       (null, null, null),
@@ -78,7 +77,7 @@ void main() {
     ]);
 
     useValue1.value = false;
-    await widgetTester.pump(const Duration(seconds: 1));
+    await widgetTester.pumpAndSettle();
     expect(valueGenerations, [1, 1, 1]);
     expect(valueRecords, [
       (null, null, null),
@@ -95,5 +94,60 @@ void main() {
       // that context.use() is never called conditionally.
       (null, 0, 1),
     ]);
+  });
+
+  testWidgets('use(key: ) allows to update the value provider',
+      (widgetTester) async {
+    int index = 0;
+    int providerCalls = 0;
+    int builds = 0;
+    final returnedValues = <int>[];
+    final buildRequest = ChangeNotifier();
+
+    Object? key;
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextUse.root(
+          child: Builder(
+            builder: (context) {
+              buildRequest.watch(context);
+              builds++;
+              final value = context.use(() {
+                providerCalls++;
+                return index++;
+              }, key: key);
+              returnedValues.add(value);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+    expect(builds, 1);
+    expect(providerCalls, 1);
+    expect(returnedValues, [0]);
+
+    // If key didn't change, the value provider is not called again
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 2);
+    expect(providerCalls, 1);
+    expect(returnedValues, [0, 0]);
+
+    // If key changed, the value provider is called again
+    key = Object();
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 3);
+    expect(providerCalls, 2);
+    expect(returnedValues, [0, 0, 1]);
+
+    // After the key change, if the build request is triggered again, the value
+    // provider is not called again
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 4);
+    expect(providerCalls, 2);
+    expect(returnedValues, [0, 0, 1, 1]);
   });
 }

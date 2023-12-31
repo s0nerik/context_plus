@@ -1,4 +1,4 @@
-name: context_watch_workspace
+name: context_plus_workspace
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

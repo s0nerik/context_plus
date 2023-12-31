@@ -134,7 +134,7 @@ void main() {
     expect(providerCalls, 1);
     expect(returnedValues, [0, 0]);
 
-    // If key changed, the value provider is called again
+    // If key changes, the value provider is called again
     key = Object();
     buildRequest.notifyListeners();
     await widgetTester.pumpAndSettle();
@@ -150,4 +150,61 @@ void main() {
     expect(providerCalls, 2);
     expect(returnedValues, [0, 0, 1, 1]);
   });
+
+  testWidgets('changing a key in use(key: ) disposes old value right away',
+      (widgetTester) async {
+    final buildRequest = ChangeNotifier();
+
+    late _TestChangeNotifier providedNotifier;
+    Object? key;
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextUse.root(
+          child: Builder(
+            builder: (context) {
+              buildRequest.watch(context);
+              providedNotifier = context.use(
+                () => _TestChangeNotifier(),
+                key: key,
+              );
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+    expect(providedNotifier.isDisposed, false);
+
+    // If key didn't change, the value is not disposed
+    final oldProvidedNotifier1 = providedNotifier;
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(providedNotifier, oldProvidedNotifier1);
+    expect(providedNotifier.isDisposed, false);
+
+    // If key changes, the old value is disposed
+    key = Object();
+    final oldProvidedNotifier2 = providedNotifier;
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(providedNotifier, isNot(oldProvidedNotifier2));
+    expect(oldProvidedNotifier2.isDisposed, true);
+
+    // After the key change, if the build request is triggered again, the value
+    // provider is not called again
+    final oldProvidedNotifier3 = providedNotifier;
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(providedNotifier, oldProvidedNotifier3);
+  });
+}
+
+class _TestChangeNotifier extends ChangeNotifier {
+  bool isDisposed = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    isDisposed = true;
+  }
 }

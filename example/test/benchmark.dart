@@ -49,7 +49,7 @@ main() async {
     await benchmarkWidgets((WidgetTester tester) async {
       // Setup
       await tester.pumpWidget(
-        ContextWatchRoot(
+        ContextWatch.root(
           key: UniqueKey(),
           child: MaterialApp(
             home: benchmark.benchmark,

@@ -9,7 +9,7 @@ void main() {
     (widgetTester) async {
       final future = Future.value(0);
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             final snapshot = future.watch(context);
@@ -38,7 +38,7 @@ void main() {
       Future<int>? future;
       StackTrace? trace;
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             trace ??= StackTrace.current;
@@ -66,7 +66,7 @@ void main() {
     (widgetTester) async {
       final future = SynchronousFuture(0);
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             final snapshot = future.watch(context);

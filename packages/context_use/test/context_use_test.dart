@@ -17,7 +17,7 @@ void main() {
     int generatedIndex = 0;
     final valueGenerations = [0, 0, 0];
     await widgetTester.pumpWidget(
-      ContextWatchRoot(
+      ContextWatch.root(
         child: ContextUseRoot(
           child: Builder(
             builder: (context) {

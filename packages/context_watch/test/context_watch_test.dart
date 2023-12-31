@@ -14,7 +14,7 @@ void main() {
     observedListenables = [];
     observedStreams = [];
     rebuilds = 0;
-    widget = ContextWatchRoot(
+    widget = ContextWatch.root(
       child: Builder(
         builder: (context) {
           context.unwatch();

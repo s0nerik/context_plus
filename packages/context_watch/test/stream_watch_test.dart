@@ -12,7 +12,7 @@ void main() {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             final snapshot = stream.watch(context);
@@ -59,7 +59,7 @@ void main() {
 
       final Stream<int> stream = streamController.stream;
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             final snapshot = stream.watch(context);
@@ -92,7 +92,7 @@ void main() {
 
       final Stream<int> stream = streamController.stream;
       final snapshots = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Builder(
           builder: (context) {
             final snapshot = stream.watch(context);
@@ -122,7 +122,7 @@ void main() {
       final stream = streamController.stream;
       final snapshots1 = <AsyncSnapshot<int>>[];
       final snapshots2 = <AsyncSnapshot<int>>[];
-      final widget = ContextWatchRoot(
+      final widget = ContextWatch.root(
         child: Column(
           children: [
             Builder(

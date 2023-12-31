@@ -1,14 +1,12 @@
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'watchers/future_context_watcher.dart';
 import 'watchers/listenable_context_watcher.dart';
 import 'watchers/stream_context_watcher.dart';
 
-/// Provides the ability to watch Listenable and Stream values using
-/// `listenable.watch(context)` within a build method.
-///
-/// This widget should be placed at the root of the tree.
+@internal
 class ContextWatchRoot extends StatefulWidget {
   const ContextWatchRoot({
     super.key,

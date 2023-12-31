@@ -38,9 +38,9 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ContextRef.root(
-      child: ContextUse.root(
-        child: ContextWatchRoot(
+    return ContextUse.root(
+      child: ContextRef.root(
+        child: ContextWatch.root(
           additionalWatchers: [
             SignalContextWatcher.instance,
             MobxObservableWatcher.instance,

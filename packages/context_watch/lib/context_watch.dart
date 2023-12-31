@@ -9,6 +9,8 @@ export 'src/watchers/listenable_context_watcher.dart'
 export 'src/watchers/future_context_watcher.dart' hide FutureContextWatcher;
 export 'src/watchers/stream_context_watcher.dart' hide StreamContextWatcher;
 
+export 'package:context_watch_base/context_watch_base.dart' show ContextWatcher;
+
 class ContextWatch {
   /// Provides the ability to watch observable values using
   /// `observable.watch(context)` within a build method.

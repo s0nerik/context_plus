@@ -22,7 +22,7 @@ class _Child extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CounterExample(
-      counter: _counterNotifier.of(context).watch(context),
+      counter: _counterNotifier.watch(context),
       onIncrement: () => _counterNotifier.of(context).value += 1,
     );
   }

@@ -51,14 +51,21 @@ class InheritedContextUseElement extends InheritedElement {
       contextData.lastIndex = 0;
     }
 
-    final providerKey = (contextData.lastIndex++, T, key);
-    final existingProvider = contextData.providers[providerKey];
+    final index = contextData.lastIndex++;
+
+    final existingProvider = contextData.providers[index];
     if (existingProvider != null) {
-      return existingProvider as Provider<T>;
+      final existingKey = contextData.keys[index];
+      if (existingKey == key) {
+        return existingProvider as Provider<T>;
+      } else {
+        _disposeProvider(existingProvider);
+      }
     }
 
     final provider = Provider<T>(create, dispose: dispose, lazy: lazy);
-    contextData.providers[providerKey] = provider;
+    contextData.keys[index] = key;
+    contextData.providers[index] = provider;
     return provider;
   }
 
@@ -110,5 +117,8 @@ void _disposeProvider<T>(Provider<T> provider) {
 class _ContextData {
   var lastFrame = Duration.zero;
   var lastIndex = 0;
-  final providers = HashMap<(int, Type, Object?), Provider>();
+  // index -> key
+  final keys = HashMap<int, Object?>();
+  // index -> provider
+  final providers = HashMap<int, Provider>();
 }

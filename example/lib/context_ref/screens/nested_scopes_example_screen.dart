@@ -56,9 +56,17 @@ class _Body extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            child: _ChildWrapper(
-              depth: 1,
-              maxDepth: childrenAmount.watch(context),
+            child: Theme(
+              data: ThemeData.dark(),
+              child: DefaultTextStyle.merge(
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                child: _ChildWrapper(
+                  depth: 1,
+                  maxDepth: childrenAmount.watch(context),
+                ),
+              ),
             ),
           ),
         ),
@@ -130,8 +138,11 @@ class _ChildWrapperState extends State<_ChildWrapper> {
           right: 0,
           child: TextButton(
             onPressed: () => setState(() {
-              _color = Color(
-                0xFF000000 | (Random().nextInt(1 << 24)),
+              _color = Color.fromARGB(
+                255,
+                Random().nextInt(128),
+                Random().nextInt(128),
+                Random().nextInt(128),
               );
             }),
             child: const Text('Set random color'),

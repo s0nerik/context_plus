@@ -1,6 +1,6 @@
 // ignore_for_file: unused_element
 
-import 'package:context_watch/context_watch.dart';
+import 'package:context_plus/context_plus.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:context_watch_beacon/context_watch_beacon.dart';

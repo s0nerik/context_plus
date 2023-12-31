@@ -1,8 +1,11 @@
-import 'package:context_ref/context_ref.dart';
+import 'package:context_ref_watch/context_ref_watch.dart';
 import 'package:context_use/context_use.dart';
-import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+export 'package:context_use/context_use.dart' hide ContextUse;
+export 'package:context_ref_watch/context_ref_watch.dart'
+    hide ContextRef, ContextWatch;
 
 final class ContextPlus {
   ContextPlus._();

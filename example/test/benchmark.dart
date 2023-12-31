@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:context_watch/context_watch.dart';
+import 'package:context_plus/context_plus.dart';
 import 'package:example/context_watch/benchmark_screen.dart';
 import 'package:example/context_watch/common/observable_listener_types.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ main() async {
     await benchmarkWidgets((WidgetTester tester) async {
       // Setup
       await tester.pumpWidget(
-        ContextWatch.root(
+        ContextPlus.root(
           key: UniqueKey(),
           child: MaterialApp(
             home: benchmark.benchmark,

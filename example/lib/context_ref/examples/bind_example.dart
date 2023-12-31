@@ -1,6 +1,4 @@
-import 'package:context_ref/context_ref.dart';
-import 'package:context_use/context_use.dart';
-import 'package:context_watch/context_watch.dart';
+import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../example.dart';

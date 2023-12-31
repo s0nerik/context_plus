@@ -65,9 +65,7 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    final watchRoot =
-        context.getElementForInheritedWidgetOfExactType<InheritedContextWatch>()
-            as InheritedContextWatchElement;
+    final watchRoot = InheritedContextWatch.of(context);
     context.dependOnInheritedElement(watchRoot);
     watchRoot.watch(context, this);
     return value;

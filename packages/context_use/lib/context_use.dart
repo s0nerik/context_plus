@@ -2,6 +2,14 @@ import 'package:flutter/widgets.dart';
 
 import 'src/context_use_root.dart';
 
+class ContextUse {
+  static Widget root({
+    Key? key,
+    required Widget child,
+  }) =>
+      ContextUseRoot(child: child);
+}
+
 extension ContextUseExt on BuildContext {
   T use<T>(
     T Function() create, {

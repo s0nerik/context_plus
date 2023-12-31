@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   context_watch: ^2.0.0-dev.5
   context_ref: ^1.0.0-dev.1
+  context_use: ^0.0.0-dev.1
   rxdart: ^0.27.7
   syntax_highlight: ^0.3.0
 

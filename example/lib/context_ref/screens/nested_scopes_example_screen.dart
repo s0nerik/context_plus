@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:context_ref/context_ref.dart';
+import 'package:context_use/context_use.dart';
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
@@ -47,8 +48,11 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _globalState.bind(context, () => _State(scopeName: 'Global scope'));
-    final scopesAmount = _childrenAmount.bind(context, () => ValueNotifier(3));
+    final globalState = context.use(() => _State(scopeName: 'Global scope'));
+    _globalState.bind(context, globalState);
+
+    final childrenAmount = context.use(() => ValueNotifier(3));
+    _childrenAmount.bind(context, childrenAmount);
 
     return Column(
       children: [
@@ -56,7 +60,7 @@ class _Body extends StatelessWidget {
           child: SingleChildScrollView(
             child: _ChildWrapper(
               depth: 1,
-              maxDepth: scopesAmount.watch(context),
+              maxDepth: childrenAmount.watch(context),
             ),
           ),
         ),
@@ -64,11 +68,11 @@ class _Body extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(
-              onPressed: () => scopesAmount.value++,
+              onPressed: () => childrenAmount.value++,
               child: const Text('Add scope'),
             ),
             TextButton(
-              onPressed: () => scopesAmount.value--,
+              onPressed: () => childrenAmount.value--,
               child: const Text('Remove scope'),
             )
           ],
@@ -106,14 +110,12 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    _childColor.bindValue(context, _color);
-    final name = _name.bindValue(context, 'Scope ${widget.depth}');
-    _message.bindValue(context, 'Hello from $name');
+    _childColor.bind(context, _color);
+    final name = _name.bind(context, 'Scope ${widget.depth}');
+    _message.bind(context, 'Hello from $name');
 
-    _state.bind(
-      context,
-      () => _State(scopeName: _name.of(context)),
-    );
+    final state = context.use(() => _State(scopeName: name));
+    _state.bind(context, state);
 
     return Stack(
       children: [

@@ -1,4 +1,5 @@
 import 'package:context_ref/context_ref.dart';
+import 'package:context_use/context_use.dart';
 import 'package:context_watch/context_watch.dart';
 import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_getx/context_watch_getx.dart';
@@ -38,23 +39,26 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return ContextRef.root(
-      child: ContextWatchRoot(
-        additionalWatchers: [
-          SignalContextWatcher.instance,
-          MobxObservableWatcher.instance,
-          BlocContextWatcher.instance,
-          GetxContextWatcher.instance,
-        ],
-        child: MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          routes: {
-            '/': (_) => const HomeScreen(),
-            '/benchmark': (_) => const BenchmarkScreen(),
-            '/hot_reload_test': (_) => const HotReloadTestScreen(),
-            '/nested_scopes_example': (_) => const NestedScopesExampleScreen(),
-            '/bind_example': (_) => const BindExampleScreen(),
-          },
+      child: ContextUse.root(
+        child: ContextWatchRoot(
+          additionalWatchers: [
+            SignalContextWatcher.instance,
+            MobxObservableWatcher.instance,
+            BlocContextWatcher.instance,
+            GetxContextWatcher.instance,
+          ],
+          child: MaterialApp(
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            routes: {
+              '/': (_) => const HomeScreen(),
+              '/benchmark': (_) => const BenchmarkScreen(),
+              '/hot_reload_test': (_) => const HotReloadTestScreen(),
+              '/nested_scopes_example': (_) =>
+                  const NestedScopesExampleScreen(),
+              '/bind_example': (_) => const BindExampleScreen(),
+            },
+          ),
         ),
       ),
     );

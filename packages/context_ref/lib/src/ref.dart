@@ -1,9 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import 'context_ref_root.dart';
-import 'ref_value.dart';
-
-export 'ref_value.dart' show RefValueInitializer, RefValueDisposer;
 
 abstract interface class ReadOnlyRef<T> {
   T of(BuildContext context);
@@ -12,43 +9,23 @@ abstract interface class ReadOnlyRef<T> {
 class Ref<T> implements ReadOnlyRef<T> {
   Ref(); // Must not be const
 
-  T bind(
-    BuildContext context,
-    RefValueInitializer<T> create, {
-    RefValueDisposer<T>? dispose,
-  }) {
-    final root = ContextRefRoot.of(context);
-    context.dependOnInheritedElement(root);
-    return root.registerProvider(
+  T bind(BuildContext context, T value) {
+    ContextRefRoot.of(context).bind(
       context: context,
       ref: this,
-      create: create,
-      dispose: dispose,
+      provider: () => value,
     );
+    return value;
   }
 
   void bindLazy(
     BuildContext context,
-    RefValueInitializer<T> create, {
-    RefValueDisposer<T>? dispose,
-  }) {
-    final root = ContextRefRoot.of(context);
-    context.dependOnInheritedElement(root);
-    root.registerLazyProvider(
+    T Function() provider,
+  ) {
+    ContextRefRoot.of(context).bind(
       context: context,
       ref: this,
-      create: create,
-      dispose: dispose,
-    );
-  }
-
-  T bindValue(BuildContext context, T value) {
-    final root = ContextRefRoot.of(context);
-    context.dependOnInheritedElement(root);
-    return root.registerValueProvider(
-      context: context,
-      ref: this,
-      value: value,
+      provider: provider,
     );
   }
 

@@ -18,7 +18,7 @@ class ContextUseRoot extends InheritedWidget {
             as InheritedContextUseElement?;
     assert(
       element != null,
-      'No ContextRef.root() found. Did you forget to add a ContextRef.root() widget?',
+      'ContextUseRoot not found. Did you forget to add a ContextUseRoot widget?',
     );
     return element!;
   }

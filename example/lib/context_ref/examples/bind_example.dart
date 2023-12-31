@@ -1,4 +1,5 @@
 import 'package:context_ref/context_ref.dart';
+import 'package:context_use/context_use.dart';
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,8 @@ class BindExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _counterNotifier.bind(context, () => ValueNotifier(0));
+    final counterNotifier = context.use(() => ValueNotifier(0));
+    _counterNotifier.bind(context, counterNotifier);
     return const _Child();
   }
 }

@@ -1,10 +1,8 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'ref.dart';
-import 'ref_value.dart';
 
 class ContextRefRoot extends InheritedWidget {
   const ContextRefRoot({
@@ -12,10 +10,10 @@ class ContextRefRoot extends InheritedWidget {
     required super.child,
   });
 
-  static InheritedContextGetElement of(BuildContext context) {
+  static InheritedContextRefElement of(BuildContext context) {
     final element =
         context.getElementForInheritedWidgetOfExactType<ContextRefRoot>()
-            as InheritedContextGetElement?;
+            as InheritedContextRefElement?;
     assert(
       element != null,
       'No ContextRef.root() found. Did you forget to add a ContextRef.root() widget?',
@@ -24,83 +22,40 @@ class ContextRefRoot extends InheritedWidget {
   }
 
   @override
-  InheritedContextGetElement createElement() =>
-      InheritedContextGetElement(this);
+  InheritedContextRefElement createElement() =>
+      InheritedContextRefElement(this);
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }
 
-class InheritedContextGetElement extends InheritedElement {
-  InheritedContextGetElement(super.widget);
+class InheritedContextRefElement extends InheritedElement {
+  InheritedContextRefElement(super.widget);
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
 
-  T registerProvider<T>({
+  void bind<T>({
     required BuildContext context,
     required Ref<T> ref,
-    required RefValueInitializer<T> create,
-    required RefValueDisposer<T>? dispose,
+    required T Function() provider,
   }) {
+    // Make [context] dependent on this element so that we can get notified
+    // when the [context] is removed from the tree.
+    context.dependOnInheritedElement(this);
     final contextData = _contextData[context] ??= _ContextData();
-
-    final existingProvider = contextData.providers[ref];
-    if (existingProvider != null) {
-      return existingProvider.value as T;
-    }
-
-    final provider = RefValue<T>(create, dispose: dispose, lazy: false);
-    contextData.providers[ref] = provider;
-    return provider.value;
-  }
-
-  T registerValueProvider<T>({
-    required BuildContext context,
-    required Ref<T> ref,
-    required T value,
-  }) {
-    final contextData = _contextData[context] ??= _ContextData();
-
-    final existingProvider = contextData.providers[ref];
-    // TODO: handle value -> non-value provider transition
-    if (existingProvider != null && existingProvider.value == value) {
-      return value;
-    }
-
-    final provider =
-        RefValue<T>(() => value, dispose: _noopDispose, lazy: false);
-    contextData.providers[ref] = provider;
-    return provider.value;
-  }
-
-  void registerLazyProvider<T>({
-    required BuildContext context,
-    required Ref<T> ref,
-    required RefValueInitializer<T> create,
-    required RefValueDisposer<T>? dispose,
-  }) {
-    final contextData = _contextData[context] ??= _ContextData();
-
-    final existingProvider = contextData.providers[ref];
-    if (existingProvider != null) {
-      return;
-    }
-
-    final provider = RefValue<T>(create, dispose: dispose, lazy: true);
     contextData.providers[ref] = provider;
   }
 
-  T get<T>(BuildContext context, Ref<T> providerRef) {
-    RefValue<T>? provider =
-        _contextData[context]?.providers[providerRef] as RefValue<T>?;
+  T get<T>(BuildContext context, Ref<T> ref) {
+    var provider = _contextData[context]?.providers[ref] as _Provider<T>?;
     if (provider != null) {
-      return provider.value;
+      return provider();
     }
 
     context.visitAncestorElements((element) {
-      final p = _contextData[element]?.providers[providerRef];
+      final p = _contextData[element]?.providers[ref];
       if (p != null) {
-        provider = p as RefValue<T>;
+        provider = p as _Provider<T>;
         return false;
       }
       return true;
@@ -108,58 +63,21 @@ class InheritedContextGetElement extends InheritedElement {
 
     assert(
       provider != null,
-      'No provider found for $providerRef',
+      '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
     );
 
-    return provider!.value;
+    return provider!();
   }
 
   @override
   void removeDependent(Element dependent) {
-    _disposeProvidersForContext(dependent);
+    _contextData.remove(dependent);
     super.removeDependent(dependent);
-  }
-
-  @override
-  void unmount() {
-    for (final contextData in _contextData.values) {
-      for (final provider in contextData.providers.values) {
-        provider.dispose();
-      }
-    }
-    _contextData.clear();
-    super.unmount();
-  }
-
-  void _disposeProvidersForContext(BuildContext context) {
-    final contextData = _contextData.remove(context);
-    if (contextData == null) {
-      return;
-    }
-
-    for (final provider in contextData.providers.values) {
-      _disposeProvider(provider);
-    }
-  }
-}
-
-void _disposeProvider<T>(RefValue<T> provider) {
-  if (!kDebugMode) {
-    provider.dispose();
-    return;
-  }
-
-  try {
-    provider.dispose();
-  } catch (e) {
-    if (e.runtimeType.toString() != '_CompileTimeError') {
-      rethrow;
-    }
   }
 }
 
 class _ContextData {
-  final providers = HashMap<Ref, RefValue>.identity();
+  final providers = HashMap<Ref, _Provider>.identity();
 }
 
-void _noopDispose(_) {}
+typedef _Provider<T> = T Function();

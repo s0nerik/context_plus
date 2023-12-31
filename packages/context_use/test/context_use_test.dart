@@ -22,19 +22,19 @@ void main() {
             builder: (context) {
               var (value1, value2, value3) = (null, null, null);
               if (useValue1.watch(context)) {
-                value1 = context.use<int>(() {
+                value1 = context.use(() {
                   valueGenerations[0]++;
                   return generatedIndex++;
                 });
               }
               if (useValue2.watch(context)) {
-                value2 = context.use<int>(() {
+                value2 = context.use(() {
                   valueGenerations[1]++;
                   return generatedIndex++;
                 });
               }
               if (useValue3.watch(context)) {
-                value3 = context.use<int>(() {
+                value3 = context.use(() {
                   valueGenerations[2]++;
                   return generatedIndex++;
                 });

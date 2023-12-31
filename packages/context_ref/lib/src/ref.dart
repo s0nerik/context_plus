@@ -2,9 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'context_ref_root.dart';
 
-abstract interface class ReadOnlyRef<T> {
-  T of(BuildContext context);
-}
+abstract interface class ReadOnlyRef<T> {}
 
 class Ref<T> implements ReadOnlyRef<T> {
   Ref(); // Must not be const
@@ -29,8 +27,9 @@ class Ref<T> implements ReadOnlyRef<T> {
     );
   }
 
-  @override
-  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
-
   ReadOnlyRef<T> get readOnly => this;
+}
+
+extension ContextRefExt<T> on ReadOnlyRef<T> {
+  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
 }

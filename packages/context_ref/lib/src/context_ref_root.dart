@@ -46,7 +46,7 @@ class InheritedContextRefElement extends InheritedElement {
     contextData.providers[ref] = provider;
   }
 
-  T get<T>(BuildContext context, Ref<T> ref) {
+  T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
     var provider = _contextData[context]?.providers[ref] as _Provider<T>?;
     if (provider != null) {
       return provider();
@@ -77,7 +77,7 @@ class InheritedContextRefElement extends InheritedElement {
 }
 
 class _ContextData {
-  final providers = HashMap<Ref, _Provider>.identity();
+  final providers = HashMap<ReadOnlyRef, _Provider>.identity();
 }
 
 typedef _Provider<T> = T Function();

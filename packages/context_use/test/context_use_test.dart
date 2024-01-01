@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
-      'use() returns the same value, no matter how many times it is called',
+      'context.use() returns the same value, no matter how many times it is called',
       (widgetTester) async {
     var (useValue1, useValue2, useValue3) = (
       ValueNotifier(false),
@@ -96,7 +96,7 @@ void main() {
     ]);
   });
 
-  testWidgets('use(key: ) allows to update the value provider',
+  testWidgets('context.use(key: ) allows to update the value provider',
       (widgetTester) async {
     int index = 0;
     int providerCalls = 0;
@@ -151,7 +151,8 @@ void main() {
     expect(returnedValues, [0, 0, 1, 1]);
   });
 
-  testWidgets('changing a key in use(key: ) disposes old value right away',
+  testWidgets(
+      'context.use(key: ) disposes old value right away upon changing a key',
       (widgetTester) async {
     final buildRequest = ChangeNotifier();
 
@@ -198,7 +199,7 @@ void main() {
     expect(providedNotifier, oldProvidedNotifier3);
   });
   testWidgets(
-      'useLazy() returns a function that returns the same value, no matter how many times it is called',
+      'context.useLazy() returns a function that returns the same value, no matter how many times it is called',
       (widgetTester) async {
     int generatedIndex = 0;
     final valueGenerations = [0];

@@ -94,10 +94,12 @@ class _ChildWrapper extends StatefulWidget {
     super.key,
     required this.depth,
     required this.maxDepth,
+    this.parentContext,
   });
 
   final int depth;
   final int maxDepth;
+  final BuildContext? parentContext;
 
   @override
   State<_ChildWrapper> createState() => _ChildWrapperState();
@@ -120,14 +122,20 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 
     _state.bind(context, () => _State(scopeName: name));
 
+    final parentColor = widget.parentContext != null
+        ? _childColor.of(widget.parentContext!)
+        : null;
+
     return Stack(
       children: [
         _Child(
+          parentColor: parentColor,
           child: widget.depth >= widget.maxDepth
               ? const SizedBox.shrink()
               : _ChildWrapper(
                   depth: widget.depth + 1,
                   maxDepth: widget.maxDepth,
+                  parentContext: context,
                 ),
         ),
         Positioned(
@@ -153,9 +161,11 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 class _Child extends StatelessWidget {
   const _Child({
     super.key,
+    required this.parentColor,
     this.child,
   });
 
+  final Color? parentColor;
   final Widget? child;
 
   @override
@@ -177,6 +187,24 @@ class _Child extends StatelessWidget {
           Text('Message: $message'),
           Text('Counter: ${state.counter.watch(context)}'),
           Text('Global counter: ${globalState.counter.watch(context)}'),
+          if (parentColor != null)
+            Row(
+              children: [
+                const Text('Parent color: '),
+                Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: parentColor!,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: Colors.grey.shade400,
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           Row(
             children: [
               const Text('Increment: '),

@@ -53,9 +53,9 @@ class InheritedContextUseElement extends InheritedElement {
 
     final index = contextData.lastIndex++;
 
-    final existingProvider = contextData.providers[index];
+    final existingProvider = contextData.providers.getOrNull(index);
     if (existingProvider != null) {
-      final existingKey = contextData.keys[index];
+      final existingKey = contextData.keys.getOrNull(index);
       if (existingKey == key) {
         return existingProvider as Provider<T>;
       } else {
@@ -64,8 +64,8 @@ class InheritedContextUseElement extends InheritedElement {
     }
 
     final provider = Provider<T>(create, dispose: dispose, lazy: lazy);
-    contextData.keys[index] = key;
-    contextData.providers[index] = provider;
+    contextData.keys.set(index, key);
+    contextData.providers.set(index, provider);
     return provider;
   }
 
@@ -78,7 +78,7 @@ class InheritedContextUseElement extends InheritedElement {
   @override
   void unmount() {
     for (final contextData in _contextData.values) {
-      for (final provider in contextData.providers.values) {
+      for (final provider in contextData.providers) {
         provider.dispose();
       }
     }
@@ -92,7 +92,7 @@ class InheritedContextUseElement extends InheritedElement {
       return;
     }
 
-    for (final provider in contextData.providers.values) {
+    for (final provider in contextData.providers) {
       _disposeProvider(provider);
     }
   }
@@ -117,8 +117,18 @@ void _disposeProvider<T>(Provider<T> provider) {
 class _ContextData {
   var lastFrame = Duration.zero;
   var lastIndex = 0;
-  // index -> key
-  final keys = HashMap<int, Object?>();
-  // index -> provider
-  final providers = HashMap<int, Provider>();
+
+  final keys = <Object?>[];
+  final providers = <Provider>[];
+}
+
+extension _ListExtension<T> on List<T> {
+  T? getOrNull(int index) => index < length ? this[index] : null;
+  void set(int index, T value) {
+    if (index < length) {
+      this[index] = value;
+    } else {
+      add(value);
+    }
+  }
 }

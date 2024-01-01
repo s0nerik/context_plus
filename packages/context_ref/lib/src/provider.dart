@@ -18,6 +18,11 @@ class Provider<T> {
     return wrapper.value;
   }
 
+  set value(T value) {
+    final wrapper = _valueWrapper ??= _ValueWrapper(value);
+    wrapper.value = value;
+  }
+
   void dispose() {
     if (_valueWrapper == null) return;
 
@@ -53,7 +58,7 @@ class Provider<T> {
 class _ValueWrapper<T> {
   _ValueWrapper(this.value);
 
-  final T value;
+  T value;
 }
 
 void _tryDispose(dynamic obj) {

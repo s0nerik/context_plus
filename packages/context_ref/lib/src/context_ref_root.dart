@@ -42,7 +42,7 @@ class InheritedContextRefElement extends InheritedElement {
         as ValueProvider<T>;
   }
 
-  void bind<T>({
+  ValueProvider<T> bind<T>({
     required BuildContext context,
     required Ref<T> ref,
     required T Function() create,
@@ -59,9 +59,10 @@ class InheritedContextRefElement extends InheritedElement {
     if (!lazy) {
       provider.value;
     }
+    return provider;
   }
 
-  void bindValue<T>({
+  ValueProvider<T> bindValue<T>({
     required BuildContext context,
     required Ref<T> ref,
     required T value,
@@ -74,6 +75,7 @@ class InheritedContextRefElement extends InheritedElement {
     provider.creator = null;
     provider.disposer = _noopDispose;
     provider.value = value;
+    return provider;
   }
 
   T get<T>(BuildContext context, ReadOnlyRef<T> ref) {

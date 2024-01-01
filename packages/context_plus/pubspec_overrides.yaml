@@ -1,9 +1,7 @@
-# melos_managed_dependency_overrides: context_ref,context_watch,context_watch_base,context_ref_watch
+# melos_managed_dependency_overrides: context_ref,context_watch,context_watch_base
 dependency_overrides:
   context_ref:
     path: ../context_ref
-  context_ref_watch:
-    path: ../context_ref_watch
   context_watch:
     path: ../context_watch
   context_watch_base:

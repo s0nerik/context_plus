@@ -1,11 +1,9 @@
-# melos_managed_dependency_overrides: context_ref,context_watch,context_watch_base,context_watch_beacon,context_watch_bloc,context_watch_getx,context_watch_mobx,context_watch_signals,context_plus,context_ref_watch
+# melos_managed_dependency_overrides: context_ref,context_watch,context_watch_base,context_watch_beacon,context_watch_bloc,context_watch_getx,context_watch_mobx,context_watch_signals,context_plus
 dependency_overrides:
   context_plus:
     path: ../packages/context_plus
   context_ref:
     path: ../packages/context_ref
-  context_ref_watch:
-    path: ../packages/context_ref_watch
   context_watch:
     path: ../packages/context_watch
   context_watch_base:

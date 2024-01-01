@@ -1,34 +1,26 @@
 import 'dart:async';
 
 class Provider<T> {
-  Provider(
-    this._initializer, {
-    required this.lazy,
-    required void Function(T value)? dispose,
-  }) : _dispose = dispose;
+  T Function()? _creator;
+  set creator(T Function()? creator) {
+    _creator = creator;
+  }
 
-  final T Function() _initializer;
-  final void Function(T value)? _dispose;
-  final bool lazy;
+  void Function(T value)? _disposer;
+  set disposer(void Function(T value)? disposer) {
+    _disposer = disposer;
+  }
 
   _ValueWrapper<T>? _valueWrapper;
-
-  T get value {
-    final wrapper = _valueWrapper ??= _ValueWrapper(_initializer());
-    return wrapper.value;
-  }
-
-  set value(T value) {
-    final wrapper = _valueWrapper ??= _ValueWrapper(value);
-    wrapper.value = value;
-  }
+  T get value => (_valueWrapper ??= _ValueWrapper(_creator!())).value;
+  set value(T value) => (_valueWrapper ??= _ValueWrapper(value)).value = value;
 
   void dispose() {
     if (_valueWrapper == null) return;
 
     try {
-      if (_dispose != null) {
-        _dispose!(value);
+      if (_disposer != null) {
+        _disposer!(value);
       } else {
         _tryDispose(value);
       }
@@ -36,23 +28,6 @@ class Provider<T> {
       _valueWrapper = null;
     }
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Provider &&
-          runtimeType == other.runtimeType &&
-          _initializer == other._initializer &&
-          _dispose == other._dispose &&
-          lazy == other.lazy &&
-          _valueWrapper == other._valueWrapper;
-
-  @override
-  int get hashCode =>
-      _initializer.hashCode ^
-      _dispose.hashCode ^
-      lazy.hashCode ^
-      _valueWrapper.hashCode;
 }
 
 class _ValueWrapper<T> {

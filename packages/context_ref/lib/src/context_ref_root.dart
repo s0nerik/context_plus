@@ -1,7 +1,9 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'provider.dart';
 import 'ref.dart';
 
 class ContextRefRoot extends InheritedWidget {
@@ -34,28 +36,55 @@ class InheritedContextRefElement extends InheritedElement {
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
 
+  Provider<T> _getOrCreateProvider<T>(BuildContext context, Ref<T> ref) {
+    final contextData = _contextData[context] ??= _ContextData();
+    return (contextData.providers[ref] ??= Provider<T>()) as Provider<T>;
+  }
+
   void bind<T>({
     required BuildContext context,
     required Ref<T> ref,
-    required T Function() provider,
+    required T Function() create,
+    required void Function(T value)? dispose,
+    required bool lazy,
   }) {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
-    final contextData = _contextData[context] ??= _ContextData();
-    contextData.providers[ref] = provider;
+
+    final provider = _getOrCreateProvider(context, ref);
+    provider.creator = create;
+    provider.disposer = dispose;
+    if (!lazy) {
+      provider.value;
+    }
+  }
+
+  void bindValue<T>({
+    required BuildContext context,
+    required Ref<T> ref,
+    required T value,
+  }) {
+    // Make [context] dependent on this element so that we can get notified
+    // when the [context] is removed from the tree.
+    context.dependOnInheritedElement(this);
+
+    final provider = _getOrCreateProvider(context, ref);
+    provider.creator = null;
+    provider.disposer = _noopDispose;
+    provider.value = value;
   }
 
   T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
-    var provider = _contextData[context]?.providers[ref] as _Provider<T>?;
+    var provider = _contextData[context]?.providers[ref] as Provider<T>?;
     if (provider != null) {
-      return provider();
+      return provider.value;
     }
 
     context.visitAncestorElements((element) {
       final p = _contextData[element]?.providers[ref];
       if (p != null) {
-        provider = p as _Provider<T>;
+        provider = p as Provider<T>;
         return false;
       }
       return true;
@@ -66,18 +95,56 @@ class InheritedContextRefElement extends InheritedElement {
       '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
     );
 
-    return provider!();
+    return provider!.value;
   }
 
   @override
   void removeDependent(Element dependent) {
-    _contextData.remove(dependent);
+    _disposeProvidersForContext(dependent);
     super.removeDependent(dependent);
+  }
+
+  void _disposeProvidersForContext(BuildContext context) {
+    final contextData = _contextData.remove(context);
+    if (contextData == null) {
+      return;
+    }
+
+    for (final provider in contextData.providers.values) {
+      _disposeProvider(provider);
+    }
+  }
+
+  @override
+  void unmount() {
+    for (final contextData in _contextData.values) {
+      for (final provider in contextData.providers.values) {
+        provider.dispose();
+      }
+    }
+    _contextData.clear();
+    super.unmount();
+  }
+}
+
+void _disposeProvider<T>(Provider<T> provider) {
+  if (!kDebugMode) {
+    provider.dispose();
+    return;
+  }
+
+  try {
+    provider.dispose();
+  } catch (e) {
+    if (e.runtimeType.toString() != '_CompileTimeError') {
+      // This happens during hot reload if the provided type has been renamed.
+      rethrow;
+    }
   }
 }
 
 class _ContextData {
-  final providers = HashMap<ReadOnlyRef, _Provider>.identity();
+  final providers = HashMap<ReadOnlyRef, Provider>.identity();
 }
 
-typedef _Provider<T> = T Function();
+void _noopDispose(_) {}

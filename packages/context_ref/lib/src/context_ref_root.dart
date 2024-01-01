@@ -47,7 +47,6 @@ class InheritedContextRefElement extends InheritedElement {
     required Ref<T> ref,
     required T Function() create,
     required void Function(T value)? dispose,
-    required bool lazy,
   }) {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
@@ -56,9 +55,6 @@ class InheritedContextRefElement extends InheritedElement {
     final provider = _getOrCreateProvider(context, ref);
     provider.creator = create;
     provider.disposer = dispose;
-    if (!lazy) {
-      provider.value;
-    }
     return provider;
   }
 

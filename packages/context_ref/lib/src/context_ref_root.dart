@@ -36,9 +36,10 @@ class InheritedContextRefElement extends InheritedElement {
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
 
-  Provider<T> _getOrCreateProvider<T>(BuildContext context, Ref<T> ref) {
+  ValueProvider<T> _getOrCreateProvider<T>(BuildContext context, Ref<T> ref) {
     final contextData = _contextData[context] ??= _ContextData();
-    return (contextData.providers[ref] ??= Provider<T>()) as Provider<T>;
+    return (contextData.providers[ref] ??= ValueProvider<T>())
+        as ValueProvider<T>;
   }
 
   void bind<T>({
@@ -76,7 +77,7 @@ class InheritedContextRefElement extends InheritedElement {
   }
 
   T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
-    var provider = _contextData[context]?.providers[ref] as Provider<T>?;
+    var provider = _contextData[context]?.providers[ref] as ValueProvider<T>?;
     if (provider != null) {
       return provider.value;
     }
@@ -84,7 +85,7 @@ class InheritedContextRefElement extends InheritedElement {
     context.visitAncestorElements((element) {
       final p = _contextData[element]?.providers[ref];
       if (p != null) {
-        provider = p as Provider<T>;
+        provider = p as ValueProvider<T>;
         return false;
       }
       return true;
@@ -127,7 +128,7 @@ class InheritedContextRefElement extends InheritedElement {
   }
 }
 
-void _disposeProvider<T>(Provider<T> provider) {
+void _disposeProvider<T>(ValueProvider<T> provider) {
   if (!kDebugMode) {
     provider.dispose();
     return;
@@ -144,7 +145,7 @@ void _disposeProvider<T>(Provider<T> provider) {
 }
 
 class _ContextData {
-  final providers = HashMap<ReadOnlyRef, Provider>.identity();
+  final providers = HashMap<ReadOnlyRef, ValueProvider>.identity();
 }
 
 void _noopDispose(_) {}

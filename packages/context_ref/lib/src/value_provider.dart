@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class Provider<T> {
+class ValueProvider<T> {
   T Function()? _creator;
   set creator(T Function()? creator) {
     _creator = creator;

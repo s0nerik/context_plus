@@ -223,6 +223,30 @@ void main() {
     );
     expect(valueGenerations, [1]);
   });
+  testWidgets('context.useLazy() initializes the value lazily',
+      (widgetTester) async {
+    int initializationCount = 0;
+    await widgetTester.pumpWidget(
+      ContextUse.root(
+        child: Builder(
+          builder: (context) {
+            final valueProvider = context.useLazy(() {
+              initializationCount++;
+              return 42;
+            });
+            // At this point, the value should not be initialized yet
+            expect(initializationCount, 0);
+            // Call the function returned by useLazy to initialize the value
+            final value = valueProvider();
+            expect(value, 42);
+            // Now the value should be initialized
+            expect(initializationCount, 1);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {

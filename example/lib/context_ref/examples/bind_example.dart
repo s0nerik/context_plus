@@ -10,8 +10,7 @@ class BindExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterNotifier = context.use(() => ValueNotifier(0));
-    _counterNotifier.bind(context, counterNotifier);
+    _counterNotifier.bind(context, () => ValueNotifier(0));
     return const _Child();
   }
 }

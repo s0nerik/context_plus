@@ -46,11 +46,9 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final globalState = context.use(() => _State(scopeName: 'Global scope'));
-    _globalState.bind(context, globalState);
-
-    final childrenAmount = context.use(() => ValueNotifier(3));
-    _childrenAmount.bind(context, childrenAmount);
+    _globalState.bind(context, () => _State(scopeName: 'Global scope'));
+    final childrenAmount =
+        _childrenAmount.bind(context, () => ValueNotifier(3));
 
     return Column(
       children: [
@@ -116,12 +114,11 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    _childColor.bind(context, _color);
-    final name = _name.bind(context, 'Scope ${widget.depth}');
-    _message.bind(context, 'Hello from $name');
+    _childColor.bindValue(context, _color);
+    final name = _name.bindValue(context, 'Scope ${widget.depth}');
+    _message.bindValue(context, 'Hello from $name');
 
-    final state = context.use(() => _State(scopeName: name));
-    _state.bind(context, state);
+    _state.bind(context, () => _State(scopeName: name));
 
     return Stack(
       children: [

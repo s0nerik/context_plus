@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'provider.dart';
+import 'value_provider.dart';
 import 'ref.dart';
 
 class ContextRefRoot extends InheritedWidget {

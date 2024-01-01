@@ -197,6 +197,31 @@ void main() {
     await widgetTester.pumpAndSettle();
     expect(providedNotifier, oldProvidedNotifier3);
   });
+  testWidgets(
+      'useLazy() returns a function that returns the same value, no matter how many times it is called',
+      (widgetTester) async {
+    int generatedIndex = 0;
+    final valueGenerations = [0];
+    await widgetTester.pumpWidget(
+      ContextUse.root(
+        child: Builder(
+          builder: (context) {
+            final valueProvider = context.useLazy(() {
+              valueGenerations[0]++;
+              return generatedIndex++;
+            });
+            final value1 = valueProvider();
+            final value2 = valueProvider();
+            final value3 = valueProvider();
+            expect(value1, value2);
+            expect(value2, value3);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(valueGenerations, [1]);
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {

@@ -1,6 +1,15 @@
 import 'dart:async';
 
 class ValueProvider<T> {
+  Object? _key;
+  set key(Object? key) {
+    if (_key == key) {
+      return;
+    }
+    dispose();
+    _key = key;
+  }
+
   T Function()? _creator;
   set creator(T Function()? creator) {
     _creator = creator;

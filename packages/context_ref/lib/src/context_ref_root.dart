@@ -47,12 +47,14 @@ class InheritedContextRefElement extends InheritedElement {
     required Ref<T> ref,
     required T Function() create,
     required void Function(T value)? dispose,
+    required Object? key,
   }) {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
     final provider = _getOrCreateProvider(context, ref);
+    provider.key = key;
     provider.creator = create;
     provider.disposer = dispose;
     return provider;

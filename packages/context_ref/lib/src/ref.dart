@@ -11,12 +11,14 @@ class Ref<T> implements ReadOnlyRef<T> {
     BuildContext context,
     T Function() create, {
     void Function(T value)? dispose,
+    Object? key,
   }) {
     final provider = ContextRefRoot.of(context).bind(
       context: context,
       ref: this,
       create: create,
       dispose: dispose,
+      key: key,
     );
     return provider.value;
   }
@@ -25,12 +27,14 @@ class Ref<T> implements ReadOnlyRef<T> {
     BuildContext context,
     T Function() create, {
     void Function(T value)? dispose,
+    Object? key,
   }) {
     ContextRefRoot.of(context).bind(
       context: context,
       ref: this,
       create: create,
       dispose: dispose,
+      key: key,
     );
   }
 

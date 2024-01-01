@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_use: ^0.0.0-dev.1
   context_ref_watch: ^1.0.0-dev.1
 
 dev_dependencies:

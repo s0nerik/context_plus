@@ -70,13 +70,6 @@ packages:
       relative: true
     source: path
     version: "1.0.0-dev.1"
-  context_use:
-    dependency: "direct overridden"
-    description:
-      path: "../packages/context_use"
-      relative: true
-    source: path
-    version: "0.0.1-dev.1"
   context_watch:
     dependency: "direct overridden"
     description:

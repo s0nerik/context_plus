@@ -3,8 +3,8 @@ import 'dart:async';
 class Provider<T> {
   Provider(
     this._initializer, {
-    this.lazy = false,
-    void Function(T value)? dispose,
+    required this.lazy,
+    required void Function(T value)? dispose,
   }) : _dispose = dispose;
 
   final T Function() _initializer;

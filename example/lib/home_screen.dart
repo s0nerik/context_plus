@@ -7,7 +7,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('context_watch'),
+        title: const Text('context_plus'),
       ),
       body: Center(
         child: Wrap(
@@ -18,16 +18,21 @@ class HomeScreen extends StatelessWidget {
           children: [
             OutlinedButton(
               onPressed: () => Navigator.of(context).pushNamed('/benchmark'),
-              child: const Text('Benchmark'),
+              child: const Text('(context_watch) Benchmark'),
             ),
             OutlinedButton(
               onPressed: () =>
                   Navigator.of(context).pushNamed('/hot_reload_test'),
-              child: const Text('Hot Reload Test'),
+              child: const Text('(context_watch) Hot Reload Test'),
             ),
             OutlinedButton(
               onPressed: () => Navigator.of(context).pushNamed('/bind_example'),
-              child: const Text('(context_ref) Bind Example'),
+              child: const Text('(context_ref) Ref.bind() Example'),
+            ),
+            OutlinedButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed('/bind_value_example'),
+              child: const Text('(context_ref) Ref.bindValue() Example'),
             ),
             OutlinedButton(
               onPressed: () =>

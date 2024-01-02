@@ -7,6 +7,7 @@ import 'package:signals_flutter/signals_flutter.dart' as signals;
 import 'package:flutter/material.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
+import 'context_ref/screens/bind_value_example_screen.dart';
 import 'context_watch/benchmark_screen.dart';
 import 'context_ref/screens/bind_example_screen.dart';
 import 'context_ref/screens/nested_scopes_example_screen.dart';
@@ -52,6 +53,7 @@ class _MainAppState extends State<MainApp> {
           '/hot_reload_test': (_) => const HotReloadTestScreen(),
           '/nested_scopes_example': (_) => const NestedScopesExampleScreen(),
           '/bind_example': (_) => const BindExampleScreen(),
+          '/bind_value_example': (_) => const BindValueExampleScreen(),
         },
       ),
     );

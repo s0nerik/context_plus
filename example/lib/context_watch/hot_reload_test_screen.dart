@@ -14,12 +14,12 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
   bool _stream1HasListeners = false;
   late final StreamController<int> _controller1;
   late final Timer _timer1;
-  Stream<int> get _stream1 => _controller1.stream;
+  late final Stream<int> _stream1 = _controller1.stream;
 
   bool _stream2HasListeners = false;
-  late final StreamController<double> _controller2;
+  late final StreamController<String> _controller2;
   late final Timer _timer2;
-  Stream<double> get _stream2 => _controller2.stream;
+  late final Stream<String> _stream2 = _controller2.stream;
 
   bool _watchStream1 = true;
   bool _watchStream2 = false;
@@ -32,14 +32,14 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
       onListen: () => _stream1HasListeners = true,
       onCancel: () => _stream1HasListeners = false,
     );
-    _timer1 = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer1 = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       debugPrint(
         'Stream 1: ${timer.tick}, has listeners? $_stream1HasListeners',
       );
-      _controller1.add(timer.tick);
+      _controller1.add(timer.tick % 10);
     });
 
-    _controller2 = StreamController<double>.broadcast(
+    _controller2 = StreamController<String>.broadcast(
       onListen: () => _stream2HasListeners = true,
       onCancel: () => _stream2HasListeners = false,
     );
@@ -47,7 +47,7 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
       debugPrint(
         '                                   Stream 2: ${timer.tick}, has listeners? $_stream2HasListeners',
       );
-      _controller2.add(timer.tick.toDouble());
+      _controller2.add(String.fromCharCode(65 + timer.tick % 26));
     });
   }
 
@@ -80,7 +80,7 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
     final stream1Value =
         _watchStream1 ? _stream1.watch(context).data ?? -1 : -1;
     final stream2Value =
-        _watchStream2 ? _stream2.watch(context).data ?? -1.0 : -1.0;
+        _watchStream2 ? _stream2.watch(context).data ?? '' : '';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hot Reload Test'),
@@ -89,8 +89,18 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Stream 1: $stream1Value'),
-            Text('Stream 2: $stream2Value'),
+            Text('Digits: ${stream1Value != -1 ? stream1Value : ''}'),
+            Text('Characters: $stream2Value'),
+            const SizedBox(height: 16),
+            Text('Reassemble count: $_reassembleCount'),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Each time you hot reload, the watched stream will change.',
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       ),

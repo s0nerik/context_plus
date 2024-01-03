@@ -71,8 +71,8 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
       _watchStream1 = false;
       _watchStream2 = true;
     }
-    debugPrint('reassemble, _watchStream2: $_watchStream2');
     debugPrint('reassemble, _watchStream1: $_watchStream1');
+    debugPrint('reassemble, _watchStream2: $_watchStream2');
   }
 
   @override

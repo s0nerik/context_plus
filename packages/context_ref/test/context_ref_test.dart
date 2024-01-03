@@ -4,6 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  setUp(() {
+    _counterRef = Ref<int>();
+    _CounterWidget.widgetBuilds = 0;
+  });
+
   testWidgets(
       'Ref.bind() returns the same value, no matter how many times it is called',
       (widgetTester) async {
@@ -217,6 +222,51 @@ void main() {
     );
     expect(valueInitializations, 1);
   });
+
+  testWidgets(
+      'Ref.bindValue() marks children elements as dirty when the value changes',
+      (widgetTester) async {
+    final valueToProvide = ValueNotifier<int>(0);
+    var providerRebuilds = 0;
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(
+            builder: (context) {
+              final value = valueToProvide.watch(context);
+              _counterRef.bindValue(context, value);
+              providerRebuilds++;
+
+              /// Must be const to ensure that [_CounterWidget]'s element
+              /// is_not rebuilt when the provider is rebuilt, only when
+              /// the child element is marked dirty.
+              return const _CounterWidget();
+            },
+          ),
+        ),
+      ),
+    );
+    expect(providerRebuilds, 1);
+    expect(_CounterWidget.widgetBuilds, 1);
+
+    // If the provided value changes, the dependent widget rebuilds
+    valueToProvide.value++;
+    await widgetTester.pumpAndSettle();
+    expect(providerRebuilds, 2);
+    expect(_CounterWidget.widgetBuilds, 2);
+
+    // If the provided value changes again, the dependent widget rebuilds again
+    valueToProvide.value++;
+    await widgetTester.pumpAndSettle();
+    expect(providerRebuilds, 3);
+    expect(_CounterWidget.widgetBuilds, 3);
+
+    // If the provided value doesn't change, the dependent widget doesn't rebuild
+    valueToProvide.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(providerRebuilds, 4);
+    expect(_CounterWidget.widgetBuilds, 3);
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {
@@ -226,5 +276,20 @@ class _TestChangeNotifier extends ChangeNotifier {
   void dispose() {
     super.dispose();
     isDisposed = true;
+  }
+}
+
+late Ref<int> _counterRef;
+
+class _CounterWidget extends StatelessWidget {
+  const _CounterWidget({super.key});
+
+  static var widgetBuilds = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    _counterRef.of(context);
+    widgetBuilds++;
+    return const Placeholder();
   }
 }

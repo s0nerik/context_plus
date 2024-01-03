@@ -282,7 +282,7 @@ class _TestChangeNotifier extends ChangeNotifier {
 late Ref<int> _counterRef;
 
 class _CounterWidget extends StatelessWidget {
-  const _CounterWidget({super.key});
+  const _CounterWidget();
 
   static var widgetBuilds = 0;
 

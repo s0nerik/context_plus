@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:meta/meta.dart';
+
 class ValueProvider<T> {
   Object? _key;
   set key(Object? key) {
@@ -36,6 +38,14 @@ class ValueProvider<T> {
     } finally {
       _valueWrapper = null;
     }
+  }
+}
+
+@internal
+extension ShouldUpdateProviderExt<T> on ValueProvider<T> {
+  bool shouldUpdateValue(T value) {
+    if (_valueWrapper == null) return true;
+    return _valueWrapper!.value != value;
   }
 }
 

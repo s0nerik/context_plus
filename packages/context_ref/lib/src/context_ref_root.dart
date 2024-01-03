@@ -35,12 +35,26 @@ class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget);
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
+  final _refDependentElements =
+      // Ref -> {Element}
+      HashMap<ReadOnlyRef, HashSet<Element>>.identity();
+
+  ValueProvider<T>? _getProvider<T>(BuildContext context, ReadOnlyRef<T> ref) {
+    final contextData = _contextData[context];
+    if (contextData == null) {
+      return null;
+    }
+    return contextData.providers[ref] as ValueProvider<T>?;
+  }
 
   ValueProvider<T> _getOrCreateProvider<T>(BuildContext context, Ref<T> ref) {
     final contextData = _contextData[context] ??= _ContextData();
     return (contextData.providers[ref] ??= ValueProvider<T>())
         as ValueProvider<T>;
   }
+
+  HashSet<Element> _getRefDependentElements(ReadOnlyRef ref) =>
+      _refDependentElements[ref] ??= HashSet<Element>.identity();
 
   ValueProvider<T> bind<T>({
     required BuildContext context,
@@ -72,12 +86,27 @@ class InheritedContextRefElement extends InheritedElement {
     final provider = _getOrCreateProvider(context, ref);
     provider.creator = null;
     provider.disposer = _noopDispose;
-    provider.value = value;
+    if (provider.shouldUpdateValue(value)) {
+      provider.value = value;
+      final dependentElements = _getRefDependentElements(ref);
+      for (final element in dependentElements) {
+        element.markNeedsBuild();
+      }
+    }
     return provider;
   }
 
   T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
-    var provider = _contextData[context]?.providers[ref] as ValueProvider<T>?;
+    assert(context is Element);
+
+    // Make [context] dependent on this element so that we can get notified
+    // when the [context] is removed from the tree.
+    context.dependOnInheritedElement(this);
+
+    final dependentElements = _getRefDependentElements(ref);
+    dependentElements.add(context as Element);
+
+    var provider = _getProvider<T>(context, ref);
     if (provider != null) {
       return provider.value;
     }
@@ -101,11 +130,11 @@ class InheritedContextRefElement extends InheritedElement {
 
   @override
   void removeDependent(Element dependent) {
-    _disposeProvidersForContext(dependent);
+    _disposeDependentContextData(dependent);
     super.removeDependent(dependent);
   }
 
-  void _disposeProvidersForContext(BuildContext context) {
+  void _disposeDependentContextData(BuildContext context) {
     final contextData = _contextData.remove(context);
     if (contextData == null) {
       return;
@@ -113,6 +142,10 @@ class InheritedContextRefElement extends InheritedElement {
 
     for (final provider in contextData.providers.values) {
       _disposeProvider(provider);
+    }
+    for (final ref in contextData.dependencies) {
+      final dependentElements = _getRefDependentElements(ref);
+      dependentElements.remove(context);
     }
   }
 
@@ -146,6 +179,7 @@ void _disposeProvider<T>(ValueProvider<T> provider) {
 
 class _ContextData {
   final providers = HashMap<ReadOnlyRef, ValueProvider>.identity();
+  final dependencies = HashSet<ReadOnlyRef>.identity();
 }
 
 void _noopDispose(_) {}

@@ -90,7 +90,9 @@ class InheritedContextRefElement extends InheritedElement {
       provider.value = value;
       final dependentElements = _getRefDependentElements(ref);
       for (final element in dependentElements) {
-        element.markNeedsBuild();
+        if (element.mounted) {
+          element.markNeedsBuild();
+        }
       }
     }
     return provider;

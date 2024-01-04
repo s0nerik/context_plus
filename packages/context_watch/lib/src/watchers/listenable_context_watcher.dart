@@ -39,7 +39,8 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
   }
 }
 
-extension ListenableContextWatchExtension on Listenable {
+extension ListenableContextWatchExtension<TListenable extends Listenable>
+    on TListenable {
   /// Watch this [Listenable] for changes.
   ///
   /// Whenever this [Listenable] notifies of a change, the [context] will be
@@ -47,13 +48,15 @@ extension ListenableContextWatchExtension on Listenable {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  void watch(BuildContext context) {
+  TListenable watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this);
+    return this;
   }
 }
 
-extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
+extension ValueListenableContextWatchExtension<
+    TListenable extends ValueListenable<T>, T> on TListenable {
   /// Watch this [ValueListenable] for changes.
   ///
   /// Whenever this [ValueListenable] notifies of a change, the [context] will

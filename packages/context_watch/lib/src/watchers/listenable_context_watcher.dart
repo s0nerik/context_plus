@@ -49,7 +49,6 @@ extension ListenableContextWatchExtension on Listenable {
   /// method.
   void watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
-    context.dependOnInheritedElement(watchRoot);
     watchRoot.watch(context, this);
   }
 }
@@ -66,7 +65,6 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   /// method.
   T watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
-    context.dependOnInheritedElement(watchRoot);
     watchRoot.watch(context, this);
     return value;
   }

@@ -103,7 +103,6 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
-    context.dependOnInheritedElement(watchRoot);
     final snapshot = watchRoot.watch<T>(context, this);
     if (snapshot == null) {
       return AsyncSnapshot<T>.nothing();

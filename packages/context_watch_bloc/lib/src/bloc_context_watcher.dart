@@ -56,7 +56,6 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   /// method.
   T watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
-    context.dependOnInheritedElement(watchRoot);
     watchRoot.watch<T>(context, this);
     return state;
   }

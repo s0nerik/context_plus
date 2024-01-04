@@ -91,6 +91,10 @@ class InheritedContextWatchElement extends InheritedElement {
     BuildContext context,
     Object observable,
   ) {
+    // Make [context] dependent on this element so that we can get notified
+    // when the [context] is removed from the tree.
+    context.dependOnInheritedElement(this);
+
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method
       return null;

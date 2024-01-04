@@ -8,3 +8,11 @@ ide:
 packages:
   - example
   - packages/*
+
+scripts:
+  test:
+    exec: flutter test
+    packageFilters:
+      flutter: true
+      dirExists: test
+      noPrivate: true

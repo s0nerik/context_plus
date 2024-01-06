@@ -159,9 +159,9 @@ class InheritedContextWatchElement extends InheritedElement {
       return false;
     }
 
-    final lastFrame = contextData.lastFrame;
+    final contextLastFrame = contextData.lastFrame;
     final observableLastFrame = contextData.observableLastFrame[observable];
-    if (observableLastFrame != lastFrame || !context.mounted) {
+    if (observableLastFrame != contextLastFrame || !context.mounted) {
       _unwatch(context, observable);
       return false;
     }

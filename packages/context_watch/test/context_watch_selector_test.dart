@@ -183,7 +183,7 @@ void main() {
     },
   );
   testWidgets(
-    'Stream.watchFor() makes gives the AsyncSnapshot as a value for selector',
+    'Stream.watchFor() gives the AsyncSnapshot as a value for selector',
     (widgetTester) async {
       final observedData = <int?>[];
 
@@ -208,6 +208,29 @@ void main() {
       streamController.add(1);
       await widgetTester.pumpAndSettle();
       expect(rebuildsListenable.value, 2);
+    },
+  );
+  testWidgets(
+    'Future.watchFor() gives the AsyncSnapshot as a value for selector',
+    (widgetTester) async {
+      final observedData = <int?>[];
+
+      final completer = Completer<int>();
+      final future = completer.future;
+      final (widget, rebuildsListenable) = _widget((context) {
+        final data = future.watchFor(context, (snapshot) => snapshot.data);
+        observedData.add(data);
+        return const SizedBox.shrink();
+      });
+
+      await widgetTester.pumpWidget(widget);
+      expect(rebuildsListenable.value, 1);
+      expect(observedData, [null]);
+
+      completer.complete(1);
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 2);
+      expect(observedData, [null, 1]);
     },
   );
 }

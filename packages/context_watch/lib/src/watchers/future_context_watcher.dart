@@ -31,24 +31,37 @@ class FutureContextWatcher extends ContextWatcher<Future> {
       snapshot: AsyncSnapshot<T>.nothing(),
     );
     observable.then((data) {
-      if (!canNotify(context, observable)) {
-        return;
-      }
       if (subscription.isCanceled) {
         return;
       }
-      subscription.snapshot =
-          AsyncSnapshot<T>.withData(ConnectionState.done, data);
+
+      final newSnapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);
+      if (!canNotify(
+        context,
+        observable,
+        oldValue: subscription.snapshot,
+        newValue: newSnapshot,
+      )) {
+        return;
+      }
+      subscription.snapshot = newSnapshot;
       element.markNeedsBuild();
     }, onError: (Object error, StackTrace stackTrace) {
-      if (!canNotify(context, observable)) {
-        return;
-      }
       if (subscription.isCanceled) {
         return;
       }
-      subscription.snapshot =
+
+      final newSnapshot =
           AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
+      if (!canNotify(
+        context,
+        observable,
+        oldValue: subscription.snapshot,
+        newValue: newSnapshot,
+      )) {
+        return;
+      }
+      subscription.snapshot = newSnapshot;
       element.markNeedsBuild();
     });
     // An implementation like `SynchronousFuture` may have already called the
@@ -76,5 +89,28 @@ extension FutureContextWatchExtension<T> on Future<T> {
       return AsyncSnapshot<T>.nothing();
     }
     return snapshot as AsyncSnapshot<T>;
+  }
+}
+
+extension FutureContextWatchForExtension<T> on Future<T> {
+  /// Watch this [Future] for changes.
+  ///
+  /// Returns the value returned by [selector].
+  ///
+  /// When this [Future] completes, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(
+    BuildContext context,
+    R Function(AsyncSnapshot<T> value) selector,
+  ) {
+    final watchRoot = InheritedContextWatch.of(context);
+    final snapshot = watchRoot.watch<T>(context, this, selector: selector);
+    if (snapshot == null) {
+      return selector(AsyncSnapshot<T>.nothing());
+    }
+    return selector(snapshot as AsyncSnapshot<T>);
   }
 }

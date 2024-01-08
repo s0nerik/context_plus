@@ -31,28 +31,45 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
 
     late final _Subscription subscription;
     final streamSubscription = stream.listen((data) {
-      if (!canNotify(context, stream)) {
+      final newSnapshot =
+          AsyncSnapshot<T>.withData(ConnectionState.active, data);
+      if (!canNotify(
+        context,
+        stream,
+        oldValue: subscription.snapshot,
+        newValue: newSnapshot,
+      )) {
         return;
       }
 
-      subscription.snapshot =
-          AsyncSnapshot<T>.withData(ConnectionState.active, data);
+      subscription.snapshot = newSnapshot;
       element.markNeedsBuild();
     }, onError: (Object error, StackTrace stackTrace) {
-      if (!canNotify(context, stream)) {
+      final newSnapshot =
+          AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
+      if (!canNotify(
+        context,
+        stream,
+        oldValue: subscription.snapshot,
+        newValue: newSnapshot,
+      )) {
         return;
       }
 
-      subscription.snapshot =
-          AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
+      subscription.snapshot = newSnapshot;
       element.markNeedsBuild();
     }, onDone: () {
-      if (!canNotify(context, stream)) {
+      final newSnapshot = subscription.snapshot.inState(ConnectionState.done);
+      if (!canNotify(
+        context,
+        stream,
+        oldValue: subscription.snapshot,
+        newValue: newSnapshot,
+      )) {
         return;
       }
 
-      subscription.snapshot =
-          subscription.snapshot.inState(ConnectionState.done);
+      subscription.snapshot = newSnapshot;
       element.markNeedsBuild();
     });
 

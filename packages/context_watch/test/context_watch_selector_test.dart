@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -178,6 +180,34 @@ void main() {
       // No rebuild since `context.unwatch()` was called during the previous
       // build while no `watch*()` calls happened.
       expect(rebuildsListenable.value, 7);
+    },
+  );
+  testWidgets(
+    'Stream.watchFor() makes gives the AsyncSnapshot as a value for selector',
+    (widgetTester) async {
+      final observedData = <int?>[];
+
+      final streamController = StreamController<int>();
+      final stream = streamController.stream;
+      final (widget, rebuildsListenable) = _widget((context) {
+        final data = stream.watchFor(context, (snapshot) => snapshot.data);
+        observedData.add(data);
+        return const SizedBox.shrink();
+      });
+
+      await widgetTester.pumpWidget(widget);
+      expect(rebuildsListenable.value, 1);
+      expect(observedData, [null]);
+
+      streamController.add(1);
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 2);
+      expect(observedData, [null, 1]);
+
+      // Adding the same value again should not trigger a rebuild
+      streamController.add(1);
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 2);
     },
   );
 }

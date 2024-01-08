@@ -127,3 +127,27 @@ extension StreamContextWatchExtension<T> on Stream<T> {
     return snapshot as AsyncSnapshot<T>;
   }
 }
+
+extension StreamContextWatchForExtension<T> on Stream<T> {
+  /// Watch this [Stream] for changes.
+  ///
+  /// Whenever this [Stream] emits new value, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// If this [Stream] is a [ValueStream], the initial value will be used
+  /// as the initial value of the [AsyncSnapshot].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(
+    BuildContext context,
+    R Function(AsyncSnapshot<T> value) selector,
+  ) {
+    final watchRoot = InheritedContextWatch.of(context);
+    final snapshot = watchRoot.watch<T>(context, this, selector: selector);
+    if (snapshot == null) {
+      return selector(AsyncSnapshot<T>.nothing());
+    }
+    return selector(snapshot as AsyncSnapshot<T>);
+  }
+}

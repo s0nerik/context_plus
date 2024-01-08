@@ -13,6 +13,8 @@ class _Subscription implements ContextWatchSubscription {
   final Listenable listenable;
   final VoidCallback listener;
 
+  Object? value;
+
   @override
   Object? getData() => null;
 
@@ -27,15 +29,48 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     Listenable observable,
   ) {
     final element = context as Element;
+    if (observable is ValueListenable) {
+      return _createValueListenableSubscription(element, observable);
+    }
+    return _createListenableSubscription(element, observable);
+  }
+
+  ContextWatchSubscription _createListenableSubscription(
+    Element element,
+    Listenable listenable,
+  ) {
     return _Subscription(
-      listenable: observable,
+      listenable: listenable,
       listener: () {
-        if (!canNotify(context, observable)) {
+        if (!canNotify(element, listenable, oldValue: null, newValue: null)) {
           return;
         }
         element.markNeedsBuild();
       },
     );
+  }
+
+  ContextWatchSubscription _createValueListenableSubscription(
+    Element element,
+    ValueListenable valueListenable,
+  ) {
+    late final _Subscription subscription;
+    subscription = _Subscription(
+      listenable: valueListenable,
+      listener: () {
+        if (!canNotify(
+          element,
+          valueListenable,
+          oldValue: subscription.value,
+          newValue: valueListenable.value,
+        )) {
+          return;
+        }
+        subscription.value = valueListenable.value;
+        element.markNeedsBuild();
+      },
+    );
+    return subscription;
   }
 }
 
@@ -70,5 +105,22 @@ extension ValueListenableContextWatchExtension<
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this);
     return value;
+  }
+}
+
+extension ValueListenableContextWatchForExtension<T> on ValueListenable<T> {
+  /// Watch this [ValueListenable] for changes.
+  ///
+  /// Whenever this [ValueListenable] notifies of a change, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// Returns the selected value.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+    final watchRoot = InheritedContextWatch.of(context);
+    watchRoot.watch(context, this, selector: selector);
+    return selector(value);
   }
 }

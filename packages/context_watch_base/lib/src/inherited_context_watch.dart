@@ -4,6 +4,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+typedef WatchSelector = Object? Function(Object? value);
+
 abstract interface class ContextWatchSubscription {
   Object? getData();
   void cancel();
@@ -17,8 +19,13 @@ abstract class ContextWatcher<TObservable extends Object> {
   @protected
   @useResult
   @nonVirtual
-  bool canNotify(BuildContext context, TObservable observable) =>
-      _canNotify(context, observable);
+  bool canNotify(
+    BuildContext context,
+    TObservable observable, {
+    required Object? oldValue,
+    required Object? newValue,
+  }) =>
+      _canNotify(context, observable, oldValue: oldValue, newValue: newValue);
 
   @protected
   @useResult
@@ -89,8 +96,9 @@ class InheritedContextWatchElement extends InheritedElement {
   @nonVirtual
   Object? watch<T>(
     BuildContext context,
-    Object observable,
-  ) {
+    Object observable, {
+    dynamic selector,
+  }) {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
@@ -102,8 +110,19 @@ class InheritedContextWatchElement extends InheritedElement {
 
     final contextData = _contextData[context] ??= _ContextData();
     final frame = SchedulerBinding.instance.currentFrameTimeStamp;
+
+    if (contextData.lastFrame != frame) {
+      // It's a new frame, so let's clear all selectors as they might've changed
+      contextData.observableSelectors.clear();
+    }
+
     contextData.lastFrame = frame;
     contextData.observableLastFrame[observable] = frame;
+
+    if (selector != null) {
+      final selectors = contextData.observableSelectors[observable] ??= {};
+      selectors.add(selector);
+    }
 
     final existingSubscription =
         contextData.observableSubscriptions[observable];
@@ -152,7 +171,12 @@ class InheritedContextWatchElement extends InheritedElement {
     super.unmount();
   }
 
-  bool _canNotify(BuildContext context, Object observable) {
+  bool _canNotify(
+    BuildContext context,
+    Object observable, {
+    required Object? oldValue,
+    required Object? newValue,
+  }) {
     final contextData = _contextData[context];
     if (contextData == null) {
       _unwatch(context, observable);
@@ -163,6 +187,20 @@ class InheritedContextWatchElement extends InheritedElement {
     final observableLastFrame = contextData.observableLastFrame[observable];
     if (observableLastFrame != contextLastFrame || !context.mounted) {
       _unwatch(context, observable);
+      return false;
+    }
+
+    final selectors = contextData.observableSelectors[observable];
+    if (selectors != null && selectors.isNotEmpty) {
+      for (final selector in selectors) {
+        if (!_isSameValue(
+          oldValue: oldValue,
+          newValue: newValue,
+          selector: selector,
+        )) {
+          return true;
+        }
+      }
       return false;
     }
 
@@ -195,10 +233,30 @@ class InheritedContextWatchElement extends InheritedElement {
 }
 
 class _ContextData {
-  late Duration lastFrame;
+  Duration? lastFrame;
   final observableLastFrame = HashMap<Object, Duration>.identity();
   final observableSubscriptions =
       HashMap<Object, ContextWatchSubscription>.identity();
+  final observableSelectors =
+      // Observable -> {Object? Function(Object?)}
+      HashMap<Object, Set<dynamic>>.identity();
 }
 
-bool _defaultCanNotify(BuildContext context, Object observable) => false;
+bool _defaultCanNotify(
+  BuildContext context,
+  Object observable, {
+  required Object? oldValue,
+  required Object? newValue,
+}) =>
+    false;
+
+bool _isSameValue({
+  required Object? oldValue,
+  required Object? newValue,
+  required dynamic selector,
+}) {
+  if (oldValue == null) {
+    return newValue == null;
+  }
+  return selector(oldValue) == selector(newValue);
+}

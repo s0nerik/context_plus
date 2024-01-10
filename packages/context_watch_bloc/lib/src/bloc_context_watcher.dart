@@ -11,6 +11,8 @@ class _Subscription implements ContextWatchSubscription {
 
   final StreamSubscription _sub;
 
+  dynamic value;
+
   @override
   Object? getData() => null;
 
@@ -32,9 +34,15 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
     late final _Subscription subscription;
 
     final streamSubscription = bloc.stream.listen((data) {
-      if (!canNotify(context, bloc)) {
+      if (!canNotify(
+        context,
+        bloc,
+        oldValue: subscription.value,
+        newValue: data,
+      )) {
         return;
       }
+      subscription.value = data;
       element.markNeedsBuild();
     });
 

@@ -11,6 +11,8 @@ class _Subscription implements ContextWatchSubscription {
 
   final StreamSubscription _sub;
 
+  dynamic value;
+
   @override
   Object? getData() => null;
 
@@ -31,9 +33,15 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
     late final _Subscription subscription;
 
     final streamSubscription = observable.stream.listen((data) {
-      if (!canNotify(context, observable)) {
+      if (!canNotify(
+        context,
+        observable,
+        oldValue: subscription.value,
+        newValue: data,
+      )) {
         return;
       }
+      subscription.value = data;
       element.markNeedsBuild();
     });
 

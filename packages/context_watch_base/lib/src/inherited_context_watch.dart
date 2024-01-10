@@ -137,7 +137,9 @@ class InheritedContextWatchElement extends InheritedElement {
     final watcher = (super.widget as InheritedContextWatch)
         .watchers
         .firstWhere((element) => element._canHandle(observable), orElse: () {
-      throw StateError('No ContextWatcher found for ${observable.runtimeType}');
+      throw UnsupportedError(
+        'No ContextWatcher found for ${observable.runtimeType}',
+      );
     });
     final subscription = watcher.createSubscription<T>(context, observable);
     contextData.observableSubscriptions[observable] = subscription;

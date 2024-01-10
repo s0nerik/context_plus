@@ -33,7 +33,7 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
     final streamSubscription = stream.listen((data) {
       final newSnapshot =
           AsyncSnapshot<T>.withData(ConnectionState.active, data);
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         stream,
         oldValue: subscription.snapshot,
@@ -47,7 +47,7 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
     }, onError: (Object error, StackTrace stackTrace) {
       final newSnapshot =
           AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         stream,
         oldValue: subscription.snapshot,
@@ -60,7 +60,7 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
       element.markNeedsBuild();
     }, onDone: () {
       final newSnapshot = subscription.snapshot.inState(ConnectionState.done);
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         stream,
         oldValue: subscription.snapshot,

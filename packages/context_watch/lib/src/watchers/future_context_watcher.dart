@@ -36,7 +36,7 @@ class FutureContextWatcher extends ContextWatcher<Future> {
       }
 
       final newSnapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.snapshot,
@@ -53,7 +53,7 @@ class FutureContextWatcher extends ContextWatcher<Future> {
 
       final newSnapshot =
           AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.snapshot,

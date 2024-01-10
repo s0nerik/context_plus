@@ -34,7 +34,7 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
 
     late final _Subscription subscription;
     final dispose = observable.observe((notification) {
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.value,

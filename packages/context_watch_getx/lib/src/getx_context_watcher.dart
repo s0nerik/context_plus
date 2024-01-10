@@ -33,7 +33,7 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
     late final _Subscription subscription;
 
     final streamSubscription = observable.stream.listen((data) {
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.value,

@@ -33,7 +33,7 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
 
     late final _Subscription subscription;
     final dispose = beacon.subscribe((value) {
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.value,

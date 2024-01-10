@@ -12,20 +12,25 @@ abstract interface class ContextWatchSubscription {
 }
 
 abstract class ContextWatcher<TObservable extends Object> {
-  var _canNotify = _defaultCanNotify;
+  var _shouldRebuild = _defaultShouldRebuild;
 
   bool _canHandle(Object observable) => observable is TObservable;
 
   @protected
   @useResult
   @nonVirtual
-  bool canNotify(
+  bool shouldRebuild(
     BuildContext context,
     TObservable observable, {
     required Object? oldValue,
     required Object? newValue,
   }) =>
-      _canNotify(context, observable, oldValue: oldValue, newValue: newValue);
+      _shouldRebuild(
+        context,
+        observable,
+        oldValue: oldValue,
+        newValue: newValue,
+      );
 
   @protected
   @useResult
@@ -66,7 +71,7 @@ class InheritedContextWatch extends InheritedWidget {
 class InheritedContextWatchElement extends InheritedElement {
   InheritedContextWatchElement(super.widget) {
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._canNotify = _canNotify;
+      watcher._shouldRebuild = _shouldRebuild;
     }
     SchedulerBinding.instance
         .addPostFrameCallback((_) => _isFirstFrame = false);
@@ -86,10 +91,10 @@ class InheritedContextWatchElement extends InheritedElement {
   void updated(covariant InheritedContextWatch oldWidget) {
     super.updated(oldWidget);
     for (final watcher in oldWidget.watchers) {
-      watcher._canNotify = _defaultCanNotify;
+      watcher._shouldRebuild = _defaultShouldRebuild;
     }
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._canNotify = _canNotify;
+      watcher._shouldRebuild = _shouldRebuild;
     }
   }
 
@@ -166,12 +171,12 @@ class InheritedContextWatchElement extends InheritedElement {
     }
     _contextData.clear();
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._canNotify = _defaultCanNotify;
+      watcher._shouldRebuild = _defaultShouldRebuild;
     }
     super.unmount();
   }
 
-  bool _canNotify(
+  bool _shouldRebuild(
     BuildContext context,
     Object observable, {
     required Object? oldValue,
@@ -242,7 +247,7 @@ class _ContextData {
       HashMap<Object, Set<dynamic>>.identity();
 }
 
-bool _defaultCanNotify(
+bool _defaultShouldRebuild(
   BuildContext context,
   Object observable, {
   required Object? oldValue,

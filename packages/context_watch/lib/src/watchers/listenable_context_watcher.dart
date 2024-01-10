@@ -42,7 +42,8 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     return _Subscription(
       listenable: listenable,
       listener: () {
-        if (!canNotify(element, listenable, oldValue: null, newValue: null)) {
+        if (!shouldRebuild(element, listenable,
+            oldValue: null, newValue: null)) {
           return;
         }
         element.markNeedsBuild();
@@ -58,7 +59,7 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     subscription = _Subscription(
       listenable: valueListenable,
       listener: () {
-        if (!canNotify(
+        if (!shouldRebuild(
           element,
           valueListenable,
           oldValue: subscription.value,

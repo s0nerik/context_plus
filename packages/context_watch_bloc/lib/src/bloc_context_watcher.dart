@@ -34,7 +34,7 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
     late final _Subscription subscription;
 
     final streamSubscription = bloc.stream.listen((data) {
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         bloc,
         oldValue: subscription.value,

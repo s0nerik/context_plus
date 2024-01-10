@@ -33,7 +33,7 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
 
     late final _Subscription subscription;
     final dispose = signal.subscribe((value) {
-      if (!canNotify(
+      if (!shouldRebuild(
         context,
         observable,
         oldValue: subscription.value,

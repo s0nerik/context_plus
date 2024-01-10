@@ -5,16 +5,23 @@ import 'package:flutter/widgets.dart';
 
 import 'src/context_ref_root.dart';
 import 'src/hot_reload.dart';
+import 'src/ref.dart';
 
 export 'src/ref.dart';
 
 class ContextRef {
+  /// A widget that manages all [Ref] values and subscriptions.
+  ///
+  /// This widget must be placed above all widgets that use [Ref], usually at
+  /// the top of the widget tree.
   static Widget root({
     Key? key,
     required Widget child,
   }) =>
       ContextRefRoot(child: child);
 
+  /// [FlutterError.onError] wrapper that replaces common hot_reload-related
+  /// errors (such as generic type rename error) with more user-friendly ones.
   static FlutterExceptionHandler? onError(FlutterExceptionHandler? handler) {
     if (!kDebugMode) {
       return handler;
@@ -35,6 +42,9 @@ class ContextRef {
     };
   }
 
+  /// [ErrorWidget.builder] wrapper that replaces common hot_reload-related
+  /// errors (such as generic type rename error) with a more user-friendly error
+  /// message.
   static ErrorWidgetBuilder errorWidgetBuilder(ErrorWidgetBuilder builder) {
     if (!kDebugMode) {
       return builder;

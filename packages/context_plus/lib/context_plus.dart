@@ -39,6 +39,7 @@ final class ContextPlus {
 }
 
 extension RefContextWatchExt<T> on ref.Ref<T> {
+  /// Get the value of this [ref.Ref] from the given [context].
   T of(BuildContext context) {
     context.unwatch();
     return ref.ContextRefExt(this).of(context);
@@ -46,17 +47,49 @@ extension RefContextWatchExt<T> on ref.Ref<T> {
 }
 
 extension RefListenableWatchExt on ref.Ref<Listenable> {
+  /// Watch this [Listenable] for changes.
+  ///
+  /// Whenever this [Listenable] notifies of a change, the [context] will be
+  /// rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   void watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefValueListenableWatchExt<T> on ref.Ref<ValueListenable<T>> {
+  /// Watch this [ValueListenable] for changes.
+  ///
+  /// Whenever this [ValueListenable] notifies of a change, the [context] will
+  /// be rebuilt.
+  ///
+  /// Returns the current value of the [ValueListenable].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   T watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefFutureWatchExt<T> on ref.Ref<Future<T>> {
+  /// Watch this [Future] for changes.
+  ///
+  /// When this [Future] completes, the [context] will be rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefStreamWatchExt<T> on ref.Ref<Stream<T>> {
+  /// Watch this [Stream] for changes.
+  ///
+  /// Whenever this [Stream] emits new value, the [context] will be
+  /// rebuilt.
+  ///
+  /// If this [Stream] is a [ValueStream], the initial value will be used
+  /// as the initial value of the [AsyncSnapshot].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }

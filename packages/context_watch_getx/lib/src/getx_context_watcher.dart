@@ -64,3 +64,20 @@ extension GetxContextWatchExtension<T> on Rx<T> {
     return value;
   }
 }
+
+extension GetxContextWatchForExtension<T> on Rx<T> {
+  /// Watch this [Rx] for changes.
+  ///
+  /// Whenever this [Rx] emits new value, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// Returns the selected value.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+    final watchRoot = InheritedContextWatch.of(context);
+    watchRoot.watch<T>(context, this, selector: selector);
+    return selector(value);
+  }
+}

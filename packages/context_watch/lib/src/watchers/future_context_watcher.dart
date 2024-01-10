@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _FutureSubscription implements ContextWatchSubscription {
+  _FutureSubscription({
     required this.snapshot,
   });
 
@@ -27,7 +27,7 @@ class FutureContextWatcher extends ContextWatcher<Future> {
     Future observable,
   ) {
     final element = context as Element;
-    final subscription = _Subscription(
+    final subscription = _FutureSubscription(
       snapshot: AsyncSnapshot<T>.nothing(),
     );
     observable.then((data) {

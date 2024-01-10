@@ -4,8 +4,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/streams.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _StreamSubscription implements ContextWatchSubscription {
+  _StreamSubscription({
     required StreamSubscription<dynamic> streamSubscription,
     required this.snapshot,
   }) : _sub = streamSubscription;
@@ -29,7 +29,7 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
     final stream = observable as Stream<T>;
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _StreamSubscription subscription;
     final streamSubscription = stream.listen((data) {
       final newSnapshot =
           AsyncSnapshot<T>.withData(ConnectionState.active, data);
@@ -73,7 +73,7 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
       element.markNeedsBuild();
     });
 
-    subscription = _Subscription(
+    subscription = _StreamSubscription(
       streamSubscription: streamSubscription,
       snapshot: _initialSnapshot<T>(stream),
     );

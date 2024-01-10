@@ -2,8 +2,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _SignalsSubscription implements ContextWatchSubscription {
+  _SignalsSubscription({
     required this.signal,
     required this.dispose,
   });
@@ -31,7 +31,7 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
     final signal = observable;
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _SignalsSubscription subscription;
     final dispose = signal.subscribe((value) {
       if (!shouldRebuild(
         context,
@@ -44,7 +44,7 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
       subscription.value = value;
       element.markNeedsBuild();
     });
-    subscription = _Subscription(
+    subscription = _SignalsSubscription(
       signal: signal,
       dispose: dispose,
     );

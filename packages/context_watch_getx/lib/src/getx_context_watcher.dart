@@ -4,8 +4,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _GetxSubscription implements ContextWatchSubscription {
+  _GetxSubscription({
     required StreamSubscription<dynamic> streamSubscription,
   }) : _sub = streamSubscription;
 
@@ -30,7 +30,7 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
       BuildContext context, Rx observable) {
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _GetxSubscription subscription;
 
     final streamSubscription = observable.stream.listen((data) {
       if (!shouldRebuild(
@@ -45,7 +45,7 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
       element.markNeedsBuild();
     });
 
-    subscription = _Subscription(
+    subscription = _GetxSubscription(
       streamSubscription: streamSubscription,
     );
 

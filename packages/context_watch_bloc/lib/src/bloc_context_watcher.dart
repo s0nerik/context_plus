@@ -4,8 +4,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:bloc/bloc.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _BlocSubscription implements ContextWatchSubscription {
+  _BlocSubscription({
     required StreamSubscription<dynamic> streamSubscription,
   }) : _sub = streamSubscription;
 
@@ -31,7 +31,7 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
     final bloc = observable;
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _BlocSubscription subscription;
 
     final streamSubscription = bloc.stream.listen((data) {
       if (!shouldRebuild(
@@ -46,7 +46,7 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
       element.markNeedsBuild();
     });
 
-    subscription = _Subscription(
+    subscription = _BlocSubscription(
       streamSubscription: streamSubscription,
     );
 

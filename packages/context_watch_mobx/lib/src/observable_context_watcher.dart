@@ -2,8 +2,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _MobxSubscription implements ContextWatchSubscription {
+  _MobxSubscription({
     required this.observable,
     required this.dispose,
   });
@@ -32,7 +32,7 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
   ) {
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _MobxSubscription subscription;
     final dispose = observable.observe((notification) {
       if (!shouldRebuild(
         context,
@@ -45,7 +45,7 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
       subscription.value = notification.newValue;
       element.markNeedsBuild();
     });
-    subscription = _Subscription(
+    subscription = _MobxSubscription(
       observable: observable,
       dispose: dispose,
     );

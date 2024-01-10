@@ -2,8 +2,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _ListenableSubscription implements ContextWatchSubscription {
+  _ListenableSubscription({
     required this.listenable,
     required this.listener,
   }) {
@@ -39,7 +39,7 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     Element element,
     Listenable listenable,
   ) {
-    return _Subscription(
+    return _ListenableSubscription(
       listenable: listenable,
       listener: () {
         if (!shouldRebuild(element, listenable,
@@ -55,8 +55,8 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     Element element,
     ValueListenable valueListenable,
   ) {
-    late final _Subscription subscription;
-    subscription = _Subscription(
+    late final _ListenableSubscription subscription;
+    subscription = _ListenableSubscription(
       listenable: valueListenable,
       listener: () {
         if (!shouldRebuild(

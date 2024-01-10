@@ -2,8 +2,8 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:state_beacon/state_beacon.dart';
 
-class _Subscription implements ContextWatchSubscription {
-  _Subscription({
+class _BeaconSubscription implements ContextWatchSubscription {
+  _BeaconSubscription({
     required this.beacon,
     required this.dispose,
   });
@@ -31,7 +31,7 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
     final beacon = observable;
     final element = context as Element;
 
-    late final _Subscription subscription;
+    late final _BeaconSubscription subscription;
     final dispose = beacon.subscribe((value) {
       if (!shouldRebuild(
         context,
@@ -44,7 +44,7 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
       subscription.value = value;
       element.markNeedsBuild();
     });
-    subscription = _Subscription(
+    subscription = _BeaconSubscription(
       beacon: beacon,
       dispose: dispose,
     );

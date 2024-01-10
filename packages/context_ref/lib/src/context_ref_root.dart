@@ -2,10 +2,12 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'value_provider.dart';
 import 'ref.dart';
 
+@internal
 class ContextRefRoot extends InheritedWidget {
   const ContextRefRoot({
     super.key,
@@ -31,6 +33,7 @@ class ContextRefRoot extends InheritedWidget {
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }
 
+@internal
 class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget);
 

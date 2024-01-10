@@ -12,7 +12,7 @@ abstract interface class ContextWatchSubscription {
 }
 
 abstract class ContextWatcher<TObservable extends Object> {
-  var _shouldRebuild = _defaultShouldRebuild;
+  var _shouldRebuild = _neverRebuild;
 
   bool _canHandle(Object observable) => observable is TObservable;
 
@@ -91,7 +91,7 @@ class InheritedContextWatchElement extends InheritedElement {
   void updated(covariant InheritedContextWatch oldWidget) {
     super.updated(oldWidget);
     for (final watcher in oldWidget.watchers) {
-      watcher._shouldRebuild = _defaultShouldRebuild;
+      watcher._shouldRebuild = _neverRebuild;
     }
     for (final watcher in (widget as InheritedContextWatch).watchers) {
       watcher._shouldRebuild = _shouldRebuild;
@@ -171,7 +171,7 @@ class InheritedContextWatchElement extends InheritedElement {
     }
     _contextData.clear();
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._shouldRebuild = _defaultShouldRebuild;
+      watcher._shouldRebuild = _neverRebuild;
     }
     super.unmount();
   }
@@ -247,7 +247,7 @@ class _ContextData {
       HashMap<Object, Set<dynamic>>.identity();
 }
 
-bool _defaultShouldRebuild(
+bool _neverRebuild(
   BuildContext context,
   Object observable, {
   required Object? oldValue,

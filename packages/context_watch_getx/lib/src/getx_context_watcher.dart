@@ -14,9 +14,6 @@ class _GetxSubscription implements ContextWatchSubscription {
   dynamic value;
 
   @override
-  Object? getData() => null;
-
-  @override
   void cancel() => _sub.cancel();
 }
 

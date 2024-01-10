@@ -7,7 +7,6 @@ import 'package:meta/meta.dart';
 typedef WatchSelector = Object? Function(Object? value);
 
 abstract interface class ContextWatchSubscription {
-  Object? getData();
   void cancel();
 }
 
@@ -99,7 +98,7 @@ class InheritedContextWatchElement extends InheritedElement {
   }
 
   @nonVirtual
-  Object? watch<T>(
+  ContextWatchSubscription? watch<T>(
     BuildContext context,
     Object observable, {
     dynamic selector,
@@ -132,7 +131,7 @@ class InheritedContextWatchElement extends InheritedElement {
     final existingSubscription =
         contextData.observableSubscriptions[observable];
     if (existingSubscription != null) {
-      return existingSubscription.getData();
+      return existingSubscription;
     }
 
     final watcher = (super.widget as InheritedContextWatch)
@@ -142,7 +141,7 @@ class InheritedContextWatchElement extends InheritedElement {
     });
     final subscription = watcher.createSubscription<T>(context, observable);
     contextData.observableSubscriptions[observable] = subscription;
-    return subscription.getData();
+    return subscription;
   }
 
   @nonVirtual

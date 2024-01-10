@@ -16,9 +16,6 @@ class _ListenableSubscription implements ContextWatchSubscription {
   Object? value;
 
   @override
-  Object? getData() => null;
-
-  @override
   void cancel() => listenable.removeListener(listener);
 }
 

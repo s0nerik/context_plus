@@ -14,9 +14,6 @@ class _MobxSubscription implements ContextWatchSubscription {
   dynamic value;
 
   @override
-  Object? getData() => null;
-
-  @override
   void cancel() => dispose();
 }
 

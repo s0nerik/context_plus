@@ -14,9 +14,6 @@ class _FutureSubscription implements ContextWatchSubscription {
   AsyncSnapshot snapshot;
 
   @override
-  Object? getData() => snapshot;
-
-  @override
   void cancel() => _isCanceled = true;
 }
 
@@ -84,11 +81,14 @@ extension FutureContextWatchExtension<T> on Future<T> {
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
-    final snapshot = watchRoot.watch<T>(context, this);
-    if (snapshot == null) {
+    final subscription =
+        watchRoot.watch<T>(context, this) as _FutureSubscription?;
+    if (subscription == null) {
+      // Subscription is null when the method is called outside of the build()
+      // method.
       return AsyncSnapshot<T>.nothing();
     }
-    return snapshot as AsyncSnapshot<T>;
+    return subscription.snapshot as AsyncSnapshot<T>;
   }
 }
 
@@ -107,10 +107,13 @@ extension FutureContextWatchForExtension<T> on Future<T> {
     R Function(AsyncSnapshot<T> value) selector,
   ) {
     final watchRoot = InheritedContextWatch.of(context);
-    final snapshot = watchRoot.watch<T>(context, this, selector: selector);
-    if (snapshot == null) {
+    final subscription = watchRoot.watch<T>(context, this, selector: selector)
+        as _FutureSubscription?;
+    if (subscription == null) {
+      // Subscription is null when the method is called outside of the build()
+      // method.
       return selector(AsyncSnapshot<T>.nothing());
     }
-    return selector(snapshot as AsyncSnapshot<T>);
+    return selector(subscription.snapshot as AsyncSnapshot<T>);
   }
 }

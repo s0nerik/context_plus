@@ -96,6 +96,23 @@ extension RefFutureWatchExt<T> on ref.Ref<Future<T>> {
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
+extension RefFutureWatchForExt<T> on ref.Ref<Future<T>> {
+  /// Watch this [Future] for changes.
+  ///
+  /// Returns the value returned by [selector].
+  ///
+  /// When this [Future] completes, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(
+    BuildContext context,
+    R Function(AsyncSnapshot<T> value) selector,
+  ) =>
+      of(context).watchFor(context, selector);
+}
+
 extension RefStreamWatchExt<T> on ref.Ref<Stream<T>> {
   /// Watch this [Stream] for changes.
   ///
@@ -108,4 +125,22 @@ extension RefStreamWatchExt<T> on ref.Ref<Stream<T>> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
+}
+
+extension RefStreamWatchForExt<T> on ref.Ref<Stream<T>> {
+  /// Watch this [Stream] for changes.
+  ///
+  /// Whenever this [Stream] emits new value, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// If this [Stream] is a [ValueStream], the initial value will be used
+  /// as the initial value of the [AsyncSnapshot].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchFor<R>(
+    BuildContext context,
+    R Function(AsyncSnapshot<T> value) selector,
+  ) =>
+      of(context).watchFor(context, selector);
 }

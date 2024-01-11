@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
+@internal
 class ValueProvider<T> {
   Object? _key;
   set key(Object? key) {

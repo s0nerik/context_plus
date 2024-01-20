@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
@@ -94,7 +95,7 @@ class InheritedContextRefElement extends InheritedElement {
       final dependentElements = _getRefDependentElements(ref);
       for (final element in dependentElements) {
         if (element.mounted) {
-          element.markNeedsBuild();
+          scheduleMicrotask(element.markNeedsBuild);
         }
       }
     }

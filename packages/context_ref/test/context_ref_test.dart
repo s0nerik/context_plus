@@ -267,6 +267,54 @@ void main() {
     expect(providerRebuilds, 4);
     expect(_CounterWidget.widgetBuilds, 3);
   });
+  testWidgets(
+      'Ref.of(context) gets the value from the closest parent context, including the current one',
+      (widgetTester) async {
+    final providerDepth = ValueNotifier<int>(1);
+
+    var observedValue = 0;
+    final childWidget = Builder(
+      builder: (context) {
+        observedValue = _counterRef.of(context);
+        return const SizedBox.shrink();
+      },
+    );
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(builder: (context) {
+            final depth = providerDepth.watch(context);
+            if (depth >= 1) {
+              _counterRef.bindValue(context, 1);
+            }
+            return Builder(builder: (context) {
+              final depth = providerDepth.watch(context);
+              if (depth >= 2) {
+                _counterRef.bindValue(context, 2);
+              }
+              return Builder(builder: (context) {
+                final depth = providerDepth.watch(context);
+                if (depth >= 3) {
+                  _counterRef.bindValue(context, 3);
+                }
+                return childWidget;
+              });
+            });
+          }),
+        ),
+      ),
+    );
+    expect(observedValue, 1);
+
+    providerDepth.value = 2;
+    await widgetTester.pumpAndSettle();
+    expect(observedValue, 2);
+
+    providerDepth.value = 3;
+    await widgetTester.pumpAndSettle();
+    expect(observedValue, 3);
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {

@@ -315,6 +315,58 @@ void main() {
     await widgetTester.pumpAndSettle();
     expect(observedValue, 3);
   });
+
+  testWidgets('Ref.of(context) correctly reacts the GlobalKey re-parenting',
+      (widgetTester) async {
+    final selectedProvider = ValueNotifier<int>(1);
+
+    var observedValue = 0;
+    final childWidget = Builder(
+      key: GlobalKey(debugLabel: 'child'),
+      builder: (context) {
+        observedValue = _counterRef.of(context);
+        return const SizedBox.shrink();
+      },
+    );
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(
+            builder: (context) => Stack(
+              textDirection: TextDirection.ltr,
+              children: [
+                if (selectedProvider.watch(context) == 1)
+                  Builder(builder: (context) {
+                    _counterRef.bindValue(context, 1);
+                    return childWidget;
+                  }),
+                if (selectedProvider.watch(context) == 2)
+                  Builder(builder: (context) {
+                    _counterRef.bindValue(context, 2);
+                    return childWidget;
+                  }),
+                if (selectedProvider.watch(context) == 3)
+                  Builder(builder: (context) {
+                    _counterRef.bindValue(context, 3);
+                    return childWidget;
+                  }),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(observedValue, 1);
+
+    selectedProvider.value = 2;
+    await widgetTester.pumpAndSettle();
+    expect(observedValue, 2);
+
+    selectedProvider.value = 3;
+    await widgetTester.pumpAndSettle();
+    expect(observedValue, 3);
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {

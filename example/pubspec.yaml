@@ -12,6 +12,7 @@ dependencies:
   context_plus: ^1.0.0-dev.1
   rxdart: ^0.27.7
   syntax_highlight: ^0.3.0
+  dolumns: ^2.0.1
 
   # Signals
   signals_flutter: ^1.0.1

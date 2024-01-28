@@ -112,6 +112,14 @@ packages:
       relative: true
     source: path
     version: "1.0.0-dev.2"
+  dolumns:
+    dependency: "direct main"
+    description:
+      name: dolumns
+      sha256: "0b6eaf4987da82173592b26d40357651f92930b3bf182ceda11d41f79e959b1f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   fake_async:
     dependency: transitive
     description:

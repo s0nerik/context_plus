@@ -12,11 +12,13 @@ class _Benchmark {
   _Benchmark({
     required this.depth,
     required this.extraBreadthEvery,
+    required int? extraBreadthAmount,
     required this.type,
-  }) {
+  }) : extraBreadthAmount = extraBreadthAmount ?? 1 {
     final (widget, totalWidgets) = _buildTree(
       depth: depth,
       extraBreadthEvery: extraBreadthEvery,
+      extraBreadthAmount: this.extraBreadthAmount,
       type: type,
     );
     this.widget = widget;
@@ -25,6 +27,7 @@ class _Benchmark {
 
   final int depth;
   final int? extraBreadthEvery;
+  final int extraBreadthAmount;
   final _BenchmarkType type;
 
   late final Widget widget;
@@ -98,10 +101,12 @@ main() async {
       runComparisonBenchmarks({
     required int depth,
     int? extraBreadthEvery,
+    int? extraBreadthAmount,
   }) async {
     final inheritedWidgetBenchmark = _Benchmark(
       depth: depth,
       extraBreadthEvery: extraBreadthEvery,
+      extraBreadthAmount: extraBreadthAmount,
       type: _BenchmarkType.inheritedWidget,
     );
     await runBenchmark(inheritedWidgetBenchmark);
@@ -109,6 +114,7 @@ main() async {
     final contextRefBenchmark = _Benchmark(
       depth: depth,
       extraBreadthEvery: extraBreadthEvery,
+      extraBreadthAmount: extraBreadthAmount,
       type: _BenchmarkType.contextRef,
     );
     await runBenchmark(contextRefBenchmark);
@@ -121,6 +127,12 @@ main() async {
     await runComparisonBenchmarks(depth: 5),
     await runComparisonBenchmarks(depth: 10),
     await runComparisonBenchmarks(depth: 100),
+    // Bigger depth is so unrealistic that Flutter itself crashes with
+    // Stack Overflow error.
+    await runComparisonBenchmarks(depth: 1000),
+    await runComparisonBenchmarks(depth: 10, extraBreadthEvery: 1),
+    await runComparisonBenchmarks(depth: 100, extraBreadthEvery: 10),
+    await runComparisonBenchmarks(depth: 1000, extraBreadthEvery: 100),
   ];
 
   final resultTable = dolumnify([
@@ -128,6 +140,7 @@ main() async {
       'total widgets',
       'depth',
       'extra breadth every Nth depth',
+      'extra breadth amount',
       'ratio',
       'ContextRef (μs)',
       'InheritedWidget (μs)'
@@ -138,6 +151,7 @@ main() async {
         contextRef.totalWidgets,
         contextRef.depth,
         contextRef.extraBreadthEvery?.toString() ?? 'none',
+        contextRef.extraBreadthAmount.toString(),
         (contextRef.resultMicroseconds / inheritedWidget.resultMicroseconds)
             .toStringAsFixed(2),
         (contextRef.resultMicroseconds).toStringAsFixed(2),
@@ -146,7 +160,9 @@ main() async {
     }),
   ], headerIncluded: true, headerSeparator: '-', columnSplitter: ' | ');
 
-  print(resultTable); // ignore: avoid_print
+  for (final line in resultTable.split('\n')) {
+    print(line); // ignore: avoid_print
+  }
 }
 
 class _ContextRefBenchmarkScreen extends StatefulWidget {
@@ -271,6 +287,7 @@ class _InheritedReader extends StatelessWidget {
 (Widget, int totalWidgets) _buildTree({
   required int depth,
   required int? extraBreadthEvery,
+  required int extraBreadthAmount,
   required _BenchmarkType type,
 }) {
   int currentDepth = depth;
@@ -292,11 +309,14 @@ class _InheritedReader extends StatelessWidget {
     final totalWidgets =
         depthWidgets.values.reduce((value, element) => value + element);
     // Column + all existing widgets (if extra breadth is requested)
-    depthWidgets[currentDepth] = 1 + (shouldAddExtraBreadth ? totalWidgets : 0);
+    depthWidgets[currentDepth] = (depthWidgets[currentDepth] ?? 0) +
+        1 +
+        (shouldAddExtraBreadth ? extraBreadthAmount * totalWidgets : 0);
 
     widget = Column(
       children: [
-        if (shouldAddExtraBreadth) widget,
+        if (shouldAddExtraBreadth)
+          for (int i = 0; i < extraBreadthAmount; i++) widget,
         widget,
       ],
     );

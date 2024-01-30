@@ -133,6 +133,8 @@ main() async {
     await runComparisonBenchmarks(depth: 10, extraBreadthEvery: 1),
     await runComparisonBenchmarks(depth: 100, extraBreadthEvery: 10),
     await runComparisonBenchmarks(depth: 1000, extraBreadthEvery: 100),
+    await runComparisonBenchmarks(depth: 15, extraBreadthEvery: 1),
+    await runComparisonBenchmarks(depth: 20, extraBreadthEvery: 1),
   ];
 
   final resultTable = dolumnify([

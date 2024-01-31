@@ -14,18 +14,15 @@ abstract class ReadOnlyRef<T> {
 
   final _dependents = HashSet<Element>.identity();
   var _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
+}
 
-  @internal
+@internal
+extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   HashMap<Element, ValueProvider<T>> get providers => _providers;
-
-  @internal
   HashSet<Element> get dependents => _dependents;
-
-  @internal
   HashMap<Element, ValueProvider<T>> get dependentProvidersCache =>
       _dependentProvidersCache;
 
-  @internal
   ValueProvider<T> getOrCreateProvider(Element element) {
     final existingProvider = _providers[element];
     if (existingProvider != null) {
@@ -119,17 +116,3 @@ extension ContextRefExt<T> on ReadOnlyRef<T> {
   /// Get the value of this [Ref] from the given [context].
   T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
 }
-
-// @internal
-// extension InternalRefAPI<T> on ReadOnlyRef<T> {
-//   HashSet<Element> get providerElements => _providerElements;
-//   HashSet<Element> get dependentElements => _dependentElements;
-//   HashMap<Element, ValueProvider<T>> get dependentElementProviders =>
-//       _dependentElementProviders;
-//
-//   ValueProvider<T> getOrCreateProvider(Element element) {
-//     final provider = _dependentElementProviders[element] ??= ValueProvider<T>();
-//     _providerElements.add(element);
-//     return provider;
-//   }
-// }

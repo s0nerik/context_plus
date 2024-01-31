@@ -1,13 +1,47 @@
+import 'dart:collection';
+
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'context_ref_root.dart';
+import 'value_provider.dart';
 
 /// A read-only reference to a value that can be bound to a [BuildContext].
-abstract interface class ReadOnlyRef<T> {}
+abstract class ReadOnlyRef<T> {
+  ReadOnlyRef._();
+
+  final _providers = HashMap<Element, ValueProvider<T>>.identity();
+
+  final _dependents = HashSet<Element>.identity();
+  var _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
+
+  @internal
+  HashMap<Element, ValueProvider<T>> get providers => _providers;
+
+  @internal
+  HashSet<Element> get dependents => _dependents;
+
+  @internal
+  HashMap<Element, ValueProvider<T>> get dependentProvidersCache =>
+      _dependentProvidersCache;
+
+  @internal
+  ValueProvider<T> getOrCreateProvider(Element element) {
+    final existingProvider = _providers[element];
+    if (existingProvider != null) {
+      return existingProvider;
+    }
+
+    final provider = ValueProvider<T>();
+    _providers[element] = provider;
+    _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
+    return provider;
+  }
+}
 
 /// A reference to a value that can be bound to a [BuildContext].
-class Ref<T> implements ReadOnlyRef<T> {
-  Ref(); // Must not be const
+class Ref<T> extends ReadOnlyRef<T> {
+  Ref() : super._(); // Must not be const
 
   /// Bind a value to this [Ref] for this and all descendant [BuildContext]s.
   ///
@@ -85,3 +119,17 @@ extension ContextRefExt<T> on ReadOnlyRef<T> {
   /// Get the value of this [Ref] from the given [context].
   T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
 }
+
+// @internal
+// extension InternalRefAPI<T> on ReadOnlyRef<T> {
+//   HashSet<Element> get providerElements => _providerElements;
+//   HashSet<Element> get dependentElements => _dependentElements;
+//   HashMap<Element, ValueProvider<T>> get dependentElementProviders =>
+//       _dependentElementProviders;
+//
+//   ValueProvider<T> getOrCreateProvider(Element element) {
+//     final provider = _dependentElementProviders[element] ??= ValueProvider<T>();
+//     _providerElements.add(element);
+//     return provider;
+//   }
+// }

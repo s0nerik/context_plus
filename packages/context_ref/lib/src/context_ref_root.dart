@@ -38,25 +38,7 @@ class ContextRefRoot extends InheritedWidget {
 class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget);
 
-  final _elementRefProviders =
-      HashMap<Element, HashMap<ReadOnlyRef, ValueProvider>>.identity();
-  final _elementDependencyRefs =
-      HashMap<Element, HashSet<ReadOnlyRef>>.identity();
-  final _refDependentElements =
-      HashMap<ReadOnlyRef, HashSet<Element>>.identity();
-
-  ValueProvider<T>? _getProvider<T>(Element element, ReadOnlyRef<T> ref) =>
-      _elementRefProviders[element]?[ref] as ValueProvider<T>?;
-
-  ValueProvider<T> _getOrCreateProvider<T>(Element element, Ref<T> ref) {
-    final contextProviders =
-        _elementRefProviders[element] ??= HashMap.identity();
-    final provider = contextProviders[ref] ??= ValueProvider<T>();
-    return provider as ValueProvider<T>;
-  }
-
-  HashSet<Element> _getOrCreateRefDependentElements(ReadOnlyRef ref) =>
-      _refDependentElements[ref] ??= HashSet.identity();
+  final _refs = HashMap<Element, HashSet<ReadOnlyRef>>.identity();
 
   ValueProvider<T> bind<T>({
     required BuildContext context,
@@ -71,7 +53,7 @@ class InheritedContextRefElement extends InheritedElement {
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
-    final provider = _getOrCreateProvider(context as Element, ref);
+    final provider = ref.getOrCreateProvider(context as Element);
     provider.key = key;
     provider.creator = create;
     provider.disposer = dispose;
@@ -89,13 +71,12 @@ class InheritedContextRefElement extends InheritedElement {
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
-    final provider = _getOrCreateProvider(context as Element, ref);
+    final provider = ref.getOrCreateProvider(context as Element);
     provider.creator = null;
     provider.disposer = _noopDispose;
     if (provider.shouldUpdateValue(value)) {
       provider.value = value;
-      final dependentElements = _getOrCreateRefDependentElements(ref);
-      for (final element in dependentElements) {
+      for (final element in ref.dependents) {
         if (element.mounted) {
           scheduleMicrotask(element.markNeedsBuild);
         }
@@ -111,22 +92,21 @@ class InheritedContextRefElement extends InheritedElement {
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
-    _refDependentElements[ref]?.add(context as Element);
+    ref.dependents.add(context as Element);
 
-    var provider = _getProvider<T>(context as Element, ref);
-    if (provider != null) {
-      return provider.value;
+    var provider =
+        ref.dependentProvidersCache[context] ?? ref.providers[context];
+    if (provider == null) {
+      context.visitAncestorElements((element) {
+        final p = ref.providers[element];
+        if (p != null) {
+          provider = p;
+          ref.dependentProvidersCache[context] = p;
+          return false;
+        }
+        return true;
+      });
     }
-
-    context.visitAncestorElements((element) {
-      final p = _getProvider<T>(element, ref);
-      if (p != null) {
-        provider = p;
-        return false;
-      }
-      return true;
-    });
-
     assert(
       provider != null,
       '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
@@ -137,29 +117,26 @@ class InheritedContextRefElement extends InheritedElement {
 
   @override
   void removeDependent(Element dependent) {
-    _disposeDependentContextData(dependent);
+    _disposeContextData(dependent);
     super.removeDependent(dependent);
   }
 
-  void _disposeDependentContextData(BuildContext context) {
-    final refProviders = _elementRefProviders.remove(context);
-    if (refProviders == null) return;
-    for (final provider in refProviders.values) {
-      _disposeProvider(provider);
-    }
-
-    final dependencyRefs = _elementDependencyRefs.remove(context);
-    for (final ref in dependencyRefs ?? const <ReadOnlyRef>[]) {
-      _refDependentElements[ref]?.remove(context);
+  void _disposeContextData(BuildContext context) {
+    final refs = _refs.remove(context);
+    for (final ref in refs ?? const <ReadOnlyRef>[]) {
+      final provider = ref.providers.remove(context);
+      if (provider != null) {
+        _disposeProvider(provider);
+      }
+      ref.dependents.remove(context);
+      ref.dependentProvidersCache.remove(context);
     }
   }
 
   @override
   void unmount() {
-    for (final contextProviders in _elementRefProviders.values) {
-      for (final provider in contextProviders.values) {
-        _disposeProvider(provider);
-      }
+    for (final element in _refs.keys) {
+      _disposeContextData(element);
     }
     super.unmount();
   }

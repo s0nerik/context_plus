@@ -39,6 +39,10 @@ class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget);
 
   final _refs = HashMap<Element, HashSet<ReadOnlyRef>>.identity();
+  void _addRef(Element element, ReadOnlyRef ref) {
+    final refs = _refs[element] ??= HashSet<ReadOnlyRef>.identity();
+    refs.add(ref);
+  }
 
   ValueProvider<T> bind<T>({
     required BuildContext context,
@@ -52,8 +56,9 @@ class InheritedContextRefElement extends InheritedElement {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
+    _addRef(context as Element, ref);
 
-    final provider = ref.getOrCreateProvider(context as Element);
+    final provider = ref.getOrCreateProvider(context);
     provider.key = key;
     provider.creator = create;
     provider.disposer = dispose;
@@ -70,8 +75,9 @@ class InheritedContextRefElement extends InheritedElement {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
+    _addRef(context as Element, ref);
 
-    final provider = ref.getOrCreateProvider(context as Element);
+    final provider = ref.getOrCreateProvider(context);
     provider.creator = null;
     provider.disposer = _noopDispose;
     if (provider.shouldUpdateValue(value)) {
@@ -91,8 +97,9 @@ class InheritedContextRefElement extends InheritedElement {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
+    _addRef(context as Element, ref);
 
-    ref.dependents.add(context as Element);
+    ref.dependents.add(context);
 
     var provider =
         ref.dependentProvidersCache[context] ?? ref.providers[context];

@@ -14,6 +14,45 @@ class Example extends StatelessWidget {
   final String fileName;
   final Widget child;
 
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 1,
+              child: child,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: _CodeViewer(fileName: fileName),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeViewer extends StatelessWidget {
+  const _CodeViewer({
+    super.key,
+    required this.fileName,
+  });
+
+  final String fileName;
+
   static final _codeThemeFuture = HighlighterTheme.loadDarkTheme();
   static final _fileContentFutures = <String, Future<String>>{};
   static final _importsRegexp = RegExp(r"import '.*';\n");
@@ -31,38 +70,16 @@ class Example extends StatelessWidget {
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watch(context).data;
 
-    return SafeArea(
+    if (highlighter == null || code == null) {
+      return const SizedBox.shrink();
+    }
+
+    return InteractiveViewer(
+      constrained: false,
+      scaleEnabled: false,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 1,
-              child: child,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: highlighter != null && code != null
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[900],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: InteractiveViewer(
-                        constrained: false,
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          child: Text.rich(highlighter.highlight(code)),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
+        padding: const EdgeInsets.all(12),
+        child: Text.rich(highlighter.highlight(code)),
       ),
     );
   }

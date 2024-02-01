@@ -14,8 +14,9 @@ class BindValueExampleScreen extends StatelessWidget {
       ),
       body: const Example(
         title: 'Ref.bindValue()',
-        fileName: 'context_ref_bind_value_example.dart',
-        child: BindValueExample(),
+        children: {
+          'context_ref_bind_value_example.dart': BindValueExample(),
+        },
       ),
     );
   }

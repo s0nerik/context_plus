@@ -2,68 +2,100 @@ import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
+final _children = Ref<Map<String, Widget>>();
+
 class Example extends StatelessWidget {
   const Example({
     super.key,
     required this.title,
-    required this.fileName,
-    required this.child,
+    required this.children,
   });
 
   final String title;
-  final String fileName;
-  final Widget child;
+  final Map<String, Widget> children;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 1,
-              child: child,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[900],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: _CodeViewer(fileName: fileName),
+    _children.bindValue(context, children);
+    return DefaultTabController(
+      length: children.length,
+      child: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              const SizedBox(width: 8),
+              const Expanded(
+                flex: 1,
+                child: _SelectedExample(),
               ),
-            ),
-            const SizedBox(width: 8),
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: Material(
+                  clipBehavior: Clip.hardEdge,
+                  color: switch (Theme.of(context).brightness) {
+                    Brightness.dark => Colors.grey[900],
+                    Brightness.light => Colors.grey[200],
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Column(
+                    children: [
+                      TabBar(
+                        tabs: [
+                          for (final fileName in children.keys)
+                            Tab(text: fileName),
+                        ],
+                      ),
+                      const Expanded(
+                        child: _SelectedExampleCode(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _CodeViewer extends StatelessWidget {
-  const _CodeViewer({
-    super.key,
-    required this.fileName,
-  });
+class _SelectedExample extends StatelessWidget {
+  const _SelectedExample();
 
-  final String fileName;
+  @override
+  Widget build(BuildContext context) {
+    final selectedTabIndex = DefaultTabController.of(context).index;
+    final widget = _children.of(context).values.elementAt(selectedTabIndex);
+    return widget;
+  }
+}
 
-  static final _codeThemeFuture = HighlighterTheme.loadDarkTheme();
+class _SelectedExampleCode extends StatelessWidget {
+  const _SelectedExampleCode();
+
+  static final _darkCodeThemeFuture = HighlighterTheme.loadDarkTheme();
+  static final _lightCodeThemeFuture = HighlighterTheme.loadLightTheme();
   static final _fileContentFutures = <String, Future<String>>{};
   static final _importsRegexp = RegExp(r"import '.*';\n");
 
   @override
   Widget build(BuildContext context) {
-    final codeTheme = _codeThemeFuture.watch(context).data;
+    final codeTheme = switch (Theme.of(context).brightness) {
+      Brightness.dark => _darkCodeThemeFuture,
+      Brightness.light => _lightCodeThemeFuture,
+    }
+        .watch(context)
+        .data;
     final highlighter = codeTheme != null
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
+    final selectedTabIndex = DefaultTabController.of(context).index;
+    final fileName = _children.of(context).keys.elementAt(selectedTabIndex);
     final codeFuture = _fileContentFutures[fileName] ??=
         DefaultAssetBundle.of(context)
             .loadString('lib/examples/$fileName')

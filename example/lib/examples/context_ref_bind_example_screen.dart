@@ -14,8 +14,9 @@ class BindExampleScreen extends StatelessWidget {
       ),
       body: const Example(
         title: 'Ref.bind()',
-        fileName: 'context_ref_bind_example.dart',
-        child: BindExample(),
+        children: {
+          'context_ref_bind_example.dart': BindExample(),
+        },
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../example.dart';
-import '../examples/bind_value_example.dart';
+import 'context_ref_bind_value_example.dart';
 
 class BindValueExampleScreen extends StatelessWidget {
   const BindValueExampleScreen({super.key});
@@ -14,7 +14,7 @@ class BindValueExampleScreen extends StatelessWidget {
       ),
       body: const Example(
         title: 'Ref.bindValue()',
-        fileName: 'bind_value_example.dart',
+        fileName: 'context_ref_bind_value_example.dart',
         child: BindValueExample(),
       ),
     );

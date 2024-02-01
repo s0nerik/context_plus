@@ -7,10 +7,10 @@ import 'package:signals_flutter/signals_flutter.dart' as signals;
 import 'package:flutter/material.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
-import 'context_ref/screens/bind_value_example_screen.dart';
+import 'examples/context_ref_bind_value_example_screen.dart';
 import 'context_watch/benchmark_screen.dart';
-import 'context_ref/screens/bind_example_screen.dart';
-import 'context_ref/screens/nested_scopes_example_screen.dart';
+import 'examples/context_ref_bind_example_screen.dart';
+import 'examples/context_ref_nested_scopes_example_screen.dart';
 import 'home_screen.dart';
 import 'context_watch/hot_reload_test_screen.dart';
 

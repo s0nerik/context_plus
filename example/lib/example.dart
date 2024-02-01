@@ -27,7 +27,7 @@ class Example extends StatelessWidget {
 
     final codeFuture = _fileContentFutures[fileName] ??=
         DefaultAssetBundle.of(context)
-            .loadString('lib/context_ref/examples/$fileName')
+            .loadString('lib/examples/$fileName')
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watch(context).data;
 

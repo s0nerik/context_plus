@@ -43,4 +43,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/context_ref/examples/
+    - lib/examples/

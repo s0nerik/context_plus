@@ -20,7 +20,7 @@ class _Child extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ExampleContainer(
       onTap: () => _counterNotifier.of(context).value += 1,
       child: CounterExample(
         counter: _counterNotifier.watch(context),

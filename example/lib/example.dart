@@ -32,34 +32,60 @@ class Example extends StatelessWidget {
     final code = codeFuture.watch(context).data;
 
     return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: child,
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            flex: 2,
-            child: highlighter != null && code != null
-                ? Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InteractiveViewer(
-                      constrained: false,
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Text.rich(highlighter.highlight(code)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 1,
+              child: child,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: highlighter != null && code != null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[900],
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
+                      child: InteractiveViewer(
+                        constrained: false,
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          child: Text.rich(highlighter.highlight(code)),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class ExampleContainer extends StatelessWidget {
+  const ExampleContainer({
+    super.key,
+    this.onTap,
+    required this.child,
+  });
+
+  final VoidCallback? onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      customBorder: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      onTap: onTap,
+      child: child,
     );
   }
 }

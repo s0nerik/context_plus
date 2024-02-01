@@ -103,6 +103,9 @@ main() async {
     int? extraBreadthEvery,
     int? extraBreadthAmount,
   }) async {
+    // Let the GC do its job
+    await Future.delayed(const Duration(seconds: 2));
+
     final inheritedWidgetBenchmark = _Benchmark(
       depth: depth,
       extraBreadthEvery: extraBreadthEvery,
@@ -110,6 +113,9 @@ main() async {
       type: _BenchmarkType.inheritedWidget,
     );
     await runBenchmark(inheritedWidgetBenchmark);
+
+    // Let the GC do its job
+    await Future.delayed(const Duration(seconds: 2));
 
     final contextRefBenchmark = _Benchmark(
       depth: depth,
@@ -134,7 +140,12 @@ main() async {
     await runComparisonBenchmarks(depth: 100, extraBreadthEvery: 10),
     await runComparisonBenchmarks(depth: 1000, extraBreadthEvery: 100),
     await runComparisonBenchmarks(depth: 15, extraBreadthEvery: 1),
-    await runComparisonBenchmarks(depth: 20, extraBreadthEvery: 1),
+    await runComparisonBenchmarks(depth: 17, extraBreadthEvery: 1),
+    await runComparisonBenchmarks(
+      depth: 2,
+      extraBreadthEvery: 1,
+      extraBreadthAmount: 100000,
+    ),
   ];
 
   final resultTable = dolumnify([

@@ -10,7 +10,7 @@ class BindExampleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ref.bind() example'),
+        title: const Text('Ref.bind()'),
       ),
       body: const Example(
         title: 'Ref.bind()',

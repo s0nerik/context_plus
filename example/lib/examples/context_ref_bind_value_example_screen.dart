@@ -10,7 +10,7 @@ class BindValueExampleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ref.bindValue() example'),
+        title: const Text('Ref.bindValue()'),
       ),
       body: const Example(
         title: 'Ref.bindValue()',

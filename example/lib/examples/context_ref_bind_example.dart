@@ -20,9 +20,11 @@ class _Child extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CounterExample(
-      counter: _counterNotifier.watch(context),
-      onIncrement: () => _counterNotifier.of(context).value += 1,
+    return InkWell(
+      onTap: () => _counterNotifier.of(context).value += 1,
+      child: CounterExample(
+        counter: _counterNotifier.watch(context),
+      ),
     );
   }
 }

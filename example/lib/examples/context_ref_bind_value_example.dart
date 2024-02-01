@@ -18,14 +18,9 @@ class _BindValueExampleState extends State<BindValueExample> {
   @override
   Widget build(BuildContext context) {
     _counterRef.bindValue(context, _counter);
-    return Stack(
-      children: [
-        const _Child(),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => setState(() => _counter += 1),
-        ),
-      ],
+    return InkWell(
+      onTap: () => setState(() => _counter += 1),
+      child: const _Child(),
     );
   }
 }
@@ -37,7 +32,6 @@ class _Child extends StatelessWidget {
   Widget build(BuildContext context) {
     return CounterExample(
       counter: _counterRef.of(context),
-      onIncrement: () {},
     );
   }
 }

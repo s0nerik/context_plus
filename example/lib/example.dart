@@ -68,11 +68,9 @@ class CounterExample extends StatelessWidget {
   const CounterExample({
     super.key,
     required this.counter,
-    required this.onIncrement,
   });
 
   final int counter;
-  final VoidCallback onIncrement;
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +83,9 @@ class CounterExample extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: onIncrement,
-            child: const Text('Increment'),
+          Text(
+            'Tap to increment',
+            style: Theme.of(context).textTheme.labelMedium,
           ),
         ],
       ),

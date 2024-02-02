@@ -12,11 +12,15 @@ class BindExampleScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ref.bind()'),
       ),
-      body: const Example(
+      body: const ExampleScaffold(
         title: 'Ref.bind()',
-        children: {
-          'context_ref_bind_example.dart': BindExample(),
-        },
+        variants: [
+          ExampleVariant(
+            title: 'Ref.bind()',
+            filePath: 'context_ref_bind_example.dart',
+            widget: BindExample(),
+          ),
+        ],
       ),
     );
   }

@@ -2,23 +2,35 @@ import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
-final _children = Ref<Map<String, Widget>>();
-
-class Example extends StatelessWidget {
-  const Example({
-    super.key,
+class ExampleVariant {
+  const ExampleVariant({
     required this.title,
-    required this.children,
+    required this.filePath,
+    required this.widget,
   });
 
   final String title;
-  final Map<String, Widget> children;
+  final String filePath;
+  final Widget widget;
+}
+
+final _exampleVariants = Ref<List<ExampleVariant>>();
+
+class ExampleScaffold extends StatelessWidget {
+  const ExampleScaffold({
+    super.key,
+    required this.title,
+    required this.variants,
+  });
+
+  final String title;
+  final List<ExampleVariant> variants;
 
   @override
   Widget build(BuildContext context) {
-    _children.bindValue(context, children);
+    _exampleVariants.bindValue(context, variants);
     return DefaultTabController(
-      length: children.length,
+      length: variants.length,
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -43,8 +55,8 @@ class Example extends StatelessWidget {
                     children: [
                       TabBar(
                         tabs: [
-                          for (final fileName in children.keys)
-                            Tab(text: fileName),
+                          for (final variant in variants)
+                            Tab(text: variant.title),
                         ],
                       ),
                       const Expanded(
@@ -68,8 +80,9 @@ class _SelectedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTabIndex = DefaultTabController.of(context).index;
-    final widget = _children.of(context).values.elementAt(selectedTabIndex);
+    final selectedTabIndex =
+        DefaultTabController.of(context).watch(context).index;
+    final widget = _exampleVariants.of(context)[selectedTabIndex].widget;
     return widget;
   }
 }
@@ -94,11 +107,13 @@ class _SelectedExampleCode extends StatelessWidget {
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
-    final selectedTabIndex = DefaultTabController.of(context).index;
-    final fileName = _children.of(context).keys.elementAt(selectedTabIndex);
-    final codeFuture = _fileContentFutures[fileName] ??=
+    final selectedTabIndex =
+        DefaultTabController.of(context).watch(context).index;
+    final selectedVariant = _exampleVariants.of(context)[selectedTabIndex];
+    final filePath = selectedVariant.filePath;
+    final codeFuture = _fileContentFutures[filePath] ??=
         DefaultAssetBundle.of(context)
-            .loadString('lib/examples/$fileName')
+            .loadString('lib/examples/$filePath')
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watch(context).data;
 

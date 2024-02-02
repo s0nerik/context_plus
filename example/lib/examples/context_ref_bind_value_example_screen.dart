@@ -1,7 +1,9 @@
+import 'context_ref_bind_value/inherited_widget_example.dart'
+    as inherited_widget;
 import 'package:flutter/material.dart';
 
 import '../example.dart';
-import 'context_ref_bind_value_example.dart';
+import 'context_ref_bind_value/context_ref_example.dart' as context_ref;
 
 class BindValueExampleScreen extends StatelessWidget {
   const BindValueExampleScreen({super.key});
@@ -12,11 +14,20 @@ class BindValueExampleScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ref.bindValue()'),
       ),
-      body: const Example(
+      body: const ExampleScaffold(
         title: 'Ref.bindValue()',
-        children: {
-          'context_ref_bind_value_example.dart': BindValueExample(),
-        },
+        variants: [
+          ExampleVariant(
+            title: 'Ref.bindValue()',
+            filePath: 'context_ref_bind_value/context_ref_example.dart',
+            widget: context_ref.Example(),
+          ),
+          ExampleVariant(
+            title: 'InheritedWidget',
+            filePath: 'context_ref_bind_value/inherited_widget_example.dart',
+            widget: inherited_widget.Example(),
+          ),
+        ],
       ),
     );
   }

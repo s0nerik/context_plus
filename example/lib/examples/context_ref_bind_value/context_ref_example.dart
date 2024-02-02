@@ -1,18 +1,18 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../example.dart';
+import '../../example.dart';
 
 final _counterRef = Ref<int>();
 
-class BindValueExample extends StatefulWidget {
-  const BindValueExample({super.key});
+class Example extends StatefulWidget {
+  const Example({super.key});
 
   @override
-  State<BindValueExample> createState() => _BindValueExampleState();
+  State<Example> createState() => _ExampleState();
 }
 
-class _BindValueExampleState extends State<BindValueExample> {
+class _ExampleState extends State<Example> {
   var _counter = 0;
 
   @override

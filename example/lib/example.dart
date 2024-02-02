@@ -82,8 +82,13 @@ class _SelectedExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedTabIndex =
         DefaultTabController.of(context).watch(context).index;
-    final widget = _exampleVariants.of(context)[selectedTabIndex].widget;
-    return widget;
+    final variants = _exampleVariants.of(context);
+    return IndexedStack(
+      index: selectedTabIndex,
+      children: [
+        for (final variant in variants) variant.widget,
+      ],
+    );
   }
 }
 
@@ -122,6 +127,7 @@ class _SelectedExampleCode extends StatelessWidget {
     }
 
     return InteractiveViewer(
+      key: ValueKey(code),
       constrained: false,
       scaleEnabled: false,
       child: Container(

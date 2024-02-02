@@ -54,9 +54,14 @@ class ExampleScaffold extends StatelessWidget {
                   child: Column(
                     children: [
                       TabBar(
+                        tabAlignment: TabAlignment.start,
+                        isScrollable: true,
                         tabs: [
                           for (final variant in variants)
-                            Tab(text: variant.title),
+                            _Tab(
+                              key: ValueKey(variant.filePath),
+                              variant: variant,
+                            ),
                         ],
                       ),
                       const Expanded(
@@ -70,6 +75,36 @@ class ExampleScaffold extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _Tab extends StatelessWidget {
+  const _Tab({
+    super.key,
+    required this.variant,
+  });
+
+  final ExampleVariant variant;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      height: 56,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(variant.title),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              variant.filePath,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ),
+        ],
       ),
     );
   }

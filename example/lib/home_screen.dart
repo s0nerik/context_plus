@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_router/url_router.dart';
+
+import 'context_watch/benchmark_screen.dart';
+import 'context_watch/hot_reload_test_screen.dart';
+import 'examples/context_ref_bind_example_screen.dart';
+import 'examples/context_ref_bind_value_example_screen.dart';
+import 'examples/context_ref_nested_scopes_example_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,20 +28,19 @@ class HomeScreen extends StatelessWidget {
                 title: 'context_ref',
                 children: [
                   OutlinedButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/bind_example'),
+                    onPressed: () => context.url = BindExampleScreen.urlPath,
                     child: const Text('Ref.bind()'),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () =>
-                        Navigator.of(context).pushNamed('/bind_value_example'),
+                        context.url = BindValueExampleScreen.urlPath,
                     child: const Text('Ref.bindValue()'),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
-                    onPressed: () => Navigator.of(context)
-                        .pushNamed('/nested_scopes_example'),
+                    onPressed: () =>
+                        context.url = NestedScopesExampleScreen.urlPath,
                     child: const Text('Nested Scopes'),
                   ),
                 ],
@@ -43,14 +49,12 @@ class HomeScreen extends StatelessWidget {
                 title: 'context_watch',
                 children: [
                   OutlinedButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/benchmark'),
+                    onPressed: () => context.url = BenchmarkScreen.urlPath,
                     child: const Text('Benchmark'),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/hot_reload_test'),
+                    onPressed: () => context.url = HotReloadTestScreen.urlPath,
                     child: const Text('Hot Reload Test'),
                   ),
                 ],

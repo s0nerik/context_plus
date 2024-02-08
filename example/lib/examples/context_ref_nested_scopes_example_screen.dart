@@ -30,6 +30,8 @@ class _State {
 class NestedScopesExampleScreen extends StatelessWidget {
   const NestedScopesExampleScreen({super.key});
 
+  static const urlPath = '/context_ref_nested_scopes_example';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

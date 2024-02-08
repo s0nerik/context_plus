@@ -63,6 +63,8 @@ class BenchmarkScreen extends StatefulWidget {
 
   final Duration tileObservableNotifyInterval;
 
+  static const urlPath = '/context_watch_benchmark';
+
   @override
   State<BenchmarkScreen> createState() => _BenchmarkScreenState();
 }

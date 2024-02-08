@@ -7,6 +7,8 @@ import 'context_ref_bind/inherited_widget_example.dart' as inherited_widget;
 class BindExampleScreen extends StatelessWidget {
   const BindExampleScreen({super.key});
 
+  static const urlPath = '/context_ref_bind_example';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 class HotReloadTestScreen extends StatefulWidget {
   const HotReloadTestScreen({super.key});
 
+  static const urlPath = '/context_watch_hot_reload_test';
+
   @override
   State<HotReloadTestScreen> createState() => _HotReloadTestScreenState();
 }

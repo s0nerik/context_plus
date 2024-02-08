@@ -13,6 +13,7 @@ dependencies:
   rxdart: ^0.27.7
   syntax_highlight: ^0.3.0
   dolumns: ^2.0.1
+  url_router: ^0.2.1+3
 
   # Signals
   signals_flutter: ^1.0.1
@@ -46,3 +47,4 @@ flutter:
     - lib/examples/
     - lib/examples/context_ref_bind/
     - lib/examples/context_ref_bind_value/
+    - lib/examples/context_watch/

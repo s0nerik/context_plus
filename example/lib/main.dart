@@ -18,17 +18,17 @@ void main() {
   ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
   FlutterError.onError = ContextPlus.onError(FlutterError.onError);
   signals.disableSignalsDevTools();
-  runApp(const MainApp());
+  runApp(const _App());
 }
 
-class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+class _App extends StatefulWidget {
+  const _App({super.key});
 
   @override
-  State<MainApp> createState() => _MainAppState();
+  State<_App> createState() => _AppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _AppState extends State<_App> {
   @override
   void initState() {
     super.initState();

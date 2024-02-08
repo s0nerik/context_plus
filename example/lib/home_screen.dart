@@ -6,6 +6,7 @@ import 'context_watch/hot_reload_test_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
+import 'examples/context_watch_example_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -41,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   OutlinedButton(
                     onPressed: () =>
                         context.url = NestedScopesExampleScreen.urlPath,
-                    child: const Text('Nested Scopes'),
+                    child: const Text(NestedScopesExampleScreen.title),
                   ),
                 ],
               ),
@@ -49,13 +50,19 @@ class HomeScreen extends StatelessWidget {
                 title: 'context_watch',
                 children: [
                   OutlinedButton(
+                    onPressed: () =>
+                        context.url = ContextWatchExampleScreen.urlPath,
+                    child: const Text(ContextWatchExampleScreen.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
                     onPressed: () => context.url = BenchmarkScreen.urlPath,
-                    child: const Text('Benchmark'),
+                    child: const Text(BenchmarkScreen.title),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () => context.url = HotReloadTestScreen.urlPath,
-                    child: const Text('Hot Reload Test'),
+                    child: const Text(HotReloadTestScreen.title),
                   ),
                 ],
               ),

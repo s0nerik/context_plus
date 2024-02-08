@@ -63,6 +63,7 @@ class BenchmarkScreen extends StatefulWidget {
 
   final Duration tileObservableNotifyInterval;
 
+  static const title = 'Benchmark';
   static const urlPath = '/context_watch_benchmark';
 
   @override
@@ -105,7 +106,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Benchmark')),
+      appBar: AppBar(title: const Text(BenchmarkScreen.title)),
       body: Container(
         key: _bodyKey,
         padding: EdgeInsets.only(

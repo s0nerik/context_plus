@@ -14,6 +14,7 @@ import 'context_watch/hot_reload_test_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
+import 'examples/context_watch_example_screen.dart';
 import 'home_screen.dart';
 
 void main() {
@@ -62,6 +63,8 @@ class _AppState extends State<_App> {
             const NestedScopesExampleScreen(),
           BindExampleScreen.urlPath => const BindExampleScreen(),
           BindValueExampleScreen.urlPath => const BindValueExampleScreen(),
+          ContextWatchExampleScreen.urlPath =>
+            const ContextWatchExampleScreen(),
           _ => null,
         },
       ].nonNulls.map((screen) => MaterialPage(child: screen)).toList();

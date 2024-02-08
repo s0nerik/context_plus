@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class HotReloadTestScreen extends StatefulWidget {
   const HotReloadTestScreen({super.key});
 
+  static const title = 'Hot Reload Test';
   static const urlPath = '/context_watch_hot_reload_test';
 
   @override
@@ -85,7 +86,7 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
         _watchStream2 ? _stream2.watch(context).data ?? '' : '';
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hot Reload Test'),
+        title: const Text(HotReloadTestScreen.title),
       ),
       body: Center(
         child: Column(

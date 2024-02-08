@@ -167,7 +167,10 @@ class _SelectedExampleCode extends StatelessWidget {
       scaleEnabled: false,
       child: Container(
         padding: const EdgeInsets.all(12),
-        child: Text.rich(highlighter.highlight(code)),
+        child: DefaultTextStyle.merge(
+          style: const TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13),
+          child: Text.rich(highlighter.highlight(code)),
+        ),
       ),
     );
   }

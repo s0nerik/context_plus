@@ -48,3 +48,7 @@ flutter:
     - lib/examples/context_ref_bind/
     - lib/examples/context_ref_bind_value/
     - lib/examples/context_watch/
+  fonts:
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono.ttf

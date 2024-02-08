@@ -86,6 +86,13 @@ class InheritedContextWatchElement extends InheritedElement {
         _isFirstFrame && phase == SchedulerPhase.idle;
   }
 
+  Duration get _currentFrameTimeStamp {
+    if (_isFirstFrame) {
+      return Duration.zero;
+    }
+    return SchedulerBinding.instance.currentFrameTimeStamp;
+  }
+
   @override
   void updated(covariant InheritedContextWatch oldWidget) {
     super.updated(oldWidget);
@@ -113,7 +120,7 @@ class InheritedContextWatchElement extends InheritedElement {
     }
 
     final contextData = _contextData[context] ??= _ContextData();
-    final frame = SchedulerBinding.instance.currentFrameTimeStamp;
+    final frame = _currentFrameTimeStamp;
 
     if (contextData.lastFrame != frame) {
       // It's a new frame, so let's clear all selectors as they might've changed
@@ -154,7 +161,7 @@ class InheritedContextWatchElement extends InheritedElement {
     }
 
     final contextData = _contextData[context] ??= _ContextData();
-    contextData.lastFrame = SchedulerBinding.instance.currentFrameTimeStamp;
+    contextData.lastFrame = _currentFrameTimeStamp;
   }
 
   @override

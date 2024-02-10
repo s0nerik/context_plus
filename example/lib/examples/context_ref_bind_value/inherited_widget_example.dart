@@ -1,4 +1,3 @@
-import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../../example.dart';

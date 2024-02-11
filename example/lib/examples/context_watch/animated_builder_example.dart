@@ -1,4 +1,3 @@
-import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
 class Example extends StatefulWidget {
@@ -22,10 +21,12 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final scale = _animCtrl.watch(context);
-    return Transform.scale(
-      scale: scale,
-      child: const FlutterLogo(size: 200),
+    return AnimatedBuilder(
+      animation: _animCtrl,
+      builder: (context, child) => Transform.scale(
+        scale: _animCtrl.value,
+        child: const FlutterLogo(size: 200),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:example/example.dart';
 import 'package:flutter/material.dart';
 
+import 'context_watch/animated_builder_example.dart' as animated_builder;
 import 'context_watch/context_watch_example.dart' as context_watch;
 
 class ContextWatchExampleScreen extends StatelessWidget {
@@ -15,9 +16,18 @@ class ContextWatchExampleScreen extends StatelessWidget {
       title: title,
       variants: [
         ExampleVariant(
-          title: 'Anything.watch()',
+          title: 'context_watch',
           filePath: 'context_watch/context_watch_example.dart',
-          widget: context_watch.Example(),
+          widget: Center(
+            child: context_watch.Example(),
+          ),
+        ),
+        ExampleVariant(
+          title: 'AnimatedBuilder',
+          filePath: 'context_watch/animated_builder_example.dart',
+          widget: Center(
+            child: animated_builder.Example(),
+          ),
         ),
       ],
     );

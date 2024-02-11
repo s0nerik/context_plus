@@ -63,17 +63,13 @@ class _ColorsList extends StatelessWidget {
     return ListView.builder(
       controller: _scrollController.of(context),
       itemCount: _colors.length,
-      itemBuilder: (context, index) => _ColorItem(
-        key: ValueKey(_colors[index]),
-        color: _colors[index],
-      ),
+      itemBuilder: (context, index) => _ColorItem(color: _colors[index]),
     );
   }
 }
 
 class _ColorItem extends StatelessWidget {
   const _ColorItem({
-    super.key,
     required this.color,
   });
 

@@ -115,8 +115,8 @@ class _SelectedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTabIndex =
-        DefaultTabController.of(context).watch(context).index;
+    final tabController = DefaultTabController.of(context)..watch(context);
+    final selectedTabIndex = tabController.index;
     final variants = _exampleVariants.of(context);
     return IndexedStack(
       index: selectedTabIndex,
@@ -147,8 +147,8 @@ class _SelectedExampleCode extends StatelessWidget {
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
-    final selectedTabIndex =
-        DefaultTabController.of(context).watch(context).index;
+    final tabController = DefaultTabController.of(context)..watch(context);
+    final selectedTabIndex = tabController.index;
     final selectedVariant = _exampleVariants.of(context)[selectedTabIndex];
     final filePath = selectedVariant.filePath;
     final codeFuture = _fileContentFutures[filePath] ??=

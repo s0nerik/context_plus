@@ -11,8 +11,7 @@ extension RefContextWatchExt<T> on Ref<T> {
   }
 }
 
-extension RefListenableWatchExt<TListenable extends Listenable>
-    on Ref<TListenable> {
+extension RefListenableWatchExt on Ref<Listenable> {
   /// Watch this [Listenable] for changes.
   ///
   /// Whenever this [Listenable] notifies of a change, the [context] will be
@@ -20,11 +19,10 @@ extension RefListenableWatchExt<TListenable extends Listenable>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  TListenable watch(BuildContext context) => of(context).watch(context);
+  void watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefValueListenableWatchExt<TListenable extends ValueListenable<T>, T>
-    on Ref<TListenable> {
+extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
   /// Watch this [ValueListenable] for changes.
   ///
   /// Whenever this [ValueListenable] notifies of a change, the [context] will

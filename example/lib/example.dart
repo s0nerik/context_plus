@@ -1,5 +1,6 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
 class ExampleVariant {
@@ -135,6 +136,10 @@ class _SelectedExampleCode extends StatelessWidget {
   static final _fileContentFutures = <String, Future<String>>{};
   static final _importsRegexp = RegExp(r"import '.*';\n");
 
+  static final _scrollControllersGroup = Ref<LinkedScrollControllerGroup>();
+  static final _lineNumbersScrollController = Ref<ScrollController>();
+  static final _sourceScrollController = Ref<ScrollController>();
+
   @override
   Widget build(BuildContext context) {
     final codeTheme = switch (Theme.of(context).brightness) {
@@ -157,21 +162,61 @@ class _SelectedExampleCode extends StatelessWidget {
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watch(context).data;
 
+    final scrollControllersGroup = _scrollControllersGroup.bind(
+        context, key: filePath, LinkedScrollControllerGroup.new);
+    final lineNumbersController = _lineNumbersScrollController.bind(
+        context, key: filePath, scrollControllersGroup.addAndGet);
+    final sourceScrollController = _sourceScrollController.bind(
+        context, key: filePath, scrollControllersGroup.addAndGet);
+
     if (highlighter == null || code == null) {
       return const SizedBox.shrink();
     }
 
-    return InteractiveViewer(
-      key: ValueKey(code),
-      constrained: false,
-      scaleEnabled: false,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        child: DefaultTextStyle.merge(
-          style: const TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13),
-          child: Text.rich(highlighter.highlight(code)),
+    const codeStyle = TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13);
+    final lineNumberStyle = codeStyle.copyWith(color: Colors.grey[700]);
+    final lineCount = code.split('\n').length;
+
+    const padding = 12.0;
+    return Row(
+      key: ValueKey(filePath),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 32,
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: ListView.builder(
+              controller: lineNumbersController,
+              itemCount: lineCount,
+              padding: const EdgeInsets.symmetric(vertical: padding),
+              itemBuilder: (context, index) => Container(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  '${index + 1}',
+                  style: lineNumberStyle,
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+        Expanded(
+          child: SingleChildScrollView(
+            controller: sourceScrollController,
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.symmetric(vertical: padding),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: padding),
+              child: DefaultTextStyle.merge(
+                style: codeStyle,
+                child: Text.rich(highlighter.highlight(code)),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

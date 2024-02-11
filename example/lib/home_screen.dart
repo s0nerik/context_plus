@@ -3,6 +3,7 @@ import 'package:url_router/url_router.dart';
 
 import 'context_watch/benchmark_screen.dart';
 import 'context_watch/hot_reload_test_screen.dart';
+import 'examples/context_plus_bind_watch_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
@@ -63,6 +64,16 @@ class HomeScreen extends StatelessWidget {
                   OutlinedButton(
                     onPressed: () => context.url = HotReloadTestScreen.urlPath,
                     child: const Text(HotReloadTestScreen.title),
+                  ),
+                ],
+              ),
+              _Group(
+                title: 'context_plus',
+                children: [
+                  OutlinedButton(
+                    onPressed: () =>
+                        context.url = ContextPlusBindWatchExampleScreen.urlPath,
+                    child: const Text(ContextPlusBindWatchExampleScreen.title),
                   ),
                 ],
               ),

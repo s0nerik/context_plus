@@ -11,6 +11,7 @@ import 'package:url_router/url_router.dart';
 
 import 'context_watch/benchmark_screen.dart';
 import 'context_watch/hot_reload_test_screen.dart';
+import 'examples/context_plus_bind_watch_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
@@ -65,6 +66,8 @@ class _AppState extends State<_App> {
           BindValueExampleScreen.urlPath => const BindValueExampleScreen(),
           ContextWatchExampleScreen.urlPath =>
             const ContextWatchExampleScreen(),
+          ContextPlusBindWatchExampleScreen.urlPath =>
+            const ContextPlusBindWatchExampleScreen(),
           _ => null,
         },
       ].nonNulls.map((screen) => MaterialPage(child: screen)).toList();

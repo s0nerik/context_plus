@@ -30,13 +30,13 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   OutlinedButton(
                     onPressed: () => context.url = BindExampleScreen.urlPath,
-                    child: const Text('Ref.bind()'),
+                    child: const Text(BindExampleScreen.title),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () =>
                         context.url = BindValueExampleScreen.urlPath,
-                    child: const Text('Ref.bindValue()'),
+                    child: const Text(BindValueExampleScreen.title),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(

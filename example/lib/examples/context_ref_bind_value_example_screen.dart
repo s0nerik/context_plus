@@ -8,13 +8,14 @@ import 'context_ref_bind_value/inherited_widget_example.dart'
 class BindValueExampleScreen extends StatelessWidget {
   const BindValueExampleScreen({super.key});
 
+  static const title = 'Ref.bindValue()';
   static const urlPath = '/context_ref_bind_value_example';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ref.bindValue()'),
+        title: const Text(title),
       ),
       body: const ExampleScaffold(
         title: 'Ref.bindValue()',

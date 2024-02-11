@@ -13,25 +13,20 @@ class BindValueExampleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(title),
-      ),
-      body: const ExampleScaffold(
-        title: 'Ref.bindValue()',
-        variants: [
-          ExampleVariant(
-            title: 'Ref.bindValue()',
-            filePath: 'context_ref_bind_value/context_ref_example.dart',
-            widget: context_ref.Example(),
-          ),
-          ExampleVariant(
-            title: 'InheritedWidget',
-            filePath: 'context_ref_bind_value/inherited_widget_example.dart',
-            widget: inherited_widget.Example(),
-          ),
-        ],
-      ),
+    return const ExampleScaffold(
+      title: title,
+      variants: [
+        ExampleVariant(
+          title: 'Ref.bindValue()',
+          filePath: 'context_ref_bind_value/context_ref_example.dart',
+          widget: context_ref.Example(),
+        ),
+        ExampleVariant(
+          title: 'InheritedWidget',
+          filePath: 'context_ref_bind_value/inherited_widget_example.dart',
+          widget: inherited_widget.Example(),
+        ),
+      ],
     );
   }
 }

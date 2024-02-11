@@ -29,50 +29,55 @@ class ExampleScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _exampleVariants.bindValue(context, variants);
-    return DefaultTabController(
-      length: variants.length,
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            children: [
-              const SizedBox(width: 8),
-              const Expanded(
-                flex: 1,
-                child: _SelectedExample(),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 2,
-                child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  color: switch (Theme.of(context).brightness) {
-                    Brightness.dark => Colors.grey[900],
-                    Brightness.light => Colors.grey[200],
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: [
-                      TabBar(
-                        tabAlignment: TabAlignment.start,
-                        isScrollable: true,
-                        tabs: [
-                          for (final variant in variants)
-                            _Tab(
-                              key: ValueKey(variant.filePath),
-                              variant: variant,
-                            ),
-                        ],
-                      ),
-                      const Expanded(
-                        child: _SelectedExampleCode(),
-                      ),
-                    ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: DefaultTabController(
+        length: variants.length,
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                const SizedBox(width: 8),
+                const Expanded(
+                  flex: 1,
+                  child: _SelectedExample(),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: Material(
+                    clipBehavior: Clip.hardEdge,
+                    color: switch (Theme.of(context).brightness) {
+                      Brightness.dark => Colors.grey[900],
+                      Brightness.light => Colors.grey[200],
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Column(
+                      children: [
+                        TabBar(
+                          tabAlignment: TabAlignment.start,
+                          isScrollable: true,
+                          tabs: [
+                            for (final variant in variants)
+                              _Tab(
+                                key: ValueKey(variant.filePath),
+                                variant: variant,
+                              ),
+                          ],
+                        ),
+                        const Expanded(
+                          child: _SelectedExampleCode(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-            ],
+                const SizedBox(width: 8),
+              ],
+            ),
           ),
         ),
       ),

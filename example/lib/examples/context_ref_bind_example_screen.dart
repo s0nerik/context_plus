@@ -12,25 +12,20 @@ class BindExampleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(title),
-      ),
-      body: const ExampleScaffold(
-        title: 'Ref.bind()',
-        variants: [
-          ExampleVariant(
-            title: 'Ref.bind()',
-            filePath: 'context_ref_bind/context_ref_example.dart',
-            widget: context_ref.Example(),
-          ),
-          ExampleVariant(
-            title: 'InheritedWidget',
-            filePath: 'context_ref_bind/inherited_widget_example.dart',
-            widget: inherited_widget.Example(),
-          ),
-        ],
-      ),
+    return const ExampleScaffold(
+      title: title,
+      variants: [
+        ExampleVariant(
+          title: 'Ref.bind()',
+          filePath: 'context_ref_bind/context_ref_example.dart',
+          widget: context_ref.Example(),
+        ),
+        ExampleVariant(
+          title: 'InheritedWidget',
+          filePath: 'context_ref_bind/inherited_widget_example.dart',
+          widget: inherited_widget.Example(),
+        ),
+      ],
     );
   }
 }

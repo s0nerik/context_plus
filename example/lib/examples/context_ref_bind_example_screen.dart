@@ -16,7 +16,7 @@ class BindExampleScreen extends StatelessWidget {
       title: title,
       variants: [
         ExampleVariant(
-          title: 'Ref.bind()',
+          title: 'context_ref',
           filePath: 'context_ref_bind/context_ref_example.dart',
           widget: context_ref.Example(),
         ),

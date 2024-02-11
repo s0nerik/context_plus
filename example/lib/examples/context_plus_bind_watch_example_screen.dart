@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../example.dart';
 import 'context_plus_bind_watch/context_plus_example.dart' as context_plus;
+import 'context_plus_bind_watch/stateful_widget_example.dart'
+    as stateful_widget;
 
 class ContextPlusBindWatchExampleScreen extends StatelessWidget {
   const ContextPlusBindWatchExampleScreen({super.key});
@@ -18,6 +20,11 @@ class ContextPlusBindWatchExampleScreen extends StatelessWidget {
           title: 'context_plus',
           filePath: 'context_plus_bind_watch/context_plus_example.dart',
           widget: context_plus.Example(),
+        ),
+        ExampleVariant(
+          title: 'StatefulWidget',
+          filePath: 'context_plus_bind_watch/stateful_widget_example.dart',
+          widget: stateful_widget.Example(),
         ),
       ],
     );

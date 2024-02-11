@@ -120,15 +120,10 @@ class _SelectedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabController = DefaultTabController.of(context)..watch(context);
-    final selectedTabIndex = tabController.index;
+    final selectedTabIndex =
+        DefaultTabController.of(context).watchAndReturn(context).index;
     final variants = _exampleVariants.of(context);
-    return IndexedStack(
-      index: selectedTabIndex,
-      children: [
-        for (final variant in variants) variant.widget,
-      ],
-    );
+    return variants[selectedTabIndex].widget;
   }
 }
 

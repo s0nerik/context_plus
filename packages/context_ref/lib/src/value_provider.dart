@@ -60,6 +60,10 @@ void _tryDispose(dynamic obj) {
   runZonedGuarded(
     () => obj.dispose(),
     (error, stack) {
+      if (error is NoSuchMethodError) {
+        return;
+      }
+
       final errorStr = error.toString();
       if (!errorStr.contains('dispose\$0 is not a function') &&
           !errorStr.contains('has no instance method \'dispose\'')) {

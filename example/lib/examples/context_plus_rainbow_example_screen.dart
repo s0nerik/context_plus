@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../example.dart';
-import 'context_plus_bind_watch/context_plus_example.dart' as context_plus;
-import 'context_plus_bind_watch/stateful_widget_example.dart'
-    as stateful_widget;
+import 'context_plus_rainbow/context_plus_example.dart' as context_plus;
+import 'context_plus_rainbow/stateful_widget_example.dart' as stateful_widget;
 
 class ContextPlusBindWatchExampleScreen extends StatelessWidget {
   const ContextPlusBindWatchExampleScreen({super.key});
 
-  static const title = 'Ref.bind() + Ref.watch()';
+  static const title = 'Rainbow example';
   static const urlPath = '/context_plus_bind_watch_example';
 
   @override
@@ -18,12 +17,12 @@ class ContextPlusBindWatchExampleScreen extends StatelessWidget {
       variants: [
         ExampleVariant(
           title: 'context_plus',
-          filePath: 'context_plus_bind_watch/context_plus_example.dart',
+          filePath: 'context_plus_rainbow/context_plus_example.dart',
           widget: context_plus.Example(),
         ),
         ExampleVariant(
           title: 'StatefulWidget',
-          filePath: 'context_plus_bind_watch/stateful_widget_example.dart',
+          filePath: 'context_plus_rainbow/stateful_widget_example.dart',
           widget: stateful_widget.Example(),
         ),
       ],

@@ -103,6 +103,27 @@ extension ListenableContextWatchAndReturnExtension<
   }
 }
 
+extension ListenableContextWatchValueExtension<TListenable extends Listenable>
+    on TListenable {
+  /// Watch this [Listenable] for changes.
+  ///
+  /// Whenever this [Listenable] notifies of a change, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// Returns the selected value.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchListenableValue<R>(
+    BuildContext context,
+    R Function(TListenable listenable) selector,
+  ) {
+    final watchRoot = InheritedContextWatch.of(context);
+    watchRoot.watch(context, this, selector: selector);
+    return selector(this);
+  }
+}
+
 extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   /// Watch this [ValueListenable] for changes.
   ///

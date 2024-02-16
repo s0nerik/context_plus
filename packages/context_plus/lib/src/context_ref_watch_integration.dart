@@ -37,6 +37,24 @@ extension RefListenableWatchAndReturnExt<TListenable extends Listenable>
       of(context)..watch(context);
 }
 
+extension RefListenableContextWatchValueExtension<
+    TListenable extends Listenable> on Ref<TListenable> {
+  /// Watch this [Listenable] for changes.
+  ///
+  /// Whenever this [Listenable] notifies of a change, if [selector]
+  /// returns a different value, the [context] will be rebuilt.
+  ///
+  /// Returns the selected value.
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  R watchListenableValue<R>(
+    BuildContext context,
+    R Function(TListenable listenable) selector,
+  ) =>
+      of(context).watchListenableValue(context, selector);
+}
+
 extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
   /// Watch this [ValueListenable] for changes.
   ///

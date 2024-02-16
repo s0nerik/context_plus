@@ -20,7 +20,7 @@ void main() {
           context.unwatch();
           for (final listenable in observedListenables) {
             // watch the value to create a subscription
-            listenable.watch(context);
+            listenable.watchListenable(context);
           }
           for (final stream in observedStreams) {
             // watch the value to create a subscription

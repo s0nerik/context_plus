@@ -11,18 +11,7 @@ extension RefContextWatchExt<T> on Ref<T> {
   }
 }
 
-extension RefListenableWatchExt on Ref<Listenable> {
-  /// Watch this [Listenable] for changes.
-  ///
-  /// Whenever this [Listenable] notifies of a change, the [context] will be
-  /// rebuilt.
-  ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  void watch(BuildContext context) => of(context).watch(context);
-}
-
-extension RefListenableWatchAndReturnExt<TListenable extends Listenable>
+extension RefListenableContextWatchExtension<TListenable extends Listenable>
     on Ref<TListenable> {
   /// Watch this [Listenable] for changes.
   ///
@@ -32,9 +21,9 @@ extension RefListenableWatchAndReturnExt<TListenable extends Listenable>
   /// It is safe to call this method multiple times within the same build
   /// method.
   ///
-  /// Same as [watch], but returns this [Listenable].
-  TListenable watchAndReturn(BuildContext context) =>
-      of(context)..watch(context);
+  /// Returns the original [Listenable].
+  TListenable watchListenable(BuildContext context) =>
+      of(context).watchListenable(context);
 }
 
 extension RefListenableContextWatchValueExtension<

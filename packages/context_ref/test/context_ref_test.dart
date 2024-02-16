@@ -105,7 +105,7 @@ void main() {
         child: ContextRef.root(
           child: Builder(
             builder: (context) {
-              buildRequest.watch(context);
+              buildRequest.watchListenable(context);
               builds++;
               final value = valueRef.bind(context, () {
                 providerCalls++;
@@ -159,7 +159,7 @@ void main() {
         child: ContextRef.root(
           child: Builder(
             builder: (context) {
-              buildRequest.watch(context);
+              buildRequest.watchListenable(context);
               providedNotifier = valueRef.bind(
                 context,
                 () => _TestChangeNotifier(),

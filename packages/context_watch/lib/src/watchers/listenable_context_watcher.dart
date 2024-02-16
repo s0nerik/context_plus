@@ -120,7 +120,7 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   }
 }
 
-extension ValueListenableContextWatchForExtension<T> on ValueListenable<T> {
+extension ValueListenableContextWatchValueExtension<T> on ValueListenable<T> {
   /// Watch this [ValueListenable] for changes.
   ///
   /// Whenever this [ValueListenable] notifies of a change, if [selector]
@@ -130,7 +130,7 @@ extension ValueListenableContextWatchForExtension<T> on ValueListenable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+  R watchValue<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this, selector: selector);
     return selector(value);

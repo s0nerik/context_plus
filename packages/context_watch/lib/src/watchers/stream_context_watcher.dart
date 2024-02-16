@@ -128,7 +128,7 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   }
 }
 
-extension StreamContextWatchForExtension<T> on Stream<T> {
+extension StreamContextWatchValueExtension<T> on Stream<T> {
   /// Watch this [Stream] for changes.
   ///
   /// Whenever this [Stream] emits new value, if [selector]
@@ -139,7 +139,7 @@ extension StreamContextWatchForExtension<T> on Stream<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(
+  R watchValue<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) {

@@ -32,11 +32,11 @@ class _State {
 
 void main() {
   testWidgets(
-    'watchFor() makes widget rebuild only when selected value changes',
+    'watchValue() makes widget rebuild only when selected value changes',
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchFor(context, (value) => value.a);
+        valueNotifier.watchValue(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -61,12 +61,12 @@ void main() {
     },
   );
   testWidgets(
-    'watchFor() can be called multiple times with the same selector',
+    'watchValue() can be called multiple times with the same selector',
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchFor(context, (value) => value.a);
-        valueNotifier.watchFor(context, (value) => value.a);
+        valueNotifier.watchValue(context, (value) => value.a);
+        valueNotifier.watchValue(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -91,7 +91,7 @@ void main() {
     },
   );
   testWidgets(
-    'watchFor() calls may appear and disappear from the build method, triggering rebuilds the same way as watch() does',
+    'watchValue() calls may appear and disappear from the build method, triggering rebuilds the same way as watch() does',
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       var unwatch = false;
@@ -102,10 +102,10 @@ void main() {
           context.unwatch();
         }
         if (watchA) {
-          valueNotifier.watchFor(context, (value) => value.a);
+          valueNotifier.watchValue(context, (value) => value.a);
         }
         if (watchB) {
-          valueNotifier.watchFor(context, (value) => value.b);
+          valueNotifier.watchValue(context, (value) => value.b);
         }
         return const SizedBox.shrink();
       });
@@ -116,46 +116,46 @@ void main() {
       // Update only `a`
       valueNotifier.value = _State(a: 1, b: 0);
       await widgetTester.pumpAndSettle();
-      // `valueNotifier.watchFor(context, (value) => value.a)` was present
+      // `valueNotifier.watchValue(context, (value) => value.a)` was present
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 2);
 
       // Update only `b`
       valueNotifier.value = _State(a: 1, b: 1);
       await widgetTester.pumpAndSettle();
-      // `valueNotifier.watchFor(context, (value) => value.b)` was present
+      // `valueNotifier.watchValue(context, (value) => value.b)` was present
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 3);
 
-      // Remove `valueNotifier.watchFor(context, (value) => value.a)` from
+      // Remove `valueNotifier.watchValue(context, (value) => value.a)` from
       // the build method and update only `a`
       watchA = false;
       valueNotifier.value = _State(a: 2, b: 1);
       await widgetTester.pumpAndSettle();
-      // `valueNotifier.watchFor(context, (value) => value.a)` was present
+      // `valueNotifier.watchValue(context, (value) => value.a)` was present
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 4);
 
       // Update only `a`
       valueNotifier.value = _State(a: 3, b: 1);
       await widgetTester.pumpAndSettle();
-      // No rebuild since `valueNotifier.watchFor(context, (value) => value.a)`
+      // No rebuild since `valueNotifier.watchValue(context, (value) => value.a)`
       // was not present during the previous build
       expect(rebuildsListenable.value, 4);
 
-      // Remove `valueNotifier.watchFor(context, (value) => value.b)` from
+      // Remove `valueNotifier.watchValue(context, (value) => value.b)` from
       // the build method and update only `b`
       watchB = false;
       valueNotifier.value = _State(a: 3, b: 2);
       await widgetTester.pumpAndSettle();
-      // `valueNotifier.watchFor(context, (value) => value.b)` was present
+      // `valueNotifier.watchValue(context, (value) => value.b)` was present
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 5);
 
       // Update only `b`
       valueNotifier.value = _State(a: 3, b: 3);
       await widgetTester.pumpAndSettle();
-      // Even though `valueNotifier.watchFor(context, (value) => value.b)` was
+      // Even though `valueNotifier.watchValue(context, (value) => value.b)` was
       // not present during the previous build, the rebuild is triggered because
       // it was the last `watch*()` call that got removed. Unfortunately,
       // it's impossible for [context_watch] to detect this automatically.
@@ -171,7 +171,7 @@ void main() {
       valueNotifier.value = _State(a: 3, b: 4);
       await widgetTester.pumpAndSettle();
       // Rebuild is triggered because `context.unwatch()` was not called during
-      // the previous build, while `valueNotifier.watchFor(context, (value) => value.b)`
+      // the previous build, while `valueNotifier.watchValue(context, (value) => value.b)`
       // removal was not yet detected.
       expect(rebuildsListenable.value, 7);
 
@@ -183,14 +183,14 @@ void main() {
     },
   );
   testWidgets(
-    'Stream.watchFor() gives the AsyncSnapshot as a value for selector',
+    'Stream.watchValue() gives the AsyncSnapshot as a value for selector',
     (widgetTester) async {
       final observedData = <int?>[];
 
       final streamController = StreamController<int>();
       final stream = streamController.stream;
       final (widget, rebuildsListenable) = _widget((context) {
-        final data = stream.watchFor(context, (snapshot) => snapshot.data);
+        final data = stream.watchValue(context, (snapshot) => snapshot.data);
         observedData.add(data);
         return const SizedBox.shrink();
       });
@@ -211,14 +211,14 @@ void main() {
     },
   );
   testWidgets(
-    'Future.watchFor() gives the AsyncSnapshot as a value for selector',
+    'Future.watchValue() gives the AsyncSnapshot as a value for selector',
     (widgetTester) async {
       final observedData = <int?>[];
 
       final completer = Completer<int>();
       final future = completer.future;
       final (widget, rebuildsListenable) = _widget((context) {
-        final data = future.watchFor(context, (snapshot) => snapshot.data);
+        final data = future.watchValue(context, (snapshot) => snapshot.data);
         observedData.add(data);
         return const SizedBox.shrink();
       });

@@ -64,7 +64,7 @@ extension SignalContextWatchExtension<T> on ReadonlySignal<T> {
   }
 }
 
-extension SignalContextWatchForExtension<T> on ReadonlySignal<T> {
+extension SignalContextWatchValueExtension<T> on ReadonlySignal<T> {
   /// Watch this [Signal] for changes.
   ///
   /// Whenever this [Signal] emits new value, if [selector]
@@ -74,7 +74,7 @@ extension SignalContextWatchForExtension<T> on ReadonlySignal<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+  R watchValue<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(value);

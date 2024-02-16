@@ -64,7 +64,7 @@ extension BeaconContextWatchExtension<T> on ReadableBeacon<T> {
   }
 }
 
-extension BeaconContextWatchForExtension<T> on ReadableBeacon<T> {
+extension BeaconContextWatchValueExtension<T> on ReadableBeacon<T> {
   /// Watch this [Beacon] for changes.
   ///
   /// Whenever this [Beacon] emits new value, if [selector]
@@ -74,7 +74,7 @@ extension BeaconContextWatchForExtension<T> on ReadableBeacon<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+  R watchValue<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this, selector: selector);
     return selector(value);

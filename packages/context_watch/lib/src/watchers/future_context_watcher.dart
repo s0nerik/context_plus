@@ -92,7 +92,7 @@ extension FutureContextWatchExtension<T> on Future<T> {
   }
 }
 
-extension FutureContextWatchForExtension<T> on Future<T> {
+extension FutureContextWatchValueExtension<T> on Future<T> {
   /// Watch this [Future] for changes.
   ///
   /// Returns the value returned by [selector].
@@ -102,7 +102,7 @@ extension FutureContextWatchForExtension<T> on Future<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(
+  R watchValue<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) {

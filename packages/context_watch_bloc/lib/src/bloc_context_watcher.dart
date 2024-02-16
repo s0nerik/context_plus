@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:bloc/bloc.dart';
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
-import 'package:bloc/bloc.dart';
 
 class _BlocSubscription implements ContextWatchSubscription {
   _BlocSubscription({
@@ -66,7 +66,7 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   }
 }
 
-extension BlocContextWatchForExtension<T> on StateStreamable<T> {
+extension BlocContextWatchValueExtension<T> on StateStreamable<T> {
   /// Watch this [StateStreamable] for changes.
   ///
   /// Whenever this [StateStreamable] emits new value, if [selector]
@@ -76,7 +76,7 @@ extension BlocContextWatchForExtension<T> on StateStreamable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(BuildContext context, R Function(T value) selector) {
+  R watchValue<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(state);

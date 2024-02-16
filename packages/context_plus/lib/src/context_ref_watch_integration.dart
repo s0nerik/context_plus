@@ -50,7 +50,7 @@ extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
   T watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefValueListenableWatchForExt<T> on Ref<ValueListenable<T>> {
+extension RefValueListenableWatchValueExt<T> on Ref<ValueListenable<T>> {
   /// Watch this [ValueListenable] for changes.
   ///
   /// Whenever this [ValueListenable] notifies of a change, if [selector]
@@ -60,8 +60,8 @@ extension RefValueListenableWatchForExt<T> on Ref<ValueListenable<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(BuildContext context, R Function(T value) selector) =>
-      of(context).watchFor(context, selector);
+  R watchValue<R>(BuildContext context, R Function(T value) selector) =>
+      of(context).watchValue(context, selector);
 }
 
 extension RefFutureWatchExt<T> on Ref<Future<T>> {
@@ -74,7 +74,7 @@ extension RefFutureWatchExt<T> on Ref<Future<T>> {
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefFutureWatchForExt<T> on Ref<Future<T>> {
+extension RefFutureWatchValueExt<T> on Ref<Future<T>> {
   /// Watch this [Future] for changes.
   ///
   /// Returns the value returned by [selector].
@@ -84,11 +84,11 @@ extension RefFutureWatchForExt<T> on Ref<Future<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(
+  R watchValue<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      of(context).watchFor(context, selector);
+      of(context).watchValue(context, selector);
 }
 
 extension RefStreamWatchExt<T> on Ref<Stream<T>> {
@@ -105,7 +105,7 @@ extension RefStreamWatchExt<T> on Ref<Stream<T>> {
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefStreamWatchForExt<T> on Ref<Stream<T>> {
+extension RefStreamWatchValueExt<T> on Ref<Stream<T>> {
   /// Watch this [Stream] for changes.
   ///
   /// Whenever this [Stream] emits new value, if [selector]
@@ -116,9 +116,9 @@ extension RefStreamWatchForExt<T> on Ref<Stream<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchFor<R>(
+  R watchValue<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      of(context).watchFor(context, selector);
+      of(context).watchValue(context, selector);
 }

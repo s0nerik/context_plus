@@ -24,7 +24,7 @@ class _ExampleState extends State<Example> {
     return ExampleContainer(
       onTap: () => _counterNotifier.value += 1,
       child: CounterExample(
-        counter: _counterNotifier.watch(context),
+        counter: _counterNotifier.watchValue(context),
       ),
     );
   }

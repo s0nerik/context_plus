@@ -122,7 +122,7 @@ class _SelectedExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedTabIndex = DefaultTabController.of(context)
-        .watchListenableValue(context, (ctrl) => ctrl.index);
+        .watchQuery(context, (ctrl) => ctrl.index);
     final variants = _exampleVariants.of(context);
     return variants[selectedTabIndex].widget;
   }
@@ -152,8 +152,7 @@ class _SelectedExampleCode extends StatelessWidget {
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
-    final tabController =
-        DefaultTabController.of(context).watchListenable(context);
+    final tabController = DefaultTabController.of(context).watch(context);
     final selectedTabIndex = tabController.index;
     final selectedVariant = _exampleVariants.of(context)[selectedTabIndex];
     final filePath = selectedVariant.filePath;

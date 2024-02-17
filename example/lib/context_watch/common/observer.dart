@@ -156,10 +156,10 @@ class _ContextWatchValueListenable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int? colorIndex = valueListenables.firstOrNull?.watch(context);
-    int? scaleIndex = valueListenables.secondOrNull?.watch(context);
+    int? colorIndex = valueListenables.firstOrNull?.watchValue(context);
+    int? scaleIndex = valueListenables.secondOrNull?.watchValue(context);
     for (final valueListenable in valueListenables.skip(2)) {
-      valueListenable.watch(context);
+      valueListenable.watchValue(context);
     }
     return _buildFromValues(
       colorIndex: colorIndex,

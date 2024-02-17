@@ -22,26 +22,25 @@ extension RefListenableContextWatchExtension<TListenable extends Listenable>
   /// method.
   ///
   /// Returns the original [Listenable].
-  TListenable watchListenable(BuildContext context) =>
-      of(context).watchListenable(context);
+  TListenable watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefListenableContextWatchValueExtension<
     TListenable extends Listenable> on Ref<TListenable> {
   /// Watch this [Listenable] for changes.
   ///
-  /// Whenever this [Listenable] notifies of a change, if [selector]
+  /// Whenever this [Listenable] notifies of a change, if [query]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchListenableValue<R>(
+  R watchQuery<R>(
     BuildContext context,
-    R Function(TListenable listenable) selector,
+    R Function(TListenable listenable) query,
   ) =>
-      of(context).watchListenableValue(context, selector);
+      of(context).watchQuery(context, query);
 }
 
 extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
@@ -54,21 +53,21 @@ extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watch(BuildContext context) => of(context).watch(context);
+  T watchValue(BuildContext context) => of(context).watchValue(context);
 }
 
 extension RefValueListenableWatchValueExt<T> on Ref<ValueListenable<T>> {
   /// Watch this [ValueListenable] for changes.
   ///
-  /// Whenever this [ValueListenable] notifies of a change, if [selector]
+  /// Whenever this [ValueListenable] notifies of a change, if [query]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(BuildContext context, R Function(T value) selector) =>
-      of(context).watchValue(context, selector);
+  R watchValueQuery<R>(BuildContext context, R Function(T value) query) =>
+      of(context).watchValueQuery(context, query);
 }
 
 extension RefFutureWatchExt<T> on Ref<Future<T>> {

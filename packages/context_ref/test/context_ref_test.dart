@@ -28,19 +28,19 @@ void main() {
           child: Builder(
             builder: (context) {
               var (value1, value2, value3) = (null, null, null);
-              if (useValue1.watch(context)) {
+              if (useValue1.watchValue(context)) {
                 value1 = value1Ref.bind(context, () {
                   valueGenerations[0]++;
                   return generatedIndex++;
                 });
               }
-              if (useValue2.watch(context)) {
+              if (useValue2.watchValue(context)) {
                 value2 = value2Ref.bind(context, () {
                   valueGenerations[1]++;
                   return generatedIndex++;
                 });
               }
-              if (useValue3.watch(context)) {
+              if (useValue3.watchValue(context)) {
                 value3 = value3Ref.bind(context, () {
                   valueGenerations[2]++;
                   return generatedIndex++;
@@ -105,7 +105,7 @@ void main() {
         child: ContextRef.root(
           child: Builder(
             builder: (context) {
-              buildRequest.watchListenable(context);
+              buildRequest.watch(context);
               builds++;
               final value = valueRef.bind(context, () {
                 providerCalls++;
@@ -159,7 +159,7 @@ void main() {
         child: ContextRef.root(
           child: Builder(
             builder: (context) {
-              buildRequest.watchListenable(context);
+              buildRequest.watch(context);
               providedNotifier = valueRef.bind(
                 context,
                 () => _TestChangeNotifier(),
@@ -233,7 +233,7 @@ void main() {
         child: ContextRef.root(
           child: Builder(
             builder: (context) {
-              final value = valueToProvide.watch(context);
+              final value = valueToProvide.watchValue(context);
               _counterRef.bindValue(context, value);
               providerRebuilds++;
 
@@ -284,17 +284,17 @@ void main() {
       ContextWatch.root(
         child: ContextRef.root(
           child: Builder(builder: (context) {
-            final depth = providerDepth.watch(context);
+            final depth = providerDepth.watchValue(context);
             if (depth >= 1) {
               _counterRef.bindValue(context, 1);
             }
             return Builder(builder: (context) {
-              final depth = providerDepth.watch(context);
+              final depth = providerDepth.watchValue(context);
               if (depth >= 2) {
                 _counterRef.bindValue(context, 2);
               }
               return Builder(builder: (context) {
-                final depth = providerDepth.watch(context);
+                final depth = providerDepth.watchValue(context);
                 if (depth >= 3) {
                   _counterRef.bindValue(context, 3);
                 }
@@ -336,17 +336,17 @@ void main() {
             builder: (context) => Stack(
               textDirection: TextDirection.ltr,
               children: [
-                if (selectedProvider.watch(context) == 1)
+                if (selectedProvider.watchValue(context) == 1)
                   Builder(builder: (context) {
                     _counterRef.bindValue(context, 1);
                     return childWidget;
                   }),
-                if (selectedProvider.watch(context) == 2)
+                if (selectedProvider.watchValue(context) == 2)
                   Builder(builder: (context) {
                     _counterRef.bindValue(context, 2);
                     return childWidget;
                   }),
-                if (selectedProvider.watch(context) == 3)
+                if (selectedProvider.watchValue(context) == 3)
                   Builder(builder: (context) {
                     _counterRef.bindValue(context, 3);
                     return childWidget;

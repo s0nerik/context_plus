@@ -11,7 +11,7 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchValue(context, (value) => value.a);
+        valueNotifier.watchValueQuery(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -40,8 +40,8 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchValue(context, (value) => value.a);
-        valueNotifier.watchValue(context, (value) => value.a);
+        valueNotifier.watchValueQuery(context, (value) => value.a);
+        valueNotifier.watchValueQuery(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -77,10 +77,10 @@ void main() {
           context.unwatch();
         }
         if (watchA) {
-          valueNotifier.watchValue(context, (value) => value.a);
+          valueNotifier.watchValueQuery(context, (value) => value.a);
         }
         if (watchB) {
-          valueNotifier.watchValue(context, (value) => value.b);
+          valueNotifier.watchValueQuery(context, (value) => value.b);
         }
         return const SizedBox.shrink();
       });
@@ -162,7 +162,7 @@ void main() {
     (widgetTester) async {
       final state = _StateChangeNotifier();
       final (widget, rebuildsListenable) = _widget((context) {
-        state.watchListenableValue(context, (state) {
+        state.watchQuery(context, (state) {
           return state.counter1;
         });
         return const SizedBox.shrink();

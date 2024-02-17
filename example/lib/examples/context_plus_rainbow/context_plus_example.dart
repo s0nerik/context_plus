@@ -32,7 +32,7 @@ class _CurrentColor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrollPosition = _scrollController.watchListenableValue(
+    final scrollPosition = _scrollController.watchQuery(
         context, (ctrl) => ctrl.positions.firstOrNull);
     final scrolledPixels = (scrollPosition?.pixels ?? 0)
         .clamp(0, scrollPosition?.maxScrollExtent ?? 0);

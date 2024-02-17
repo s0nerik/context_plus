@@ -22,7 +22,7 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final scale = _animCtrl.watch(context);
+    final scale = _animCtrl.watchValue(context);
     return Transform.scale(
       scale: scale,
       child: const FlutterLogo(size: 200),

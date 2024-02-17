@@ -65,7 +65,7 @@ class _Body extends StatelessWidget {
                 ),
                 child: _ChildWrapper(
                   depth: 1,
-                  maxDepth: childrenAmount.watch(context),
+                  maxDepth: childrenAmount.watchValue(context),
                 ),
               ),
             ),
@@ -188,8 +188,8 @@ class _Child extends StatelessWidget {
         children: [
           Text('Current scope: $scopeName'),
           Text('Message: $message'),
-          Text('Counter: ${state.counter.watch(context)}'),
-          Text('Global counter: ${globalState.counter.watch(context)}'),
+          Text('Counter: ${state.counter.watchValue(context)}'),
+          Text('Global counter: ${globalState.counter.watchValue(context)}'),
           if (parentColor != null)
             Row(
               children: [

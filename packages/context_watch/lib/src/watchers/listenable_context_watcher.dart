@@ -98,24 +98,24 @@ extension ListenableContextWatchExtension<TListenable extends Listenable>
   }
 }
 
-extension ListenableContextWatchValueExtension<TListenable extends Listenable>
+extension ListenableContextWatchOnlyExtension<TListenable extends Listenable>
     on TListenable {
   /// Watch this [Listenable] for changes.
   ///
-  /// Whenever this [Listenable] notifies of a change, if [query]
+  /// Whenever this [Listenable] notifies of a change, if [selector]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchQuery<R>(
+  R watchOnly<R>(
     BuildContext context,
-    R Function(TListenable listenable) query,
+    R Function(TListenable listenable) selector,
   ) {
     final watchRoot = InheritedContextWatch.of(context);
-    watchRoot.watch(context, this, selector: query);
-    return query(this);
+    watchRoot.watch(context, this, selector: selector);
+    return selector(this);
   }
 }
 
@@ -139,16 +139,16 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
 extension ValueListenableContextWatchValueExtension<T> on ValueListenable<T> {
   /// Watch this [ValueListenable] for changes.
   ///
-  /// Whenever this [ValueListenable] notifies of a change, if [query]
+  /// Whenever this [ValueListenable] notifies of a change, if [selector]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValueQuery<R>(BuildContext context, R Function(T value) query) {
+  R watchValueOnly<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
-    watchRoot.watch(context, this, selector: query);
-    return query(value);
+    watchRoot.watch(context, this, selector: selector);
+    return selector(value);
   }
 }

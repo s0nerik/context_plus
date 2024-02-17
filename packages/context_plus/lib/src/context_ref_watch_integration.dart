@@ -25,22 +25,22 @@ extension RefListenableContextWatchExtension<TListenable extends Listenable>
   TListenable watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefListenableContextWatchValueExtension<
-    TListenable extends Listenable> on Ref<TListenable> {
+extension RefListenableContextWatchOnlyExtension<TListenable extends Listenable>
+    on Ref<TListenable> {
   /// Watch this [Listenable] for changes.
   ///
-  /// Whenever this [Listenable] notifies of a change, if [query]
+  /// Whenever this [Listenable] notifies of a change, if [selector]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchQuery<R>(
+  R watchOnly<R>(
     BuildContext context,
-    R Function(TListenable listenable) query,
+    R Function(TListenable listenable) selector,
   ) =>
-      of(context).watchQuery(context, query);
+      of(context).watchOnly(context, selector);
 }
 
 extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
@@ -59,15 +59,15 @@ extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
 extension RefValueListenableWatchValueExt<T> on Ref<ValueListenable<T>> {
   /// Watch this [ValueListenable] for changes.
   ///
-  /// Whenever this [ValueListenable] notifies of a change, if [query]
+  /// Whenever this [ValueListenable] notifies of a change, if [selection]
   /// returns a different value, the [context] will be rebuilt.
   ///
   /// Returns the selected value.
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValueQuery<R>(BuildContext context, R Function(T value) query) =>
-      of(context).watchValueQuery(context, query);
+  R watchValueOnly<R>(BuildContext context, R Function(T value) selection) =>
+      of(context).watchValueOnly(context, selection);
 }
 
 extension RefFutureWatchExt<T> on Ref<Future<T>> {
@@ -80,7 +80,7 @@ extension RefFutureWatchExt<T> on Ref<Future<T>> {
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefFutureWatchValueExt<T> on Ref<Future<T>> {
+extension RefFutureWatchOnlyExt<T> on Ref<Future<T>> {
   /// Watch this [Future] for changes.
   ///
   /// Returns the value returned by [selector].
@@ -90,11 +90,11 @@ extension RefFutureWatchValueExt<T> on Ref<Future<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(
+  R watchOnly<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      of(context).watchValue(context, selector);
+      of(context).watchOnly(context, selector);
 }
 
 extension RefStreamWatchExt<T> on Ref<Stream<T>> {
@@ -111,7 +111,7 @@ extension RefStreamWatchExt<T> on Ref<Stream<T>> {
   AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
-extension RefStreamWatchValueExt<T> on Ref<Stream<T>> {
+extension RefStreamWatchOnlyExt<T> on Ref<Stream<T>> {
   /// Watch this [Stream] for changes.
   ///
   /// Whenever this [Stream] emits new value, if [selector]
@@ -122,9 +122,9 @@ extension RefStreamWatchValueExt<T> on Ref<Stream<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(
+  R watchOnly<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      of(context).watchValue(context, selector);
+      of(context).watchOnly(context, selector);
 }

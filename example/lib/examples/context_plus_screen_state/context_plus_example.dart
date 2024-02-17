@@ -35,7 +35,7 @@ class _Counter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counter = _state.watchQuery(context, (state) => state.counter);
+    final counter = _state.watchOnly(context, (state) => state.counter);
     return Text(counter.toString());
   }
 }

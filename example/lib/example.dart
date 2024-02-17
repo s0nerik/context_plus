@@ -122,7 +122,7 @@ class _SelectedExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedTabIndex = DefaultTabController.of(context)
-        .watchQuery(context, (ctrl) => ctrl.index);
+        .watchOnly(context, (ctrl) => ctrl.index);
     final variants = _exampleVariants.of(context);
     return variants[selectedTabIndex].widget;
   }

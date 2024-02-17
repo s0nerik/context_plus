@@ -11,7 +11,7 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchValueQuery(context, (value) => value.a);
+        valueNotifier.watchValueOnly(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -40,8 +40,8 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchValueQuery(context, (value) => value.a);
-        valueNotifier.watchValueQuery(context, (value) => value.a);
+        valueNotifier.watchValueOnly(context, (value) => value.a);
+        valueNotifier.watchValueOnly(context, (value) => value.a);
         return const SizedBox.shrink();
       });
 
@@ -77,10 +77,10 @@ void main() {
           context.unwatch();
         }
         if (watchA) {
-          valueNotifier.watchValueQuery(context, (value) => value.a);
+          valueNotifier.watchValueOnly(context, (value) => value.a);
         }
         if (watchB) {
-          valueNotifier.watchValueQuery(context, (value) => value.b);
+          valueNotifier.watchValueOnly(context, (value) => value.b);
         }
         return const SizedBox.shrink();
       });
@@ -162,7 +162,7 @@ void main() {
     (widgetTester) async {
       final state = _StateChangeNotifier();
       final (widget, rebuildsListenable) = _widget((context) {
-        state.watchQuery(context, (state) => state.counter1);
+        state.watchOnly(context, (state) => state.counter1);
         return const SizedBox.shrink();
       });
 
@@ -198,7 +198,7 @@ void main() {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
       final (widget, rebuildsListenable) = _widget((context) {
-        final data = stream.watchValue(context, (snapshot) => snapshot.data);
+        final data = stream.watchOnly(context, (snapshot) => snapshot.data);
         observedData.add(data);
         return const SizedBox.shrink();
       });
@@ -226,7 +226,7 @@ void main() {
       final completer = Completer<int>();
       final future = completer.future;
       final (widget, rebuildsListenable) = _widget((context) {
-        final data = future.watchValue(context, (snapshot) => snapshot.data);
+        final data = future.watchOnly(context, (snapshot) => snapshot.data);
         observedData.add(data);
         return const SizedBox.shrink();
       });

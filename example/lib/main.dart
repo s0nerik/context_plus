@@ -3,6 +3,7 @@ import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_getx/context_watch_getx.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
+import 'package:example/examples/context_plus_screen_state_example_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:signals_flutter/signals_flutter.dart' as signals;
@@ -71,6 +72,8 @@ class _AppState extends State<_App> {
             const ContextPlusBindWatchExampleScreen(),
           ContextWatchListenableExampleScreen.urlPath =>
             const ContextWatchListenableExampleScreen(),
+          ContextPlusScreenStateExampleScreen.urlPath =>
+            const ContextPlusScreenStateExampleScreen(),
           _ => null,
         },
       ].nonNulls.map((screen) => MaterialPage(child: screen)).toList();

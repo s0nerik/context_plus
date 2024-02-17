@@ -1,3 +1,4 @@
+import 'package:example/examples/context_plus_screen_state_example_screen.dart';
 import 'package:example/examples/context_watch_listenable_example_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
@@ -82,6 +83,13 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () =>
                         context.url = ContextPlusBindWatchExampleScreen.urlPath,
                     child: const Text(ContextPlusBindWatchExampleScreen.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.url =
+                        ContextPlusScreenStateExampleScreen.urlPath,
+                    child:
+                        const Text(ContextPlusScreenStateExampleScreen.title),
                   ),
                 ],
               ),

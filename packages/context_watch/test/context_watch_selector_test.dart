@@ -162,9 +162,7 @@ void main() {
     (widgetTester) async {
       final state = _StateChangeNotifier();
       final (widget, rebuildsListenable) = _widget((context) {
-        state.watchQuery(context, (state) {
-          return state.counter1;
-        });
+        state.watchQuery(context, (state) => state.counter1);
         return const SizedBox.shrink();
       });
 

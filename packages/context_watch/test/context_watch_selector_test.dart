@@ -5,31 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-(Widget, ValueListenable<int>) _widget(WidgetBuilder builder) {
-  final rebuildsNotifier = ValueNotifier(0);
-  return (
-    ContextWatch.root(
-      child: Builder(
-        builder: (context) {
-          rebuildsNotifier.value++;
-          return builder(context);
-        },
-      ),
-    ),
-    rebuildsNotifier,
-  );
-}
-
-class _State {
-  final int a;
-  final int b;
-
-  _State({
-    required this.a,
-    required this.b,
-  });
-}
-
 void main() {
   testWidgets(
     'watchValue() makes widget rebuild only when selected value changes',
@@ -183,6 +158,41 @@ void main() {
     },
   );
   testWidgets(
+    'Listenable.watchListenableValue() rebuilds the widget only when the selected value changes',
+    (widgetTester) async {
+      final state = _StateChangeNotifier();
+      final (widget, rebuildsListenable) = _widget((context) {
+        state.watchListenableValue(context, (state) {
+          return state.counter1;
+        });
+        return const SizedBox.shrink();
+      });
+
+      await widgetTester.pumpWidget(widget);
+      expect(rebuildsListenable.value, 1);
+
+      // Changing the initial value should trigger a rebuild
+      state.counter1 = 1;
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 2);
+
+      // Adding the same value again should not trigger a rebuild
+      state.counter1 = 1;
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 2);
+
+      // Changing the value should trigger a rebuild
+      state.counter1 = 2;
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 3);
+
+      // Changing another value should not trigger a rebuild
+      state.counter2 = 1;
+      await widgetTester.pumpAndSettle();
+      expect(rebuildsListenable.value, 3);
+    },
+  );
+  testWidgets(
     'Stream.watchValue() gives the AsyncSnapshot as a value for selector',
     (widgetTester) async {
       final observedData = <int?>[];
@@ -233,4 +243,45 @@ void main() {
       expect(observedData, [null, 1]);
     },
   );
+}
+
+(Widget, ValueListenable<int>) _widget(WidgetBuilder builder) {
+  final rebuildsNotifier = ValueNotifier(0);
+  return (
+    ContextWatch.root(
+      child: Builder(
+        builder: (context) {
+          rebuildsNotifier.value++;
+          return builder(context);
+        },
+      ),
+    ),
+    rebuildsNotifier,
+  );
+}
+
+class _State {
+  final int a;
+  final int b;
+
+  _State({
+    required this.a,
+    required this.b,
+  });
+}
+
+class _StateChangeNotifier with ChangeNotifier {
+  int _counter1 = 0;
+  int get counter1 => _counter1;
+  set counter1(int value) {
+    _counter1 = value;
+    notifyListeners();
+  }
+
+  int _counter2 = 0;
+  int get counter2 => _counter2;
+  set counter2(int value) {
+    _counter2 = value;
+    notifyListeners();
+  }
 }

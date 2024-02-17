@@ -36,16 +36,24 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     Element element,
     Listenable listenable,
   ) {
-    return _ListenableSubscription(
+    late final _ListenableSubscription subscription;
+    subscription = _ListenableSubscription(
       listenable: listenable,
       listener: () {
-        if (!shouldRebuild(element, listenable,
-            oldValue: null, newValue: null)) {
+        final oldSelection = subscription.value as List<Object?>?;
+        final newSelection = getObservableSelection(element, listenable);
+        final isSameSelectedValues = listEquals(oldSelection, newSelection);
+        final isBothNull = oldSelection == null && newSelection == null;
+        if (isSameSelectedValues && !isBothNull) {
           return;
         }
-        element.markNeedsBuild();
+        subscription.value = newSelection;
+        if (element.mounted) {
+          element.markNeedsBuild();
+        }
       },
     );
+    return subscription;
   }
 
   ContextWatchSubscription _createValueListenableSubscription(

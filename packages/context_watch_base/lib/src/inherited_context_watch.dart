@@ -11,10 +11,19 @@ abstract interface class ContextWatchSubscription {
 }
 
 abstract class ContextWatcher<TObservable extends Object> {
-  var _shouldRebuild = _neverRebuild;
+  var _shouldRebuild = InheritedContextWatchElement._neverRebuild;
+  var _getObservableSelection =
+      InheritedContextWatchElement._noObservableSelection;
 
   bool _canHandle(Object observable) => observable is TObservable;
 
+  /// Returns whether the widget should rebuild when the [observable] changes
+  /// based on the [oldValue] and [newValue].
+  ///
+  /// Call this method to determine if the widget should rebuild for the
+  /// observable types that store current state.
+  ///
+  /// Must not be used together with [getObservableSelection].
   @protected
   @useResult
   @nonVirtual
@@ -30,6 +39,22 @@ abstract class ContextWatcher<TObservable extends Object> {
         oldValue: oldValue,
         newValue: newValue,
       );
+
+  /// Returns a list of selected values from [observable] that should be used
+  /// to determine if the widget should rebuild.
+  ///
+  /// Call this method to determine if the widget should rebuild for the
+  /// observable types that do_not store current state.
+  ///
+  /// Must not be used together with [shouldRebuild].
+  @protected
+  @useResult
+  @nonVirtual
+  List<Object?>? getObservableSelection(
+    BuildContext context,
+    TObservable observable,
+  ) =>
+      _getObservableSelection(context, observable);
 
   @protected
   @useResult
@@ -71,6 +96,7 @@ class InheritedContextWatchElement extends InheritedElement {
   InheritedContextWatchElement(super.widget) {
     for (final watcher in (widget as InheritedContextWatch).watchers) {
       watcher._shouldRebuild = _shouldRebuild;
+      watcher._getObservableSelection = _getObservableSelection;
     }
     SchedulerBinding.instance
         .addPostFrameCallback((_) => _isFirstFrame = false);
@@ -98,9 +124,11 @@ class InheritedContextWatchElement extends InheritedElement {
     super.updated(oldWidget);
     for (final watcher in oldWidget.watchers) {
       watcher._shouldRebuild = _neverRebuild;
+      watcher._getObservableSelection = _noObservableSelection;
     }
     for (final watcher in (widget as InheritedContextWatch).watchers) {
       watcher._shouldRebuild = _shouldRebuild;
+      watcher._getObservableSelection = _getObservableSelection;
     }
   }
 
@@ -184,12 +212,25 @@ class InheritedContextWatchElement extends InheritedElement {
     super.unmount();
   }
 
+  static bool _neverRebuild(
+    BuildContext context,
+    Object observable, {
+    required Object? oldValue,
+    required Object? newValue,
+  }) =>
+      false;
+
   bool _shouldRebuild(
     BuildContext context,
     Object observable, {
     required Object? oldValue,
     required Object? newValue,
   }) {
+    if (!context.mounted) {
+      _unwatch(context, observable);
+      return false;
+    }
+
     final contextData = _contextData[context];
     if (contextData == null) {
       _unwatch(context, observable);
@@ -198,7 +239,7 @@ class InheritedContextWatchElement extends InheritedElement {
 
     final contextLastFrame = contextData.lastFrame;
     final observableLastFrame = contextData.observableLastFrame[observable];
-    if (observableLastFrame != contextLastFrame || !context.mounted) {
+    if (observableLastFrame != contextLastFrame) {
       _unwatch(context, observable);
       return false;
     }
@@ -218,6 +259,49 @@ class InheritedContextWatchElement extends InheritedElement {
     }
 
     return true;
+  }
+
+  static List<Object?>? _noObservableSelection(
+    BuildContext context,
+    Object observable,
+  ) =>
+      null;
+
+  List<Object?>? _getObservableSelection(
+    BuildContext context,
+    Object observable,
+  ) {
+    if (!context.mounted) {
+      _unwatch(context, observable);
+      return null;
+    }
+
+    final contextData = _contextData[context];
+    if (contextData == null) {
+      _unwatch(context, observable);
+      return null;
+    }
+
+    final contextLastFrame = contextData.lastFrame;
+    final observableLastFrame = contextData.observableLastFrame[observable];
+    if (observableLastFrame != contextLastFrame) {
+      _unwatch(context, observable);
+      return null;
+    }
+
+    final selectors = contextData.observableSelectors[observable];
+    if (selectors == null || selectors.isEmpty) {
+      return null;
+    }
+
+    final selection = <Object?>[
+      for (final selector in selectors)
+        _selectValue(
+          value: observable,
+          selector: selector,
+        ),
+    ];
+    return selection;
   }
 
   void _unwatch(
@@ -255,14 +339,6 @@ class _ContextData {
       HashMap<Object, Set<dynamic>>.identity();
 }
 
-bool _neverRebuild(
-  BuildContext context,
-  Object observable, {
-  required Object? oldValue,
-  required Object? newValue,
-}) =>
-    false;
-
 bool _isSameValue({
   required Object? oldValue,
   required Object? newValue,
@@ -272,4 +348,14 @@ bool _isSameValue({
     return newValue == null;
   }
   return selector(oldValue) == selector(newValue);
+}
+
+dynamic _selectValue({
+  required Object? value,
+  required dynamic selector,
+}) {
+  if (value == null) {
+    return null;
+  }
+  return selector(value);
 }

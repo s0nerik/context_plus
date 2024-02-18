@@ -1,11 +1,12 @@
 name: context_ref
-description: "Hassle-free way to provide and retrieve values for a BuildContext"
-version: 1.0.0-dev.1
-homepage:
+description: A hassle-free way to provide and retrieve values for a BuildContext
+version: 1.0.0
+homepage: https://github.com/s0nerik/context_plus/tree/master/packages/context_ref
+repository: https://github.com/s0nerik/context_plus/tree/master/packages/context_ref
 
 environment:
   sdk: ">=3.0.6 <4.0.0"
-  flutter: ">=3.17.0-1.0.pre.38 <4.0.0"
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -16,6 +17,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  context_watch: ^2.0.0-dev.5
+  context_watch: ^2.0.0
 
 flutter:

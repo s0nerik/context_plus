@@ -1,18 +1,18 @@
 name: context_watch_signals
 description: "context_watch adapter for signals package"
 version: 1.0.0-dev.2
-homepage: https://github.com/s0nerik/context_watch
-repository: https://github.com/s0nerik/context_watch
-publish_to: "none" # Signals provide `watch(context)` method out-of-the-box, so there's no need in this package at the moment
+homepage: https://github.com/s0nerik/context_plus/tree/master/packages/context_watch
+repository: https://github.com/s0nerik/context_plus/tree/master/packages/context_watch
+publish_to: "none"
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
-  flutter: ">=3.17.0-1.0.pre.38"
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  context_watch_base: ^2.0.0-dev.5
+  context_watch_base: ^2.0.0
   signals_flutter: ^1.0.1
 
 dev_dependencies:

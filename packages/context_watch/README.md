@@ -1,6 +1,6 @@
 # context_watch
 
-![context_watch.png](https://github.com/s0nerik/context_watch/raw/main/doc/context_watch.png)
+![context_watch.png](https://github.com/s0nerik/context_plus/raw/main/doc/context_watch.png)
 
 [![context_watch](https://img.shields.io/pub/v/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/likes/context_watch)](https://pub.dev/packages/context_watch)
@@ -9,7 +9,7 @@
 
 Listen to `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
 
-**Note:** Flutter 3.17.0-1.0.pre.38 or higher is required.
+See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
 
 ## Getting started
 
@@ -17,9 +17,9 @@ Listen to `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`
 flutter pub add context_watch
 ```
 
-Wrap your app in a `ContextWatchRoot`
+Wrap your app in a `ContextWatch.root` widget.
 ```dart
-ContextWatchRoot(
+ContextWatch.root(
   child: MaterialApp(...),
 );
 ```
@@ -57,17 +57,26 @@ the `context` will be marked as needing a rebuild.
 
 ### `context.unwatch()`
 
-If you have conditional `watch()`'es in your `build` method, you might want to add an unconditional `context.unwatch()`
-call to avoid potential unnecessary rebuilds. This doesn't incur any performance penalty and can be called multiple
-times, so feel free to call it whenever you need.
+If you have conditional `watch()`'es in your `build` method, you might encounter some extra rebuilds when ALL `watch()`'es are gone
+from the `build` method. This is usually not a problem at all, and that's exactly the same as any other `InheritedWidget` behaves.
+Yet, if you want to guarantee no potential rebuilds even if you call `watch()` conditionally - just add an unconditional `context.unwatch()`
+call to the `build` method. This doesn't incur any performance penalty and can be called multiple times.
 
-#### Why is it needed?
+###### What is `context.unwatch()`, exactly?
 
-Unfortunately, `InheritedWidget`s in Flutter never unsubscribe their dependents. `context_watch` does everything it can
-to compensate for that, so that if widget goes from 2 `watch()`'es to only 1 - the second `watch()` will be
-discarded, as expected. But still, there exists a case where it's not possible to automagically compensate for the
-Flutter's limitation. If a widget goes from 1 (or more) `watch()` to 0, the `context` will still be registered as a
-listener to all of them, as it's impossible to know that `watch()`'es are now completely gone from the `build` method.
+`context_watch` is based on the `InheritedWidget` mechanism. Unfortunately, `InheritedWidget`s in Flutter never
+unsubscribe their dependents. `context_watch` does everything it can to compensate for that:
+- As long as the amount of `watch()`'es within a `build` method remains non-zero, `context_watch` ensures that the `context` is registered as a listener to all of them, and only them.
+- As soon as the `context` gets unmounted, all the `watch()`'ed observable subscriptions are guaranteed to be canceled.
+- `context_watch` provides the `.watchOnly(context, ...)` method for all observable type, which allows for returning the values conditionally, if needed.
+- [context_plus](https://pub.dev/packages/context_plus) further decreases the likeliness of extra rebuilds due to conditional `watch()` calls. Feel free to check it out.
+
+Yet still, if ALL `watch()` calls suddenly disappear from the `build` method - the `context` will remain
+subscribed to all the previously `watch()`'ed observables, since `InheritedWidget` mechanism doesn't
+notify that a dependent widget is no longer dependent. This may lead to some unnecessary rebuilds.
+This is usually not a problem and doesn't require any fixing or attention, though.
+Yet, if you find this to be a problem in some specific case - you can add an unconditional `context.unwatch()` call into the `build` method,
+which will guarantee that the observable subscriptions are canceled as soon as they stop being `watch()`'ed, even if all `watch()`'es disappear at once.
 
 So, given this example:
 ```dart
@@ -98,8 +107,9 @@ Widget build(BuildContext context) {
   ...
 }
 ```
-This will ensure that all conditional `watch()`'es are discarded each `build`. Calling `context.unwatch()` doesn't
-incur any performance penalty, so feel free to call it unconditionally in all your `build` methods whenever you need.
+This will guarantee that the `InheritedContextWatch` is triggered the next time `context` is built, even if
+no `watch()` calls are made now, giving it a chance to cancel the no longer `watch()`'ed observable subscriptions.
+Calling `context.unwatch()` doesn't incur any performance penalty.
 
 ### Performance
 

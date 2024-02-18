@@ -55,28 +55,28 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "1.0.0-dev.1"
+    version: "1.0.0"
   context_ref:
     dependency: "direct overridden"
     description:
       path: "../packages/context_ref"
       relative: true
     source: path
-    version: "1.0.0-dev.1"
+    version: "1.0.0"
   context_watch:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch"
       relative: true
     source: path
-    version: "2.0.0-dev.5"
+    version: "2.0.0"
   context_watch_base:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch_base"
       relative: true
     source: path
-    version: "2.0.0-dev.5"
+    version: "2.0.0"
   context_watch_beacon:
     dependency: "direct main"
     description:

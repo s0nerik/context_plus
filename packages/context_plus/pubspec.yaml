@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_ref: ^2.0.0
+  context_ref: ^1.0.0
   context_watch: ^2.0.0
 
 dev_dependencies:

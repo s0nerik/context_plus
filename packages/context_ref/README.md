@@ -1,27 +1,36 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# context_ref
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+![context_ref.png](https://github.com/s0nerik/context_plus/raw/main/doc/context_ref.png)
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+[![context_ref](https://img.shields.io/pub/v/context_ref)](https://pub.dev/packages/context_ref)
+[![context_ref](https://img.shields.io/pub/likes/context_ref)](https://pub.dev/packages/context_ref)
+[![context_ref](https://img.shields.io/pub/points/context_ref)](https://pub.dev/packages/context_ref)
+[![context_ref](https://img.shields.io/pub/popularity/context_ref)](https://pub.dev/packages/context_ref)
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A more convenient `InheritedWidget` alternative.
 
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+```shell
+flutter pub add context_ref
+```
+
+Wrap your app in a `ContextRef.root` widget.
+```dart
+ContextRef.root(
+  child: MaterialApp(...),
+);
+```
+
+(Optional) Wrap default error handlers with `ContextRef.errorWidgetBuilder()` and `ContextRef.onError()` to get better hot reload related error messages.
+```dart
+void main() {
+  ErrorWidget.builder = ContextRef.errorWidgetBuilder(ErrorWidget.builder);
+  FlutterError.onError = ContextRef.onError(FlutterError.onError);
+}
+```
 
 ## Usage
 
@@ -31,9 +40,3 @@ to `/example` folder.
 ```dart
 const like = 'sample';
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.

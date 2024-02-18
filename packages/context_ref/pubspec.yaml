@@ -1,5 +1,5 @@
 name: context_ref
-description: "Hassle-free way to provide and retrieve values for BuildContext"
+description: "Hassle-free way to provide and retrieve values for a BuildContext"
 version: 1.0.0-dev.1
 homepage:
 

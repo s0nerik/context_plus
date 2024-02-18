@@ -22,7 +22,9 @@ final class ContextPlus {
     required Widget child,
   }) {
     return ContextRef.root(
+      key: key,
       child: ContextWatch.root(
+        additionalWatchers: additionalWatchers,
         child: child,
       ),
     );

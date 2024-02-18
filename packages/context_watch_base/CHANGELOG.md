@@ -1,3 +1,7 @@
+## 2.0.1
+
+ - **REFACTOR**: updated Flutter SDK constraint.
+
 ## 2.0.0-dev.5
 
  - Fixed initial frame handling

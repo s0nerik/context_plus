@@ -41,7 +41,7 @@ class _Benchmark {
 
 // Run this with `flutter run --profile test/benchmark_context_ref.dart`
 main() async {
-  // assert(false); // fail in debug mode
+  assert(false); // fail in debug mode
 
   LiveTestWidgetsFlutterBinding.ensureInitialized();
   LiveTestWidgetsFlutterBinding.instance.framePolicy =

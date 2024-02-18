@@ -66,7 +66,7 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   }
 }
 
-extension BlocContextWatchValueExtension<T> on StateStreamable<T> {
+extension BlocContextWatchOnlyExtension<T> on StateStreamable<T> {
   /// Watch this [StateStreamable] for changes.
   ///
   /// Whenever this [StateStreamable] emits new value, if [selector]
@@ -76,7 +76,7 @@ extension BlocContextWatchValueExtension<T> on StateStreamable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(BuildContext context, R Function(T value) selector) {
+  R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(state);

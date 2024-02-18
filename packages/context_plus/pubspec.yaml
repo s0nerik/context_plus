@@ -1,5 +1,5 @@
 name: context_plus
-description: "Tighter integration between context_use, context_ref and context_watch."
+description: "Tighter integration between context_ref and context_watch"
 version: 1.0.0-dev.1
 homepage:
 

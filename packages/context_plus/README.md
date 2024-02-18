@@ -42,7 +42,7 @@ ContextPlus.root(
 );
 ```
 
-(Optional) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages. Replace `ContextRef.errorWidgetBuilder()` and `ContextPlus.onError()` if you have them.
+(Optional) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages. Replace `ContextRef.errorWidgetBuilder()` and `ContextRef.onError()` if you have them.
 ```dart
 void main() {
   ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);

@@ -22,8 +22,15 @@ This package combines [context_ref](https://pub.dev/packages/context_ref) and [c
 
 ## Getting started
 
+Add `context_plus` to your `pubspec.yaml`:
 ```shell
-flutter pub add context_watch
+flutter pub add context_plus
+```
+
+Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them:
+```shell
+flutter pub remove context_ref
+flutter pub remove context_watch
 ```
 
 Wrap your app in `ContextPlus.root`. Remove `ContextWatch.root` and `ContextRef.root` if you have them.

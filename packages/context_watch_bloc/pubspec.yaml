@@ -4,13 +4,11 @@ version: 1.0.0
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 topics:
-  - context_watch
+  - context-watch
   - bloc
   - integration
   - reactive
-  - ui
   - state-management
-  - extension
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

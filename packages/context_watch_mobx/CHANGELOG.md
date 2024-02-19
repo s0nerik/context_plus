@@ -1,3 +1,7 @@
+## 1.0.2
+
+ - **REFACTOR**: loosened Flutter SDK constraint.
+
 ## 1.0.1
 
  - **REFACTOR**: context_watch_mobx: pubspec.yaml cleanup.

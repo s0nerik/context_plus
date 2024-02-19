@@ -3,7 +3,12 @@ description: "context_watch adapter for mobx package"
 version: 1.0.0-dev.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
-publish_to: "none"
+topics:
+  - context-watch
+  - mobx
+  - integration
+  - reactive
+  - state-management
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

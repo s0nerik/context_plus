@@ -65,7 +65,7 @@ extension MobxObservableContextWatchExtension<T> on Observable<T> {
   }
 }
 
-extension MobxObservableContextWatchValueExtension<T> on Observable<T> {
+extension MobxObservableContextWatchOnlyExtension<T> on Observable<T> {
   /// Watch this [Observable] for changes.
   ///
   /// Whenever this [Observable] emits new value, if [selector]
@@ -75,7 +75,7 @@ extension MobxObservableContextWatchValueExtension<T> on Observable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(BuildContext context, R Function(T value) selector) {
+  R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(value);

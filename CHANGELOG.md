@@ -11,6 +11,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_watch_mobx` - `v1.0.1`](#context_watch_mobx---v101)
+
+---
+
+#### `context_watch_mobx` - `v1.0.1`
+
+ - **REFACTOR**: context_watch_mobx: pubspec.yaml cleanup.
+
+
+## 2024-02-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`context_watch_mobx` - `v1.0.0`](#context_watch_mobx---v100)
 
 Packages with other changes:

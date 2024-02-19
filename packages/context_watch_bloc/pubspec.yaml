@@ -3,7 +3,14 @@ description: "context_watch adapter for the bloc package"
 version: 1.0.0-dev.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
-publish_to: "none"
+topics:
+  - context_watch
+  - bloc
+  - integration
+  - reactive
+  - ui
+  - state-management
+  - extension
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

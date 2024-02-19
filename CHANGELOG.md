@@ -11,6 +11,29 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`context_watch_bloc` - `v1.0.0`](#context_watch_bloc---v100)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+Packages graduated to a stable release (see pre-releases prior to the stable version for changelog entries):
+
+ - `context_watch_bloc` - `v1.0.0`
+
+---
+
+#### `context_watch_bloc` - `v1.0.0`
+
+
+## 2024-02-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - There are no breaking changes in this release.
 
 Packages with other changes:

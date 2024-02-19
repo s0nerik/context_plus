@@ -1,8 +1,8 @@
 name: context_watch_signals
 description: "context_watch adapter for signals package"
 version: 1.0.0-dev.2
-homepage: https://github.com/s0nerik/context_plus/tree/master/packages/context_watch
-repository: https://github.com/s0nerik/context_plus/tree/master/packages/context_watch
+homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
+repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 publish_to: "none"
 
 environment:

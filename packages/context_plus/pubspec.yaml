@@ -1,8 +1,8 @@
 name: context_plus
 description: Convenient value propagation and observing for Flutter
 version: 1.0.1
-homepage: https://github.com/s0nerik/context_plus/tree/master/packages/context_plus
-repository: https://github.com/s0nerik/context_plus/tree/master/packages/context_plus
+homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
+repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 
 environment:
   sdk: ">=3.0.6 <4.0.0"

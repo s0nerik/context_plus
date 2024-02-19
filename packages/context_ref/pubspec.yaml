@@ -3,6 +3,11 @@ description: A hassle-free way to provide and retrieve values for a BuildContext
 version: 1.0.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_ref
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_ref
+topics:
+  - reactive
+  - ui
+  - state-management
+  - extension
 
 environment:
   sdk: ">=3.0.6 <4.0.0"

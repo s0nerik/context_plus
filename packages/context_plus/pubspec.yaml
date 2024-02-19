@@ -3,6 +3,11 @@ description: Convenient value propagation and observing for Flutter
 version: 1.0.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
+topics:
+  - reactive
+  - ui
+  - state-management
+  - extension
 
 environment:
   sdk: ">=3.0.6 <4.0.0"

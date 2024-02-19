@@ -3,6 +3,11 @@ description: A hassle-free way to watch for observable value changes within the 
 version: 2.0.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
+topics:
+  - reactive
+  - ui
+  - state-management
+  - extension
 
 environment:
   sdk: ">=3.0.6 <4.0.0"

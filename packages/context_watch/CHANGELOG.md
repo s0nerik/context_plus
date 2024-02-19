@@ -1,3 +1,7 @@
+## 2.0.3
+
+ - **REFACTOR**: added topics to context_plus, context_ref, context_watch.
+
 ## 2.0.2
 
  - **REFACTOR**: pubspec.yaml: Updated homepage/repository with proper branch name.

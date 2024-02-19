@@ -12,7 +12,7 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
-    context_watch_base: ^2.0.1
+    context_watch_base: ^2.0.2
     state_beacon: ^0.14.5
 
 dev_dependencies:

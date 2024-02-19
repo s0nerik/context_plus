@@ -23,7 +23,7 @@ dependencies:
   # MobX
   mobx: ^2.2.3
   flutter_mobx: ^2.2.0+1
-  context_watch_mobx: ^1.0.0-dev.2
+  context_watch_mobx: ^1.0.0
 
   # Beacon
   state_beacon: ^0.14.5

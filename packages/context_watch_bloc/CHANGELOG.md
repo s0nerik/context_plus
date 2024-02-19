@@ -1,3 +1,7 @@
+## 1.0.1
+
+ - **REFACTOR**: updated context_watch_bloc topics.
+
 ## 1.0.0
 
  - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.

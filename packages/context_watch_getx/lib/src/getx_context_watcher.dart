@@ -65,7 +65,7 @@ extension GetxContextWatchExtension<T> on Rx<T> {
   }
 }
 
-extension GetxContextWatchValueExtension<T> on Rx<T> {
+extension GetxContextWatchOnlyExtension<T> on Rx<T> {
   /// Watch this [Rx] for changes.
   ///
   /// Whenever this [Rx] emits new value, if [selector]
@@ -75,7 +75,7 @@ extension GetxContextWatchValueExtension<T> on Rx<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(BuildContext context, R Function(T value) selector) {
+  R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(value);

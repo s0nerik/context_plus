@@ -1,4 +1,4 @@
-import 'package:example/example.dart';
+import 'package:example/other/example.dart';
 import 'package:flutter/material.dart';
 
 import 'context_watch_listenable/context_watch_example.dart' as context_watch;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../example.dart';
+import '../other/example.dart';
 import 'context_plus_screen_state/context_plus_example.dart' as context_plus;
 
 class ContextPlusScreenStateExampleScreen extends StatelessWidget {

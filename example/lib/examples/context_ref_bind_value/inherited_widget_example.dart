@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../example.dart';
+import '../../other/example.dart';
 
 class _Counter extends InheritedWidget {
   const _Counter({

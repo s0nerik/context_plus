@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../example.dart';
+import '../other/example.dart';
 import 'context_ref_bind/context_ref_example.dart' as context_ref;
 import 'context_ref_bind/inherited_widget_example.dart' as inherited_widget;
 

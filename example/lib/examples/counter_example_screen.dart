@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../example.dart';
+import '../other/example.dart';
 import 'counter/context_plus_bind_watch_value_example.dart'
     as context_plus_bind_watch_value;
 

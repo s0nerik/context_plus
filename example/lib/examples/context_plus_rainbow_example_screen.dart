@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../example.dart';
+import '../other/example.dart';
 import 'context_plus_rainbow/context_plus_example.dart' as context_plus;
 import 'context_plus_rainbow/stateful_widget_example.dart' as stateful_widget;
 

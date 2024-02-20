@@ -1,4 +1,4 @@
-import 'package:example/example.dart';
+import 'package:example/other/example.dart';
 import 'package:flutter/material.dart';
 
 import 'context_watch/animated_builder_example.dart' as animated_builder;

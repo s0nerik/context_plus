@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
 import 'context_watch/benchmark_screen.dart';
-import 'context_watch/hot_reload_test_screen.dart';
 import 'examples/context_plus_rainbow_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
+import 'other/context_watch_hot_reload_test_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,8 +71,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
-                    onPressed: () => context.url = HotReloadTestScreen.urlPath,
-                    child: const Text(HotReloadTestScreen.title),
+                    onPressed: () =>
+                        context.url = ContextWatchHotReloadTestScreen.urlPath,
+                    child: const Text(ContextWatchHotReloadTestScreen.title),
                   ),
                 ],
               ),

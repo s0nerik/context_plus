@@ -11,7 +11,6 @@ import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:url_router/url_router.dart';
 
 import 'context_watch/benchmark_screen.dart';
-import 'context_watch/hot_reload_test_screen.dart';
 import 'examples/context_plus_rainbow_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
@@ -19,6 +18,7 @@ import 'examples/context_ref_nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
 import 'examples/context_watch_listenable_example_screen.dart';
 import 'home_screen.dart';
+import 'other/context_watch_hot_reload_test_screen.dart';
 
 void main() {
   ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
@@ -61,7 +61,8 @@ class _AppState extends State<_App> {
         const HomeScreen(),
         switch (router.urlPath) {
           BenchmarkScreen.urlPath => const BenchmarkScreen(),
-          HotReloadTestScreen.urlPath => const HotReloadTestScreen(),
+          ContextWatchHotReloadTestScreen.urlPath =>
+            const ContextWatchHotReloadTestScreen(),
           NestedScopesExampleScreen.urlPath =>
             const NestedScopesExampleScreen(),
           BindExampleScreen.urlPath => const BindExampleScreen(),

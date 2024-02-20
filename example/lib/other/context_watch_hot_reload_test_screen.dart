@@ -3,17 +3,19 @@ import 'dart:async';
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-class HotReloadTestScreen extends StatefulWidget {
-  const HotReloadTestScreen({super.key});
+class ContextWatchHotReloadTestScreen extends StatefulWidget {
+  const ContextWatchHotReloadTestScreen({super.key});
 
   static const title = 'Hot Reload Test';
   static const urlPath = '/context_watch_hot_reload_test';
 
   @override
-  State<HotReloadTestScreen> createState() => _HotReloadTestScreenState();
+  State<ContextWatchHotReloadTestScreen> createState() =>
+      _ContextWatchHotReloadTestScreenState();
 }
 
-class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
+class _ContextWatchHotReloadTestScreenState
+    extends State<ContextWatchHotReloadTestScreen> {
   bool _stream1HasListeners = false;
   late final StreamController<int> _controller1;
   late final Timer _timer1;
@@ -86,7 +88,7 @@ class _HotReloadTestScreenState extends State<HotReloadTestScreen> {
         _watchStream2 ? _stream2.watch(context).data ?? '' : '';
     return Scaffold(
       appBar: AppBar(
-        title: const Text(HotReloadTestScreen.title),
+        title: const Text(ContextWatchHotReloadTestScreen.title),
       ),
       body: Center(
         child: Column(

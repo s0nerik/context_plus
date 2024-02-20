@@ -9,6 +9,7 @@ import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/context_ref_nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
+import 'examples/counter_example_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -28,6 +29,15 @@ class HomeScreen extends StatelessWidget {
             spacing: 24,
             runSpacing: 24,
             children: [
+              _Group(
+                title: 'Examples',
+                children: [
+                  OutlinedButton(
+                    onPressed: () => context.url = CounterExampleScreen.urlPath,
+                    child: const Text(CounterExampleScreen.title),
+                  ),
+                ],
+              ),
               _Group(
                 title: 'context_ref',
                 children: [

@@ -247,13 +247,15 @@ class CounterExample extends StatelessWidget {
   const CounterExample({
     super.key,
     required this.counter,
+    this.onTap,
   });
 
   final int counter;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    final child = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -269,5 +271,14 @@ class CounterExample extends StatelessWidget {
         ],
       ),
     );
+
+    if (onTap != null) {
+      return ExampleContainer(
+        onTap: onTap,
+        child: child,
+      );
+    }
+
+    return child;
   }
 }

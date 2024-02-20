@@ -52,6 +52,7 @@ flutter:
     - lib/examples/context_plus_rainbow/
     - lib/examples/context_watch_listenable/
     - lib/examples/context_plus_screen_state/
+    - lib/examples/counter/
   fonts:
     - family: JetBrains Mono
       fonts:

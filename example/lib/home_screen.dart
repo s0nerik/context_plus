@@ -3,7 +3,7 @@ import 'package:example/examples/context_watch_listenable_example_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
-import 'context_watch/benchmark_screen.dart';
+import 'benchmarks/context_watch/benchmark_screen.dart';
 import 'examples/context_plus_rainbow_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';

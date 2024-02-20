@@ -3,8 +3,8 @@
 import 'dart:io';
 
 import 'package:context_plus/context_plus.dart';
-import 'package:example/context_watch/benchmark_screen.dart';
-import 'package:example/context_watch/common/observable_listener_types.dart';
+import 'package:example/benchmarks/context_watch/benchmark_screen.dart';
+import 'package:example/benchmarks/context_watch/common/observable_listener_types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

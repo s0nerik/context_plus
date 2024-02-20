@@ -6,7 +6,7 @@ import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_getx/context_watch_getx.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
-import 'package:example/context_watch/common/publisher.dart';
+import 'package:example/benchmarks/context_watch/common/publisher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;

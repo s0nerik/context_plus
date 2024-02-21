@@ -1,3 +1,7 @@
+## 2.0.4
+
+ - **DOCS**: updated README.md.
+
 ## 2.0.3
 
  - **REFACTOR**: added topics to context_plus, context_ref, context_watch.

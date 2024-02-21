@@ -10,6 +10,7 @@ import 'examples/context_ref_nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
 import 'examples/context_watch_listenable_example_screen.dart';
 import 'examples/counter_example_screen.dart';
+import 'examples/counter_with_propagation_example_screen.dart';
 import 'home_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
@@ -30,6 +31,8 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     ContextPlusScreenStateExampleScreen.urlPath =>
       const ContextPlusScreenStateExampleScreen(),
     CounterExampleScreen.urlPath => const CounterExampleScreen(),
+    CounterWithPropagationExampleScreen.urlPath =>
+      const CounterWithPropagationExampleScreen(),
     _ => null,
   };
 }

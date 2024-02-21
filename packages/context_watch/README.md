@@ -7,7 +7,7 @@
 [![context_watch](https://img.shields.io/pub/points/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/popularity/context_watch)](https://pub.dev/packages/context_watch)
 
-Listen to `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
+Listen to `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
 
 See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
 
@@ -49,7 +49,7 @@ the `context` will be marked as needing a rebuild.
 
 ### Supported observable types
 
-- `Listenable` (`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.)
+- `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.)
 - `Stream`/`ValueStream`
 - `Future`/`SynchronousFuture`
 

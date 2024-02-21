@@ -128,9 +128,14 @@ class _SelectedExample extends StatelessWidget {
   }
 }
 
-class _SelectedExampleCode extends StatelessWidget {
+class _SelectedExampleCode extends StatefulWidget {
   const _SelectedExampleCode();
 
+  @override
+  State<_SelectedExampleCode> createState() => _SelectedExampleCodeState();
+}
+
+class _SelectedExampleCodeState extends State<_SelectedExampleCode> {
   static final _darkCodeThemeFuture = HighlighterTheme.loadDarkTheme();
   static final _lightCodeThemeFuture = HighlighterTheme.loadLightTheme();
   static final _fileContentFutures = <String, Future<String>>{};
@@ -139,6 +144,12 @@ class _SelectedExampleCode extends StatelessWidget {
   static final _scrollControllersGroup = Ref<LinkedScrollControllerGroup>();
   static final _lineNumbersScrollController = Ref<ScrollController>();
   static final _sourceScrollController = Ref<ScrollController>();
+
+  @override
+  void reassemble() {
+    _fileContentFutures.clear();
+    super.reassemble();
+  }
 
   @override
   Widget build(BuildContext context) {

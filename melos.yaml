@@ -16,3 +16,14 @@ scripts:
       flutter: true
       dirExists: test
       noPrivate: true
+
+  # collect coverage information for all packages
+  coverage: >
+    melos exec -c 1 --fail-fast --dir-exists=test -- \
+      flutter test --coverage && melos run coverage:cleanup
+
+  # cleanup generated files from coverage
+  coverage:cleanup: >
+    melos exec --file-exists=coverage/lcov.info -- \
+      lcov --remove coverage/lcov.info \
+        -o coverage/lcov.info

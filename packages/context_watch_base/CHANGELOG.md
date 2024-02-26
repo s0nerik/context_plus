@@ -1,3 +1,9 @@
+## 3.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: Simplified the API. Every observable type now has only two extension methods: `watch()`, `watchOnly()`.
+
 ## 2.0.2
 
  - **REFACTOR**: pubspec.yaml: Updated homepage/repository with proper branch name.

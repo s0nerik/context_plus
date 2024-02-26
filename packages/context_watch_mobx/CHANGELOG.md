@@ -1,3 +1,7 @@
+## 1.0.3
+
+ - **REFACTOR**: context_watch v3 migration.
+
 ## 1.0.2
 
  - **REFACTOR**: loosened Flutter SDK constraint.

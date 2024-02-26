@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus` - `v2.0.0`](#context_plus---v200)
+ - [`context_watch` - `v3.0.0`](#context_watch---v300)
+ - [`context_watch_base` - `v3.0.0`](#context_watch_base---v300)
+
+Packages with other changes:
+
+ - [`context_watch_bloc` - `v1.0.3`](#context_watch_bloc---v103)
+ - [`context_watch_getx` - `v1.0.1`](#context_watch_getx---v101)
+ - [`context_watch_mobx` - `v1.0.3`](#context_watch_mobx---v103)
+
+---
+
+#### `context_plus` - `v2.0.0`
+
+ - **BREAKING** **CHANGE**: Removed `Ref<ValueListenable>.watchValue()` and `Ref<ValueListenable>.watchValueOnly()`. `Ref<ValueListenable>.watch()` now returns the value, `Ref<Listenable>.watch()` now returns void.
+
+#### `context_watch` - `v3.0.0`
+
+ - **BREAKING** **REFACTOR**: Simplified the API. Every observable type now has only two extension methods: `watch()`, `watchOnly()`.
+
+#### `context_watch_base` - `v3.0.0`
+
+ - **BREAKING** **REFACTOR**: Simplified the API. Every observable type now has only two extension methods: `watch()`, `watchOnly()`.
+
+#### `context_watch_bloc` - `v1.0.3`
+
+ - **REFACTOR**: context_watch v3 migration.
+
+#### `context_watch_getx` - `v1.0.1`
+
+ - **REFACTOR**: context_watch v3 migration.
+
+#### `context_watch_mobx` - `v1.0.3`
+
+ - **REFACTOR**: context_watch v3 migration.
+
+
 ## 2024-02-21
 
 ### Changes

@@ -11,8 +11,7 @@ extension RefContextWatchExt<T> on Ref<T> {
   }
 }
 
-extension RefListenableContextWatchExtension<TListenable extends Listenable>
-    on Ref<TListenable> {
+extension RefListenableContextWatchExtension on Ref<Listenable> {
   /// Watch this [Listenable] for changes.
   ///
   /// Whenever this [Listenable] notifies of a change, the [context] will be
@@ -22,7 +21,7 @@ extension RefListenableContextWatchExtension<TListenable extends Listenable>
   /// method.
   ///
   /// Returns the original [Listenable].
-  TListenable watch(BuildContext context) => of(context).watch(context);
+  void watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefListenableContextWatchOnlyExtension<TListenable extends Listenable>
@@ -53,21 +52,7 @@ extension RefValueListenableWatchExt<T> on Ref<ValueListenable<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watchValue(BuildContext context) => of(context).watchValue(context);
-}
-
-extension RefValueListenableWatchValueExt<T> on Ref<ValueListenable<T>> {
-  /// Watch this [ValueListenable] for changes.
-  ///
-  /// Whenever this [ValueListenable] notifies of a change, if [selection]
-  /// returns a different value, the [context] will be rebuilt.
-  ///
-  /// Returns the selected value.
-  ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  R watchValueOnly<R>(BuildContext context, R Function(T value) selection) =>
-      of(context).watchValueOnly(context, selection);
+  T watch(BuildContext context) => of(context).watch(context);
 }
 
 extension RefFutureWatchExt<T> on Ref<Future<T>> {

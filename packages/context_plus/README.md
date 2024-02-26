@@ -19,8 +19,6 @@ This package combines [context_ref](https://pub.dev/packages/context_ref) and [c
 | `Ref<T>`                                        | `ref.of(context)`                  | <code>context.unwatch();<br/>ref.of(context);</code>                              |
 | `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watch(context)`               | <code>context.unwatch();<br/>ref.of(context).watch(context);</code>               |
 | `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watchOnly(context, ...)`      | <code>context.unwatch();<br/>ref.of(context).watchOnly(context, ...);</code>      |
-| `Ref<ValueListenable>`                          | `ref.watchValue(context)`          | <code>context.unwatch();<br/>ref.of(context).watchValue(context);</code>          |
-| `Ref<ValueListenable>`                          | `ref.watchValueOnly(context, ...)` | <code>context.unwatch();<br/>ref.of(context).watchValueOnly(context, ...);</code> |
 
 ## Getting started
 

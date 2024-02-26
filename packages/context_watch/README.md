@@ -7,9 +7,25 @@
 [![context_watch](https://img.shields.io/pub/points/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/popularity/context_watch)](https://pub.dev/packages/context_watch)
 
-Listen to `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.) or `Stream`/`ValueStream` changes using a simple `observable.watch(context)`. No strings attached.
+Subscribe widgets to any observable value using `observable.watch(context)`. No strings attached.
 
 See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
+
+## Supported observable types
+
+### Built-in
+
+- `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.):
+- `Stream`/`ValueStream`
+- `Future`/`SynchronousFuture`
+
+### Integrations
+
+| Package                                                                                             | Pub                                                                                                                   | Description                                                                                                                              |
+|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [context_watch_bloc](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_bloc) | [![context_watch_bloc](https://img.shields.io/pub/v/context_watch_bloc)](https://pub.dev/packages/context_watch_bloc) | `Bloc.watch(context)`<br/>`Bloc.watchOnly(context, () => ...)`<br/><br/>`Cubit.watch(context)`<br/>`Cubit.watchOnly(context, () => ...)` |
+| [context_watch_mobx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_mobx) | [![context_watch_mobx](https://img.shields.io/pub/v/context_watch_mobx)](https://pub.dev/packages/context_watch_mobx) | `Observable.watch(context)`<br/>`Observable.watchOnly(context, () => ...)`                                                               |
+| [context_watch_getx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_getx) | [![context_watch_getx](https://img.shields.io/pub/v/context_watch_getx)](https://pub.dev/packages/context_watch_getx) | `Rx.watch(context)`<br/>`Rx.watchOnly(context, () => ...)`                                                                               |
 
 ## Getting started
 
@@ -46,12 +62,6 @@ Just call `watch()` on your observable value and you've got a reactive widget. `
 It doesn't matter where you call `watch()` from or how many times you call it. While in a build phase, it will
 always register the `context` as a listener to the observable value. Whenever the observable notifies of a change,
 the `context` will be marked as needing a rebuild.
-
-### Supported observable types
-
-- `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.)
-- `Stream`/`ValueStream`
-- `Future`/`SynchronousFuture`
 
 ## Additional information
 
@@ -152,7 +162,7 @@ Stream.watch(context) vs StreamBuilder                          1.03x      1000 
 ValueListenable.watch(context) vs ValueListenableBuilder        1.05x      1000 total subs         1000 single stream subscriptions    133.62μs/frame vs 127.10μs/frame
 ```
 
-`example` contains both a [live benchmark](example/lib/benchmark_screen.dart) and an [automated one](example/test/stream_watch_benchmark.dart), so feel free to run them and compare the results on your device.
+`example` contains both a [live benchmark](example/lib/benchmarks/context_watch/benchmark_screen.dart) and an [automated one](example/benchmarks/benchmark_context_watch.dart), so feel free to run them and compare the results on your device.
 Don't forget to run them in `--profile` mode.
 
 ![benchmark.gif](https://github.com/s0nerik/context_watch/raw/main/doc/benchmark.gif)

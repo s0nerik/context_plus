@@ -34,6 +34,37 @@ void main() {
   });
 
   testWidgets(
+    'widget rebuilds each time a Listenable notifies',
+    (widgetTester) async {
+      final changeNotifier = ChangeNotifier();
+      observedListenables = [changeNotifier];
+
+      await widgetTester.pumpWidget(widget);
+      expect(rebuilds, 1);
+
+      // No rebuilds yet, because the changeNotifier has_not notified yet.
+      await widgetTester.pumpAndSettle();
+      expect(rebuilds, 1);
+
+      changeNotifier.notifyListeners();
+
+      // Rebuilds once, because the changeNotifier has notified.
+      await widgetTester.pumpAndSettle();
+      expect(rebuilds, 2);
+
+      changeNotifier.notifyListeners();
+
+      // Rebuilds again, because the changeNotifier has notified again.
+      await widgetTester.pumpAndSettle();
+      expect(rebuilds, 3);
+
+      // No more rebuilds, because the changeNotifier has_not notified again.
+      await widgetTester.pumpAndSettle();
+      expect(rebuilds, 3);
+    },
+  );
+
+  testWidgets(
     'widget rebuilds only once after each bunch of synchronous change notifications',
     (widgetTester) async {
       final valueNotifier = ValueNotifier('a');

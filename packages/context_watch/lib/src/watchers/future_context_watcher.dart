@@ -23,7 +23,6 @@ class FutureContextWatcher extends ContextWatcher<Future> {
     BuildContext context,
     Future observable,
   ) {
-    final element = context as Element;
     final subscription = _FutureSubscription(
       snapshot: AsyncSnapshot<T>.nothing(),
     );
@@ -33,16 +32,8 @@ class FutureContextWatcher extends ContextWatcher<Future> {
       }
 
       final newSnapshot = AsyncSnapshot<T>.withData(ConnectionState.done, data);
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.snapshot,
-        newValue: newSnapshot,
-      )) {
-        return;
-      }
       subscription.snapshot = newSnapshot;
-      element.markNeedsBuild();
+      rebuildIfNeeded(context, observable, value: newSnapshot);
     }, onError: (Object error, StackTrace stackTrace) {
       if (subscription.isCanceled) {
         return;
@@ -50,16 +41,8 @@ class FutureContextWatcher extends ContextWatcher<Future> {
 
       final newSnapshot =
           AsyncSnapshot<T>.withError(ConnectionState.done, error, stackTrace);
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.snapshot,
-        newValue: newSnapshot,
-      )) {
-        return;
-      }
       subscription.snapshot = newSnapshot;
-      element.markNeedsBuild();
+      rebuildIfNeeded(context, observable, value: newSnapshot);
     });
     // An implementation like `SynchronousFuture` may have already called the
     // .then closure. Do not overwrite it in that case.

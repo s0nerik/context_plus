@@ -11,6 +11,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v2.0.1`](#context_plus---v201)
+
+---
+
+#### `context_plus` - `v2.0.1`
+
+ - **DOCS**: updated README.md.
+
+
+## 2024-02-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`context_plus` - `v2.0.0`](#context_plus---v200)
  - [`context_watch` - `v3.0.0`](#context_watch---v300)
  - [`context_watch_base` - `v3.0.0`](#context_watch_base---v300)

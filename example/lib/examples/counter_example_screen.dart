@@ -17,7 +17,7 @@ class CounterExampleScreen extends StatelessWidget {
       title: title,
       variants: [
         ExampleVariant(
-          title: 'context_plus: ValueNotifier + Ref.bind() + Ref.watchValue()',
+          title: 'context_plus: ValueNotifier + Ref.bind() + Ref.watch()',
           filePath: 'counter/context_plus_bind_watch_value_example.dart',
           widget: Center(
             child: context_plus_bind_watch_value.Example(),

@@ -23,7 +23,7 @@ class _Child extends StatelessWidget {
     return ExampleContainer(
       onTap: () => _counterNotifier.of(context).value += 1,
       child: CounterExample(
-        counter: _counterNotifier.watchValue(context),
+        counter: _counterNotifier.watch(context),
       ),
     );
   }

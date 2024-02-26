@@ -163,7 +163,7 @@ class _SelectedExampleCodeState extends State<_SelectedExampleCode> {
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
-    final tabController = DefaultTabController.of(context).watch(context);
+    final tabController = DefaultTabController.of(context)..watch(context);
     final selectedTabIndex = tabController.index;
     final selectedVariant = _exampleVariants.of(context)[selectedTabIndex];
     final filePath = selectedVariant.filePath;

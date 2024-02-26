@@ -11,8 +11,6 @@ class _BlocSubscription implements ContextWatchSubscription {
 
   final StreamSubscription _sub;
 
-  dynamic value;
-
   @override
   void cancel() => _sub.cancel();
 }
@@ -26,28 +24,12 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, StateStreamable observable) {
     final bloc = observable;
-    final element = context as Element;
 
-    late final _BlocSubscription subscription;
-
-    final streamSubscription = bloc.stream.listen((data) {
-      if (!shouldRebuild(
-        context,
-        bloc,
-        oldValue: subscription.value,
-        newValue: data,
-      )) {
-        return;
-      }
-      subscription.value = data;
-      element.markNeedsBuild();
-    });
-
-    subscription = _BlocSubscription(
-      streamSubscription: streamSubscription,
+    return _BlocSubscription(
+      streamSubscription: bloc.stream.listen(
+        (data) => rebuildIfNeeded(context, bloc, value: data),
+      ),
     );
-
-    return subscription;
   }
 }
 

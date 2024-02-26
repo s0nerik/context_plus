@@ -11,8 +11,6 @@ class _MobxSubscription implements ContextWatchSubscription {
   final Observable observable;
   final VoidCallback dispose;
 
-  dynamic value;
-
   @override
   void cancel() => dispose();
 }
@@ -27,26 +25,13 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
     BuildContext context,
     Observable observable,
   ) {
-    final element = context as Element;
-
-    late final _MobxSubscription subscription;
-    final dispose = observable.observe((notification) {
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.value,
-        newValue: notification.newValue,
-      )) {
-        return;
-      }
-      subscription.value = notification.newValue;
-      element.markNeedsBuild();
-    });
-    subscription = _MobxSubscription(
+    return _MobxSubscription(
       observable: observable,
-      dispose: dispose,
+      dispose: observable.observe(
+        (notification) =>
+            rebuildIfNeeded(context, observable, value: notification.newValue),
+      ),
     );
-    return subscription;
   }
 }
 

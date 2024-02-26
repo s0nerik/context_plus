@@ -11,8 +11,6 @@ class _SignalsSubscription implements ContextWatchSubscription {
   final ReadonlySignal<dynamic> signal;
   final VoidCallback dispose;
 
-  dynamic value;
-
   @override
   void cancel() => dispose();
 }
@@ -26,26 +24,13 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, ReadonlySignal<dynamic> observable) {
     final signal = observable;
-    final element = context as Element;
 
-    late final _SignalsSubscription subscription;
-    final dispose = signal.subscribe((value) {
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.value,
-        newValue: value,
-      )) {
-        return;
-      }
-      subscription.value = value;
-      element.markNeedsBuild();
-    });
-    subscription = _SignalsSubscription(
+    return _SignalsSubscription(
       signal: signal,
-      dispose: dispose,
+      dispose: signal.subscribe(
+        (value) => rebuildIfNeeded(context, observable, value: value),
+      ),
     );
-    return subscription;
   }
 }
 

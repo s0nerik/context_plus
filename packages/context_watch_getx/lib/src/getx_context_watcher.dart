@@ -11,8 +11,6 @@ class _GetxSubscription implements ContextWatchSubscription {
 
   final StreamSubscription _sub;
 
-  dynamic value;
-
   @override
   void cancel() => _sub.cancel();
 }
@@ -25,28 +23,10 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
   @override
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, Rx observable) {
-    final element = context as Element;
-
-    late final _GetxSubscription subscription;
-
-    final streamSubscription = observable.stream.listen((data) {
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.value,
-        newValue: data,
-      )) {
-        return;
-      }
-      subscription.value = data;
-      element.markNeedsBuild();
-    });
-
-    subscription = _GetxSubscription(
-      streamSubscription: streamSubscription,
+    return _GetxSubscription(
+      streamSubscription: observable.stream
+          .listen((data) => rebuildIfNeeded(context, observable, value: data)),
     );
-
-    return subscription;
   }
 }
 

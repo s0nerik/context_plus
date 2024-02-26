@@ -11,8 +11,6 @@ class _BeaconSubscription implements ContextWatchSubscription {
   final ReadableBeacon<dynamic> beacon;
   final VoidCallback dispose;
 
-  dynamic value;
-
   @override
   void cancel() => dispose();
 }
@@ -26,26 +24,13 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, ReadableBeacon<dynamic> observable) {
     final beacon = observable;
-    final element = context as Element;
 
-    late final _BeaconSubscription subscription;
-    final dispose = beacon.subscribe((value) {
-      if (!shouldRebuild(
-        context,
-        observable,
-        oldValue: subscription.value,
-        newValue: value,
-      )) {
-        return;
-      }
-      subscription.value = value;
-      element.markNeedsBuild();
-    });
-    subscription = _BeaconSubscription(
+    return _BeaconSubscription(
       beacon: beacon,
-      dispose: dispose,
+      dispose: beacon.subscribe(
+        (value) => rebuildIfNeeded(context, observable, value: value),
+      ),
     );
-    return subscription;
   }
 }
 

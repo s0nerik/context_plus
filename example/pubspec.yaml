@@ -49,7 +49,7 @@ flutter:
     - lib/examples/context_ref_bind/
     - lib/examples/context_ref_bind_value/
     - lib/examples/context_watch/
-    - lib/examples/context_plus_rainbow/
+    - lib/examples/rainbow/
     - lib/examples/context_watch_listenable/
     - lib/examples/context_plus_screen_state/
     - lib/examples/counter/

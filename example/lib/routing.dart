@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
 import 'benchmarks/context_watch/benchmark_screen.dart';
-import 'examples/context_plus_rainbow_example_screen.dart';
+import 'examples/rainbow_example_screen.dart';
 import 'examples/context_plus_screen_state_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';

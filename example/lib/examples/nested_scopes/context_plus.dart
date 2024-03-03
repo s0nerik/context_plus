@@ -1,20 +1,18 @@
-// ignore_for_file: unused_element_parameter
-
 import 'dart:math';
 
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-final _globalState = Ref<_State>();
+final _globalScope = Ref<_Scope>();
 final _childrenAmount = Ref<ValueNotifier<int>>();
 
 final _childColor = Ref<Color>();
 final _name = Ref<String>();
 final _message = Ref<String>();
-final _state = Ref<_State>();
+final _scope = Ref<_Scope>();
 
-class _State {
-  _State({
+class _Scope {
+  _Scope({
     required this.scopeName,
   });
 
@@ -23,33 +21,17 @@ class _State {
   final counter = ValueNotifier(0);
 
   void dispose() {
-    debugPrint('_State($scopeName) was disposed');
+    debugPrint('_Scope($scopeName) was disposed');
+    counter.dispose();
   }
 }
 
-class NestedScopesExampleScreen extends StatelessWidget {
-  const NestedScopesExampleScreen({super.key});
-
-  static const title = 'Nested scopes';
-  static const urlPath = '/context_ref_nested_scopes_example';
+class Example extends StatelessWidget {
+  const Example({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(title),
-      ),
-      body: const _Body(),
-    );
-  }
-}
-
-class _Body extends StatelessWidget {
-  const _Body({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    _globalState.bind(context, () => _State(scopeName: 'Global scope'));
+    _globalScope.bind(context, () => _Scope(scopeName: 'Global scope'));
     final childrenAmount =
         _childrenAmount.bind(context, () => ValueNotifier(3));
 
@@ -94,7 +76,6 @@ class _Body extends StatelessWidget {
 
 class _ChildWrapper extends StatefulWidget {
   const _ChildWrapper({
-    super.key,
     required this.depth,
     required this.maxDepth,
     this.parentContext,
@@ -123,7 +104,7 @@ class _ChildWrapperState extends State<_ChildWrapper> {
     final name = _name.bindValue(context, 'Scope ${widget.depth}');
     _message.bindValue(context, 'Hello from $name');
 
-    _state.bind(context, () => _State(scopeName: name));
+    _scope.bind(context, () => _Scope(scopeName: name));
 
     final parentColor = widget.parentContext != null
         ? _childColor.of(widget.parentContext!)
@@ -163,7 +144,6 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 
 class _Child extends StatelessWidget {
   const _Child({
-    super.key,
     required this.parentColor,
     this.child,
   });
@@ -176,9 +156,9 @@ class _Child extends StatelessWidget {
     final bgColor = _childColor.of(context);
     final scopeName = _name.of(context);
     final message = _message.of(context);
-    final state = _state.of(context);
+    final scope = _scope.of(context);
 
-    final globalState = _globalState.of(context);
+    final globalScope = _globalScope.of(context);
 
     return Container(
       color: bgColor,
@@ -188,8 +168,8 @@ class _Child extends StatelessWidget {
         children: [
           Text('Current scope: $scopeName'),
           Text('Message: $message'),
-          Text('Counter: ${state.counter.watch(context)}'),
-          Text('Global counter: ${globalState.counter.watch(context)}'),
+          Text('Counter: ${scope.counter.watch(context)}'),
+          Text('Global counter: ${globalScope.counter.watch(context)}'),
           if (parentColor != null)
             Row(
               children: [
@@ -213,13 +193,13 @@ class _Child extends StatelessWidget {
               const Text('Increment: '),
               Expanded(
                 child: TextButton(
-                  onPressed: () => state.counter.value++,
+                  onPressed: () => scope.counter.value++,
                   child: const Text('Local'),
                 ),
               ),
               Expanded(
                 child: TextButton(
-                  onPressed: () => globalState.counter.value++,
+                  onPressed: () => globalScope.counter.value++,
                   child: const Text('Global'),
                 ),
               ),

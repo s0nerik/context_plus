@@ -8,7 +8,7 @@ import 'benchmarks/context_watch/benchmark_screen.dart';
 import 'examples/rainbow_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
-import 'examples/context_ref_nested_scopes_example_screen.dart';
+import 'examples/nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
 import 'examples/counter_example_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
@@ -49,6 +49,12 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () => context.url = RainbowExampleScreen.urlPath,
                     child: const Text(RainbowExampleScreen.title),
                   ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () =>
+                        context.url = NestedScopesExampleScreen.urlPath,
+                    child: const Text(NestedScopesExampleScreen.title),
+                  ),
                 ],
               ),
               _Group(
@@ -63,12 +69,6 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () =>
                         context.url = BindValueExampleScreen.urlPath,
                     child: const Text(BindValueExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () =>
-                        context.url = NestedScopesExampleScreen.urlPath,
-                    child: const Text(NestedScopesExampleScreen.title),
                   ),
                 ],
               ),

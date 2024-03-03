@@ -6,7 +6,7 @@ import 'examples/rainbow_example_screen.dart';
 import 'examples/context_plus_screen_state_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
-import 'examples/context_ref_nested_scopes_example_screen.dart';
+import 'examples/nested_scopes_example_screen.dart';
 import 'examples/context_watch_example_screen.dart';
 import 'examples/context_watch_listenable_example_screen.dart';
 import 'examples/counter_example_screen.dart';

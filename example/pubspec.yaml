@@ -54,6 +54,7 @@ flutter:
     - lib/examples/context_plus_screen_state/
     - lib/examples/counter/
     - lib/examples/counter_with_propagation/
+    - lib/examples/nested_scopes/
   fonts:
     - family: JetBrains Mono
       fonts:

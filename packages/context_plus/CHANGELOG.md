@@ -1,3 +1,8 @@
+## 2.1.0
+
+ - **FEAT**: context.unwatch() upon Ref.bind(), Ref.bindLazy(), Ref.bindValue().
+ - **DOCS**: Added Ref.bind(), Ref.bindLazy(), Ref.bindValue() to the comparison table.
+
 ## 2.0.1
 
  - **DOCS**: updated README.md.

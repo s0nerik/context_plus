@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v2.1.0`](#context_plus---v210)
+ - [`context_ref` - `v1.0.4`](#context_ref---v104)
+
+---
+
+#### `context_plus` - `v2.1.0`
+
+ - **FEAT**: context.unwatch() upon Ref.bind(), Ref.bindLazy(), Ref.bindValue().
+ - **DOCS**: Added Ref.bind(), Ref.bindLazy(), Ref.bindValue() to the comparison table.
+
+#### `context_ref` - `v1.0.4`
+
+ - **REFACTOR**: extension-based API for both Ref and ReadOnlyRef.
+
+
 ## 2024-02-26
 
 ### Changes

@@ -1,3 +1,7 @@
+## 1.0.4
+
+ - **REFACTOR**: extension-based API for both Ref and ReadOnlyRef.
+
 ## 1.0.3
 
  - **REFACTOR**: added topics to context_plus, context_ref, context_watch.

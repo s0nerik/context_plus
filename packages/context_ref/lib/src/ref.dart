@@ -40,6 +40,18 @@ extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
 class Ref<T> extends ReadOnlyRef<T> {
   Ref() : super._(); // Must not be const
 
+  /// Returns a read-only version of this [Ref]. The returned [ReadOnlyRef]
+  /// can be used to get the value of this [Ref] without being able to change
+  /// the provided value.
+  ReadOnlyRef<T> get readOnly => this;
+}
+
+extension ReadOnlyRefAPI<T> on ReadOnlyRef<T> {
+  /// Get the value of this [Ref] from the given [context].
+  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
+}
+
+extension RefAPI<T> on Ref<T> {
   /// Bind a value to this [Ref] for this and all descendant [BuildContext]s.
   ///
   /// [create] is called only once per [BuildContext] and the value remains
@@ -105,14 +117,4 @@ class Ref<T> extends ReadOnlyRef<T> {
     );
     return provider.value;
   }
-
-  /// Returns a read-only version of this [Ref]. The returned [ReadOnlyRef]
-  /// can be used to get the value of this [Ref] without being able to change
-  /// the provided value.
-  ReadOnlyRef<T> get readOnly => this;
-}
-
-extension ContextRefExt<T> on ReadOnlyRef<T> {
-  /// Get the value of this [Ref] from the given [context].
-  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
 }

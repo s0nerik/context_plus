@@ -14,11 +14,14 @@ This package combines [context_ref](https://pub.dev/packages/context_ref) and [c
 - Makes observing a value from `Ref` more convenient.
 - Reduces the likeliness of extra rebuilds due to conditional `watch()` calls. Calling `Ref.of(context)`, `Ref.watch(context)`, `Ref.watchOnly(context, ...)` via this package will invoke [`context.unwatch()`](https://github.com/s0nerik/context_plus/tree/master/packages/context_watch#contextunwatch) under the hood.
 
-| Types                                           | context_plus                       | context_watch + context_ref (separately)                                          |
-|-------------------------------------------------|------------------------------------|-----------------------------------------------------------------------------------|
-| `Ref<T>`                                        | `ref.of(context)`                  | <code>context.unwatch();<br/>ref.of(context);</code>                              |
-| `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watch(context)`               | <code>context.unwatch();<br/>ref.of(context).watch(context);</code>               |
-| `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watchOnly(context, ...)`      | <code>context.unwatch();<br/>ref.of(context).watchOnly(context, ...);</code>      |
+| Types                                           | context_plus                  | context_watch + context_ref (separately)                      |
+|-------------------------------------------------|-------------------------------|---------------------------------------------------------------|
+| `Ref<T>`                                        | `ref.of(context)`             | `context.unwatch(); ref.of(context);`                         |
+| `Ref<T>`                                        | `ref.bind(context, ...)`      | `context.unwatch(); ref.bind(context);`                       |
+| `Ref<T>`                                        | `ref.bindLazy(context, ...)`  | `context.unwatch(); ref.bindLazy(context);`                   |
+| `Ref<T>`                                        | `ref.bindValue(context, ...)` | `context.unwatch(); ref.bindValue(context);`                  |
+| `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watch(context)`          | `context.unwatch(); ref.of(context).watch(context);`          |
+| `Ref<Listenable>`, `Ref<Stream>`, `Ref<Future>` | `ref.watchOnly(context, ...)` | `context.unwatch(); ref.of(context).watchOnly(context, ...);` |
 
 ## Getting started
 

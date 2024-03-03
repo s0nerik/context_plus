@@ -4,11 +4,11 @@ import '../other/example.dart';
 import 'rainbow/context_plus_example.dart' as context_plus;
 import 'rainbow/stateful_widget_example.dart' as stateful_widget;
 
-class ContextPlusBindWatchExampleScreen extends StatelessWidget {
-  const ContextPlusBindWatchExampleScreen({super.key});
+class RainbowExampleScreen extends StatelessWidget {
+  const RainbowExampleScreen({super.key});
 
   static const title = 'Rainbow example';
-  static const urlPath = '/context_plus_bind_watch_example';
+  static const urlPath = '/rainbow_example';
 
   @override
   Widget build(BuildContext context) {

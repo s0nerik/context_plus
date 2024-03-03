@@ -24,8 +24,7 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     BindExampleScreen.urlPath => const BindExampleScreen(),
     BindValueExampleScreen.urlPath => const BindValueExampleScreen(),
     ContextWatchExampleScreen.urlPath => const ContextWatchExampleScreen(),
-    ContextPlusBindWatchExampleScreen.urlPath =>
-      const ContextPlusBindWatchExampleScreen(),
+    RainbowExampleScreen.urlPath => const RainbowExampleScreen(),
     ContextWatchListenableExampleScreen.urlPath =>
       const ContextWatchListenableExampleScreen(),
     ContextPlusScreenStateExampleScreen.urlPath =>

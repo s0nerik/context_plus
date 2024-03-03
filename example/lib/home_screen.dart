@@ -44,6 +44,11 @@ class HomeScreen extends StatelessWidget {
                     child:
                         const Text(CounterWithPropagationExampleScreen.title),
                   ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.url = RainbowExampleScreen.urlPath,
+                    child: const Text(RainbowExampleScreen.title),
+                  ),
                 ],
               ),
               _Group(
@@ -98,12 +103,6 @@ class HomeScreen extends StatelessWidget {
               _Group(
                 title: 'context_plus',
                 children: [
-                  OutlinedButton(
-                    onPressed: () =>
-                        context.url = ContextPlusBindWatchExampleScreen.urlPath,
-                    child: const Text(ContextPlusBindWatchExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () => context.url =
                         ContextPlusScreenStateExampleScreen.urlPath,

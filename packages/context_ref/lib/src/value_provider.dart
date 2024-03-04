@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 @internal
@@ -34,7 +35,11 @@ class ValueProvider<T> {
       if (_disposer != null) {
         _disposer!(value);
       } else {
-        _tryDispose(value);
+        if (value case ChangeNotifier cn) {
+          cn.dispose();
+        } else {
+          _tryDispose(value);
+        }
       }
     } finally {
       _valueWrapper = null;

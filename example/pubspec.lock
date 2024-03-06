@@ -55,28 +55,28 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "2.1.0"
+    version: "2.1.2"
   context_ref:
     dependency: "direct overridden"
     description:
       path: "../packages/context_ref"
       relative: true
     source: path
-    version: "1.0.4"
+    version: "1.1.0"
   context_watch:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch"
       relative: true
     source: path
-    version: "3.0.0"
+    version: "3.1.0"
   context_watch_base:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch_base"
       relative: true
     source: path
-    version: "3.0.0"
+    version: "3.1.0"
   context_watch_beacon:
     dependency: "direct main"
     description:
@@ -90,21 +90,21 @@ packages:
       path: "../packages/context_watch_bloc"
       relative: true
     source: path
-    version: "1.0.3"
+    version: "1.0.4"
   context_watch_getx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_getx"
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.0.2"
   context_watch_mobx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_mobx"
       relative: true
     source: path
-    version: "1.0.3"
+    version: "1.0.4"
   context_watch_signals:
     dependency: "direct main"
     description:

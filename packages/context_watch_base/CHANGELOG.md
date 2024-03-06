@@ -1,3 +1,7 @@
+## 3.1.0
+
+ - **FEAT**: Subscriptions are now kept throughout the Element re-parenting.
+
 ## 3.0.0
 
 > Note: This release has breaking changes.

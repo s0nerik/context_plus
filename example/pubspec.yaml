@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_plus: ^2.1.1
+  context_plus: ^2.1.2
   rxdart: ^0.27.7
   syntax_highlight: ^0.3.0
   dolumns: ^2.0.1
@@ -23,7 +23,7 @@ dependencies:
   # MobX
   mobx: ^2.2.3
   flutter_mobx: ^2.2.0+1
-  context_watch_mobx: ^1.0.3
+  context_watch_mobx: ^1.0.4
 
   # Beacon
   state_beacon: ^0.14.5
@@ -31,11 +31,11 @@ dependencies:
 
   # Bloc
   flutter_bloc: ^8.1.2
-  context_watch_bloc: ^1.0.3
+  context_watch_bloc: ^1.0.4
 
   # GetX
   get: ^4.6.6
-  context_watch_getx: ^1.0.1
+  context_watch_getx: ^1.0.2
 
 dev_dependencies:
   flutter_test:

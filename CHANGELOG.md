@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_watch` - `v3.1.0`](#context_watch---v310)
+ - [`context_watch_base` - `v3.1.0`](#context_watch_base---v310)
+ - [`context_plus` - `v2.1.2`](#context_plus---v212)
+ - [`context_watch_mobx` - `v1.0.4`](#context_watch_mobx---v104)
+ - [`context_watch_getx` - `v1.0.2`](#context_watch_getx---v102)
+ - [`context_watch_bloc` - `v1.0.4`](#context_watch_bloc---v104)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v2.1.2`
+ - `context_watch_mobx` - `v1.0.4`
+ - `context_watch_getx` - `v1.0.2`
+ - `context_watch_bloc` - `v1.0.4`
+
+---
+
+#### `context_watch` - `v3.1.0`
+
+ - **FEAT**: Subscriptions are now kept throughout the Element re-parenting.
+
+#### `context_watch_base` - `v3.1.0`
+
+ - **FEAT**: Subscriptions are now kept throughout the Element re-parenting.
+
+
 ## 2024-03-06
 
 ### Changes

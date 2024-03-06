@@ -135,4 +135,117 @@ void main() {
       expect(rebuilds, 5);
     },
   );
+
+  testWidgets('value.watch() handles the GlobalKey re-parenting (1)',
+      (widgetTester) async {
+    final returnChildImmediately = ValueNotifier(true);
+    final globalKey = GlobalKey();
+    final notifier = _TestChangeNotifier();
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: Builder(
+          builder: (context) {
+            if (returnChildImmediately.watch(context)) {
+              return _ReparentedChild(
+                key: globalKey,
+                listenable: notifier,
+              );
+            }
+            return SizedBox(
+              child: _ReparentedChild(
+                key: globalKey,
+                listenable: notifier,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    expect(notifier.listeners, 1);
+    expect(notifier.addListenerCalls, 1);
+    expect(notifier.removeListenerCalls, 0);
+
+    returnChildImmediately.value = false;
+    await widgetTester.pumpAndSettle();
+    expect(notifier.listeners, 1);
+    expect(notifier.addListenerCalls, 1);
+    expect(notifier.removeListenerCalls, 0);
+  });
+
+  testWidgets('value.watch() handles the GlobalKey re-parenting (2)',
+      (widgetTester) async {
+    final returnChildImmediately = ValueNotifier(true);
+    final globalKey = GlobalKey();
+    final notifier = _TestChangeNotifier();
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: Builder(
+          builder: (context) {
+            if (returnChildImmediately.watch(context)) {
+              return SizedBox(
+                key: globalKey,
+                child: _ReparentedChild(
+                  listenable: notifier,
+                ),
+              );
+            }
+            return Center(
+              child: SizedBox(
+                key: globalKey,
+                child: _ReparentedChild(
+                  listenable: notifier,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    expect(notifier.listeners, 1);
+    expect(notifier.addListenerCalls, 1);
+    expect(notifier.removeListenerCalls, 0);
+
+    returnChildImmediately.value = false;
+    await widgetTester.pumpAndSettle();
+    expect(notifier.listeners, 1);
+    expect(notifier.addListenerCalls, 1);
+    expect(notifier.removeListenerCalls, 0);
+  });
+}
+
+class _ReparentedChild extends StatelessWidget {
+  const _ReparentedChild({
+    super.key,
+    required this.listenable,
+  });
+
+  final Listenable listenable;
+
+  @override
+  Widget build(BuildContext context) {
+    listenable.watch(context);
+    return const SizedBox.shrink();
+  }
+}
+
+class _TestChangeNotifier extends ChangeNotifier {
+  int addListenerCalls = 0;
+  int removeListenerCalls = 0;
+  int listeners = 0;
+
+  @override
+  void addListener(VoidCallback listener) {
+    super.addListener(listener);
+    listeners++;
+    addListenerCalls++;
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    listeners--;
+    removeListenerCalls++;
+    super.removeListener(listener);
+  }
 }

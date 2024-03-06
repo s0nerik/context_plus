@@ -224,7 +224,7 @@ void main() {
   });
 
   testWidgets(
-      'Ref.bindValue() marks children elements as dirty when the value changes',
+      'Ref.bindValue() marks child elements as dirty when the value changes',
       (widgetTester) async {
     final valueToProvide = ValueNotifier<int>(0);
     var providerRebuilds = 0;
@@ -316,7 +316,7 @@ void main() {
     expect(observedValue, 3);
   });
 
-  testWidgets('Ref.of(context) correctly reacts the GlobalKey re-parenting',
+  testWidgets('Ref.of(context) correctly reacts to the GlobalKey re-parenting',
       (widgetTester) async {
     final selectedProvider = ValueNotifier<int>(1);
 
@@ -367,6 +367,94 @@ void main() {
     await widgetTester.pumpAndSettle();
     expect(observedValue, 3);
   });
+
+  testWidgets('Ref.bind() handles the GlobalKey re-parenting (1)',
+      (widgetTester) async {
+    final returnChildImmediately = ValueNotifier(true);
+    final ref = Ref<Object>();
+    final globalKey = GlobalKey();
+
+    var disposeCalls = 0;
+    void onDisposeRef() {
+      disposeCalls++;
+    }
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(
+            builder: (context) {
+              if (returnChildImmediately.watch(context)) {
+                return _ReparentedChild(
+                  key: globalKey,
+                  ref: ref,
+                  onDisposeRef: onDisposeRef,
+                );
+              }
+              return SizedBox(
+                child: _ReparentedChild(
+                  key: globalKey,
+                  ref: ref,
+                  onDisposeRef: onDisposeRef,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    expect(disposeCalls, 0);
+
+    returnChildImmediately.value = false;
+    await widgetTester.pumpAndSettle();
+    expect(disposeCalls, 0);
+  });
+
+  testWidgets('Ref.bind() handles the GlobalKey re-parenting (2)',
+      (widgetTester) async {
+    final returnChildImmediately = ValueNotifier(true);
+    final ref = Ref<Object>();
+    final globalKey = GlobalKey();
+
+    var disposeCalls = 0;
+    void onDisposeRef() {
+      disposeCalls++;
+    }
+
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(
+            builder: (context) {
+              if (returnChildImmediately.watch(context)) {
+                return SizedBox(
+                  key: globalKey,
+                  child: _ReparentedChild(
+                    ref: ref,
+                    onDisposeRef: onDisposeRef,
+                  ),
+                );
+              }
+              return Center(
+                child: SizedBox(
+                  key: globalKey,
+                  child: _ReparentedChild(
+                    ref: ref,
+                    onDisposeRef: onDisposeRef,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    expect(disposeCalls, 0);
+
+    returnChildImmediately.value = false;
+    await widgetTester.pumpAndSettle();
+    expect(disposeCalls, 0);
+  });
 }
 
 class _TestChangeNotifier extends ChangeNotifier {
@@ -391,5 +479,26 @@ class _CounterWidget extends StatelessWidget {
     _counterRef.of(context);
     widgetBuilds++;
     return const Placeholder();
+  }
+}
+
+class _ReparentedChild extends StatelessWidget {
+  const _ReparentedChild({
+    super.key,
+    required this.ref,
+    required this.onDisposeRef,
+  });
+
+  final Ref<Object> ref;
+  final VoidCallback onDisposeRef;
+
+  @override
+  Widget build(BuildContext context) {
+    ref.bind(
+      context,
+      () => Object(),
+      dispose: (_) => onDisposeRef(),
+    );
+    return const SizedBox.shrink();
   }
 }

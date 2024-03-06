@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_ref` - `v1.1.0`](#context_ref---v110)
+ - [`context_plus` - `v2.1.1`](#context_plus---v211)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v2.1.1`
+
+---
+
+#### `context_ref` - `v1.1.0`
+
+ - **FEAT**: Element re-parenting support.
+
+
 ## 2024-03-03
 
 ### Changes

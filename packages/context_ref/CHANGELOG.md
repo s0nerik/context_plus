@@ -1,3 +1,7 @@
+## 1.1.0
+
+ - **FEAT**: Element re-parenting support.
+
 ## 1.0.4
 
  - **REFACTOR**: extension-based API for both Ref and ReadOnlyRef.

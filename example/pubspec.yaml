@@ -48,7 +48,7 @@ flutter:
     - lib/examples/
     - lib/examples/context_ref_bind/
     - lib/examples/context_ref_bind_value/
-    - lib/examples/context_watch/
+    - lib/examples/animation_controller/
     - lib/examples/rainbow/
     - lib/examples/context_watch_listenable/
     - lib/examples/context_plus_screen_state/

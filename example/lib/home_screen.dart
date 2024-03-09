@@ -9,7 +9,7 @@ import 'examples/rainbow_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/nested_scopes_example_screen.dart';
-import 'examples/context_watch_example_screen.dart';
+import 'examples/animation_controller_example_screen.dart';
 import 'examples/counter_example_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
@@ -46,6 +46,12 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
+                    onPressed: () =>
+                        context.url = AnimationControllerExampleScreen.urlPath,
+                    child: const Text(AnimationControllerExampleScreen.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
                     onPressed: () => context.url = RainbowExampleScreen.urlPath,
                     child: const Text(RainbowExampleScreen.title),
                   ),
@@ -75,12 +81,6 @@ class HomeScreen extends StatelessWidget {
               _Group(
                 title: 'context_watch',
                 children: [
-                  OutlinedButton(
-                    onPressed: () =>
-                        context.url = ContextWatchExampleScreen.urlPath,
-                    child: const Text(ContextWatchExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () => context.url =
                         ContextWatchListenableExampleScreen.urlPath,

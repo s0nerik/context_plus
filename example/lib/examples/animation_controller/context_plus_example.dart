@@ -1,8 +1,6 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../../other/context_animation_controller.dart';
-
 final _animCtrl = Ref<AnimationController>();
 
 class Example extends StatelessWidget {
@@ -12,8 +10,8 @@ class Example extends StatelessWidget {
   Widget build(BuildContext context) {
     _animCtrl.bind(
       context,
-      () => ContextAnimationController(
-        context: context,
+      (vsync) => AnimationController(
+        vsync: vsync,
         duration: const Duration(seconds: 1),
       )..repeat(min: 0.5, max: 1, reverse: true),
     );

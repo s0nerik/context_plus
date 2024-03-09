@@ -8,6 +8,7 @@ import 'src/hot_reload.dart';
 import 'src/ref.dart';
 
 export 'src/ref.dart' hide InternalReadOnlyRefAPI;
+export 'src/special_cases/vsync_ref_api.dart';
 
 class ContextRef {
   /// A widget that manages all [Ref] values and subscriptions.

@@ -3,10 +3,12 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-export 'package:context_ref/context_ref.dart' hide RefAPI, ReadOnlyRefAPI;
+export 'package:context_ref/context_ref.dart'
+    hide RefAPI, ReadOnlyRefAPI, AnimationControllerRefAPI, TabControllerRefAPI;
 export 'package:context_watch/context_watch.dart';
 
 export 'src/context_ref_watch_integration.dart';
+export 'src/context_ref_watch_special_cases_integration.dart';
 
 final class ContextPlus {
   ContextPlus._();

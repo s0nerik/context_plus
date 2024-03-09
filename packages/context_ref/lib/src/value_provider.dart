@@ -38,7 +38,7 @@ class ValueProvider<T> {
         if (value case ChangeNotifier cn) {
           cn.dispose();
         } else {
-          _tryDispose(value);
+          tryDispose(value);
         }
       }
     } finally {
@@ -61,7 +61,8 @@ class _ValueWrapper<T> {
   T value;
 }
 
-void _tryDispose(dynamic obj) {
+@internal
+void tryDispose(dynamic obj) {
   runZonedGuarded(
     () => obj.dispose(),
     (error, stack) {

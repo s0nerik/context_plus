@@ -7,7 +7,7 @@ import 'examples/context_plus_screen_state_example_screen.dart';
 import 'examples/context_ref_bind_example_screen.dart';
 import 'examples/context_ref_bind_value_example_screen.dart';
 import 'examples/nested_scopes_example_screen.dart';
-import 'examples/context_watch_example_screen.dart';
+import 'examples/animation_controller_example_screen.dart';
 import 'examples/context_watch_listenable_example_screen.dart';
 import 'examples/counter_example_screen.dart';
 import 'examples/counter_with_propagation_example_screen.dart';
@@ -23,7 +23,8 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     NestedScopesExampleScreen.urlPath => const NestedScopesExampleScreen(),
     BindExampleScreen.urlPath => const BindExampleScreen(),
     BindValueExampleScreen.urlPath => const BindValueExampleScreen(),
-    ContextWatchExampleScreen.urlPath => const ContextWatchExampleScreen(),
+    AnimationControllerExampleScreen.urlPath =>
+      const AnimationControllerExampleScreen(),
     RainbowExampleScreen.urlPath => const RainbowExampleScreen(),
     ContextWatchListenableExampleScreen.urlPath =>
       const ContextWatchListenableExampleScreen(),

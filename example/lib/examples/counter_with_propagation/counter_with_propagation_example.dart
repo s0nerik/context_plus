@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../other/example.dart';
-import 'counter_with_propagation/context_plus_bind_watch_value_example.dart'
-    as context_plus_bind_watch_value;
-import 'counter_with_propagation/stateful_widget_explicit_params.dart'
+import '../../other/example.dart';
+import 'variants/context_plus_bind_watch.dart' as context_plus_bind_watch_value;
+import 'variants/context_plus_stateful_bind_value.dart'
+    as context_plus_stateful_bind_value;
+import 'variants/stateful_widget_explicit_params.dart'
     as stateful_widget_explicit_params;
-import 'counter_with_propagation/stateful_widget_inherited_widget.dart'
+import 'variants/stateful_widget_inherited_widget.dart'
     as stateful_widget_inherited_widget;
 
-class CounterWithPropagationExampleScreen extends StatelessWidget {
-  const CounterWithPropagationExampleScreen({super.key});
+class CounterWithPropagationExample extends StatelessWidget {
+  const CounterWithPropagationExample({super.key});
 
   static const title = 'Counter (with propagation)';
   static const urlPath = '/counter_with_propagation_example';
@@ -17,28 +18,34 @@ class CounterWithPropagationExampleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ExampleScaffold(
+      exampleDir: 'counter_with_propagation',
       title: title,
       variants: [
         ExampleVariant(
+          file: 'context_plus_bind_watch.dart',
           title: 'context_plus: ValueNotifier + Ref.bind() + Ref.watch()',
-          filePath:
-              'counter_with_propagation/context_plus_bind_watch_value_example.dart',
           widget: Center(
             child: context_plus_bind_watch_value.Example(),
           ),
         ),
         ExampleVariant(
+          file: 'context_plus_stateful_bind_value.dart',
+          title:
+              'context_plus: StatefulWidget + Ref.bindValue() + Ref.of(context)',
+          widget: Center(
+            child: context_plus_stateful_bind_value.Example(),
+          ),
+        ),
+        ExampleVariant(
+          file: 'stateful_widget_explicit_params.dart',
           title: 'StatefulWidget (explicit params propagation)',
-          filePath:
-              'counter_with_propagation/stateful_widget_explicit_params.dart',
           widget: Center(
             child: stateful_widget_explicit_params.Example(),
           ),
         ),
         ExampleVariant(
+          file: 'stateful_widget_inherited_widget.dart',
           title: 'StatefulWidget + InheritedWidget',
-          filePath:
-              'counter_with_propagation/stateful_widget_inherited_widget.dart',
           widget: Center(
             child: stateful_widget_inherited_widget.Example(),
           ),

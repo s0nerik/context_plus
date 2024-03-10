@@ -1,21 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../other/example.dart';
-
-class _Counter extends InheritedWidget {
-  const _Counter({
-    required this.counter,
-    required super.child,
-  });
-
-  final int counter;
-
-  static int of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_Counter>()!.counter;
-
-  @override
-  bool updateShouldNotify(_Counter oldWidget) => counter != oldWidget.counter;
-}
+import '../../../other/example.dart';
 
 class Example extends StatefulWidget {
   const Example({super.key});
@@ -35,31 +20,32 @@ class _ExampleState extends State<Example> {
 
   @override
   Widget build(BuildContext context) {
-    return _Counter(
-      counter: counter,
-      child: const _Child1(),
-    );
+    return _Child1(counter: counter);
   }
 }
 
 class _Child1 extends StatelessWidget {
-  const _Child1();
+  const _Child1({required this.counter});
+
+  final int counter;
 
   @override
   Widget build(BuildContext context) {
-    return const _Child2();
+    return _Child2(counter: counter);
   }
 }
 
 class _Child2 extends StatelessWidget {
-  const _Child2();
+  const _Child2({required this.counter});
+
+  final int counter;
 
   @override
   Widget build(BuildContext context) {
     return CounterExample(
       onTap: () =>
           context.findAncestorStateOfType<_ExampleState>()!.increment(),
-      counter: _Counter.of(context),
+      counter: counter,
     );
   }
 }

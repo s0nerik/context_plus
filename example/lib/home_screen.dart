@@ -1,16 +1,13 @@
-import 'package:example/examples/context_plus_screen_state_example_screen.dart';
-import 'package:example/examples/context_watch_listenable_example_screen.dart';
-import 'package:example/examples/counter_with_propagation_example_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
 import 'benchmarks/context_watch/benchmark_screen.dart';
-import 'examples/rainbow_example_screen.dart';
-import 'examples/context_ref_bind_example_screen.dart';
-import 'examples/context_ref_bind_value_example_screen.dart';
-import 'examples/nested_scopes_example_screen.dart';
-import 'examples/animation_controller_example_screen.dart';
-import 'examples/counter_example_screen.dart';
+import 'examples/counter_with_propagation/counter_with_propagation_example.dart';
+import 'examples/derived_state/derived_state_example.dart';
+import 'examples/rainbow/rainbow_example.dart';
+import 'examples/nested_scopes/nested_scopes_example.dart';
+import 'examples/animation_controller/animation_controller_example.dart';
+import 'examples/counter/counter_example.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -34,60 +31,41 @@ class HomeScreen extends StatelessWidget {
                 title: 'Examples',
                 children: [
                   OutlinedButton(
-                    onPressed: () => context.url = CounterExampleScreen.urlPath,
-                    child: const Text(CounterExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () => context.url =
-                        CounterWithPropagationExampleScreen.urlPath,
-                    child:
-                        const Text(CounterWithPropagationExampleScreen.title),
+                    onPressed: () => context.url = CounterExample.urlPath,
+                    child: const Text(CounterExample.title),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () =>
-                        context.url = AnimationControllerExampleScreen.urlPath,
-                    child: const Text(AnimationControllerExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () => context.url = RainbowExampleScreen.urlPath,
-                    child: const Text(RainbowExampleScreen.title),
+                        context.url = CounterWithPropagationExample.urlPath,
+                    child: const Text(CounterWithPropagationExample.title),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () =>
-                        context.url = NestedScopesExampleScreen.urlPath,
-                    child: const Text(NestedScopesExampleScreen.title),
+                        context.url = AnimationControllerExample.urlPath,
+                    child: const Text(AnimationControllerExample.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.url = RainbowExample.urlPath,
+                    child: const Text(RainbowExample.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.url = NestedScopesExample.urlPath,
+                    child: const Text(NestedScopesExample.title),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.url = DerivedStateExample.urlPath,
+                    child: const Text(DerivedStateExample.title),
                   ),
                 ],
               ),
               _Group(
-                title: 'context_ref',
+                title: 'Other',
                 children: [
-                  OutlinedButton(
-                    onPressed: () => context.url = BindExampleScreen.urlPath,
-                    child: const Text(BindExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () =>
-                        context.url = BindValueExampleScreen.urlPath,
-                    child: const Text(BindValueExampleScreen.title),
-                  ),
-                ],
-              ),
-              _Group(
-                title: 'context_watch',
-                children: [
-                  OutlinedButton(
-                    onPressed: () => context.url =
-                        ContextWatchListenableExampleScreen.urlPath,
-                    child:
-                        const Text(ContextWatchListenableExampleScreen.title),
-                  ),
-                  const SizedBox(height: 16),
                   OutlinedButton(
                     onPressed: () => context.url = BenchmarkScreen.urlPath,
                     child: const Text(BenchmarkScreen.title),
@@ -97,17 +75,6 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () =>
                         context.url = ContextWatchHotReloadTestScreen.urlPath,
                     child: const Text(ContextWatchHotReloadTestScreen.title),
-                  ),
-                ],
-              ),
-              _Group(
-                title: 'context_plus',
-                children: [
-                  OutlinedButton(
-                    onPressed: () => context.url =
-                        ContextPlusScreenStateExampleScreen.urlPath,
-                    child:
-                        const Text(ContextPlusScreenStateExampleScreen.title),
                   ),
                 ],
               ),

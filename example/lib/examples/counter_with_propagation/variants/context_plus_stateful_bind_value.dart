@@ -1,16 +1,29 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../../other/example.dart';
+import '../../../other/example.dart';
 
-final _counterNotifier = Ref<ValueNotifier<int>>();
+final _counterNotifier = Ref<int>();
 
-class Example extends StatelessWidget {
+class Example extends StatefulWidget {
   const Example({super.key});
 
   @override
+  State<Example> createState() => _ExampleState();
+}
+
+class _ExampleState extends State<Example> {
+  int _counter = 0;
+
+  void increment() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _counterNotifier.bind(context, () => ValueNotifier(0));
+    _counterNotifier.bindValue(context, _counter);
     return const _Child1();
   }
 }
@@ -30,8 +43,9 @@ class _Child2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CounterExample(
-      onTap: () => _counterNotifier.of(context).value += 1,
-      counter: _counterNotifier.watch(context),
+      onTap: () =>
+          context.findAncestorStateOfType<_ExampleState>()!.increment(),
+      counter: _counterNotifier.of(context),
     );
   }
 }

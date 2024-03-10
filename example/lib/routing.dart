@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
 import 'benchmarks/context_watch/benchmark_screen.dart';
-import 'examples/rainbow_example_screen.dart';
-import 'examples/context_plus_screen_state_example_screen.dart';
-import 'examples/context_ref_bind_example_screen.dart';
-import 'examples/context_ref_bind_value_example_screen.dart';
-import 'examples/nested_scopes_example_screen.dart';
-import 'examples/animation_controller_example_screen.dart';
-import 'examples/context_watch_listenable_example_screen.dart';
-import 'examples/counter_example_screen.dart';
-import 'examples/counter_with_propagation_example_screen.dart';
+import 'examples/derived_state/derived_state_example.dart';
+import 'examples/rainbow/rainbow_example.dart';
+import 'examples/nested_scopes/nested_scopes_example.dart';
+import 'examples/animation_controller/animation_controller_example.dart';
+import 'examples/counter/counter_example.dart';
+import 'examples/counter_with_propagation/counter_with_propagation_example.dart';
 import 'home_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
@@ -20,19 +17,13 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     BenchmarkScreen.urlPath => const BenchmarkScreen(),
     ContextWatchHotReloadTestScreen.urlPath =>
       const ContextWatchHotReloadTestScreen(),
-    NestedScopesExampleScreen.urlPath => const NestedScopesExampleScreen(),
-    BindExampleScreen.urlPath => const BindExampleScreen(),
-    BindValueExampleScreen.urlPath => const BindValueExampleScreen(),
-    AnimationControllerExampleScreen.urlPath =>
-      const AnimationControllerExampleScreen(),
-    RainbowExampleScreen.urlPath => const RainbowExampleScreen(),
-    ContextWatchListenableExampleScreen.urlPath =>
-      const ContextWatchListenableExampleScreen(),
-    ContextPlusScreenStateExampleScreen.urlPath =>
-      const ContextPlusScreenStateExampleScreen(),
-    CounterExampleScreen.urlPath => const CounterExampleScreen(),
-    CounterWithPropagationExampleScreen.urlPath =>
-      const CounterWithPropagationExampleScreen(),
+    NestedScopesExample.urlPath => const NestedScopesExample(),
+    AnimationControllerExample.urlPath => const AnimationControllerExample(),
+    RainbowExample.urlPath => const RainbowExample(),
+    DerivedStateExample.urlPath => const DerivedStateExample(),
+    CounterExample.urlPath => const CounterExample(),
+    CounterWithPropagationExample.urlPath =>
+      const CounterWithPropagationExample(),
     _ => null,
   };
 }

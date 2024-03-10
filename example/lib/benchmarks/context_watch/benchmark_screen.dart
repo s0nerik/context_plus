@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:performance/performance.dart';
 
 import 'common/observable_listener_types.dart';
 import 'common/observer.dart';
@@ -63,7 +63,7 @@ class BenchmarkScreen extends StatefulWidget {
 
   final Duration tileObservableNotifyInterval;
 
-  static const title = 'context_watch vs others';
+  static const title = 'Value observing benchmark';
   static const urlPath = '/context_watch_benchmark';
 
   @override
@@ -396,12 +396,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   }
 
   Widget _buildPerformanceOverlay() {
-    return SizedBox(
+    return const SizedBox(
       height: 36,
-      child: PerformanceOverlay(
-        optionsMask:
-            1 << PerformanceOverlayOption.displayRasterizerStatistics.index |
-                1 << PerformanceOverlayOption.displayEngineStatistics.index,
+      child: CustomPerformanceOverlay(
+        alignment: Alignment.center,
+        child: SizedBox(),
       ),
     );
   }

@@ -15,6 +15,7 @@ dependencies:
   dolumns: ^2.0.1
   url_router: ^0.2.1+3
   linked_scroll_controller: ^0.2.0
+  performance: ^0.1.1
 
   # Signals
   signals_flutter: ^1.0.1
@@ -45,16 +46,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/examples/
-    - lib/examples/context_ref_bind/
-    - lib/examples/context_ref_bind_value/
-    - lib/examples/animation_controller/
-    - lib/examples/rainbow/
-    - lib/examples/context_watch_listenable/
-    - lib/examples/context_plus_screen_state/
-    - lib/examples/counter/
-    - lib/examples/counter_with_propagation/
-    - lib/examples/nested_scopes/
+    - lib/examples/animation_controller/variants/
+    - lib/examples/rainbow/variants/
+    - lib/examples/derived_state/variants/
+    - lib/examples/counter/variants/
+    - lib/examples/counter_with_propagation/variants/
+    - lib/examples/nested_scopes/variants/
   fonts:
     - family: JetBrains Mono
       fonts:

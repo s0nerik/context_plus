@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../other/example.dart';
-import 'rainbow/context_plus_example.dart' as context_plus;
-import 'rainbow/stateful_widget_example.dart' as stateful_widget;
+import '../../other/example.dart';
+import 'variants/context_plus.dart' as context_plus;
+import 'variants/stateful_widget.dart' as stateful_widget;
 
-class RainbowExampleScreen extends StatelessWidget {
-  const RainbowExampleScreen({super.key});
+class RainbowExample extends StatelessWidget {
+  const RainbowExample({super.key});
 
   static const title = 'Rainbow example';
   static const urlPath = '/rainbow_example';
@@ -13,16 +13,17 @@ class RainbowExampleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ExampleScaffold(
+      exampleDir: 'rainbow',
       title: title,
       variants: [
         ExampleVariant(
+          file: 'context_plus.dart',
           title: 'context_plus',
-          filePath: 'rainbow/context_plus_example.dart',
           widget: context_plus.Example(),
         ),
         ExampleVariant(
+          file: 'stateful_widget.dart',
           title: 'StatefulWidget',
-          filePath: 'rainbow/stateful_widget_example.dart',
           widget: stateful_widget.Example(),
         ),
       ],

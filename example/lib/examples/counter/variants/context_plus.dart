@@ -1,7 +1,7 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../../other/example.dart';
+import '../../../other/example.dart';
 
 final _counterNotifier = Ref<ValueNotifier<int>>();
 

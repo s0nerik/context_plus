@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 class _State with ChangeNotifier {
   int _counter = 0;
   int get counter => _counter;
-  set counter(int value) {
-    _counter = value;
+  int get counterSquared => _counter * _counter;
+
+  void increment() {
+    _counter += 1;
     notifyListeners();
   }
 }
@@ -24,6 +26,8 @@ class Example extends StatelessWidget {
       children: [
         _Counter(),
         SizedBox(height: 16),
+        _CounterSquared(),
+        SizedBox(height: 16),
         _IncrementButton(),
       ],
     );
@@ -35,8 +39,18 @@ class _Counter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counter = _state.watchOnly(context, (state) => state.counter);
-    return Text(counter.toString());
+    final counter = _state.watchOnly(context, (_) => _.counter);
+    return Text('Counter: $counter');
+  }
+}
+
+class _CounterSquared extends StatelessWidget {
+  const _CounterSquared();
+
+  @override
+  Widget build(BuildContext context) {
+    final counterSquared = _state.watchOnly(context, (_) => _.counterSquared);
+    return Text('Counter²: $counterSquared');
   }
 }
 
@@ -46,7 +60,7 @@ class _IncrementButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () => _state.of(context).counter += 1,
+      onPressed: _state.of(context).increment,
       child: const Text('Increment'),
     );
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../other/example.dart';
-import 'counter/context_plus_bind_watch_value_example.dart'
-    as context_plus_bind_watch_value;
-import 'counter/stateful_widget.dart' as stateful_widget;
+import '../../other/example.dart';
+import 'variants/context_plus.dart' as context_plus_bind_watch_value;
+import 'variants/stateful_widget.dart' as stateful_widget;
 
-class CounterExampleScreen extends StatelessWidget {
-  const CounterExampleScreen({super.key});
+class CounterExample extends StatelessWidget {
+  const CounterExample({super.key});
 
   static const title = 'Counter';
   static const urlPath = '/counter_example';
@@ -14,18 +13,19 @@ class CounterExampleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ExampleScaffold(
+      exampleDir: 'counter',
       title: title,
       variants: [
         ExampleVariant(
+          file: 'context_plus.dart',
           title: 'context_plus: ValueNotifier + Ref.bind() + Ref.watch()',
-          filePath: 'counter/context_plus_bind_watch_value_example.dart',
           widget: Center(
             child: context_plus_bind_watch_value.Example(),
           ),
         ),
         ExampleVariant(
+          file: 'stateful_widget.dart',
           title: 'StatefulWidget',
-          filePath: 'counter/stateful_widget.dart',
           widget: Center(
             child: stateful_widget.Example(),
           ),

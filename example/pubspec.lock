@@ -258,6 +258,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  performance:
+    dependency: "direct main"
+    description:
+      name: performance
+      sha256: "64c20474bc0704cb450d0b183d81ac36b651c1a99f9934b85fbb97b441e7c772"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   provider:
     dependency: transitive
     description:

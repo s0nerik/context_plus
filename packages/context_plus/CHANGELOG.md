@@ -1,3 +1,7 @@
+## 2.2.0
+
+ - **FEAT**: Added a simplified way of binding the TickerProvider-dependent controllers.
+
 ## 2.1.2
 
  - Update a dependency to the latest release.

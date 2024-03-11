@@ -1,3 +1,7 @@
+## 1.2.0
+
+ - **FEAT**: Added a simplified way of binding the TickerProvider-dependent controllers.
+
 ## 1.1.0
 
  - **FEAT**: Element re-parenting support.

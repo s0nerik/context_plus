@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-12
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v2.2.0`](#context_plus---v220)
+ - [`context_ref` - `v1.2.0`](#context_ref---v120)
+
+---
+
+#### `context_plus` - `v2.2.0`
+
+ - **FEAT**: Added a simplified way of binding the TickerProvider-dependent controllers.
+
+#### `context_ref` - `v1.2.0`
+
+ - **FEAT**: Added a simplified way of binding the TickerProvider-dependent controllers.
+
+
 ## 2024-03-07
 
 ### Changes

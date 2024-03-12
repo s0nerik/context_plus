@@ -55,7 +55,7 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "2.2.1"
+    version: "2.2.2"
   context_ref:
     dependency: "direct overridden"
     description:
@@ -69,7 +69,7 @@ packages:
       path: "../packages/context_watch"
       relative: true
     source: path
-    version: "3.1.0"
+    version: "3.1.1"
   context_watch_base:
     dependency: "direct overridden"
     description:

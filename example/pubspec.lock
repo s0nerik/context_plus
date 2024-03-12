@@ -55,14 +55,14 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "2.1.2"
+    version: "2.2.0"
   context_ref:
     dependency: "direct overridden"
     description:
       path: "../packages/context_ref"
       relative: true
     source: path
-    version: "1.1.0"
+    version: "1.2.0"
   context_watch:
     dependency: "direct overridden"
     description:

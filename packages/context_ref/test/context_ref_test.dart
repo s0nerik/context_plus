@@ -196,6 +196,93 @@ void main() {
     expect(providedNotifier, oldProvidedNotifier3);
   });
 
+  testWidgets(
+      'Ref.bind(key: ) performs deep comparison on Lists, Maps and Sets',
+      (widgetTester) async {
+    int builds = 0;
+    int providerCalls = 0;
+
+    final buildRequest = ChangeNotifier();
+    final valueRef = Ref<int>();
+
+    Object? Function() buildKey = () => [1];
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: ContextRef.root(
+          child: Builder(
+            builder: (context) {
+              builds++;
+              buildRequest.watch(context);
+              valueRef.bind(context, () {
+                providerCalls++;
+                return 0;
+              }, key: buildKey());
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+    expect(builds, 1);
+    expect(providerCalls, 1);
+
+    // If List key values didn't change - the provider is not triggered again
+    buildKey = () => [1];
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 2);
+    expect(providerCalls, 1);
+
+    // If List key values did change - the provider is triggered again
+    buildKey = () => [1, 2];
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 3);
+    expect(providerCalls, 2);
+
+    // If key type changes - the provider is triggered again
+    buildKey = () => {1, 2};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 4);
+    expect(providerCalls, 3);
+
+    // If Set key values didn't change - the provider is not triggered again
+    buildKey = () => {1, 2};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 5);
+    expect(providerCalls, 3);
+
+    // If Set key values did change - the provider is triggered again
+    buildKey = () => {1, 2, 3};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 6);
+    expect(providerCalls, 4);
+
+    // If key type changes - the provider is triggered again
+    buildKey = () => {'a': 1, 'b': 2, 'c': 3};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 7);
+    expect(providerCalls, 5);
+
+    // If Map key values didn't change - the provider is not triggered again
+    buildKey = () => {'a': 1, 'b': 2, 'c': 3};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 8);
+    expect(providerCalls, 5);
+
+    // If Map key values did change - the provider is triggered again
+    buildKey = () => {'a': 1, 'b': 2, 'c': 4};
+    buildRequest.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 9);
+    expect(providerCalls, 6);
+  });
+
   testWidgets('Ref.bindLazy() initializes the value lazily and only once',
       (widgetTester) async {
     int generatedIndex = 0;

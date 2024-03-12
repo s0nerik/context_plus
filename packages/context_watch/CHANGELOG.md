@@ -1,3 +1,7 @@
+## 3.1.1
+
+ - **DOCS**: Updated README.md.
+
 ## 3.1.0
 
  - **FEAT**: Subscriptions are now kept throughout the Element re-parenting.

@@ -3,7 +3,6 @@ description: "context_watch adapter for signals package"
 version: 1.0.0-dev.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
-publish_to: "none"
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
@@ -13,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   context_watch_base: ^3.1.0
-  signals_flutter: ^1.0.1
+  signals_flutter: ^4.5.1
 
 dev_dependencies:
   flutter_test:

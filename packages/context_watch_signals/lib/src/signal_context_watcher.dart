@@ -59,7 +59,7 @@ extension SignalContextWatchValueExtension<T> on ReadonlySignal<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  R watchValue<R>(BuildContext context, R Function(T value) selector) {
+  R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch<T>(context, this, selector: selector);
     return selector(value);

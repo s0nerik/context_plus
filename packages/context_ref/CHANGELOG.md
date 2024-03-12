@@ -1,3 +1,7 @@
+## 1.3.0
+
+ - **FEAT**: Per-element equality checks for List, Set and Map keys Ref.bind(key: ...).
+
 ## 1.2.0
 
  - **FEAT**: Added a simplified way of binding the TickerProvider-dependent controllers.

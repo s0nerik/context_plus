@@ -15,6 +15,34 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`context_ref` - `v1.3.0`](#context_ref---v130)
+ - [`context_plus` - `v2.2.1`](#context_plus---v221)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v2.2.1`
+
+---
+
+#### `context_ref` - `v1.3.0`
+
+ - **FEAT**: Per-element equality checks for List, Set and Map keys Ref.bind(key: ...).
+
+
+## 2024-03-12
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`context_plus` - `v2.2.0`](#context_plus---v220)
  - [`context_ref` - `v1.2.0`](#context_ref---v120)
 

@@ -18,8 +18,8 @@ dependencies:
   performance: ^0.1.1
 
   # Signals
-  signals_flutter: ^1.0.1
-  context_watch_signals: ^1.0.0-dev.2
+  signals_flutter: ^4.5.1
+  context_watch_signals: ^1.0.0
 
   # MobX
   mobx: ^2.2.3

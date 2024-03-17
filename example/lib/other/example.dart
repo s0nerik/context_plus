@@ -35,8 +35,11 @@ class ExampleScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     _exampleDir.bindValue(context, exampleDir);
     _exampleVariants.bindValue(context, variants);
-    _tabController.bind(context,
-        (vsync) => TabController(vsync: vsync, length: variants.length));
+    _tabController.bind(
+      context,
+      (vsync) => TabController(vsync: vsync, length: variants.length),
+      key: variants.length,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Column(

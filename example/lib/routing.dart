@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
 import 'benchmarks/context_watch/benchmark_screen.dart';
+import 'examples/country_search/country_search_example.dart';
 import 'examples/derived_state/derived_state_example.dart';
 import 'examples/rainbow/rainbow_example.dart';
 import 'examples/nested_scopes/nested_scopes_example.dart';
@@ -24,6 +25,7 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     CounterExample.urlPath => const CounterExample(),
     CounterWithPropagationExample.urlPath =>
       const CounterWithPropagationExample(),
+    CountrySearchExample.urlPath => const CountrySearchExample(),
     _ => null,
   };
 }

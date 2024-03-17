@@ -14,7 +14,7 @@ import 'routing.dart';
 void main() {
   ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
   FlutterError.onError = ContextPlus.onError(FlutterError.onError);
-  signals.disableSignalsDevTools();
+  signals.signalsDevToolsEnabled = false;
   runApp(const _App());
 }
 

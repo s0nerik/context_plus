@@ -17,6 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   rxdart: ^0.27.7
+  async_listenable: ^1.0.1
   meta: ^1.9.1
   context_watch_base: ^3.1.0
 

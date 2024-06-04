@@ -1,3 +1,4 @@
+import 'package:async_listenable/async_listenable.dart';
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -94,5 +95,22 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this);
     return value;
+  }
+}
+
+extension AsyncListenableContextWatchExtension<T> on AsyncListenable<T> {
+  /// Watch this [AsyncListenable] for changes.
+  ///
+  /// Whenever this [AsyncListenable] notifies of a change, the [context] will
+  /// be rebuilt.
+  ///
+  /// Returns the current [AsyncSnapshot] of the [AsyncListenable].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  AsyncSnapshot<T> watch(BuildContext context) {
+    final watchRoot = InheritedContextWatch.of(context);
+    watchRoot.watch(context, this);
+    return snapshot;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:async_listenable/async_listenable.dart';
 import 'package:context_ref/context_ref.dart' as context_ref;
 import 'package:context_watch/context_watch.dart' as context_watch;
 import 'package:flutter/foundation.dart';
@@ -110,6 +111,21 @@ extension ReadOnlyRefValueListenableWatchAPI<T>
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) =>
+      ReadOnlyRefAPI(this).of(context).watch(context);
+}
+
+extension ReadOnlyRefAsyncListenableWatchAPI<T>
+    on context_ref.ReadOnlyRef<AsyncListenable<T>> {
+  /// Watch this [AsyncListenable] for changes.
+  ///
+  /// Whenever this [AsyncListenable] notifies of a change, the [context] will
+  /// be rebuilt.
+  ///
+  /// Returns the current [AsyncSnapshot] of the [AsyncListenable].
+  ///
+  /// It is safe to call this method multiple times within the same build
+  /// method.
+  AsyncSnapshot<T> watch(BuildContext context) =>
       ReadOnlyRefAPI(this).of(context).watch(context);
 }
 

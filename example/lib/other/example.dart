@@ -86,8 +86,17 @@ class ExampleScaffold extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const Expanded(
-                      child: _SelectedExampleCode(),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController.of(context),
+                        children: [
+                          for (final variant in variants)
+                            _SelectedVariantCode(
+                              key: PageStorageKey(variant.file),
+                              variant: variant,
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -143,14 +152,19 @@ class _SelectedExample extends StatelessWidget {
   }
 }
 
-class _SelectedExampleCode extends StatefulWidget {
-  const _SelectedExampleCode();
+class _SelectedVariantCode extends StatefulWidget {
+  const _SelectedVariantCode({
+    super.key,
+    required this.variant,
+  });
+
+  final ExampleVariant variant;
 
   @override
-  State<_SelectedExampleCode> createState() => _SelectedExampleCodeState();
+  State<_SelectedVariantCode> createState() => _SelectedVariantCodeState();
 }
 
-class _SelectedExampleCodeState extends State<_SelectedExampleCode> {
+class _SelectedVariantCodeState extends State<_SelectedVariantCode> {
   static final _darkCodeThemeFuture = HighlighterTheme.loadDarkTheme();
   static final _lightCodeThemeFuture = HighlighterTheme.loadLightTheme();
   static final _fileContentFutures = <String, Future<String>>{};
@@ -177,11 +191,9 @@ class _SelectedExampleCodeState extends State<_SelectedExampleCode> {
         ? Highlighter(language: 'dart', theme: codeTheme)
         : null;
 
-    final selectedTabIndex =
-        _tabController.watchOnly(context, (ctrl) => ctrl.index);
-    final variant = _exampleVariants.of(context)[selectedTabIndex];
-    final codeFilePath =
-        'lib/examples/${_exampleDir.of(context)}/variants/${variant.file}';
+    final exampleDir = _exampleDir.of(context);
+    final codeFileName = widget.variant.file;
+    final codeFilePath = 'lib/examples/$exampleDir/variants/$codeFileName';
     final codeFuture = _fileContentFutures[codeFilePath] ??=
         DefaultAssetBundle.of(context)
             .loadString(codeFilePath)

@@ -47,8 +47,7 @@ class _AppState extends State<_App> {
       child: MaterialApp.router(
         routeInformationParser: const _UrlRouteParser(),
         routerDelegate: router,
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
+        theme: ThemeData.dark(),
       ),
     );
   }

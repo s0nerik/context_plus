@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../other/example.dart';
 
-final _counterNotifier = Ref<int>();
+final _counter = Ref<int>();
 
 class Example extends StatefulWidget {
   const Example({super.key});
@@ -13,17 +13,15 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends State<Example> {
-  int _counter = 0;
+  int _counterValue = 0;
 
   void increment() {
-    setState(() {
-      _counter++;
-    });
+    setState(() => _counterValue++);
   }
 
   @override
   Widget build(BuildContext context) {
-    _counterNotifier.bindValue(context, _counter);
+    _counter.bindValue(context, _counterValue);
     return const _Child1();
   }
 }
@@ -45,7 +43,7 @@ class _Child2 extends StatelessWidget {
     return CounterExample(
       onTap: () =>
           context.findAncestorStateOfType<_ExampleState>()!.increment(),
-      counter: _counterNotifier.of(context),
+      counter: _counter.of(context),
     );
   }
 }

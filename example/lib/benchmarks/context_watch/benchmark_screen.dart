@@ -64,6 +64,13 @@ class BenchmarkScreen extends StatefulWidget {
   final Duration tileObservableNotifyInterval;
 
   static const title = 'Value observing benchmark';
+  static const description =
+      'Compare performance of different value observing mechanisms/libraries.';
+  static const tags = [
+    'ValueListenable.watch()',
+    'Stream.watch()',
+  ];
+
   static const urlPath = '/context_watch_benchmark';
 
   @override

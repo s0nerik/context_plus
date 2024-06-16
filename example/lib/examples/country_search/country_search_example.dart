@@ -11,7 +11,17 @@ import 'variants/context_plus_state_1.dart' as context_plus_state_1;
 class CountrySearchExample extends StatelessWidget {
   const CountrySearchExample({super.key});
 
-  static const title = 'Live search example';
+  static const title = 'Live search';
+  static const description =
+      'Example that demonstrates how different approaches compare when building a more complex UI.';
+  static const tags = [
+    'Ref.bind()',
+    'Ref.of(context)',
+    'Ref.watch()',
+    'Ref.watchOnly()',
+    'ValueListenable.watch()',
+  ];
+
   static const urlPath = '/country_search_example';
 
   @override

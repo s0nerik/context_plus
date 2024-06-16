@@ -8,6 +8,10 @@ class RainbowExample extends StatelessWidget {
   const RainbowExample({super.key});
 
   static const title = 'Rainbow example';
+  static const description =
+      'A slightly more complicated example that shows how various things can be provided and observed at the same time.';
+  static const tags = ['Ref.bind()', 'Ref.bindValue()', 'Ref.of(context)'];
+
   static const urlPath = '/rainbow_example';
 
   @override

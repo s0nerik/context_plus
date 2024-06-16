@@ -1,4 +1,5 @@
 import 'package:context_plus/context_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_sequence_animation/flutter_sequence_animation.dart';
@@ -21,38 +22,43 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        scrollDirection: Axis.vertical,
-        pageSnapping: false,
-        children: const [
-          _IntroPage(),
-          _ExamplesPage(),
-        ],
+    return const Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _Intro(),
+            _Examples(),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _IntroPage extends StatelessWidget {
-  const _IntroPage();
+class _Intro extends StatelessWidget {
+  const _Intro();
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: _margin),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: _margin),
-            child: _IntroImage(),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: _margin),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: _margin),
+              child: _IntroImage(),
+            ),
           ),
-        ),
-        SizedBox(height: 24),
-        _IntroShortDescription(),
-        SizedBox(height: _margin),
-      ],
+          SizedBox(height: 24),
+          _IntroShortDescription(),
+          SizedBox(height: _margin),
+        ],
+      ),
     );
   }
 }
@@ -78,17 +84,25 @@ class _IntroShortDescription extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          "Bind and observe values for a BuildContext, conveniently",
-          style: Theme.of(context).textTheme.titleLarge,
-          textAlign: TextAlign.center,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text.rich(
+            textAlign: TextAlign.center,
+            TextSpan(
+              style: Theme.of(context).textTheme.titleLarge,
+              children: const [
+                TextSpan(text: 'Bind and observe values for a '),
+                TextSpan(
+                  text: 'BuildContext',
+                  style: TextStyle(color: Colors.lightBlueAccent),
+                ),
+                TextSpan(text: ', conveniently.'),
+              ],
+            ),
+          ),
         ),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _IntroShortDescriptionArrow(),
-          ],
-        ),
+        const SizedBox(height: 4),
+        const _IntroShortDescriptionArrow(),
       ],
     );
   }
@@ -174,105 +188,193 @@ class _IntroShortDescriptionArrow extends StatelessWidget {
   }
 }
 
-class _ExamplesPage extends StatelessWidget {
-  const _ExamplesPage();
+class _Examples extends StatelessWidget {
+  const _Examples();
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      alignment: WrapAlignment.center,
-      spacing: 24,
-      runSpacing: 24,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Group(
+        const SizedBox(height: _margin),
+        const _SectionHeader(
           title: 'Examples',
-          children: [
-            OutlinedButton(
-              onPressed: () => context.url = CounterExample.urlPath,
-              child: const Text(CounterExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.url = CounterWithPropagationExample.urlPath,
-              child: const Text(CounterWithPropagationExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.url = AnimationControllerExample.urlPath,
-              child: const Text(AnimationControllerExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.url = RainbowExample.urlPath,
-              child: const Text(RainbowExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.url = NestedScopesExample.urlPath,
-              child: const Text(NestedScopesExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.url = DerivedStateExample.urlPath,
-              child: const Text(DerivedStateExample.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.url = CountrySearchExample.urlPath,
-              child: const Text(CountrySearchExample.title),
-            ),
-          ],
+          subtitle:
+              'All examples provide pure Flutter implementations as well for comparison',
         ),
-        _Group(
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Wrap(
+            children: [
+              _ExampleCard(
+                onPressed: () => context.url = CounterExample.urlPath,
+                title: const Text(CounterExample.title),
+                description: const Text(CounterExample.description),
+                tags: CounterExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () =>
+                    context.url = CounterWithPropagationExample.urlPath,
+                title: const Text(CounterWithPropagationExample.title),
+                description:
+                    const Text(CounterWithPropagationExample.description),
+                tags: CounterWithPropagationExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () =>
+                    context.url = AnimationControllerExample.urlPath,
+                title: const Text(AnimationControllerExample.title),
+                description: const Text(AnimationControllerExample.description),
+                tags: AnimationControllerExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () => context.url = RainbowExample.urlPath,
+                title: const Text(RainbowExample.title),
+                description: const Text(RainbowExample.description),
+                tags: RainbowExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () => context.url = DerivedStateExample.urlPath,
+                title: const Text(DerivedStateExample.title),
+                description: const Text(DerivedStateExample.description),
+                tags: DerivedStateExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () => context.url = CountrySearchExample.urlPath,
+                title: const Text(CountrySearchExample.title),
+                description: const Text(CountrySearchExample.description),
+                tags: CountrySearchExample.tags,
+              ),
+            ],
+          ),
+        ),
+        const _SectionHeader(
           title: 'Other',
-          children: [
-            OutlinedButton(
-              onPressed: () => context.url = BenchmarkScreen.urlPath,
-              child: const Text(BenchmarkScreen.title),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () =>
-                  context.url = ContextWatchHotReloadTestScreen.urlPath,
-              child: const Text(ContextWatchHotReloadTestScreen.title),
-            ),
-          ],
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Wrap(
+            children: [
+              _ExampleCard(
+                onPressed: () => context.url = NestedScopesExample.urlPath,
+                title: const Text(NestedScopesExample.title),
+                description: const Text(NestedScopesExample.description),
+                tags: NestedScopesExample.tags,
+              ),
+              _ExampleCard(
+                onPressed: () => context.url = BenchmarkScreen.urlPath,
+                title: const Text(BenchmarkScreen.title),
+                description: const Text(BenchmarkScreen.description),
+                tags: BenchmarkScreen.tags,
+              ),
+              if (kDebugMode)
+                _ExampleCard(
+                  onPressed: () =>
+                      context.url = ContextWatchHotReloadTestScreen.urlPath,
+                  title: const Text(ContextWatchHotReloadTestScreen.title),
+                  description:
+                      const Text(ContextWatchHotReloadTestScreen.description),
+                  tags: ContextWatchHotReloadTestScreen.tags,
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: _margin),
       ],
     );
   }
 }
 
-class _Group extends StatelessWidget {
-  const _Group({
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({
     required this.title,
-    required this.children,
+    this.subtitle,
   });
 
   final String title;
-  final List<Widget> children;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-          const SizedBox(height: 24),
-          ...children,
+          if (subtitle != null) ...[
+            Text(
+              subtitle!,
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+class _ExampleCard extends StatelessWidget {
+  const _ExampleCard({
+    required this.title,
+    this.description,
+    this.tags = const <String>[],
+    required this.onPressed,
+  });
+
+  final Widget title;
+  final Widget? description;
+  final List<String> tags;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 400),
+      child: Card(
+        margin: const EdgeInsets.all(12),
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DefaultTextStyle(
+                  style: Theme.of(context).textTheme.titleLarge!,
+                  textHeightBehavior: const TextHeightBehavior(
+                    leadingDistribution: TextLeadingDistribution.even,
+                  ),
+                  child: title,
+                ),
+                if (description != null) ...[
+                  const SizedBox(height: 8),
+                  description!,
+                ],
+                if (tags.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final tag in tags)
+                        Chip(
+                          label: Text(tag),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

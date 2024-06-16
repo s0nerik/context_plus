@@ -10,6 +10,15 @@ class DerivedStateExample extends StatelessWidget {
   const DerivedStateExample({super.key});
 
   static const title = 'Derived state';
+  static const description =
+      'Example that shows various hot reload friendly ways of deriving the state.';
+  static const tags = [
+    'Ref.bind()',
+    'Ref.watch()',
+    'Ref.watchOnly()',
+    'Ref.of(context)',
+  ];
+
   static const urlPath = '/derived_state_example';
 
   @override

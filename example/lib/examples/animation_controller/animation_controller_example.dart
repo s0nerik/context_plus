@@ -9,6 +9,14 @@ class AnimationControllerExample extends StatelessWidget {
   const AnimationControllerExample({super.key});
 
   static const title = 'AnimationController';
+  static const description =
+      'Example that shows different ways to initialize and use an AnimationController.';
+  static const tags = [
+    'Ref.bind()',
+    'Ref.watch()',
+    'ValueListenable.watch()',
+  ];
+
   static const urlPath = '/animation_controller_example';
 
   @override

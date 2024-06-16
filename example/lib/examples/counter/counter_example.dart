@@ -8,6 +8,13 @@ class CounterExample extends StatelessWidget {
   const CounterExample({super.key});
 
   static const title = 'Counter';
+  static const description = 'Classic counter example.';
+  static const tags = [
+    'Ref.bind()',
+    'Ref.of(context)',
+    'Ref.watch()',
+  ];
+
   static const urlPath = '/counter_example';
 
   @override

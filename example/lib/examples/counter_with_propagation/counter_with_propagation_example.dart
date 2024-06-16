@@ -13,6 +13,15 @@ class CounterWithPropagationExample extends StatelessWidget {
   const CounterWithPropagationExample({super.key});
 
   static const title = 'Counter (with propagation)';
+  static const description =
+      'Counter example where the counter value getter/setter has to be propagated to the child widgets.';
+  static const tags = [
+    'Ref.bind()',
+    'Ref.bindValue()',
+    'Ref.of(context)',
+    'Ref.watch()',
+  ];
+
   static const urlPath = '/counter_with_propagation_example';
 
   @override

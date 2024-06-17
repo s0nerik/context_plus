@@ -53,6 +53,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/context_plus.png
+    - lib/examples/showcase/variants/
     - lib/examples/animation_controller/variants/
     - lib/examples/rainbow/variants/
     - lib/examples/derived_state/variants/

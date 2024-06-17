@@ -1,4 +1,5 @@
 import 'package:context_plus/context_plus.dart';
+import 'package:example/examples/showcase/showcase_example.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -207,6 +208,12 @@ class _Examples extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Wrap(
             children: [
+              _ExampleCard(
+                onPressed: () => context.url = ShowcaseExample.urlPath,
+                title: const Text(ShowcaseExample.title),
+                description: const Text(ShowcaseExample.description),
+                tags: ShowcaseExample.tags,
+              ),
               _ExampleCard(
                 onPressed: () => context.url = CounterExample.urlPath,
                 title: const Text(CounterExample.title),

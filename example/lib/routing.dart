@@ -1,3 +1,4 @@
+import 'package:example/examples/showcase/showcase_example.dart';
 import 'package:flutter/material.dart';
 import 'package:url_router/url_router.dart';
 
@@ -26,6 +27,7 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
     CounterWithPropagationExample.urlPath =>
       const CounterWithPropagationExample(),
     CountrySearchExample.urlPath => const CountrySearchExample(),
+    ShowcaseExample.urlPath => const ShowcaseExample(),
     _ => null,
   };
 }

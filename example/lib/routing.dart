@@ -10,7 +10,7 @@ import 'examples/nested_scopes/nested_scopes_example.dart';
 import 'examples/animation_controller/animation_controller_example.dart';
 import 'examples/counter/counter_example.dart';
 import 'examples/counter_with_propagation/counter_with_propagation_example.dart';
-import 'home_screen.dart';
+import 'home/home_screen.dart';
 import 'other/context_watch_hot_reload_test_screen.dart';
 
 Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {

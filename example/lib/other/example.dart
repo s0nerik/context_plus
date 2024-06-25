@@ -65,13 +65,7 @@ class ExampleScaffold extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               flex: 2,
-              child: Material(
-                clipBehavior: Clip.hardEdge,
-                color: switch (Theme.of(context).brightness) {
-                  Brightness.dark => Colors.grey[900],
-                  Brightness.light => Colors.grey[200],
-                },
-                borderRadius: BorderRadius.circular(12),
+              child: Card(
                 child: Column(
                   children: [
                     TabBar(

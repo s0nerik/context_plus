@@ -47,7 +47,30 @@ class _AppState extends State<_App> {
       child: MaterialApp.router(
         routeInformationParser: const _UrlRouteParser(),
         routerDelegate: router,
-        theme: ThemeData.dark(),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+          cardTheme: CardTheme(
+            color: const Color(0xFF1D1E21),
+            clipBehavior: Clip.hardEdge,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.white12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor: WidgetStateProperty.all(Colors.white),
+              overlayColor: WidgetStateProperty.all(Colors.white12),
+              side: WidgetStateProperty.all(
+                  const BorderSide(color: Colors.white24)),
+            ),
+          ),
+        ),
       ),
     );
   }

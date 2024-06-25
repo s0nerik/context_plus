@@ -21,6 +21,9 @@ dependencies:
   flutter_sequence_animation: ^4.0.0
   http: ^1.2.1
   highlight_text: ^1.7.0
+  rive: ^0.13.8
+  visibility_detector: ^0.4.0+2
+  gap: ^3.0.1
 
   # Signals
   signals_flutter: ^4.5.1
@@ -53,6 +56,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/context_plus.png
+    - assets/showcase/
     - lib/examples/showcase/variants/
     - lib/examples/animation_controller/variants/
     - lib/examples/rainbow/variants/
@@ -66,3 +70,6 @@ flutter:
     - family: JetBrains Mono
       fonts:
         - asset: assets/fonts/JetBrainsMono.ttf
+    - family: Fira Code
+      fonts:
+        - asset: assets/fonts/FiraCode.ttf

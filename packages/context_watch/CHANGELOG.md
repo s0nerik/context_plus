@@ -1,3 +1,7 @@
+## 3.2.0
+
+ - **FEAT**: async_listenable support integration.
+
 ## 3.1.1
 
  - **DOCS**: Updated README.md.

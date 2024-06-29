@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-06-29
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v2.3.0`](#context_plus---v230)
+ - [`context_watch` - `v3.2.0`](#context_watch---v320)
+ - [`context_watch_base` - `v3.1.1`](#context_watch_base---v311)
+ - [`context_watch_signals` - `v1.1.0`](#context_watch_signals---v110)
+ - [`context_watch_getx` - `v1.0.3`](#context_watch_getx---v103)
+ - [`context_watch_bloc` - `v1.0.5`](#context_watch_bloc---v105)
+ - [`context_watch_mobx` - `v1.0.5`](#context_watch_mobx---v105)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_watch_getx` - `v1.0.3`
+ - `context_watch_bloc` - `v1.0.5`
+ - `context_watch_mobx` - `v1.0.5`
+
+---
+
+#### `context_plus` - `v2.3.0`
+
+ - **FEAT**: async_listenable support integration.
+
+#### `context_watch` - `v3.2.0`
+
+ - **FEAT**: async_listenable support integration.
+
+#### `context_watch_base` - `v3.1.1`
+
+ - **FIX**: proper handling of synchronous new value notifications during build().
+
+#### `context_watch_signals` - `v1.1.0`
+
+ - **FEAT**: Update signals_flutter in context_watch_signals to v5 (#11).
+
+
 ## 2024-03-12
 
 ### Changes

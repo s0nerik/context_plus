@@ -1,3 +1,7 @@
+## 2.3.0
+
+ - **FEAT**: async_listenable support integration.
+
 ## 2.2.2
 
  - Update a dependency to the latest release.

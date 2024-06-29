@@ -37,8 +37,14 @@ class TypewriterText extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final row in visibleRows) Text(row, style: style),
+        for (final row in visibleRows)
+          Text(
+            row,
+            textAlign: TextAlign.center,
+            style: style,
+          ),
       ],
     );
   }

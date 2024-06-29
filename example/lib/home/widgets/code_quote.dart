@@ -1,110 +1,152 @@
+import 'package:example/home/widgets/dynamic_section_text.dart';
 import 'package:flutter/material.dart';
 
 const _codeBackground = Color(0xFF1D1E21);
 const _borderColor = Colors.white12;
 const _typeColor = Color(0xFF84D6EB);
 const _functionColor = Color(0xFFB2DF52);
+const _parameterColor = Color(0xFFFF9B2B);
+const _otherCodeColor = Colors.white;
 const _fontFamily = 'Fira Code';
 
-abstract final class CodeQuote {
-  static Widget type(
-    String typeName, {
-    TextStyle? style,
-  }) =>
-      _CodeType(typeName: typeName, style: style);
-
-  static Widget functionCall(
-    String functionName, {
-    TextStyle? style,
-  }) =>
-      _FunctionCall(functionName: functionName, style: style);
-}
-
-class _CodeType extends StatelessWidget {
-  const _CodeType({
-    required this.typeName,
-    required this.style,
+class CodeQuote extends StatelessWidget {
+  const CodeQuote({
+    super.key,
+    this.margin = EdgeInsets.zero,
+    required this.child,
   });
 
-  final String typeName;
-  final TextStyle? style;
+  final EdgeInsets margin;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return _CodeQuote(
-      child: Text(
-        typeName,
-        style: style != null
-            ? style!
-                .copyWith(fontFamily: _fontFamily, color: _typeColor, height: 1)
-            : const TextStyle(
-                fontFamily: _fontFamily, color: _typeColor, height: 1),
+    return DefaultTextStyle.merge(
+      style: const TextStyle(
+        fontFamily: _fontFamily,
+        color: _otherCodeColor,
+        height: 1,
+      ),
+      child: Transform.translate(
+        offset: const Offset(0, 2),
+        child: Container(
+          margin: margin,
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: _codeBackground,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: _borderColor),
+          ),
+          child: child,
+        ),
       ),
     );
   }
 }
 
-class _FunctionCall extends StatelessWidget {
-  const _FunctionCall({
-    required this.functionName,
-    required this.style,
+class CodeType extends StatelessWidget {
+  const CodeType({
+    super.key,
+    required this.type,
+    this.genericTypes = const [],
+    this.animate = true,
   });
 
-  final String functionName;
-  final TextStyle? style;
+  final String type;
+  final List<String> genericTypes;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
-    return _CodeQuote(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DefaultTextStyle.merge(
+          style: const TextStyle(
+            fontFamily: _fontFamily,
+            color: _typeColor,
+          ),
+          child: DynamicSectionText(
+            type,
+            animate: animate,
+          ),
+        ),
+        if (genericTypes.isNotEmpty) ...[
+          const Text('<'),
+          for (var i = 0; i < genericTypes.length; i++) ...[
+            CodeType(
+              type: genericTypes[i],
+              animate: animate,
+            ),
+            if (i < genericTypes.length - 1) const Text(', '),
+          ],
+          const Text('>'),
+        ],
+      ],
+    );
+  }
+}
+
+class CodeFunctionCall extends StatelessWidget {
+  const CodeFunctionCall({
+    super.key,
+    required this.name,
+    this.params = const [],
+    this.animate = true,
+  });
+
+  final String name;
+  final List<Widget> params;
+  final bool animate;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle.merge(
+      style: const TextStyle(fontFamily: _fontFamily),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '.',
-            style: style != null
-                ? style!.copyWith(fontFamily: _fontFamily, height: 1)
-                : const TextStyle(fontFamily: _fontFamily, height: 1),
+          const Text('.'),
+          DefaultTextStyle.merge(
+            style: const TextStyle(color: _functionColor),
+            child: DynamicSectionText(
+              name,
+              animate: animate,
+            ),
           ),
-          Text(
-            functionName,
-            style: style != null
-                ? style!.copyWith(
-                    fontFamily: _fontFamily, color: _functionColor, height: 1)
-                : const TextStyle(
-                    fontFamily: _fontFamily, color: _functionColor, height: 1),
-          ),
-          Text(
-            '()',
-            style: style != null
-                ? style!.copyWith(fontFamily: _fontFamily, height: 1)
-                : const TextStyle(fontFamily: _fontFamily, height: 1),
-          ),
+          const Text('('),
+          for (var i = 0; i < params.length; i++) ...[
+            params[i],
+            if (i < params.length - 1) const Text(', '),
+          ],
+          const Text(')'),
         ],
       ),
     );
   }
 }
 
-class _CodeQuote extends StatelessWidget {
-  const _CodeQuote({
-    required this.child,
+class CodeParameter extends StatelessWidget {
+  const CodeParameter({
+    super.key,
+    required this.name,
+    this.animate = true,
   });
 
-  final Widget child;
+  final String name;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: const Offset(0, 2),
-      child: Container(
-        padding: const EdgeInsets.all(2),
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: _codeBackground,
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: _borderColor),
-        ),
-        child: child,
+    return DefaultTextStyle.merge(
+      style: const TextStyle(
+        fontFamily: _fontFamily,
+        color: _parameterColor,
+        fontWeight: FontWeight.w600,
+      ),
+      child: DynamicSectionText(
+        name,
+        animate: animate,
       ),
     );
   }

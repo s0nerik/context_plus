@@ -23,6 +23,7 @@ enum ShowcaseKeyframe {
   });
 
   bool get isInitial => this == vanillaFlutter;
+
   bool get isFinal => this == watch;
 }
 
@@ -30,18 +31,23 @@ class ShowcaseRiveController extends SimpleAnimation {
   ShowcaseRiveController() : super('Timeline 1', autoplay: false);
 
   final _currentFrame = ValueNotifier(0);
+
   ValueListenable<int> get currentFrame => _currentFrame;
 
   final _targetKeyframe = ValueNotifier(ShowcaseKeyframe.values.first);
+
   ValueListenable<ShowcaseKeyframe> get targetKeyframe => _targetKeyframe;
 
   final _currentKeyframe = ValueNotifier(ShowcaseKeyframe.values.first);
+
   ValueListenable<ShowcaseKeyframe> get currentKeyframe => _currentKeyframe;
 
   final _nextKeyframe = ValueNotifier(ShowcaseKeyframe.values.first);
+
   ValueListenable<ShowcaseKeyframe> get nextKeyframe => _nextKeyframe;
 
-  final _keyframeTransitionProgress = ValueNotifier(1.0);
+  final _keyframeTransitionProgress = ValueNotifier(0.0);
+
   ValueListenable<double> get keyframeTransitionProgress =>
       _keyframeTransitionProgress;
 
@@ -50,6 +56,7 @@ class ShowcaseRiveController extends SimpleAnimation {
   static const _artboardAspectRatio = _artboardWidth / _artboardHeight;
 
   final _optimalWidth = ValueNotifier(_artboardWidth);
+
   ValueListenable<double> get optimalWidth => _optimalWidth;
 
   final optimalHeight = _artboardHeight;
@@ -82,6 +89,10 @@ class ShowcaseRiveController extends SimpleAnimation {
 
   @override
   bool init(RuntimeArtboard artboard) {
+    if (instance != null) {
+      animateToKeyframe(_currentKeyframe.value);
+      return true;
+    }
     final result = super.init(artboard);
 
     final currentFrame = _calculateCurrentFrame();
@@ -94,7 +105,7 @@ class ShowcaseRiveController extends SimpleAnimation {
       (keyframe) => keyframe.frame <= currentFrame,
       orElse: () => ShowcaseKeyframe.values.last,
     );
-    _keyframeTransitionProgress.value = 1.0;
+    _keyframeTransitionProgress.value = 0.0;
     _optimalWidth.value = _calculateOptimalWidth(frame: currentFrame);
 
     apply(artboard, 0);
@@ -146,12 +157,15 @@ class ShowcaseRiveController extends SimpleAnimation {
           (currentFrame - _currentKeyframe.value.frame).abs() /
               (_nextKeyframe.value.frame - _currentKeyframe.value.frame).abs();
     } else {
-      _keyframeTransitionProgress.value = 1.0;
+      _keyframeTransitionProgress.value = 0.0;
     }
 
     if (direction > 0 && currentFrame >= _targetKeyframe.value.frame ||
         direction < 0 && currentFrame <= _targetKeyframe.value.frame) {
       isActive = false;
+      _keyframeTransitionProgress.value = 0.0;
+      _currentKeyframe.value = _targetKeyframe.value;
+      _nextKeyframe.value = _targetKeyframe.value;
       super.apply(artboard, 0);
     }
   }

@@ -162,4 +162,15 @@ class ShowcaseRiveController extends SimpleAnimation {
     _currentFrame.value = 0;
     _targetKeyframe.value = ShowcaseKeyframe.values.first;
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _currentFrame.dispose();
+    _targetKeyframe.dispose();
+    _currentKeyframe.dispose();
+    _nextKeyframe.dispose();
+    _keyframeTransitionProgress.dispose();
+    _optimalWidth.dispose();
+  }
 }

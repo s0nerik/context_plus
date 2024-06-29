@@ -63,7 +63,7 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "2.2.2"
+    version: "2.3.0"
   context_ref:
     dependency: "direct overridden"
     description:
@@ -77,14 +77,14 @@ packages:
       path: "../packages/context_watch"
       relative: true
     source: path
-    version: "3.1.1"
+    version: "3.2.0"
   context_watch_base:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch_base"
       relative: true
     source: path
-    version: "3.1.0"
+    version: "3.1.1"
   context_watch_beacon:
     dependency: "direct main"
     description:
@@ -98,28 +98,28 @@ packages:
       path: "../packages/context_watch_bloc"
       relative: true
     source: path
-    version: "1.0.4"
+    version: "1.0.5"
   context_watch_getx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_getx"
       relative: true
     source: path
-    version: "1.0.2"
+    version: "1.0.3"
   context_watch_mobx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_mobx"
       relative: true
     source: path
-    version: "1.0.4"
+    version: "1.0.5"
   context_watch_signals:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_signals"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.1.0"
   dolumns:
     dependency: "direct main"
     description:
@@ -181,6 +181,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0+1"
+  flutter_resize_observer:
+    dependency: "direct main"
+    description:
+      name: flutter_resize_observer
+      sha256: "7fea87040d2798832329b75825d3ccba994b7264ac369b7e39ceea2efea031d5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   flutter_sequence_animation:
     dependency: "direct main"
     description:
@@ -387,18 +395,18 @@ packages:
     dependency: transitive
     description:
       name: signals_core
-      sha256: "29258212f4e89297e7a6abbc0a000fda934bfa6d8b5634c30ce31ec1033bf9e4"
+      sha256: e5888685b9a3cff7c9814bd433195b1f76d0bfa3eae135e0a2f4ff5c48a56a1c
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.0"
+    version: "5.2.2"
   signals_flutter:
     dependency: "direct main"
     description:
       name: signals_flutter
-      sha256: dd4971b2a0165d1ef8de1a45d59e89cdcdd5fc1c8f7fa180d55e6d049be89e92
+      sha256: "1c202bc5136fbe1d8d71b66202e8f71bc10b957ca678c1f44d0d3af2aeb678cc"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.1"
+    version: "5.2.2"
   sky_engine:
     dependency: transitive
     description: flutter

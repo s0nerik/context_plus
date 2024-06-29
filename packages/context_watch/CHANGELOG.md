@@ -1,3 +1,8 @@
+## 3.2.0
+
+ - **FEAT**: async_listenable support integration.
+ - **FIX**: proper handling of synchronous new value notifications during build().
+
 ## 3.1.1
 
  - **DOCS**: Updated README.md.

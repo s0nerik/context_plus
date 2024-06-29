@@ -1,3 +1,8 @@
+## 2.3.0
+
+ - **FEAT**: async_listenable support integration.
+ - **FIX**: proper handling of synchronous new value notifications during build().
+
 ## 2.2.2
 
  - Update a dependency to the latest release.

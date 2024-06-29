@@ -266,7 +266,7 @@ class InheritedContextWatchElement extends InheritedElement {
               oldSelectedValues != null && oldSelectedValues.isNotEmpty;
       contextData.observableSelectedValues.remove(observable);
       if (shouldRebuild) {
-        (context as Element).markNeedsBuild();
+        _scheduleRebuild(context as Element);
       }
       return;
     }
@@ -289,7 +289,22 @@ class InheritedContextWatchElement extends InheritedElement {
             !listEquals(newSelectedValues, oldSelectedValues);
     contextData.observableSelectedValues[observable] = newSelectedValues;
     if (shouldRebuild) {
-      (context as Element).markNeedsBuild();
+      _scheduleRebuild(context as Element);
+    }
+  }
+
+  @pragma('vm:prefer-inline')
+  void _scheduleRebuild(Element element) {
+    if (_isBuildPhase) {
+      // If we are in the build phase, we can't rebuild immediately, because
+      // it would break the build. Instead, we need to schedule a post-frame
+      // callback to rebuild the context.
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        element.markNeedsBuild();
+      });
+    } else {
+      // If we are not in the build phase, we can rebuild immediately.
+      element.markNeedsBuild();
     }
   }
 

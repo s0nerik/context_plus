@@ -24,6 +24,7 @@ dependencies:
   rive: ^0.13.8
   visibility_detector: ^0.4.0+2
   gap: ^3.0.1
+  color_mesh: ^0.0.6
 
   # Signals
   signals_flutter: ^5.2.2

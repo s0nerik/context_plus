@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  color_mesh:
+    dependency: "direct main"
+    description:
+      name: color_mesh
+      sha256: "59d715dbd50c8a7df72edefb12571e89e29146059ca2706a8bf0163d99cbcbdc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   context_plus:
     dependency: "direct main"
     description:

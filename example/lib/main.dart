@@ -70,6 +70,18 @@ class _AppState extends State<_App> {
                   const BorderSide(color: Colors.white24)),
             ),
           ),
+          snackBarTheme: const SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            width: 300,
+            backgroundColor: Color(0xFF1A1A1A),
+            contentTextStyle: TextStyle(color: Colors.white),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.white12),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            showCloseIcon: true,
+            closeIconColor: Colors.white,
+          ),
         ),
       ),
     );

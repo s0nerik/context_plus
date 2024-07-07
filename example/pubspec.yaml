@@ -25,6 +25,7 @@ dependencies:
   visibility_detector: ^0.4.0+2
   gap: ^3.0.1
   color_mesh: ^0.0.6
+  flutter_svg: ^2.0.10+1
 
   # Signals
   signals_flutter: ^5.2.2
@@ -58,6 +59,7 @@ flutter:
   assets:
     - assets/context_plus.png
     - assets/showcase/
+    - assets/svg/
     - lib/examples/showcase/variants/
     - lib/examples/animation_controller/variants/
     - lib/examples/rainbow/variants/

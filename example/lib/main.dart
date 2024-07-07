@@ -5,6 +5,7 @@ import 'package:context_watch_mobx/context_watch_mobx.dart';
 import 'package:context_watch_signals/context_watch_signals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:signals_flutter/signals_flutter.dart' as signals;
 import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:url_router/url_router.dart';
@@ -31,6 +32,13 @@ class _AppState extends State<_App> {
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) {
+      // Disable the built-in context menus on the web so that custom rich text
+      // widget contents can be copied properly.
+      //
+      // Without this, many source code snippets won't be copyable properly.
+      BrowserContextMenu.disableContextMenu();
+    }
     Highlighter.initialize(['dart']);
     router = createRouter();
   }

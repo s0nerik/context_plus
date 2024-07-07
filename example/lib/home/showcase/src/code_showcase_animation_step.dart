@@ -5,6 +5,7 @@ import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
 import 'copyable_widget_span.dart';
@@ -80,7 +81,18 @@ const _descriptions = {
 };
 
 const _vanillaFlutterTitle = TextSpan(children: [
-  TextSpan(text: '👋 Meet '),
+  WidgetSpan(
+    child: Padding(
+      padding: EdgeInsets.only(bottom: 2),
+      child: SvgPicture(
+        SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+        width: 16,
+        height: 16,
+      ),
+    ),
+  ),
+  TextSpan(text: '  '),
+  TextSpan(text: 'Meet '),
   WidgetSpan(
     child: CodeQuote(
       child: CodeType(type: 'context_plus'),
@@ -93,11 +105,32 @@ const _vanillaFlutterDescription = TextSpan(children: [
   TextSpan(text: '\n\n'),
   TextSpan(text: 'We can halve it!'),
   TextSpan(text: '\n'),
-  TextSpan(text: 'Let me show you how. 🚀'),
+  TextSpan(text: 'Let me show you how.'),
+  TextSpan(text: ' '),
+  CopyableWidgetSpan(
+    index: 0,
+    plainText: '🚀',
+    child: SvgPicture(
+      SvgAssetLoader('assets/svg/emoji_u1f680.svg'), // 🚀
+      width: 16,
+      height: 16,
+    ),
+  ),
 ]);
 
 const _refTitle = TextSpan(children: [
-  TextSpan(text: '🔗 Create a '),
+  WidgetSpan(
+    child: Padding(
+      padding: EdgeInsets.only(bottom: 2),
+      child: SvgPicture(
+        SvgAssetLoader('assets/svg/emoji_u1f517.svg'), // 🔗
+        width: 16,
+        height: 16,
+      ),
+    ),
+  ),
+  TextSpan(text: '  '),
+  TextSpan(text: 'Create a '),
   WidgetSpan(
     child: CodeQuote(
       child: CodeType(type: 'Ref'),
@@ -207,9 +240,22 @@ const _refDescription = TextSpan(children: [
   ),
   TextSpan(text: ' bindings.'),
   TextSpan(text: '\n\n'),
-  TextSpan(text: '👋 Bye, '),
   CopyableWidgetSpan(
     index: 11,
+    plainText: '👋',
+    child: Padding(
+      padding: EdgeInsets.only(right: 4),
+      child: SvgPicture(
+        SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+        width: 16,
+        height: 16,
+      ),
+    ),
+  ),
+  TextSpan(text: ' '),
+  TextSpan(text: 'Bye, '),
+  CopyableWidgetSpan(
+    index: 12,
     plainText: '`InheritedWidget`',
     child: CodeQuote(
       child: CodeType(type: 'InheritedWidget'),
@@ -219,7 +265,17 @@ const _refDescription = TextSpan(children: [
 ]);
 
 const _bindTitle = TextSpan(children: [
-  TextSpan(text: '🤝 '),
+  WidgetSpan(
+    child: Padding(
+      padding: EdgeInsets.only(bottom: 2),
+      child: SvgPicture(
+        SvgAssetLoader('assets/svg/emoji_u1f91d.svg'), // 🤝
+        width: 16,
+        height: 16,
+      ),
+    ),
+  ),
+  TextSpan(text: '  '),
   WidgetSpan(
     child: CodeQuote(
       child: CodeFunctionCall(name: 'bind'),
@@ -391,9 +447,22 @@ const _bindDescription = TextSpan(
     ],
     TextSpan(text: '\n\n'),
     ...[
-      TextSpan(text: '👋 Bye, '),
       CopyableWidgetSpan(
         index: 8,
+        plainText: '👋',
+        child: Padding(
+          padding: EdgeInsets.only(right: 4),
+          child: SvgPicture(
+            SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+            width: 16,
+            height: 16,
+          ),
+        ),
+      ),
+      TextSpan(text: ' '),
+      TextSpan(text: 'Bye, '),
+      CopyableWidgetSpan(
+        index: 9,
         plainText: '`StatefulWidget`',
         child: CodeQuote(
           child: CodeType(type: 'StatefulWidget'),
@@ -405,7 +474,17 @@ const _bindDescription = TextSpan(
 );
 
 const _watchTitle = TextSpan(children: [
-  TextSpan(text: '👀 '),
+  WidgetSpan(
+    child: Padding(
+      padding: EdgeInsets.only(bottom: 2),
+      child: SvgPicture(
+        SvgAssetLoader('assets/svg/emoji_u1f440.svg'), // 👀
+        width: 16,
+        height: 16,
+      ),
+    ),
+  ),
+  TextSpan(text: '  '),
   WidgetSpan(
     child: CodeQuote(
       child: CodeFunctionCall(name: 'watch'),
@@ -506,9 +585,22 @@ const _watchDescription = TextSpan(
     ],
     TextSpan(text: '\n\n'),
     ...[
-      TextSpan(text: '👋 Bye, '),
       CopyableWidgetSpan(
         index: 6,
+        plainText: '👋',
+        child: Padding(
+          padding: EdgeInsets.only(right: 4),
+          child: SvgPicture(
+            SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+            width: 16,
+            height: 16,
+          ),
+        ),
+      ),
+      TextSpan(text: ' '),
+      TextSpan(text: 'Bye, '),
+      CopyableWidgetSpan(
+        index: 7,
         plainText: '`<Observable>Builder`',
         child: CodeQuote(
           child: CodeType(

@@ -1,9 +1,11 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
+import 'package:example/home/showcase/src/halo_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:rive/rive.dart' hide LinearGradient;
+import 'package:rive/rive.dart' hide LinearGradient, RadialGradient;
 
 import '../widgets/animated_arrow_down.dart';
 import '../widgets/code_quote.dart';
@@ -116,8 +118,9 @@ class Showcase extends StatelessWidget {
             child: _IntroText(),
           ),
           switch (layout) {
-            _ShowcaseLayout.desktop => const _DesktopView(),
-            _ShowcaseLayout.smallerDesktop => const _SmallerDesktopView(),
+            _ShowcaseLayout.desktop ||
+            _ShowcaseLayout.smallerDesktop =>
+              const _DesktopView(),
             _ShowcaseLayout.mobile => const _MobileView(),
           },
           const Positioned(
@@ -238,25 +241,27 @@ class _SkipIntroButton extends StatelessWidget {
 class _DesktopView extends StatelessWidget {
   const _DesktopView();
 
-  static final _link = Ref<LayerLink>();
-
   @override
   Widget build(BuildContext context) {
-    final layerLink = _link.bind(context, LayerLink.new);
     return Stack(
       children: [
-        Center(
-          child: CompositedTransformTarget(
-            link: layerLink,
-            child: const _CodeAnimation(),
+        Positioned(
+          top: 24,
+          bottom: 88,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (_showcaseLayout.of(context) == _ShowcaseLayout.desktop)
+                const Gap(_DesktopCodeAnimationStepButtons.width),
+              const _CodeAnimation(),
+              const Gap(12),
+              const _DesktopCodeAnimationStepButtons(),
+            ],
           ),
-        ),
-        CompositedTransformFollower(
-          link: layerLink,
-          targetAnchor: Alignment.topRight,
-          followerAnchor: Alignment.topLeft,
-          offset: const Offset(0, 0),
-          child: const _DesktopCodeAnimationStepButtons(),
         ),
         const Positioned(
           left: 0,
@@ -268,45 +273,6 @@ class _DesktopView extends StatelessWidget {
           ),
         ),
         const Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: IgnorePointer(
-            child: _ShortPackageDescription(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SmallerDesktopView extends StatelessWidget {
-  const _SmallerDesktopView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Stack(
-      fit: StackFit.expand,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _CodeAnimation(),
-            _DesktopCodeAnimationStepButtons(),
-          ],
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: 128,
-          child: IgnorePointer(
-            child: BackgroundGradient(),
-          ),
-        ),
-        Positioned(
           left: 0,
           right: 0,
           bottom: 0,
@@ -381,31 +347,43 @@ class _CodeAnimation extends StatelessWidget {
     // Additional 4 pixels are added to prevent the window from being cut off
     // due to inaccuracies in the estimated height calculation.
     final estimatedWindowHeight = ctrl.estimatedWindowHeight + 4;
+    final animationProgress = ctrl.animationProgress;
 
     return _AppearAnimation(
       beginAt: 0,
       endAt: 0.75,
       child: FittedBox(
         fit: BoxFit.contain,
-        child: SizedBox(
-          width: ShowcaseRiveController.windowWidth,
-          height: estimatedWindowHeight,
-          child: SizedOverflowBox(
-            size: Size(
-              ShowcaseRiveController.windowWidth,
-              estimatedWindowHeight,
-            ),
-            child: UnconstrainedBox(
-              clipBehavior: Clip.hardEdge,
-              child: RiveAnimation.asset(
-                key: _codeAnimationKey,
-                'assets/showcase/context_plus_showcase_v11.riv',
-                controllers: [ctrl],
-                useArtboardSize: true,
-                onInit: (artboard) => _introCtrl.of(context).forward(),
+        child: Stack(
+          children: [
+            Opacity(
+              opacity: animationProgress,
+              child: HaloBox(
+                width: ShowcaseRiveController.windowWidth,
+                height: estimatedWindowHeight,
               ),
             ),
-          ),
+            SizedBox(
+              width: ShowcaseRiveController.windowWidth,
+              height: estimatedWindowHeight,
+              child: SizedOverflowBox(
+                size: Size(
+                  ShowcaseRiveController.windowWidth,
+                  estimatedWindowHeight,
+                ),
+                child: UnconstrainedBox(
+                  clipBehavior: Clip.hardEdge,
+                  child: RiveAnimation.asset(
+                    key: _codeAnimationKey,
+                    'assets/showcase/context_plus_showcase_v11.riv',
+                    controllers: [ctrl],
+                    useArtboardSize: true,
+                    onInit: (artboard) => _introCtrl.of(context).forward(),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -415,10 +393,12 @@ class _CodeAnimation extends StatelessWidget {
 class _DesktopCodeAnimationStepButtons extends StatelessWidget {
   const _DesktopCodeAnimationStepButtons();
 
+  static const width = 324.0;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 324,
+      width: width,
       child: _AppearAnimation(
         beginAt: 0.25,
         endAt: 1,
@@ -519,21 +499,17 @@ class _MobileCodeAnimationStepButton extends StatelessWidget {
         margin: EdgeInsets.zero,
         child: InkWell(
           onTap: () => _showcaseCtrl.of(context).animateToKeyframe(keyframe),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.center,
-            child: Transform.scale(
-              scale: 20 / 25,
-              alignment: Alignment.center,
-              child: Text(
-                switch (keyframe) {
-                  ShowcaseKeyframe.vanillaFlutter => '👋',
-                  ShowcaseKeyframe.ref => '🔗',
-                  ShowcaseKeyframe.bind => '🤝',
-                  ShowcaseKeyframe.watch => '👀',
-                },
-                style: const TextStyle(fontSize: 25, height: 1),
-              ),
+          child: Center(
+            child: SvgPicture.asset(
+              switch (keyframe) {
+                ShowcaseKeyframe.vanillaFlutter =>
+                  'assets/svg/emoji_u1f44b.svg', // 👋
+                ShowcaseKeyframe.ref => 'assets/svg/emoji_u1f517.svg', // 🔗
+                ShowcaseKeyframe.bind => 'assets/svg/emoji_u1f91d.svg', // 🤝
+                ShowcaseKeyframe.watch => 'assets/svg/emoji_u1f440.svg', // 👀
+              },
+              width: 20,
+              height: 20,
             ),
           ),
         ),

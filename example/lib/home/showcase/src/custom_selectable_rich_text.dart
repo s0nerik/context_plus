@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 final _focusNode = Ref<FocusNode>();
 final _textSelection = Ref<ValueNotifier<TextSelection?>>();
-final _isMetaPressed = Ref<ValueNotifier<bool>>();
+final _pressedKeys = Ref<ValueNotifier<Set<LogicalKeyboardKey>>>();
 
 class CustomSelectableRichText extends StatelessWidget {
   const CustomSelectableRichText(
@@ -14,27 +14,25 @@ class CustomSelectableRichText extends StatelessWidget {
   });
 
   final TextSpan span;
-
-  static bool _updateIsMetaPressed(BuildContext context, KeyEvent event) {
-    if (event is KeyDownEvent &&
-            event.physicalKey == PhysicalKeyboardKey.metaLeft ||
-        event.physicalKey == PhysicalKeyboardKey.metaRight) {
-      _isMetaPressed.of(context).value = true;
-    }
-    if (event is KeyUpEvent &&
-            event.physicalKey == PhysicalKeyboardKey.metaLeft ||
-        event.physicalKey == PhysicalKeyboardKey.metaRight) {
-      _isMetaPressed.of(context).value = false;
-    }
-    return _isMetaPressed.of(context).value;
-  }
-
   void _handleKey(BuildContext context, KeyEvent event) {
-    final isMetaPressed = _updateIsMetaPressed(context, event);
+    final oldPressedKeys = _pressedKeys.of(context).value;
+    final pressedKeys = {...oldPressedKeys};
+    if (event is KeyDownEvent) {
+      pressedKeys.add(event.logicalKey);
+    } else if (event is KeyUpEvent) {
+      pressedKeys.remove(event.logicalKey);
+    }
+    _pressedKeys.of(context).value = pressedKeys;
 
-    if (isMetaPressed &&
-        event is KeyUpEvent &&
-        event.logicalKey == LogicalKeyboardKey.keyC) {
+    final copyRequested =
+        (oldPressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
+                oldPressedKeys.contains(LogicalKeyboardKey.metaRight)) &&
+            oldPressedKeys.contains(LogicalKeyboardKey.keyC);
+    final copyConfirmed = pressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
+        pressedKeys.contains(LogicalKeyboardKey.metaRight) ||
+        pressedKeys.contains(LogicalKeyboardKey.keyC);
+
+    if (copyRequested && copyConfirmed) {
       _copyToClipboard(context, span, _textSelection.of(context).value);
     }
   }
@@ -44,7 +42,7 @@ class CustomSelectableRichText extends StatelessWidget {
     final focusNode = _focusNode.bind(context, () => FocusNode());
     final textSelection =
         _textSelection.bind(context, () => ValueNotifier(null));
-    _isMetaPressed.bind(context, () => ValueNotifier(false));
+    _pressedKeys.bind(context, () => ValueNotifier(const {}));
     return KeyboardListener(
       focusNode: focusNode,
       onKeyEvent: (event) => _handleKey(context, event),

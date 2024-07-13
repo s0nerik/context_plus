@@ -169,8 +169,8 @@ class _IntroText extends StatelessWidget {
             ],
             rows: const [
               'Value propagation in Flutter can get bulky sometimes...',
-              'What if there was a way to make it more convenient?',
-              'Meet context_plus!',
+              '\nWhat if there was a way to make it more convenient?',
+              '\nMeet context_plus!',
             ],
             style: Theme.of(context)
                 .textTheme
@@ -275,9 +275,17 @@ class _DesktopView extends StatelessWidget {
         const Positioned(
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: 32,
           child: IgnorePointer(
             child: _ShortPackageDescription(),
+          ),
+        ),
+        const Positioned(
+          left: 0,
+          right: 0,
+          bottom: 4,
+          child: IgnorePointer(
+            child: _ScrollDownArrow(),
           ),
         ),
       ],
@@ -328,6 +336,11 @@ class _MobileView extends StatelessWidget {
               ),
             ],
           ),
+        ),
+        Positioned(
+          right: 24,
+          bottom: 24,
+          child: _ScrollDownArrow(),
         ),
       ],
     );
@@ -584,47 +597,52 @@ class _ShortPackageDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
-    return AnimatedSlide(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
-      offset: Offset(0, isShowcaseCompleted ? 0 : 0.1),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-        opacity: isShowcaseCompleted ? 1 : 0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleLarge!,
-                child: const Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    Text('Bind and observe values for a '),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CodeQuote(
-                          child: CodeType(type: 'BuildContext'),
-                        ),
-                        Text(', conveniently.'),
-                      ],
-                    ),
-                  ],
-                ),
+    return _AppearAnimation(
+      beginAt: 0.75,
+      endAt: 1,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: DefaultTextStyle.merge(
+              style: Theme.of(context).textTheme.titleLarge!,
+              child: const Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.center,
+                children: [
+                  Text('Bind and observe values for a '),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CodeQuote(
+                        child: CodeType(type: 'BuildContext'),
+                      ),
+                      Text(', conveniently.'),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            const AnimatedArrowDown(),
-            const SizedBox(height: 12),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _ScrollDownArrow extends StatelessWidget {
+  const _ScrollDownArrow();
+
+  @override
+  Widget build(BuildContext context) {
+    final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.easeOut,
+      opacity: isShowcaseCompleted ? 1 : 0,
+      child: const AnimatedArrowDown(),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:gap/gap.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
@@ -15,9 +17,13 @@ class ExampleVariant {
   final Widget widget;
 }
 
+final _title = Ref<String>();
 final _exampleVariants = Ref<List<ExampleVariant>>();
 final _exampleDir = Ref<String>();
 final _tabController = Ref<TabController>();
+
+bool _isMobileLayout(BuildContext context) =>
+    MediaQuery.sizeOf(context).width < 800;
 
 class ExampleScaffold extends StatelessWidget {
   const ExampleScaffold({
@@ -33,6 +39,7 @@ class ExampleScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _title.bindValue(context, title);
     _exampleDir.bindValue(context, exampleDir);
     _exampleVariants.bindValue(context, variants);
     _tabController.bind(
@@ -40,6 +47,20 @@ class ExampleScaffold extends StatelessWidget {
       (vsync) => TabController(vsync: vsync, length: variants.length),
       key: variants.length,
     );
+    if (_isMobileLayout(context)) {
+      return const _MobileLayout();
+    }
+    return const _DesktopLayout();
+  }
+}
+
+class _DesktopLayout extends StatelessWidget {
+  const _DesktopLayout();
+
+  @override
+  Widget build(BuildContext context) {
+    final title = _title.of(context);
+    final exampleDir = _exampleDir.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -55,48 +76,19 @@ class ExampleScaffold extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8) +
             MediaQuery.paddingOf(context),
-        child: Row(
+        child: const Row(
           children: [
-            const SizedBox(width: 8),
-            const Expanded(
+            SizedBox(width: 8),
+            Expanded(
               flex: 1,
               child: _SelectedExample(),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Expanded(
               flex: 2,
-              child: Card(
-                child: Column(
-                  children: [
-                    TabBar(
-                      controller: _tabController.of(context),
-                      tabAlignment: TabAlignment.start,
-                      isScrollable: true,
-                      tabs: [
-                        for (final variant in variants)
-                          _Tab(
-                            key: ValueKey(variant.file),
-                            variant: variant,
-                          ),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController.of(context),
-                        children: [
-                          for (final variant in variants)
-                            _SelectedVariantCode(
-                              key: PageStorageKey(variant.file),
-                              variant: variant,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: _SourceCode(),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
           ],
         ),
       ),
@@ -104,8 +96,125 @@ class ExampleScaffold extends StatelessWidget {
   }
 }
 
-class _Tab extends StatelessWidget {
-  const _Tab({
+class _MobileLayout extends StatelessWidget {
+  const _MobileLayout();
+
+  static final _selected = Ref<ValueNotifier<int>>();
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = _selected.bind(context, () => ValueNotifier(0));
+    final title = _title.of(context);
+    final exampleDir = _exampleDir.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Text(title),
+            Text(
+              'lib/examples/$exampleDir',
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8) +
+            MediaQuery.paddingOf(context),
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: IndexedStack(
+                  index: selected.watch(context),
+                  children: const [
+                    _SourceCode(),
+                    _SelectedExample(),
+                  ],
+                ),
+              ),
+            ),
+            const Gap(8),
+            SegmentedButton(
+              selected: {selected.watch(context)},
+              onSelectionChanged: (selection) =>
+                  selected.value = selection.first,
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(
+                  value: 0,
+                  icon: Icon(MdiIcons.codeBraces),
+                  label: Text('Code'),
+                ),
+                ButtonSegment(
+                  value: 1,
+                  icon: Icon(MdiIcons.applicationBraces),
+                  label: Text('Example'),
+                ),
+              ],
+            ),
+            const Gap(8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectedExample extends StatelessWidget {
+  const _SelectedExample();
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedTabIndex =
+        _tabController.watchOnly(context, (ctrl) => ctrl.index);
+    final variants = _exampleVariants.of(context);
+    return variants[selectedTabIndex].widget;
+  }
+}
+
+class _SourceCode extends StatelessWidget {
+  const _SourceCode();
+
+  @override
+  Widget build(BuildContext context) {
+    final variants = _exampleVariants.of(context);
+    return Card(
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController.of(context),
+            tabAlignment: TabAlignment.start,
+            isScrollable: true,
+            tabs: [
+              for (final variant in variants)
+                _SourceCodeVariantTab(
+                  key: ValueKey(variant.file),
+                  variant: variant,
+                ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController.of(context),
+              children: [
+                for (final variant in variants)
+                  _SourceCodeVariantCode(
+                    key: PageStorageKey(variant.file),
+                    variant: variant,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SourceCodeVariantTab extends StatelessWidget {
+  const _SourceCodeVariantTab({
     super.key,
     required this.variant,
   });
@@ -134,20 +243,8 @@ class _Tab extends StatelessWidget {
   }
 }
 
-class _SelectedExample extends StatelessWidget {
-  const _SelectedExample();
-
-  @override
-  Widget build(BuildContext context) {
-    final selectedTabIndex =
-        _tabController.watchOnly(context, (ctrl) => ctrl.index);
-    final variants = _exampleVariants.of(context);
-    return variants[selectedTabIndex].widget;
-  }
-}
-
-class _SelectedVariantCode extends StatefulWidget {
-  const _SelectedVariantCode({
+class _SourceCodeVariantCode extends StatefulWidget {
+  const _SourceCodeVariantCode({
     super.key,
     required this.variant,
   });
@@ -155,10 +252,10 @@ class _SelectedVariantCode extends StatefulWidget {
   final ExampleVariant variant;
 
   @override
-  State<_SelectedVariantCode> createState() => _SelectedVariantCodeState();
+  State<_SourceCodeVariantCode> createState() => _SourceCodeVariantCodeState();
 }
 
-class _SelectedVariantCodeState extends State<_SelectedVariantCode> {
+class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
   static final _darkCodeThemeFuture = HighlighterTheme.loadDarkTheme();
   static final _lightCodeThemeFuture = HighlighterTheme.loadLightTheme();
   static final _fileContentFutures = <String, Future<String>>{};
@@ -205,7 +302,13 @@ class _SelectedVariantCodeState extends State<_SelectedVariantCode> {
       return const SizedBox.shrink();
     }
 
-    const codeStyle = TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13);
+    const codeStyleDesktop =
+        TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13);
+    const codeStyleMobile =
+        TextStyle(fontFamily: 'JetBrains Mono', fontSize: 10);
+    final codeStyle =
+        _isMobileLayout(context) ? codeStyleMobile : codeStyleDesktop;
+
     final lineNumberStyle = codeStyle.copyWith(color: Colors.grey[700]);
     final lineCount = code.split('\n').length;
 
@@ -215,7 +318,7 @@ class _SelectedVariantCodeState extends State<_SelectedVariantCode> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 32,
+          width: _isMobileLayout(context) ? 28 : 32,
           child: ScrollConfiguration(
             behavior:
                 ScrollConfiguration.of(context).copyWith(scrollbars: false),

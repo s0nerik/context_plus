@@ -26,6 +26,7 @@ dependencies:
   gap: ^3.0.1
   color_mesh: ^0.0.6
   flutter_svg: ^2.0.10+1
+  yaml: ^3.1.2
 
   # Signals
   signals_flutter: ^5.2.2
@@ -69,6 +70,7 @@ flutter:
     - lib/examples/nested_scopes/variants/
     - lib/examples/country_search/variants/
     - lib/examples/country_search/util/countries.json
+    - pubspec.yaml
   fonts:
     - family: JetBrains Mono
       fonts:

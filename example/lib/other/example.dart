@@ -5,6 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
+import 'code_highlighter_theme.dart';
+
 class ExampleVariant {
   const ExampleVariant({
     required this.title,
@@ -256,8 +258,6 @@ class _SourceCodeVariantCode extends StatefulWidget {
 }
 
 class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
-  static final _darkCodeThemeFuture = HighlighterTheme.loadDarkTheme();
-  static final _lightCodeThemeFuture = HighlighterTheme.loadLightTheme();
   static final _fileContentFutures = <String, Future<String>>{};
   static final _importsRegexp = RegExp(r"import '.*';\n");
 
@@ -274,8 +274,8 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
   @override
   Widget build(BuildContext context) {
     final codeTheme = switch (Theme.of(context).brightness) {
-      Brightness.dark => _darkCodeThemeFuture,
-      Brightness.light => _lightCodeThemeFuture,
+      Brightness.dark => darkCodeThemeFuture,
+      Brightness.light => lightCodeThemeFuture,
     }
         .watchOnly(context, (snap) => snap.data);
     final highlighter = codeTheme != null

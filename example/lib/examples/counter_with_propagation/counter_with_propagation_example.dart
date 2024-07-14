@@ -32,15 +32,14 @@ class CounterWithPropagationExample extends StatelessWidget {
       variants: [
         ExampleVariant(
           file: 'context_plus_bind_watch.dart',
-          title: 'context_plus: ValueNotifier + Ref.bind() + Ref.watch()',
+          title: 'context_plus #1',
           widget: Center(
             child: context_plus_bind_watch_value.Example(),
           ),
         ),
         ExampleVariant(
           file: 'context_plus_stateful_bind_value.dart',
-          title:
-              'context_plus: StatefulWidget + Ref.bindValue() + Ref.of(context)',
+          title: 'context_plus #2',
           widget: Center(
             child: context_plus_stateful_bind_value.Example(),
           ),

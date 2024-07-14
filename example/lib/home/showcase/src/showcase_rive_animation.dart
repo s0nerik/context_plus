@@ -1,5 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
 
 enum ShowcaseKeyframe {
@@ -118,7 +119,7 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
       super.apply(artboard, 0);
     }
 
-    notifyListeners();
+    SchedulerBinding.instance.addPostFrameCallback((_) => notifyListeners());
   }
 }
 

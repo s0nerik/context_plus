@@ -34,89 +34,10 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _ShowcasePage(),
-            if (isShowcaseCompleted.watch(context)) ...[
-              _Section(
-                header: const _SectionHeader(
-                  title: 'Examples',
-                  subtitle:
-                      'All examples provide pure Flutter implementations as well for comparison',
-                ),
-                children: [
-                  _ExampleCard(
-                    onPressed: () => context.url = ShowcaseExample.urlPath,
-                    title: const Text(ShowcaseExample.title),
-                    description: const Text(ShowcaseExample.description),
-                    tags: ShowcaseExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () => context.url = CounterExample.urlPath,
-                    title: const Text(CounterExample.title),
-                    description: const Text(CounterExample.description),
-                    tags: CounterExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () =>
-                        context.url = CounterWithPropagationExample.urlPath,
-                    title: const Text(CounterWithPropagationExample.title),
-                    description:
-                        const Text(CounterWithPropagationExample.description),
-                    tags: CounterWithPropagationExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () =>
-                        context.url = AnimationControllerExample.urlPath,
-                    title: const Text(AnimationControllerExample.title),
-                    description:
-                        const Text(AnimationControllerExample.description),
-                    tags: AnimationControllerExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () => context.url = RainbowExample.urlPath,
-                    title: const Text(RainbowExample.title),
-                    description: const Text(RainbowExample.description),
-                    tags: RainbowExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () => context.url = DerivedStateExample.urlPath,
-                    title: const Text(DerivedStateExample.title),
-                    description: const Text(DerivedStateExample.description),
-                    tags: DerivedStateExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () => context.url = CountrySearchExample.urlPath,
-                    title: const Text(CountrySearchExample.title),
-                    description: const Text(CountrySearchExample.description),
-                    tags: CountrySearchExample.tags,
-                  ),
-                ],
-              ),
-              _Section(
-                header: const _SectionHeader(title: 'Other'),
-                children: [
-                  _ExampleCard(
-                    onPressed: () => context.url = NestedScopesExample.urlPath,
-                    title: const Text(NestedScopesExample.title),
-                    description: const Text(NestedScopesExample.description),
-                    tags: NestedScopesExample.tags,
-                  ),
-                  _ExampleCard(
-                    onPressed: () => context.url = BenchmarkScreen.urlPath,
-                    title: const Text(BenchmarkScreen.title),
-                    description: const Text(BenchmarkScreen.description),
-                    tags: BenchmarkScreen.tags,
-                  ),
-                  if (kDebugMode)
-                    _ExampleCard(
-                      onPressed: () =>
-                          context.url = ContextWatchHotReloadTestScreen.urlPath,
-                      title: const Text(ContextWatchHotReloadTestScreen.title),
-                      description: const Text(
-                          ContextWatchHotReloadTestScreen.description),
-                      tags: ContextWatchHotReloadTestScreen.tags,
-                    ),
-                ],
-              ),
-              const Gap(12),
+            if (isShowcaseCompleted.watch(context)) ...const [
+              _ExamplesSection(),
+              _DemonstrationsSection(),
+              Gap(12),
             ],
           ],
         ),
@@ -145,14 +66,123 @@ class _ShowcasePage extends StatelessWidget {
   }
 }
 
+class _SetupSection extends StatelessWidget {
+  const _SetupSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+class _ExamplesSection extends StatelessWidget {
+  const _ExamplesSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Section(
+      header: const _SectionHeader(
+        title: 'Examples',
+        subtitle:
+            'All examples provide pure Flutter implementations as well for comparison',
+      ),
+      child: Wrap(
+        children: [
+          _ExampleCard(
+            onPressed: () => context.url = ShowcaseExample.urlPath,
+            title: const Text(ShowcaseExample.title),
+            description: const Text(ShowcaseExample.description),
+            tags: ShowcaseExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = CounterExample.urlPath,
+            title: const Text(CounterExample.title),
+            description: const Text(CounterExample.description),
+            tags: CounterExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () =>
+                context.url = CounterWithPropagationExample.urlPath,
+            title: const Text(CounterWithPropagationExample.title),
+            description: const Text(CounterWithPropagationExample.description),
+            tags: CounterWithPropagationExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = AnimationControllerExample.urlPath,
+            title: const Text(AnimationControllerExample.title),
+            description: const Text(AnimationControllerExample.description),
+            tags: AnimationControllerExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = RainbowExample.urlPath,
+            title: const Text(RainbowExample.title),
+            description: const Text(RainbowExample.description),
+            tags: RainbowExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = CountrySearchExample.urlPath,
+            title: const Text(CountrySearchExample.title),
+            description: const Text(CountrySearchExample.description),
+            tags: CountrySearchExample.tags,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DemonstrationsSection extends StatelessWidget {
+  const _DemonstrationsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Section(
+      header: const _SectionHeader(
+        title: 'Demonstrations',
+      ),
+      child: Wrap(
+        children: [
+          _ExampleCard(
+            onPressed: () => context.url = NestedScopesExample.urlPath,
+            title: const Text(NestedScopesExample.title),
+            description: const Text(NestedScopesExample.description),
+            tags: NestedScopesExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = DerivedStateExample.urlPath,
+            title: const Text(DerivedStateExample.title),
+            description: const Text(DerivedStateExample.description),
+            tags: DerivedStateExample.tags,
+          ),
+          _ExampleCard(
+            onPressed: () => context.url = BenchmarkScreen.urlPath,
+            title: const Text(BenchmarkScreen.title),
+            description: const Text(BenchmarkScreen.description),
+            tags: BenchmarkScreen.tags,
+          ),
+          if (kDebugMode)
+            _ExampleCard(
+              onPressed: () =>
+                  context.url = ContextWatchHotReloadTestScreen.urlPath,
+              title: const Text(ContextWatchHotReloadTestScreen.title),
+              description:
+                  const Text(ContextWatchHotReloadTestScreen.description),
+              tags: ContextWatchHotReloadTestScreen.tags,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _Section extends StatelessWidget {
   const _Section({
     required this.header,
-    required this.children,
+    required this.child,
   });
 
   final Widget header;
-  final List<Widget> children;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +192,7 @@ class _Section extends StatelessWidget {
         header,
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Wrap(children: children),
+          child: child,
         ),
       ],
     );

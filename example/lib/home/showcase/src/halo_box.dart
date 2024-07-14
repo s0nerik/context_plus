@@ -1,5 +1,7 @@
 import 'package:color_mesh/color_mesh.dart';
+import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HaloBox extends StatelessWidget {
   const HaloBox({
@@ -11,11 +13,17 @@ class HaloBox extends StatelessWidget {
   final double width;
   final double height;
 
+  static final _key = Ref<GlobalKey>();
+  static final _show = Ref<ValueNotifier<bool>>();
+
   @override
   Widget build(BuildContext context) {
-    return SizedOverflowBox(
-      size: Size(width, height),
-      child: ShaderMask(
+    final key = _key.bind(context, () => GlobalKey());
+    final show = _show.bind(context, () => ValueNotifier(true));
+
+    Widget child = const SizedBox.shrink();
+    if (show.watch(context)) {
+      child = ShaderMask(
         shaderCallback: (rect) => RadialGradient(
           colors: [
             Colors.white.withOpacity(0.25),
@@ -44,6 +52,17 @@ class HaloBox extends StatelessWidget {
             ),
           ),
         ),
+      );
+    }
+
+    return VisibilityDetector(
+      key: key,
+      onVisibilityChanged: (info) {
+        show.value = info.visibleFraction > 0;
+      },
+      child: SizedOverflowBox(
+        size: Size(width, height),
+        child: child,
       ),
     );
   }

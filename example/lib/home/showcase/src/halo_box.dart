@@ -21,40 +21,6 @@ class HaloBox extends StatelessWidget {
     final key = _key.bind(context, () => GlobalKey());
     final show = _show.bind(context, () => ValueNotifier(true));
 
-    Widget child = const SizedBox.shrink();
-    if (show.watch(context)) {
-      child = ShaderMask(
-        shaderCallback: (rect) => RadialGradient(
-          colors: [
-            Colors.white.withOpacity(0.25),
-            Colors.white.withOpacity(0.0),
-          ],
-        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
-        blendMode: BlendMode.modulate,
-        child: UnconstrainedBox(
-          clipBehavior: Clip.none,
-          child: SizedBox(
-            width: width * 2,
-            height: height * 2,
-            child: Padding(
-              padding: EdgeInsets.all(width * 0.01),
-              child: AnimatedMeshGradientContainer(
-                duration: const Duration(milliseconds: 500),
-                gradient: MeshGradient(
-                  colors: [
-                    Colors.yellow,
-                    Colors.green,
-                    Colors.blue,
-                    Colors.purple[300]!,
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
     return VisibilityDetector(
       key: key,
       onVisibilityChanged: (info) {
@@ -62,7 +28,45 @@ class HaloBox extends StatelessWidget {
       },
       child: SizedOverflowBox(
         size: Size(width, height),
-        child: child,
+        child: AnimatedCrossFade(
+          duration: const Duration(milliseconds: 500),
+          alignment: Alignment.center,
+          sizeCurve: const Interval(0.0, 0.0),
+          crossFadeState: show.watch(context)
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          firstChild: ShaderMask(
+            shaderCallback: (rect) => RadialGradient(
+              colors: [
+                Colors.white.withOpacity(0.25),
+                Colors.white.withOpacity(0.0),
+              ],
+            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
+            blendMode: BlendMode.modulate,
+            child: UnconstrainedBox(
+              clipBehavior: Clip.none,
+              child: SizedBox(
+                width: width * 2,
+                height: height * 2,
+                child: Padding(
+                  padding: EdgeInsets.all(width * 0.01),
+                  child: AnimatedMeshGradientContainer(
+                    duration: const Duration(milliseconds: 500),
+                    gradient: MeshGradient(
+                      colors: [
+                        Colors.yellow,
+                        Colors.green,
+                        Colors.blue,
+                        Colors.purple[300]!,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          secondChild: const SizedBox.shrink(),
+        ),
       ),
     );
   }

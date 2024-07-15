@@ -10,8 +10,6 @@ class Example extends StatefulWidget {
 class _ExampleState extends State<Example> {
   final _scrollController = ScrollController();
 
-  late double _itemHeight;
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -22,17 +20,17 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        _itemHeight = constraints.maxHeight * 2 / _colors.length;
+        final itemHeight = constraints.maxHeight * 2 / _colors.length;
         return Column(
           children: [
             _CurrentColor(
               scrollController: _scrollController,
-              itemHeight: _itemHeight,
+              itemHeight: itemHeight,
             ),
             Expanded(
               child: _ColorsList(
                 scrollController: _scrollController,
-                itemHeight: _itemHeight,
+                itemHeight: itemHeight,
               ),
             ),
           ],

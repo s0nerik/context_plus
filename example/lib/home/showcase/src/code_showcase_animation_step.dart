@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
+import 'package:example/home/widgets/low_emphasis_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -501,19 +502,44 @@ const _watchDescription = TextSpan(
   children: [
     CopyableWidgetSpan(
       index: 0,
-      plainText: '`<observable>.watch(context)`',
-      child: CodeQuote(
-        margin: EdgeInsets.only(bottom: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+      plainText:
+          '`<Observable>.watch(context)` or `Ref<Observable>.watch(context)`',
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 4),
+        child: Wrap(
           children: [
-            CodeType(
-              type:
-                  '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
+            CodeQuote(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CodeType(
+                    type:
+                        '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
+                  ),
+                  CodeFunctionCall(
+                    name: 'watch',
+                    params: [CodeParameter(name: 'context')],
+                  ),
+                ],
+              ),
             ),
-            CodeFunctionCall(
-              name: 'watch',
-              params: [CodeParameter(name: 'context')],
+            Text(' and ', style: TextStyle(height: 1.75)),
+            CodeQuote(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CodeType(
+                    type: 'Ref',
+                    genericTypes: [
+                      '{Stream|Future|Listenable|ValueListenable|AsyncListenable}'
+                    ],
+                  ),
+                  CodeFunctionCall(
+                    name: 'watch',
+                    params: [CodeParameter(name: 'context')],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -557,36 +583,8 @@ const _watchDescription = TextSpan(
     ],
     TextSpan(text: '\n\n'),
     ...[
-      TextSpan(text: 'For even more convenience, '),
       CopyableWidgetSpan(
         index: 3,
-        plainText: '`Ref`',
-        child: CodeQuote(
-          child: CodeType(type: 'Ref'),
-        ),
-      ),
-      TextSpan(text: 's to the same observable types also provide '),
-      CopyableWidgetSpan(
-        index: 4,
-        plainText: '`.watch()`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'watch'),
-        ),
-      ),
-      TextSpan(text: ' and '),
-      CopyableWidgetSpan(
-        index: 5,
-        plainText: '`.watchOnly()`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'watchOnly'),
-        ),
-      ),
-      TextSpan(text: ' methods.'),
-    ],
-    TextSpan(text: '\n\n'),
-    ...[
-      CopyableWidgetSpan(
-        index: 6,
         plainText: '👋',
         child: Padding(
           padding: EdgeInsets.only(right: 4),
@@ -600,7 +598,7 @@ const _watchDescription = TextSpan(
       TextSpan(text: ' '),
       TextSpan(text: 'Bye, '),
       CopyableWidgetSpan(
-        index: 7,
+        index: 4,
         plainText: '`<Observable>Builder`',
         child: CodeQuote(
           child: CodeType(
@@ -753,9 +751,8 @@ class _Description extends StatelessWidget {
         heightFactor: descriptionVisibilityFactor,
         child: Opacity(
           opacity: descriptionVisibilityFactor,
-          child: Card(
+          child: LowEmphasisCard(
             margin: const EdgeInsets.only(top: 8, bottom: 8),
-            color: const Color(0xFF111111),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),

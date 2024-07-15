@@ -1,7 +1,6 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
-import 'package:gap/gap.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
@@ -121,42 +120,45 @@ class _MobileLayout extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8) +
-            MediaQuery.paddingOf(context),
-        child: Column(
+        padding: MediaQuery.paddingOf(context),
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: IndexedStack(
-                  index: selected.watch(context),
-                  children: const [
-                    _SourceCode(),
-                    _SelectedExample(),
-                  ],
-                ),
+            Positioned(
+              left: 8,
+              right: 8,
+              top: 8,
+              bottom: 8,
+              child: IndexedStack(
+                index: selected.watch(context),
+                children: const [
+                  _SourceCode(),
+                  _SelectedExample(),
+                ],
               ),
             ),
-            const Gap(8),
-            SegmentedButton(
-              selected: {selected.watch(context)},
-              onSelectionChanged: (selection) =>
-                  selected.value = selection.first,
-              showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(
-                  value: 0,
-                  icon: Icon(MdiIcons.codeBraces),
-                  label: Text('Code'),
-                ),
-                ButtonSegment(
-                  value: 1,
-                  icon: Icon(MdiIcons.applicationBraces),
-                  label: Text('Example'),
-                ),
-              ],
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: SegmentedButton(
+                selected: {selected.watch(context)},
+                onSelectionChanged: (selection) =>
+                    selected.value = selection.first,
+                showSelectedIcon: false,
+                segments: const [
+                  ButtonSegment(
+                    value: 0,
+                    icon: Icon(MdiIcons.codeBraces),
+                    label: Text('Code'),
+                  ),
+                  ButtonSegment(
+                    value: 1,
+                    icon: Icon(MdiIcons.applicationBraces),
+                    label: Text('Example'),
+                  ),
+                ],
+              ),
             ),
-            const Gap(8),
           ],
         ),
       ),

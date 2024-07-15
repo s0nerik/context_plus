@@ -48,6 +48,7 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
   ShowcaseRiveController() : super('Timeline 1', autoplay: false);
 
   static const windowWidth = 520.0;
+  static const initialWindowHeight = 952.0;
   static const artboardWidth = 536.0;
   static const artboardHeight = 968.0;
   static const totalFrames = 155;

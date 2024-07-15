@@ -21,7 +21,7 @@ const _appearDuration = Duration(seconds: 1);
 
 final _isIntroCompleted = Ref<ValueNotifier<bool>>();
 final _introCtrl = Ref<AnimationController>();
-const _introDuration = Duration(seconds: 10);
+const _introDuration = Duration(seconds: 6);
 
 final _mobileExpandShowcaseStepDescriptionCtrl = Ref<AnimationController?>();
 
@@ -93,7 +93,7 @@ class Showcase extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final layout = _showcaseLayout.bindValue(
       context,
-      width >= 1220
+      width >= 1280
           ? _ShowcaseLayout.desktop
           : width >= 890
               ? _ShowcaseLayout.smallerDesktop
@@ -114,6 +114,11 @@ class Showcase extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          const Positioned.fill(
+            child: CustomPaint(
+              painter: _BlueprintPainter(),
+            ),
+          ),
           const Center(
             child: _IntroText(),
           ),
@@ -163,14 +168,12 @@ class _IntroText extends StatelessWidget {
           child: TypewriterText(
             progress: progress,
             intervals: const [
-              (0.0, 0.3),
-              (0.4, 0.65),
-              (0.75, 0.85),
+              (0.1, 0.5),
+              (0.6, 0.8),
             ],
             rows: const [
               'Value propagation in Flutter can get bulky sometimes...',
-              '\nWhat if there was a way to make it more convenient?',
-              '\nMeet context_plus!',
+              '\nCan we make it easier?',
             ],
             style: Theme.of(context)
                 .textTheme
@@ -248,16 +251,18 @@ class _DesktopView extends StatelessWidget {
         Positioned(
           top: 24,
           bottom: 88,
-          left: 0,
-          right: 0,
+          left: 24,
+          right: 24,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_showcaseLayout.of(context) == _ShowcaseLayout.desktop)
+              if (_showcaseLayout.of(context) == _ShowcaseLayout.desktop) ...[
                 const Gap(_DesktopCodeAnimationStepButtons.width),
-              const _CodeAnimation(),
+                const Gap(12),
+              ],
+              const Flexible(child: _CodeAnimation()),
               const Gap(12),
               const _DesktopCodeAnimationStepButtons(),
             ],
@@ -359,44 +364,64 @@ class _CodeAnimation extends StatelessWidget {
     //
     // Additional 4 pixels are added to prevent the window from being cut off
     // due to inaccuracies in the estimated height calculation.
+    const inaccuracyCompensation = 4;
+    const constraints = BoxConstraints(
+      minWidth: ShowcaseRiveController.windowWidth + inaccuracyCompensation,
+      minHeight:
+          ShowcaseRiveController.initialWindowHeight + inaccuracyCompensation,
+      maxWidth: ShowcaseRiveController.windowWidth * 1.5,
+      maxHeight: ShowcaseRiveController.initialWindowHeight * 1.5,
+    );
+
     final estimatedWindowHeight = ctrl.estimatedWindowHeight + 4;
     final animationProgress = ctrl.animationProgress;
+
+    final windowAspectRatio =
+        ShowcaseRiveController.windowWidth / estimatedWindowHeight;
+    final windowSize =
+        Size(ShowcaseRiveController.windowWidth, estimatedWindowHeight);
 
     return _AppearAnimation(
       beginAt: 0,
       endAt: 0.75,
       child: FittedBox(
-        fit: BoxFit.contain,
-        child: Stack(
-          children: [
-            Opacity(
-              opacity: animationProgress,
-              child: HaloBox(
-                width: ShowcaseRiveController.windowWidth,
-                height: estimatedWindowHeight,
-              ),
-            ),
-            SizedBox(
-              width: ShowcaseRiveController.windowWidth,
-              height: estimatedWindowHeight,
-              child: SizedOverflowBox(
-                size: Size(
-                  ShowcaseRiveController.windowWidth,
-                  estimatedWindowHeight,
-                ),
-                child: UnconstrainedBox(
-                  clipBehavior: Clip.hardEdge,
-                  child: RiveAnimation.asset(
-                    key: _codeAnimationKey,
-                    'assets/showcase/context_plus_showcase_v11.riv',
-                    controllers: [ctrl],
-                    useArtboardSize: true,
-                    onInit: (artboard) => _introCtrl.of(context).forward(),
+        fit: BoxFit.scaleDown,
+        child: ConstrainedBox(
+          constraints: constraints,
+          child: AspectRatio(
+            aspectRatio: windowAspectRatio,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: animationProgress,
+                    child: HaloBox(
+                      width: windowSize.width,
+                      height: windowSize.height,
+                    ),
                   ),
-                ),
+                  SizedBox.fromSize(
+                    size: windowSize,
+                    child: SizedOverflowBox(
+                      size: windowSize,
+                      child: UnconstrainedBox(
+                        clipBehavior: Clip.hardEdge,
+                        child: RiveAnimation.asset(
+                          key: _codeAnimationKey,
+                          'assets/showcase/context_plus_showcase_v11.riv',
+                          controllers: [ctrl],
+                          useArtboardSize: true,
+                          onInit: (artboard) =>
+                              _introCtrl.of(context).forward(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -406,7 +431,7 @@ class _CodeAnimation extends StatelessWidget {
 class _DesktopCodeAnimationStepButtons extends StatelessWidget {
   const _DesktopCodeAnimationStepButtons();
 
-  static const width = 324.0;
+  static const width = 330.0;
 
   @override
   Widget build(BuildContext context) {
@@ -673,6 +698,36 @@ class _AppearAnimation extends StatelessWidget {
       ),
     );
   }
+}
+
+class _BlueprintPainter extends CustomPainter {
+  const _BlueprintPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0x03FFFFFF)
+      ..strokeWidth = 1;
+
+    const step = 16.0;
+    for (var x = 0.0; x < size.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+
+    paint.color = const Color(0x04FFFFFF);
+    for (var x = 0.0; x < size.width; x += step * 4) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += step * 4) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 double _watchKeyframeTransitionProgress({

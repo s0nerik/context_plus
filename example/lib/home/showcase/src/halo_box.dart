@@ -24,6 +24,7 @@ class HaloBox extends StatelessWidget {
     return VisibilityDetector(
       key: key,
       onVisibilityChanged: (info) {
+        if (!context.mounted) return;
         show.value = info.visibleFraction > 0;
       },
       child: SizedOverflowBox(
@@ -38,7 +39,7 @@ class HaloBox extends StatelessWidget {
           firstChild: ShaderMask(
             shaderCallback: (rect) => RadialGradient(
               colors: [
-                Colors.white.withOpacity(0.25),
+                Colors.white.withOpacity(0.4),
                 Colors.white.withOpacity(0.0),
               ],
             ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),

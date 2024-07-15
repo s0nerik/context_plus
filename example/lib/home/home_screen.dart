@@ -1,10 +1,14 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/examples/showcase/showcase_example.dart';
 import 'package:example/home/showcase/showcase.dart';
+import 'package:example/home/widgets/code_quote.dart';
+import 'package:example/home/widgets/low_emphasis_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:indent/indent.dart';
 import 'package:url_router/url_router.dart';
+import 'package:yaml/yaml.dart';
 
 import '../benchmarks/context_watch/benchmark_screen.dart';
 import '../examples/animation_controller/animation_controller_example.dart';
@@ -15,6 +19,9 @@ import '../examples/derived_state/derived_state_example.dart';
 import '../examples/nested_scopes/nested_scopes_example.dart';
 import '../examples/rainbow/rainbow_example.dart';
 import '../other/context_watch_hot_reload_test_screen.dart';
+
+const _horizontalMargin = 24.0;
+const _gap = _horizontalMargin;
 
 final _scrollController = Ref<ScrollController>();
 final _isShowcaseCompleted = Ref<ValueNotifier<bool>>();
@@ -34,11 +41,21 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _ShowcasePage(),
-            if (isShowcaseCompleted.watch(context)) ...const [
-              _ExamplesSection(),
-              _DemonstrationsSection(),
-              Gap(12),
-            ],
+            if (isShowcaseCompleted.watch(context))
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _SetupSection(),
+                    _ExamplesSection(),
+                    _DemonstrationsSection(),
+                    Gap(12),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -67,11 +84,308 @@ class _ShowcasePage extends StatelessWidget {
 }
 
 class _SetupSection extends StatelessWidget {
-  const _SetupSection({super.key});
+  const _SetupSection();
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final displayAsRow = MediaQuery.sizeOf(context).width >=
+        _horizontalMargin +
+            _SetupStep1.minWidth +
+            _gap +
+            _SetupStep2.minWidth +
+            _gap +
+            _SetupStep3.minWidth +
+            _horizontalMargin;
+
+    final displayStep1AndStep2InRow = MediaQuery.sizeOf(context).width >=
+        _horizontalMargin +
+            _SetupStep1.minWidth +
+            _gap +
+            _SetupStep2.minWidth +
+            _horizontalMargin;
+
+    return _Section(
+      header: const _SectionHeader(title: 'Setup'),
+      child: displayAsRow
+          ? const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SetupStep1(),
+                Gap(_gap),
+                _SetupStep2(),
+                Gap(_gap),
+                Flexible(child: _SetupStep3()),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: displayStep1AndStep2InRow
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.stretch,
+              children: [
+                if (displayStep1AndStep2InRow)
+                  const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SetupStep1(),
+                      Gap(_gap),
+                      _SetupStep2(),
+                    ],
+                  )
+                else ...const [
+                  _SetupStep1(),
+                  Gap(_gap),
+                  _SetupStep2(),
+                ],
+                const Gap(_gap),
+                const _SetupStep3(),
+              ],
+            ),
+    );
+  }
+}
+
+class _SetupStep1 extends StatelessWidget {
+  const _SetupStep1();
+
+  static const minWidth = 258.0;
+
+  static final _contextPlusVersion = Ref<Future<String>>();
+
+  @override
+  Widget build(BuildContext context) {
+    final version = _contextPlusVersion
+        .bind(context, () async {
+          final yamlString =
+              await DefaultAssetBundle.of(context).loadString('pubspec.yaml');
+          final yaml = loadYaml(yamlString);
+          final version = yaml['dependencies']['context_plus'] as String;
+          return version;
+        })
+        .watch(context)
+        .data;
+
+    return _SetupStep(
+      index: '1',
+      child: Column(
+        children: [
+          const Text.rich(
+            textAlign: TextAlign.center,
+            TextSpan(
+              children: [
+                TextSpan(text: 'Add the package to your\n'),
+                WidgetSpan(
+                  child: CodeQuote(
+                    child: Text('pubspec.yaml'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(24),
+          CodeMultilineQuote(
+            fileName: 'pubspec.yaml',
+            code: 'dependencies:\n  context_plus: $version',
+            copyableCode: 'context_plus: $version',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SetupStep2 extends StatelessWidget {
+  const _SetupStep2();
+
+  static const minWidth = 266.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return const _SetupStep(
+      index: '2',
+      child: Column(
+        children: [
+          Text('Wrap your application with'),
+          CodeQuote(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CodeType(type: 'ContextPlus', style: CodeStyle.vsCode),
+                CodeFunctionCall(name: 'root', style: CodeStyle.vsCode),
+              ],
+            ),
+          ),
+          Gap(24),
+          CodeMultilineQuote(
+            fileName: 'lib/main.dart',
+            code: 'void main() {\n'
+                '  runApp(\n'
+                '    ContextPlus.root(\n'
+                '      MaterialApp(...),\n'
+                '    ),\n'
+                '  );\n'
+                '}',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SetupStep3 extends StatelessWidget {
+  const _SetupStep3();
+
+  static const minWidth = 384.0;
+  static const midWidth = 568.0;
+  static const maxWidth = 724.0;
+
+  static final _copyableCode = '''
+    void main() {
+      ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
+      FlutterError.onError = ContextPlus.onError(FlutterError.onError);
+      runApp(...);
+    }
+  '''
+      .unindent()
+      .trim();
+
+  static final _midWidthCode = '''
+    void main() {
+      ErrorWidget.builder =
+          ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
+      FlutterError.onError =
+          ContextPlus.onError(FlutterError.onError);
+      runApp(...);
+    }
+  '''
+      .unindent()
+      .trim();
+
+  static final _minWidthCode = '''
+    void main() {
+      ErrorWidget.builder =
+          ContextPlus.errorWidgetBuilder(
+              ErrorWidget.builder
+          );
+      FlutterError.onError =
+          ContextPlus.onError(
+              FlutterError.onError
+          );
+      runApp(...);
+    }
+  '''
+      .unindent()
+      .trim();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final code = constraints.maxWidth >= maxWidth
+            ? _copyableCode
+            : constraints.maxWidth >= midWidth
+                ? _midWidthCode
+                : _minWidthCode;
+        return ConstrainedBox(
+          constraints:
+              const BoxConstraints(minWidth: minWidth, maxWidth: maxWidth),
+          child: _SetupStep(
+            index: '3',
+            child: Column(
+              children: [
+                const Text.rich(
+                  textAlign: TextAlign.center,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                          text:
+                              '(Optional, but recommended) Wrap default error handlers with '),
+                      WidgetSpan(
+                        child: CodeQuote(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CodeType(
+                                  type: 'ContextPlus', style: CodeStyle.vsCode),
+                              CodeFunctionCall(
+                                  name: 'errorWidgetBuilder',
+                                  style: CodeStyle.vsCode),
+                            ],
+                          ),
+                        ),
+                      ),
+                      TextSpan(text: ' and '),
+                      WidgetSpan(
+                        child: CodeQuote(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CodeType(
+                                  type: 'ContextPlus', style: CodeStyle.vsCode),
+                              CodeFunctionCall(
+                                  name: 'onError', style: CodeStyle.vsCode),
+                            ],
+                          ),
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            ' to get more user-friendly error messages when known hot reload-preventing errors occur',
+                      )
+                    ],
+                  ),
+                ),
+                const Gap(24),
+                CodeMultilineQuote(
+                  fileName: 'lib/main.dart',
+                  code: code,
+                  copyableCode: _copyableCode,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SetupStep extends StatelessWidget {
+  const _SetupStep({
+    required this.index,
+    required this.child,
+  });
+
+  final String index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    var indexStyle = Theme.of(context).textTheme.displayLarge!;
+    indexStyle = indexStyle.copyWith(
+      color: indexStyle.color!.withOpacity(0.05),
+      height: 1,
+      fontFamily: 'JetBrains Mono',
+    );
+
+    return LowEmphasisCard(
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          Positioned(
+            top: -8,
+            left: -8,
+            child: Text(
+              '#$index',
+              style: indexStyle,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: IntrinsicWidth(child: child),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -87,6 +401,8 @@ class _ExamplesSection extends StatelessWidget {
             'All examples provide pure Flutter implementations as well for comparison',
       ),
       child: Wrap(
+        spacing: _gap,
+        runSpacing: _gap,
         children: [
           _ExampleCard(
             onPressed: () => context.url = ShowcaseExample.urlPath,
@@ -141,6 +457,8 @@ class _DemonstrationsSection extends StatelessWidget {
         title: 'Demonstrations',
       ),
       child: Wrap(
+        spacing: _horizontalMargin,
+        runSpacing: _horizontalMargin,
         children: [
           _ExampleCard(
             onPressed: () => context.url = NestedScopesExample.urlPath,
@@ -191,7 +509,7 @@ class _Section extends StatelessWidget {
       children: [
         header,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: _horizontalMargin),
           child: child,
         ),
       ],
@@ -211,7 +529,12 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.only(
+        left: _horizontalMargin,
+        right: _horizontalMargin,
+        top: _horizontalMargin * 2,
+        bottom: _horizontalMargin / 2,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -249,9 +572,8 @@ class _ExampleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 400),
+      constraints: const BoxConstraints(minWidth: 200, maxWidth: 400),
       child: Card(
-        margin: const EdgeInsets.all(12),
         clipBehavior: Clip.hardEdge,
         child: InkWell(
           onTap: onPressed,

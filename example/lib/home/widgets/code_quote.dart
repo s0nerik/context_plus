@@ -1,23 +1,42 @@
+import 'package:context_plus/context_plus.dart';
 import 'package:example/home/widgets/dynamic_section_text.dart';
+import 'package:example/other/code_highlighter_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:syntax_highlight/syntax_highlight.dart';
 
+const _codeFilenameBackground = Color(0xFF2F2F33);
 const _codeBackground = Color(0xFF1D1E21);
 const _borderColor = Colors.white12;
+
 const _typeColor = Color(0xFF84D6EB);
+const _typeColorVsCode = Color(0xFF4EC9B0);
+
 const _functionColor = Color(0xFFB2DF52);
+const _functionColorVsCode = Color(0xFFDCDCAA);
+
 const _parameterColor = Color(0xFFFF9B2B);
+
 const _otherCodeColor = Colors.white;
 const _fontFamily = 'Fira Code';
+
+enum CodeStyle {
+  gapStyle, // default, used in the showcase
+  vsCode, // used in the code snippets
+}
 
 class CodeQuote extends StatelessWidget {
   const CodeQuote({
     super.key,
     this.margin = EdgeInsets.zero,
     required this.child,
+    this.bottomOffset = 2,
   });
 
   final EdgeInsets margin;
   final Widget child;
+  final double bottomOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +47,7 @@ class CodeQuote extends StatelessWidget {
         height: 1,
       ),
       child: Transform.translate(
-        offset: const Offset(0, 2),
+        offset: Offset(0, bottomOffset),
         child: Container(
           margin: margin,
           padding: const EdgeInsets.all(2),
@@ -44,17 +63,133 @@ class CodeQuote extends StatelessWidget {
   }
 }
 
+class CodeMultilineQuote extends StatelessWidget {
+  const CodeMultilineQuote({
+    super.key,
+    required this.fileName,
+    required this.code,
+    this.copyableCode,
+  });
+
+  final String fileName;
+  final String code;
+  final String? copyableCode;
+
+  static final _codeScrollController = Ref<ScrollController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        color: _codeBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildFilenameHeader(context),
+          _buildCodeArea(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilenameHeader(BuildContext context) {
+    return SelectionArea(
+      child: Container(
+        height: 28,
+        decoration: const BoxDecoration(
+          color: _codeFilenameBackground,
+          border: Border(
+            bottom: BorderSide(color: _borderColor),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Text(
+                fileName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: _fontFamily,
+                ),
+              ),
+            ),
+            Positioned(
+              right: -6,
+              top: -6,
+              child: IconButton(
+                icon: const Icon(MdiIcons.contentCopy, size: 16),
+                onPressed: () {
+                  Clipboard.setData(
+                    ClipboardData(text: copyableCode ?? code),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Copied to clipboard!'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCodeArea(BuildContext context) {
+    final darkCodeTheme = darkCodeThemeFuture.watch(context).data;
+    if (darkCodeTheme == null) {
+      return const SizedBox.shrink();
+    }
+
+    final fileExt = fileName.split('.').last;
+    final highlighter = switch (fileExt) {
+      'yaml' || 'yml' => Highlighter(language: 'yaml', theme: darkCodeTheme),
+      'dart' => Highlighter(language: 'dart', theme: darkCodeTheme),
+      _ => throw UnsupportedError('Unsupported file extension: $fileExt'),
+    };
+
+    final scrollController =
+        _codeScrollController.bind(context, ScrollController.new);
+
+    return Scrollbar(
+      thumbVisibility: true,
+      controller: scrollController,
+      child: SelectionArea(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text.rich(
+              highlighter.highlight(code),
+              softWrap: false,
+              style: const TextStyle(fontFamily: _fontFamily),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class CodeType extends StatelessWidget {
   const CodeType({
     super.key,
     required this.type,
     this.genericTypes = const [],
     this.animate = true,
+    this.style = CodeStyle.gapStyle,
   });
 
   final String type;
   final List<String> genericTypes;
   final bool animate;
+  final CodeStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +197,12 @@ class CodeType extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         DefaultTextStyle.merge(
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: _fontFamily,
-            color: _typeColor,
+            color: switch (style) {
+              CodeStyle.gapStyle => _typeColor,
+              CodeStyle.vsCode => _typeColorVsCode,
+            },
           ),
           child: DynamicSectionText(
             type,
@@ -93,11 +231,13 @@ class CodeFunctionCall extends StatelessWidget {
     required this.name,
     this.params = const [],
     this.animate = true,
+    this.style = CodeStyle.gapStyle,
   });
 
   final String name;
   final List<Widget> params;
   final bool animate;
+  final CodeStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +248,12 @@ class CodeFunctionCall extends StatelessWidget {
         children: [
           const Text('.'),
           DefaultTextStyle.merge(
-            style: const TextStyle(color: _functionColor),
+            style: TextStyle(
+              color: switch (style) {
+                CodeStyle.gapStyle => _functionColor,
+                CodeStyle.vsCode => _functionColorVsCode,
+              },
+            ),
             child: DynamicSectionText(
               name,
               animate: animate,

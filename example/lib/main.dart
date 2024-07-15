@@ -39,7 +39,7 @@ class _AppState extends State<_App> {
       // Without this, many source code snippets won't be copyable properly.
       BrowserContextMenu.disableContextMenu();
     }
-    Highlighter.initialize(['dart']);
+    Highlighter.initialize(['dart', 'yaml']);
     router = createRouter();
   }
 
@@ -69,6 +69,7 @@ class _AppState extends State<_App> {
               side: const BorderSide(color: Colors.white12),
               borderRadius: BorderRadius.circular(12),
             ),
+            margin: EdgeInsets.zero,
           ),
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: ButtonStyle(
@@ -89,6 +90,16 @@ class _AppState extends State<_App> {
             ),
             showCloseIcon: true,
             closeIconColor: Colors.white,
+          ),
+          segmentedButtonTheme: SegmentedButtonThemeData(
+            style: SegmentedButton.styleFrom(
+              foregroundColor: Colors.grey,
+              selectedForegroundColor: Colors.white,
+              backgroundColor: Colors.black.withOpacity(0.85),
+              selectedBackgroundColor:
+                  const Color(0xFF353535).withOpacity(0.85),
+              side: const BorderSide(color: Colors.white24),
+            ),
           ),
         ),
       ),

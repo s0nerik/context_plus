@@ -300,7 +300,9 @@ class InheritedContextWatchElement extends InheritedElement {
       // it would break the build. Instead, we need to schedule a post-frame
       // callback to rebuild the context.
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        element.markNeedsBuild();
+        if (element.mounted) {
+          element.markNeedsBuild();
+        }
       });
     } else {
       // If we are not in the build phase, we can rebuild immediately.

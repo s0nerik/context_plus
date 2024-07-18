@@ -43,6 +43,43 @@ extension AnimationControllerRefAPI<
   }
 }
 
+extension NullableAnimationControllerRefAPI<
+        TAnimationController extends AnimationController>
+    on Ref<TAnimationController?> {
+  /// Optionally binds the provided [TAnimationController] to the [context].
+  TAnimationController? bind(
+    BuildContext context,
+    TAnimationController? Function(TickerProvider vsync) create, {
+    void Function(TAnimationController? controller)? dispose,
+    Object? key,
+  }) {
+    return _bindWithVsync(
+      ref: this,
+      context: context,
+      create: create,
+      dispose: dispose,
+      key: key,
+    ).value;
+  }
+
+  /// Same as [bind] but [create] is called lazily, i.e. only when the
+  /// controller is requested for the first.
+  void bindLazy(
+    BuildContext context,
+    TAnimationController? Function(TickerProvider vsync) create, {
+    void Function(TAnimationController? controller)? dispose,
+    Object? key,
+  }) {
+    _bindWithVsync(
+      ref: this,
+      context: context,
+      create: create,
+      dispose: dispose,
+      key: key,
+    );
+  }
+}
+
 extension TabControllerRefAPI<TTabController extends TabController>
     on Ref<TTabController> {
   /// Binds the provided [TTabController] to the [context].

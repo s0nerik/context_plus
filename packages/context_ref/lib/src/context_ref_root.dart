@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
@@ -6,8 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'value_provider.dart';
 import 'ref.dart';
+import 'value_provider.dart';
 
 @internal
 class ContextRefRoot extends InheritedWidget {
@@ -96,7 +95,7 @@ class InheritedContextRefElement extends InheritedElement {
       provider.value = value;
       for (final element in ref.dependents) {
         if (element.mounted) {
-          scheduleMicrotask(element.markNeedsBuild);
+          _scheduleRebuild(element);
         }
       }
     }
@@ -169,6 +168,24 @@ class InheritedContextRefElement extends InheritedElement {
       _disposeContextData(element);
     }
     super.unmount();
+  }
+}
+
+@pragma('vm:prefer-inline')
+void _scheduleRebuild(Element element) {
+  if (SchedulerBinding.instance.schedulerPhase ==
+      SchedulerPhase.persistentCallbacks) {
+    // If we are in the persistent callbacks phase, we need to defer
+    // the rebuild to the next frame to avoid calling setState() during
+    // the build phase.
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (element.mounted) {
+        element.markNeedsBuild();
+      }
+    });
+  } else {
+    // Otherwise, we can rebuild immediately.
+    element.markNeedsBuild();
   }
 }
 

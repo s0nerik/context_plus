@@ -1,6 +1,6 @@
-# context_plus
+![context_plus_anim.webp](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)
 
-![context_plus.png](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus.png)
+# context_plus
 
 [![context_plus](https://img.shields.io/pub/v/context_plus)](https://pub.dev/packages/context_plus)
 [![context_plus](https://img.shields.io/pub/likes/context_plus)](https://pub.dev/packages/context_plus)

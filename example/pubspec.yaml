@@ -60,7 +60,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/context_plus.png
     - assets/showcase/
     - assets/svg/
     - lib/examples/showcase/variants/

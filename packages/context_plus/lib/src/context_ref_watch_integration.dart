@@ -75,8 +75,6 @@ extension ReadOnlyRefListenableWatchAPI on context_ref.ReadOnlyRef<Listenable> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  ///
-  /// Returns the original [Listenable].
   void watch(BuildContext context) =>
       ReadOnlyRefAPI(this).of(context).watch(context);
 }

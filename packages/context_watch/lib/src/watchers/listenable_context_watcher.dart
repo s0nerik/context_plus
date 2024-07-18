@@ -52,8 +52,6 @@ extension ListenableContextWatchExtension on Listenable {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  ///
-  /// Returns this [Listenable].
   void watch(BuildContext context) {
     final watchRoot = InheritedContextWatch.of(context);
     watchRoot.watch(context, this);

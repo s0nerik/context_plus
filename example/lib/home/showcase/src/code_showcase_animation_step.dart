@@ -647,36 +647,46 @@ class _Layout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (displayShadow)
-          const SizedBox(
-            height: 56,
-            child: BackgroundGradient(),
+          const RepaintBoundary(
+            key: ValueKey('shadow'),
+            child: SizedBox(
+              height: 56,
+              child: BackgroundGradient(),
+            ),
           ),
-        Material(
-          color:
-              displayShadow ? BackgroundGradient.endColor : Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: titleMargin,
-                child: _Title(
-                  onTap: onTap,
-                  title: title,
-                  isMobileLayout: isMobileLayout,
-                  descriptionVisibilityFactor: descriptionVisibilityFactor,
+        RepaintBoundary(
+          key: const ValueKey('content'),
+          child: Material(
+            color: displayShadow
+                ? BackgroundGradient.endColor
+                : Colors.transparent,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RepaintBoundary(
+                  key: const ValueKey('title'),
+                  child: Padding(
+                    padding: titleMargin,
+                    child: _Title(
+                      onTap: onTap,
+                      title: title,
+                      isMobileLayout: isMobileLayout,
+                      descriptionVisibilityFactor: descriptionVisibilityFactor,
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: isMobileLayout
-                    ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
-                    : const EdgeInsets.only(left: 34),
-                child: _Description(
-                  descriptionVisibilityFactor: descriptionVisibilityFactor,
-                  description: description,
+                Padding(
+                  padding: isMobileLayout
+                      ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
+                      : const EdgeInsets.only(left: 34),
+                  child: _Description(
+                    descriptionVisibilityFactor: descriptionVisibilityFactor,
+                    description: description,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

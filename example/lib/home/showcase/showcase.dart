@@ -123,12 +123,14 @@ class Showcase extends StatelessWidget {
           const Center(
             child: _IntroText(),
           ),
-          switch (layout) {
-            _ShowcaseLayout.desktop ||
-            _ShowcaseLayout.smallerDesktop =>
-              const _DesktopView(),
-            _ShowcaseLayout.mobile => const _MobileView(),
-          },
+          RepaintBoundary(
+            child: switch (layout) {
+              _ShowcaseLayout.desktop ||
+              _ShowcaseLayout.smallerDesktop =>
+                const _DesktopView(),
+              _ShowcaseLayout.mobile => const _MobileView(),
+            },
+          ),
           const Positioned(
             right: 16,
             bottom: 12,

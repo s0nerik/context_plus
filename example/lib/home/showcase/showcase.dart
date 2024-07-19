@@ -447,7 +447,10 @@ class _DesktopCodeAnimationStepButtons extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             for (final keyframe in ShowcaseKeyframe.values)
-              _DesktopCodeAnimationStepButton(keyframe: keyframe),
+              RepaintBoundary(
+                key: ValueKey(keyframe),
+                child: _DesktopCodeAnimationStepButton(keyframe: keyframe),
+              ),
           ],
         ),
       ),

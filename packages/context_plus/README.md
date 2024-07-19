@@ -1,6 +1,6 @@
-![context_plus_anim.webp](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)
+# [<img src="https://github.com/s0nerik/context_plus/raw/main/example/web/icons/Icon-192.png" alt="icon.png" width="192"/>](https://sonerik.dev/context_plus/) <br/> context_plus
 
-# <img src="https://github.com/s0nerik/context_plus/raw/main/example/web/icons/Icon-192.png" alt="icon.png" width="192"/> <br/> context_plus
+[![showcase](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)](https://sonerik.dev/context_plus/)
 
 [![context_plus](https://img.shields.io/pub/v/context_plus)](https://pub.dev/packages/context_plus)
 [![context_plus](https://img.shields.io/pub/likes/context_plus)](https://pub.dev/packages/context_plus)

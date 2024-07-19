@@ -1,6 +1,5 @@
 import 'package:context_plus/context_plus.dart';
-import 'package:example/home/showcase/src/background_gradient.dart';
-import 'package:example/home/showcase/src/halo_box.dart';
+import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,7 +9,9 @@ import 'package:rive/rive.dart' hide LinearGradient, RadialGradient;
 import '../widgets/animated_arrow_down.dart';
 import '../widgets/code_quote.dart';
 import '../widgets/typewriter_text.dart';
+import 'src/background_gradient.dart';
 import 'src/code_showcase_animation_step.dart';
+import 'src/halo_box.dart';
 import 'src/showcase_rive_animation.dart';
 
 final _isShowcaseCompleted = Ref<ValueNotifier<bool>>();
@@ -465,7 +466,7 @@ class _DesktopCodeAnimationStepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress =
         _watchKeyframeTransitionProgress(context: context, keyframe: keyframe);
-    final opacity = (1 / 3 + 2 / 3 * progress).clamp(0.0, 1.0);
+    final opacity = (1 / 3 + 2 / 3 * progress).clamp(0.0, 1.0).toPrecision(3);
 
     return CodeShowcaseProgressStep(
       showcaseCtrl: _showcaseCtrl.of(context),

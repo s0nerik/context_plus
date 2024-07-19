@@ -765,7 +765,7 @@ double _watchKeyframeTransitionProgress({
   }
       .clamp(0.0, 1.0);
 
-  return progress;
+  return progress.toPrecision(3);
 }
 
 // endregion

@@ -4,6 +4,7 @@ import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
+import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,7 +38,10 @@ class CodeShowcaseProgressStep extends StatelessWidget {
   Widget build(BuildContext context) {
     var expandProgress = expandCtrl?.watch(context);
     expandProgress = expandProgress != null
-        ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
+        ? Curves.easeInOut
+            .transform(expandProgress)
+            .clamp(0.0, 1.0)
+            .toPrecision(3)
         : null;
 
     return Transform.translate(

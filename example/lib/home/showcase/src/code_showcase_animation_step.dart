@@ -744,6 +744,10 @@ class _Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (descriptionVisibilityFactor == 0) {
+      return const SizedBox.shrink();
+    }
+
     return ClipRect(
       child: Align(
         alignment: Alignment.topLeft,

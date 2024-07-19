@@ -1,11 +1,11 @@
 {
-    "name": "example",
-    "short_name": "example",
+    "name": "context_plus - Bind and observe values for a BuildContext, conveniently.",
+    "short_name": "context_plus",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "description": "A package that combines context_watch with context_ref to provide a convenient way to bind and observe values for a BuildContext.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

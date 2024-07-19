@@ -447,10 +447,7 @@ class _DesktopCodeAnimationStepButtons extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             for (final keyframe in ShowcaseKeyframe.values)
-              RepaintBoundary(
-                key: ValueKey(keyframe),
-                child: _DesktopCodeAnimationStepButton(keyframe: keyframe),
-              ),
+              _DesktopCodeAnimationStepButton(keyframe: keyframe),
           ],
         ),
       ),
@@ -692,8 +689,11 @@ class _AppearAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final curve = Interval(beginAt, endAt, curve: Curves.linearToEaseOut);
-    final opacity = curve.transform(_appearCtrl.watch(context)).clamp(0.0, 1.0);
-    final translateY = curve.transform(1 - opacity) * 16;
+    final opacity = curve
+        .transform(_appearCtrl.watch(context))
+        .clamp(0.0, 1.0)
+        .toPrecision(3);
+    final translateY = (curve.transform(1 - opacity) * 16).toPrecision(3);
     return Transform.translate(
       offset: Offset(0, translateY),
       child: Opacity(

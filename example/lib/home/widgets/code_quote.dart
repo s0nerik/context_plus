@@ -107,6 +107,7 @@ class CodeMultilineQuote extends StatelessWidget {
           ),
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             Center(
               child: Text(

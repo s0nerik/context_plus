@@ -401,12 +401,10 @@ class _CodeAnimation extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Opacity(
+                  HaloBox(
+                    width: windowSize.width,
+                    height: windowSize.height,
                     opacity: animationProgress,
-                    child: HaloBox(
-                      width: windowSize.width,
-                      height: windowSize.height,
-                    ),
                   ),
                   SizedBox.fromSize(
                     size: windowSize,

@@ -1,74 +1,138 @@
-import 'package:color_mesh/color_mesh.dart';
-import 'package:context_plus/context_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:visibility_detector/visibility_detector.dart';
+import 'dart:async';
+import 'dart:math';
 
-class HaloBox extends StatelessWidget {
+import 'package:flutter/material.dart';
+
+class HaloBox extends StatefulWidget {
   const HaloBox({
     super.key,
     required this.width,
     required this.height,
+    required this.opacity,
   });
 
   final double width;
   final double height;
+  final double opacity;
 
-  static final _key = Ref<GlobalKey>();
-  static final _show = Ref<ValueNotifier<bool>>();
+  @override
+  State<HaloBox> createState() => _HaloBoxState();
+}
+
+class _HaloBoxState extends State<HaloBox> {
+  static const _duration = Duration(milliseconds: 1000);
+  static final colors = [
+    Colors.yellow,
+    Colors.green,
+    Colors.purple[300]!,
+    Colors.blue,
+  ];
+
+  final _rnd = Random();
+  late Timer _timer;
+
+  late List<_Gradient> _gradients;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(_duration, _onTimerTick);
+    _onTimerTick(null);
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _onTimerTick(_) {
+    if (!mounted) return;
+    setState(() {
+      const positionFraction = 0.2;
+      const sizeFraction = 1.5;
+      _gradients = List.generate(4, (i) {
+        final color = colors[i];
+        final gradient = _Gradient(
+          color: color,
+          left: i % 2 == 0 ? _rnd.nextDouble() * positionFraction : null,
+          right: i % 2 == 1 ? _rnd.nextDouble() * positionFraction : null,
+          top: i < 2 ? _rnd.nextDouble() * positionFraction : null,
+          bottom: i >= 2 ? _rnd.nextDouble() * positionFraction : null,
+          width: sizeFraction,
+          height: sizeFraction,
+        );
+        return gradient;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final key = _key.bind(context, () => GlobalKey());
-    final show = _show.bind(context, () => ValueNotifier(true));
-
-    return VisibilityDetector(
-      key: key,
-      onVisibilityChanged: (info) {
-        if (!context.mounted) return;
-        show.value = info.visibleFraction > 0;
-      },
-      child: SizedOverflowBox(
-        size: Size(width, height),
-        child: AnimatedCrossFade(
-          duration: const Duration(milliseconds: 500),
-          alignment: Alignment.center,
-          sizeCurve: const Interval(0.0, 0.0),
-          crossFadeState: show.watch(context)
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          firstChild: ShaderMask(
-            shaderCallback: (rect) => RadialGradient(
-              colors: [
-                Colors.white.withOpacity(0.4),
-                Colors.white.withOpacity(0.0),
-              ],
-            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
-            blendMode: BlendMode.modulate,
-            child: UnconstrainedBox(
-              clipBehavior: Clip.none,
-              child: SizedBox(
-                width: width * 2,
-                height: height * 2,
-                child: Padding(
-                  padding: EdgeInsets.all(width * 0.01),
-                  child: AnimatedMeshGradientContainer(
-                    duration: const Duration(milliseconds: 500),
-                    gradient: MeshGradient(
-                      colors: [
-                        Colors.yellow,
-                        Colors.green,
-                        Colors.blue,
-                        Colors.purple[300]!,
-                      ],
+    return SizedOverflowBox(
+      size: Size(widget.width, widget.height),
+      child: UnconstrainedBox(
+        clipBehavior: Clip.none,
+        child: SizedBox(
+          width: widget.width * 2,
+          height: widget.height * 2,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              for (final gradient in _gradients)
+                AnimatedPositioned(
+                  duration: _duration,
+                  left: gradient.left != null
+                      ? widget.width * gradient.left!
+                      : null,
+                  top: gradient.top != null
+                      ? widget.height * gradient.top!
+                      : null,
+                  right: gradient.right != null
+                      ? widget.width * gradient.right!
+                      : null,
+                  bottom: gradient.bottom != null
+                      ? widget.height * gradient.bottom!
+                      : null,
+                  width: gradient.width * widget.width,
+                  height: gradient.height * widget.height,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        colors: [
+                          gradient.color.withOpacity(0.4 * widget.opacity),
+                          gradient.color.withOpacity(0.0),
+                        ],
+                        radius: 0.4,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+            ],
           ),
-          secondChild: const SizedBox.shrink(),
         ),
       ),
     );
   }
+}
+
+/// All values except color are fractions
+class _Gradient {
+  const _Gradient({
+    required this.color,
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    required this.width,
+    required this.height,
+  });
+
+  final Color color;
+  final double? left;
+  final double? top;
+  final double? right;
+  final double? bottom;
+  final double width;
+  final double height;
 }

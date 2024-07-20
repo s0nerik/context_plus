@@ -9,14 +9,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.0"
-  assorted_layout_widgets:
-    dependency: "direct main"
-    description:
-      name: assorted_layout_widgets
-      sha256: "5b7f7c76a1a4c7cf95edfb854c3ed09ce9cb7f25a372f2d9a8d4c1569d42ecfb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.0.2"
   async:
     dependency: transitive
     description:
@@ -73,14 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  color_mesh:
-    dependency: "direct main"
-    description:
-      name: color_mesh
-      sha256: "59d715dbd50c8a7df72edefb12571e89e29146059ca2706a8bf0163d99cbcbdc"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   context_plus:
     dependency: "direct main"
     description:
@@ -343,14 +327,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
-  matrix4_transform:
-    dependency: transitive
-    description:
-      name: matrix4_transform
-      sha256: "42c42610deecc382be2653f4a21358537401bd5b027c168a174c7c6a64959908"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.1"
   meta:
     dependency: transitive
     description:

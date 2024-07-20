@@ -24,11 +24,9 @@ dependencies:
   rive: ^0.13.8
   visibility_detector: ^0.4.0+2
   gap: ^3.0.1
-  color_mesh: ^0.0.6
   flutter_svg: ^2.0.10+1
   yaml: ^3.1.2
   indent: ^2.0.0
-  assorted_layout_widgets: ^9.0.2
 
   # Signals
   signals_flutter: ^5.2.2

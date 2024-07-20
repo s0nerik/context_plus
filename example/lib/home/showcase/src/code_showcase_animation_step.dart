@@ -38,10 +38,7 @@ class CodeShowcaseProgressStep extends StatelessWidget {
   Widget build(BuildContext context) {
     var expandProgress = expandCtrl?.watch(context);
     expandProgress = expandProgress != null
-        ? Curves.easeInOut
-            .transform(expandProgress)
-            .clamp(0.0, 1.0)
-            .toPrecision(3)
+        ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
         : null;
 
     return Transform.translate(

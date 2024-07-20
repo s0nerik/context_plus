@@ -50,7 +50,7 @@ class _HaloBoxState extends State<HaloBox> {
     if (!mounted) return;
     setState(() {
       const positionFraction = 0.2;
-      const sizeFraction = 1.5;
+      const sizeFraction = 1.35;
       _gradients = List.generate(4, (i) {
         final color = colors[i];
         final gradient = _Gradient(
@@ -59,8 +59,8 @@ class _HaloBoxState extends State<HaloBox> {
           right: i % 2 == 1 ? _rnd.nextDouble() * positionFraction : null,
           top: i < 2 ? _rnd.nextDouble() * positionFraction : null,
           bottom: i >= 2 ? _rnd.nextDouble() * positionFraction : null,
-          width: sizeFraction,
-          height: sizeFraction,
+          width: sizeFraction + 0.2 * _rnd.nextDouble(),
+          height: sizeFraction + 0.2 * _rnd.nextDouble(),
         );
         return gradient;
       });

@@ -46,35 +46,32 @@ class CustomSelectableRichText extends StatelessWidget {
     return KeyboardListener(
       focusNode: focusNode,
       onKeyEvent: (event) => _handleKey(context, event),
-      child: Focus(
-        autofocus: true,
-        child: SelectableText.rich(
-          span,
-          onSelectionChanged: (selection, source) =>
-              textSelection.value = selection,
-          contextMenuBuilder: (context, editableTextState) {
-            final buttonItems = editableTextState.contextMenuButtonItems;
-            final copyButtonIndex = buttonItems
-                .indexWhere((btn) => btn.type == ContextMenuButtonType.copy);
-            if (copyButtonIndex >= 0) {
-              final copyButtonItem = buttonItems[copyButtonIndex];
-              buttonItems[copyButtonIndex] = copyButtonItem.copyWith(
-                onPressed: () {
-                  _copyToClipboard(context, span, textSelection.value);
-                  editableTextState.bringIntoView(
-                    editableTextState.textEditingValue.selection.extent,
-                  );
-                  editableTextState.hideToolbar(false);
-                  editableTextState.clipboardStatus.update();
-                },
-              );
-            }
-            return AdaptiveTextSelectionToolbar.buttonItems(
-              anchors: editableTextState.contextMenuAnchors,
-              buttonItems: buttonItems,
+      child: SelectableText.rich(
+        span,
+        onSelectionChanged: (selection, source) =>
+            textSelection.value = selection,
+        contextMenuBuilder: (context, editableTextState) {
+          final buttonItems = editableTextState.contextMenuButtonItems;
+          final copyButtonIndex = buttonItems
+              .indexWhere((btn) => btn.type == ContextMenuButtonType.copy);
+          if (copyButtonIndex >= 0) {
+            final copyButtonItem = buttonItems[copyButtonIndex];
+            buttonItems[copyButtonIndex] = copyButtonItem.copyWith(
+              onPressed: () {
+                _copyToClipboard(context, span, textSelection.value);
+                editableTextState.bringIntoView(
+                  editableTextState.textEditingValue.selection.extent,
+                );
+                editableTextState.hideToolbar(false);
+                editableTextState.clipboardStatus.update();
+              },
             );
-          },
-        ),
+          }
+          return AdaptiveTextSelectionToolbar.buttonItems(
+            anchors: editableTextState.contextMenuAnchors,
+            buttonItems: buttonItems,
+          );
+        },
       ),
     );
   }

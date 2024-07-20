@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 class HaloBox extends StatefulWidget {
   const HaloBox({
     super.key,
+    required this.size,
     required this.opacity,
-    required this.child,
   });
 
+  final Size size;
   final double opacity;
-  final Widget child;
 
   @override
   State<HaloBox> createState() => _HaloBoxState();
@@ -36,14 +36,17 @@ class _HaloBoxState extends State<HaloBox> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      isComplex: true,
-      willChange: true,
-      painter: _LissajousOrbitPainter(
-        animation: _controller,
-        opacity: widget.opacity,
+    return RotationTransition(
+      turns: _controller,
+      child: CustomPaint(
+        isComplex: true,
+        willChange: false,
+        size: widget.size,
+        painter: _LissajousOrbitPainter(
+          animation: const AlwaysStoppedAnimation(0.75),
+          opacity: widget.opacity,
+        ),
       ),
-      child: widget.child,
     );
   }
 }

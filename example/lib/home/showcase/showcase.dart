@@ -398,24 +398,31 @@ class _CodeAnimation extends StatelessWidget {
             aspectRatio: windowAspectRatio,
             child: FittedBox(
               fit: BoxFit.contain,
-              child: HaloBox(
-                opacity: animationProgress,
-                child: SizedBox.fromSize(
-                  size: windowSize,
-                  child: SizedOverflowBox(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  HaloBox(
                     size: windowSize,
-                    child: UnconstrainedBox(
-                      clipBehavior: Clip.hardEdge,
-                      child: RiveAnimation.asset(
-                        key: _codeAnimationKey,
-                        'assets/showcase/context_plus_showcase_v11.riv',
-                        controllers: [ctrl],
-                        useArtboardSize: true,
-                        onInit: (artboard) => _introCtrl.of(context).forward(),
+                    opacity: animationProgress,
+                  ),
+                  SizedBox.fromSize(
+                    size: windowSize,
+                    child: SizedOverflowBox(
+                      size: windowSize,
+                      child: UnconstrainedBox(
+                        clipBehavior: Clip.hardEdge,
+                        child: RiveAnimation.asset(
+                          key: _codeAnimationKey,
+                          'assets/showcase/context_plus_showcase_v11.riv',
+                          controllers: [ctrl],
+                          useArtboardSize: true,
+                          onInit: (artboard) =>
+                              _introCtrl.of(context).forward(),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),

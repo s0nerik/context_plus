@@ -113,6 +113,7 @@ class Showcase extends StatelessWidget {
 
     return SafeArea(
       child: Stack(
+        clipBehavior: Clip.none,
         fit: StackFit.expand,
         children: [
           const Positioned.fill(
@@ -250,6 +251,7 @@ class _DesktopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Positioned(
           top: 24,
@@ -307,6 +309,7 @@ class _MobileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Stack(
+      clipBehavior: Clip.none,
       children: [
         Positioned(
           left: 12,
@@ -396,6 +399,7 @@ class _CodeAnimation extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   Opacity(
                     opacity: animationProgress,
@@ -591,6 +595,7 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
       beginAt: 0.5,
       endAt: 1,
       child: Stack(
+        clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
           CodeShowcaseProgressStep(

@@ -1,4 +1,5 @@
 import 'package:context_plus/context_plus.dart';
+import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/svg.dart';
@@ -467,7 +468,7 @@ class _DesktopCodeAnimationStepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress =
         _watchKeyframeTransitionProgress(context: context, keyframe: keyframe);
-    final opacity = (1 / 3 + 2 / 3 * progress).clamp(0.0, 1.0);
+    final opacity = (1 / 3 + 2 / 3 * progress).clamp(0.0, 1.0).toPrecision(2);
 
     return CodeShowcaseProgressStep(
       showcaseCtrl: _showcaseCtrl.of(context),
@@ -763,7 +764,7 @@ double _watchKeyframeTransitionProgress({
   }
       .clamp(0.0, 1.0);
 
-  return progress;
+  return progress.toPrecision(2);
 }
 
 // endregion

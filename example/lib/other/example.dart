@@ -346,10 +346,10 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: padding),
-              child: SelectionArea(
-                child: DefaultTextStyle.merge(
-                  style: codeStyle,
-                  child: Text.rich(highlighter.highlight(code)),
+              child: DefaultTextStyle.merge(
+                style: codeStyle,
+                child: SelectableText.rich(
+                  highlighter.highlight(code),
                 ),
               ),
             ),

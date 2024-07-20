@@ -97,46 +97,44 @@ class CodeMultilineQuote extends StatelessWidget {
   }
 
   Widget _buildFilenameHeader(BuildContext context) {
-    return SelectionArea(
-      child: Container(
-        height: 28,
-        decoration: const BoxDecoration(
-          color: _codeFilenameBackground,
-          border: Border(
-            bottom: BorderSide(color: _borderColor),
+    return Container(
+      height: 28,
+      decoration: const BoxDecoration(
+        color: _codeFilenameBackground,
+        border: Border(
+          bottom: BorderSide(color: _borderColor),
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Center(
+            child: Text(
+              fileName,
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: _fontFamily,
+              ),
+            ),
           ),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Center(
-              child: Text(
-                fileName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: _fontFamily,
-                ),
-              ),
+          Positioned(
+            right: -6,
+            top: -6,
+            child: IconButton(
+              icon: const Icon(MdiIcons.contentCopy, size: 16),
+              onPressed: () {
+                Clipboard.setData(
+                  ClipboardData(text: copyableCode ?? code),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Copied to clipboard!'),
+                  ),
+                );
+              },
             ),
-            Positioned(
-              right: -6,
-              top: -6,
-              child: IconButton(
-                icon: const Icon(MdiIcons.contentCopy, size: 16),
-                onPressed: () {
-                  Clipboard.setData(
-                    ClipboardData(text: copyableCode ?? code),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Copied to clipboard!'),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -160,17 +158,15 @@ class CodeMultilineQuote extends StatelessWidget {
     return Scrollbar(
       thumbVisibility: true,
       controller: scrollController,
-      child: SelectionArea(
-        child: SingleChildScrollView(
-          controller: scrollController,
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text.rich(
-              highlighter.highlight(code),
-              softWrap: false,
-              style: const TextStyle(fontFamily: _fontFamily),
-            ),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SelectableText.rich(
+            highlighter.highlight(code),
+            textAlign: TextAlign.left,
+            style: const TextStyle(fontFamily: _fontFamily),
           ),
         ),
       ),

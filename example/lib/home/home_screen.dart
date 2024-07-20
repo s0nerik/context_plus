@@ -369,6 +369,7 @@ class _SetupStep extends StatelessWidget {
 
     return LowEmphasisCard(
       child: Stack(
+        clipBehavior: Clip.none,
         fit: StackFit.passthrough,
         children: [
           Positioned(

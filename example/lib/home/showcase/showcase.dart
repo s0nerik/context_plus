@@ -691,7 +691,10 @@ class _AppearAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final curve = Interval(beginAt, endAt, curve: Curves.linearToEaseOut);
-    final opacity = curve.transform(_appearCtrl.watch(context)).clamp(0.0, 1.0);
+    final opacity = curve
+        .transform(_appearCtrl.watch(context))
+        .clamp(0.0, 1.0)
+        .toPrecision(2);
     final translateY = (curve.transform(1 - opacity) * 16);
     return Transform.translate(
       offset: Offset(0, translateY),

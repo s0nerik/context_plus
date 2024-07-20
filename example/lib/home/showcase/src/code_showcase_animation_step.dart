@@ -4,7 +4,6 @@ import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
-import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -648,46 +647,36 @@ class _Layout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (displayShadow)
-          const RepaintBoundary(
-            key: ValueKey('shadow'),
-            child: SizedBox(
-              height: 56,
-              child: BackgroundGradient(),
-            ),
+          const SizedBox(
+            height: 56,
+            child: BackgroundGradient(),
           ),
-        RepaintBoundary(
-          key: const ValueKey('content'),
-          child: Material(
-            color: displayShadow
-                ? BackgroundGradient.endColor
-                : Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RepaintBoundary(
-                  key: const ValueKey('title'),
-                  child: Padding(
-                    padding: titleMargin,
-                    child: _Title(
-                      onTap: onTap,
-                      title: title,
-                      isMobileLayout: isMobileLayout,
-                      descriptionVisibilityFactor: descriptionVisibilityFactor,
-                    ),
-                  ),
+        Material(
+          color:
+              displayShadow ? BackgroundGradient.endColor : Colors.transparent,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: titleMargin,
+                child: _Title(
+                  onTap: onTap,
+                  title: title,
+                  isMobileLayout: isMobileLayout,
+                  descriptionVisibilityFactor: descriptionVisibilityFactor,
                 ),
-                Padding(
-                  padding: isMobileLayout
-                      ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
-                      : const EdgeInsets.only(left: 34),
-                  child: _Description(
-                    descriptionVisibilityFactor: descriptionVisibilityFactor,
-                    description: description,
-                  ),
+              ),
+              Padding(
+                padding: isMobileLayout
+                    ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
+                    : const EdgeInsets.only(left: 34),
+                child: _Description(
+                  descriptionVisibilityFactor: descriptionVisibilityFactor,
+                  description: description,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -776,7 +765,10 @@ class _Description extends StatelessWidget {
                     .textTheme
                     .bodySmall!
                     .copyWith(color: Colors.grey[300]),
-                child: CustomSelectableRichText(description),
+                child: TickerMode(
+                  enabled: descriptionVisibilityFactor == 1,
+                  child: CustomSelectableRichText(description),
+                ),
               ),
             ),
           ),

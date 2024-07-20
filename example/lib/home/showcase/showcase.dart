@@ -399,8 +399,6 @@ class _CodeAnimation extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.contain,
               child: HaloBox(
-                width: windowSize.width,
-                height: windowSize.height,
                 opacity: animationProgress,
                 child: SizedBox.fromSize(
                   size: windowSize,

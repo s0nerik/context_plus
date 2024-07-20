@@ -5,14 +5,10 @@ import 'package:flutter/material.dart';
 class HaloBox extends StatefulWidget {
   const HaloBox({
     super.key,
-    required this.width,
-    required this.height,
     required this.opacity,
     required this.child,
   });
 
-  final double width;
-  final double height;
   final double opacity;
   final Widget child;
 

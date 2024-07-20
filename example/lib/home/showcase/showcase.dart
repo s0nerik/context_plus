@@ -111,33 +111,33 @@ class Showcase extends StatelessWidget {
       );
     }, key: layout);
 
-    return SafeArea(
-      child: Stack(
-        clipBehavior: Clip.none,
-        fit: StackFit.expand,
-        children: [
-          const Positioned.fill(
-            child: CustomPaint(
-              painter: _BlueprintPainter(),
+    return CustomPaint(
+      isComplex: true,
+      willChange: false,
+      painter: const _BlueprintPainter(),
+      child: SafeArea(
+        child: Stack(
+          clipBehavior: Clip.none,
+          fit: StackFit.expand,
+          children: [
+            const Center(
+              child: _IntroText(),
             ),
-          ),
-          const Center(
-            child: _IntroText(),
-          ),
-          RepaintBoundary(
-            child: switch (layout) {
-              _ShowcaseLayout.desktop ||
-              _ShowcaseLayout.smallerDesktop =>
-                const _DesktopView(),
-              _ShowcaseLayout.mobile => const _MobileView(),
-            },
-          ),
-          const Positioned(
-            right: 16,
-            bottom: 12,
-            child: _SkipIntroButton(),
-          ),
-        ],
+            RepaintBoundary(
+              child: switch (layout) {
+                _ShowcaseLayout.desktop ||
+                _ShowcaseLayout.smallerDesktop =>
+                  const _DesktopView(),
+                _ShowcaseLayout.mobile => const _MobileView(),
+              },
+            ),
+            const Positioned(
+              right: 16,
+              bottom: 12,
+              child: _SkipIntroButton(),
+            ),
+          ],
+        ),
       ),
     );
   }

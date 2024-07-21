@@ -3,13 +3,19 @@ import 'package:flutter/widgets.dart';
 
 import 'src/context_watch_root.dart';
 
-export 'src/context_unwatch.dart';
-export 'src/watchers/listenable_context_watcher.dart'
-    hide ListenableContextWatcher;
-export 'src/watchers/future_context_watcher.dart' hide FutureContextWatcher;
-export 'src/watchers/stream_context_watcher.dart' hide StreamContextWatcher;
-
 export 'package:context_watch_base/context_watch_base.dart' show ContextWatcher;
+
+export 'src/context_unwatch.dart';
+export 'src/watchers/future_context_watcher.dart'
+    show FutureContextWatchExtension, FutureContextWatchOnlyExtension;
+export 'src/watchers/listenable_context_watcher.dart'
+    show
+        ListenableContextWatchExtension,
+        ListenableContextWatchOnlyExtension,
+        ValueListenableContextWatchExtension,
+        AsyncListenableContextWatchExtension;
+export 'src/watchers/stream_context_watcher.dart'
+    show StreamContextWatchExtension, StreamContextWatchOnlyExtension;
 
 class ContextWatch {
   /// Provides the ability to watch observable values using

@@ -1,5 +1,6 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/copyable_widget_span.dart';
+import 'package:example/other/user_agent/user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -43,10 +44,15 @@ class CustomSelectableRichText extends StatelessWidget {
     final textSelection =
         _textSelection.bind(context, () => ValueNotifier(null));
     _pressedKeys.bind(context, () => ValueNotifier(const {}));
-    return KeyboardListener(
-      focusNode: focusNode,
-      onKeyEvent: (event) => _handleKey(context, event),
-      child: SelectableText.rich(
+
+    final Widget child;
+    if (!isMobileWebKit) {
+      // Mobile WebKit doesn't handle text selection properly.
+      // So let's disable it.
+      //
+      // https://github.com/flutter/flutter/issues/95958
+      // https://github.com/flutter/flutter/issues/122015
+      child = SelectableText.rich(
         span,
         onSelectionChanged: (selection, source) =>
             textSelection.value = selection,
@@ -72,7 +78,15 @@ class CustomSelectableRichText extends StatelessWidget {
             buttonItems: buttonItems,
           );
         },
-      ),
+      );
+    } else {
+      child = Text.rich(span);
+    }
+
+    return KeyboardListener(
+      focusNode: focusNode,
+      onKeyEvent: (event) => _handleKey(context, event),
+      child: child,
     );
   }
 }

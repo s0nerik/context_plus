@@ -161,7 +161,7 @@ void main() {
   );
 
   group('SupportValueStream', () {
-    test('recognizes rx_dart ValueStream', () {
+    test('recognizes rxdart ValueStream', () {
       final subject = BehaviorSubject<int>();
       // ignore: unnecessary_type_check
       expect(subject is ValueStream<int>, isTrue);

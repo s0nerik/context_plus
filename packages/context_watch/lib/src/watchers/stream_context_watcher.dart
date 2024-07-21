@@ -70,8 +70,8 @@ AsyncSnapshot<T> _initialSnapshot<T>(Stream stream) {
   return AsyncSnapshot<T>.nothing().inState(ConnectionState.waiting);
 }
 
-/// Mimics the interface of a `ValueStream` from `rx_dart` without having an
-/// actual dependency on the [rx_dart] package.
+/// Mimics the interface of a `ValueStream` from `rxdart` without having an
+/// actual dependency on the [rxdart] package.
 class SupportValueStream<T> {
   final Stream<T> stream;
 

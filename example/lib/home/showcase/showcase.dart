@@ -341,10 +341,7 @@ class _MobileView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _MobileCodeAnimationStepDescription(),
-              ColoredBox(
-                color: Color(0xDD000000),
-                child: _MobileCodeAnimationStepButtons(),
-              ),
+              _MobileCodeAnimationStepButtons(),
             ],
           ),
         ),

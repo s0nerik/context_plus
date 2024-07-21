@@ -132,6 +132,7 @@ class _MobileLayout extends StatelessWidget {
               bottom: 8,
               child: IndexedStack(
                 index: selected.watch(context),
+                sizing: StackFit.expand,
                 children: const [
                   _SourceCode(),
                   _SelectedExample(),

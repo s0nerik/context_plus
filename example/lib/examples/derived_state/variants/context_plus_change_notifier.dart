@@ -23,6 +23,7 @@ class Example extends StatelessWidget {
     return const Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _Counter(),
         SizedBox(height: 16),

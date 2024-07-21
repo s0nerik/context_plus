@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                     _SetupSection(),
                     _ExamplesSection(),
                     _DemonstrationsSection(),
-                    Gap(12),
+                    Gap(_gap),
                   ],
                 ),
               ),
@@ -459,8 +459,8 @@ class _DemonstrationsSection extends StatelessWidget {
         title: 'Demonstrations',
       ),
       child: Wrap(
-        spacing: _horizontalMargin,
-        runSpacing: _horizontalMargin,
+        spacing: _gap,
+        runSpacing: _gap,
         children: [
           _ExampleCard(
             onPressed: () => context.url = NestedScopesExample.urlPath,

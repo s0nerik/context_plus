@@ -1,14 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
-import 'package:flutter_sequence_animation/flutter_sequence_animation.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class AnimatedArrowDown extends StatelessWidget {
   const AnimatedArrowDown({super.key});
 
   static final _animCtrl = Ref<AnimationController>();
-  static final _anim = Ref<SequenceAnimation>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,81 +14,61 @@ class AnimatedArrowDown extends StatelessWidget {
       context,
       (vsync) => AnimationController(
         vsync: vsync,
-        duration: const Duration(seconds: 1),
+        duration: const Duration(seconds: 2),
       )..repeat(),
     );
 
-    final anim = _anim.bind(
-      context,
-      () => SequenceAnimationBuilder()
-          .addAnimatable(
-            animatable: Tween<double>(begin: 0, end: 1),
-            from: Duration.zero,
-            to: const Duration(milliseconds: 300),
-            tag: 'opacity',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: -8, end: 0),
-            from: Duration.zero,
-            to: const Duration(milliseconds: 300),
-            tag: 'translateY',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 1, end: 1),
-            from: const Duration(milliseconds: 300),
-            to: const Duration(milliseconds: 600),
-            tag: 'opacity',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 0, end: 0),
-            from: const Duration(milliseconds: 300),
-            to: const Duration(milliseconds: 600),
-            tag: 'translateY',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 1, end: 0),
-            from: const Duration(milliseconds: 600),
-            to: const Duration(milliseconds: 900),
-            tag: 'opacity',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 0, end: 8),
-            from: const Duration(milliseconds: 600),
-            to: const Duration(milliseconds: 900),
-            tag: 'translateY',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 0, end: 0),
-            from: const Duration(milliseconds: 900),
-            to: const Duration(milliseconds: 1000),
-            tag: 'opacity',
-          )
-          .addAnimatable(
-            animatable: Tween<double>(begin: 8, end: 8),
-            from: const Duration(milliseconds: 900),
-            to: const Duration(milliseconds: 1000),
-            tag: 'translateY',
-          )
-          .animate(animCtrl),
-    );
-
-    return VisibilityDetector(
-      key: const Key('AnimatedBottomArrow'),
-      onVisibilityChanged: (info) {
-        if (!context.mounted) return;
-        if (info.visibleFraction == 0) {
-          animCtrl.reset();
-        } else {
-          animCtrl.repeat();
-        }
-      },
-      child: Transform.translate(
-        offset: Offset(0, anim['translateY'].watch(context)),
-        child: Opacity(
-          opacity: anim['opacity'].watch(context),
-          child: const Icon(MdiIcons.chevronDoubleDown),
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 24,
+        height: 24,
+        child: CustomPaint(
+          willChange: true,
+          painter: ScrollDownArrowsPainter(animation: animCtrl),
         ),
       ),
     );
   }
+}
+
+class ScrollDownArrowsPainter extends CustomPainter {
+  ScrollDownArrowsPainter({required this.animation})
+      : super(repaint: animation);
+
+  final Animation<double> animation;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final arrowWidth = size.width * 0.6;
+    final arrowHeight = size.height * 0.25;
+
+    for (int i = 0; i < 3; i++) {
+      final progress = (animation.value + i / 3) % 1.0;
+      final yOffset = progress * size.height;
+
+      // Calculate opacity
+      final fadeDistance = size.height * 0.5;
+      final topFade = yOffset.clamp(0.0, fadeDistance) / fadeDistance;
+      final bottomFade =
+          (size.height - yOffset * 1.1).clamp(0.0, fadeDistance) / fadeDistance;
+      final opacity = math.min(topFade, bottomFade);
+
+      paint.color = Colors.white.withOpacity(opacity);
+
+      final path = Path()
+        ..moveTo(size.width / 2 - arrowWidth / 2, yOffset)
+        ..lineTo(size.width / 2, yOffset + arrowHeight)
+        ..lineTo(size.width / 2 + arrowWidth / 2, yOffset);
+
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

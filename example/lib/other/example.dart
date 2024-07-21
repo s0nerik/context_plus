@@ -5,6 +5,7 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
 import 'code_highlighter_theme.dart';
+import 'user_agent/user_agent.dart';
 
 class ExampleVariant {
   const ExampleVariant({
@@ -315,6 +316,32 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
     final lineCount = code.split('\n').length;
 
     const padding = 12.0;
+
+    Widget child = SingleChildScrollView(
+      controller: sourceScrollController,
+      scrollDirection: Axis.vertical,
+      padding: const EdgeInsets.symmetric(vertical: padding),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: padding),
+        child: DefaultTextStyle.merge(
+          style: codeStyle,
+          child: Text.rich(highlighter.highlight(code)),
+        ),
+      ),
+    );
+
+    if (!isMobileWebKit) {
+      // Mobile WebKit doesn't handle text selection properly.
+      // So let's disable it.
+      //
+      // https://github.com/flutter/flutter/issues/95958
+      // https://github.com/flutter/flutter/issues/122015
+      child = SelectionArea(
+        child: child,
+      );
+    }
+
     return Row(
       key: ValueKey(codeFilePath),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -339,21 +366,7 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
           ),
         ),
         Expanded(
-          child: SelectionArea(
-            child: SingleChildScrollView(
-              controller: sourceScrollController,
-              scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.symmetric(vertical: padding),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: padding),
-                child: DefaultTextStyle.merge(
-                  style: codeStyle,
-                  child: Text.rich(highlighter.highlight(code)),
-                ),
-              ),
-            ),
-          ),
+          child: child,
         ),
       ],
     );

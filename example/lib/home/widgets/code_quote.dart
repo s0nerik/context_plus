@@ -1,6 +1,7 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/widgets/dynamic_section_text.dart';
 import 'package:example/other/code_highlighter_theme.dart';
+import 'package:example/other/user_agent/user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -155,23 +156,34 @@ class CodeMultilineQuote extends StatelessWidget {
     final scrollController =
         _codeScrollController.bind(context, ScrollController.new);
 
+    Widget child = SingleChildScrollView(
+      controller: scrollController,
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text.rich(
+          highlighter.highlight(code),
+          softWrap: false,
+          style: const TextStyle(fontFamily: _fontFamily),
+        ),
+      ),
+    );
+
+    if (!isMobileWebKit) {
+      // Mobile WebKit doesn't handle text selection properly.
+      // So let's disable it.
+      //
+      // https://github.com/flutter/flutter/issues/95958
+      // https://github.com/flutter/flutter/issues/122015
+      child = SelectionArea(
+        child: child,
+      );
+    }
+
     return Scrollbar(
       thumbVisibility: true,
       controller: scrollController,
-      child: SelectionArea(
-        child: SingleChildScrollView(
-          controller: scrollController,
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text.rich(
-              highlighter.highlight(code),
-              softWrap: false,
-              style: const TextStyle(fontFamily: _fontFamily),
-            ),
-          ),
-        ),
-      ),
+      child: child,
     );
   }
 }

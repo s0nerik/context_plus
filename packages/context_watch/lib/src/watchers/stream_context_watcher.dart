@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rxdart/streams.dart';
 
 class _StreamSubscription implements ContextWatchSubscription {
   _StreamSubscription({
@@ -52,28 +51,101 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
 }
 
 AsyncSnapshot<T> _initialSnapshot<T>(Stream stream) {
-  if (stream is ValueStream<T>) {
-    if (stream.hasValue) {
+  final supportValueStream = SupportValueStream.cast(stream);
+  if (supportValueStream != null) {
+    if (supportValueStream.hasValue) {
       return AsyncSnapshot<T>.withData(
         ConnectionState.waiting,
-        stream.value,
+        supportValueStream.value,
       );
     }
-    if (stream.hasError) {
-      if (stream.stackTrace != null) {
-        return AsyncSnapshot<T>.withError(
-          ConnectionState.waiting,
-          stream.error,
-          stream.stackTrace!,
-        );
-      }
+    if (supportValueStream.hasError) {
       return AsyncSnapshot<T>.withError(
         ConnectionState.waiting,
-        stream.error,
+        supportValueStream.error,
+        supportValueStream.stackTrace ?? StackTrace.empty,
       );
     }
   }
   return AsyncSnapshot<T>.nothing().inState(ConnectionState.waiting);
+}
+
+/// Mimics the interface of a `ValueStream` from `rx_dart` without having an
+/// actual dependency on the [rx_dart] package.
+class SupportValueStream<T> {
+  final Stream<T> stream;
+
+  @visibleForTesting
+  SupportValueStream(this.stream);
+
+  /// Casts a [Stream] to a [_SupportValueStream] if it passed the duck test
+  static SupportValueStream<T>? cast<T>(Stream<T> stream) {
+    final valueStream = SupportValueStream(stream);
+    try {
+      // Duck test: If it looks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck.
+      // try to access all methods that make a ValueStream a ValueStream
+      if (valueStream.hasValue) {
+        valueStream.value;
+      }
+      if (valueStream.hasError) {
+        valueStream.error;
+        valueStream.stackTrace;
+      }
+      // supports all used methods/getters, so it is a ValueStream
+      return valueStream;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool get hasValue {
+    final dynamic dynamicStream = stream;
+    final result = dynamicStream.hasValue;
+    if (result is bool) {
+      return result;
+    }
+    throw StateError(
+        'Stream.hasValue does not return a boolean, but ${result.runtimeType}');
+  }
+
+  T get value {
+    final dynamic dynamicStream = stream;
+    final result = dynamicStream.value;
+    if (result is T) {
+      return result;
+    }
+    throw StateError('Stream.value is of type ${result.runtimeType}, not $T');
+  }
+
+  bool get hasError {
+    final dynamic dynamicStream = stream;
+    final result = dynamicStream.hasError;
+    if (result is bool) {
+      return result;
+    }
+    throw StateError(
+        'Stream.hasError does not return a boolean, but ${result.runtimeType}');
+  }
+
+  Object get error {
+    final dynamic dynamicStream = stream;
+    final result = dynamicStream.error;
+    if (result is Object) {
+      return result;
+    }
+    throw StateError(
+        'Stream.error is of type ${result.runtimeType}, not Object');
+  }
+
+  StackTrace? get stackTrace {
+    final dynamic dynamicStream = stream;
+    final result = dynamicStream.stackTrace;
+    if (result is StackTrace?) {
+      return result;
+    }
+    throw StateError(
+        'Stream.stackTrace is of type ${result.runtimeType}, not StackTrace');
+  }
 }
 
 extension StreamContextWatchExtension<T> on Stream<T> {

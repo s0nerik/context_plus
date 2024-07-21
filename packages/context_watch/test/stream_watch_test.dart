@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
@@ -157,4 +159,89 @@ void main() {
       ]);
     },
   );
+
+  group('SupportValueStream', () {
+    test('recognizes rx_dart ValueStream', () {
+      final subject = BehaviorSubject<int>();
+      // ignore: unnecessary_type_check
+      expect(subject is ValueStream<int>, isTrue);
+      final stream = SupportValueStream.cast(subject.stream);
+      expect(stream, isNotNull);
+    });
+
+    test('hasValue does not exist', () {
+      final stream = SupportValueStream(_AnyOtherStream());
+      expect(() => stream.hasValue, throwsNoSuchMethodError);
+    });
+    test('hasValue wrong type', () {
+      final stream =
+          SupportValueStream(_SupportValueStream_hasValueWrongType());
+      expect(() => stream.hasValue, throwsStateError);
+    });
+    test('value does not exist', () {
+      final stream = SupportValueStream(_AnyOtherStream());
+      expect(() => stream.value, throwsNoSuchMethodError);
+    });
+    test('value wrong type', () {
+      final stream = SupportValueStream(_SupportValueStream_valueWrongType());
+      expect(() => stream.value, throwsStateError);
+    });
+    test('hasError does not exist', () {
+      final stream = SupportValueStream(_AnyOtherStream());
+      expect(() => stream.hasError, throwsNoSuchMethodError);
+    });
+    test('hasError wrong type', () {
+      final stream =
+          SupportValueStream(_SupportValueStream_hasErrorWrongType());
+      expect(() => stream.hasError, throwsStateError);
+    });
+    test('error does not exist', () {
+      final stream = SupportValueStream(_AnyOtherStream());
+      expect(() => stream.error, throwsNoSuchMethodError);
+    });
+    test('error wrong type', () {
+      final stream = SupportValueStream(_SupportValueStream_errorWrongType());
+      expect(() => stream.error, throwsStateError);
+    });
+    test('stackTrace does not exist', () {
+      final stream = SupportValueStream(_AnyOtherStream());
+      expect(() => stream.stackTrace, throwsNoSuchMethodError);
+    });
+    test('stackTrace wrong type', () {
+      final stream =
+          SupportValueStream(_SupportValueStream_stacktraceWrongType());
+      expect(() => stream.stackTrace, throwsStateError);
+    });
+  });
+}
+
+class _AnyOtherStream<T> extends _UnimplementedStream<T> {}
+
+class _SupportValueStream_hasValueWrongType<T> extends _UnimplementedStream<T> {
+  String get hasValue => 'no'; // expects bool
+}
+
+class _SupportValueStream_valueWrongType extends _UnimplementedStream<int> {
+  String get value => 'no'; // expects T (int)
+}
+
+class _SupportValueStream_hasErrorWrongType<T> extends _UnimplementedStream<T> {
+  String get hasError => 'no'; // expects bool
+}
+
+class _SupportValueStream_errorWrongType<T> extends _UnimplementedStream<T> {
+  Object? get error => null; // expects Object
+}
+
+class _SupportValueStream_stacktraceWrongType<T>
+    extends _UnimplementedStream<T> {
+  String get stackTrace => 'no'; // expects StackTrace?
+}
+
+class _UnimplementedStream<T> extends Stream<T> {
+  @override
+  StreamSubscription<T> listen(void Function(T event)? onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+    throw UnimplementedError();
+  }
 }

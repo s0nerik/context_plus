@@ -76,6 +76,7 @@ class _ShowcasePage extends StatelessWidget {
       child: TickerMode(
         enabled: allowAnimations,
         child: Showcase(
+          homeScrollController: _scrollController.of(context),
           onCompleted: () => _isShowcaseCompleted.of(context).value = true,
         ),
       ),

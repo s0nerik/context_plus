@@ -30,18 +30,43 @@ final _codeAnimationKey = GlobalKey();
 
 final _showcaseLayout = Ref<_ShowcaseLayout>();
 
+final _homeScrollController = Ref<ScrollController>();
+final _homeScrollControllerListener = Ref<VoidCallback>();
+final _hasScrolled = Ref<ValueNotifier<bool>>();
+
 enum _ShowcaseLayout { desktop, smallerDesktop, mobile }
 
 class Showcase extends StatelessWidget {
   const Showcase({
     super.key,
     required this.onCompleted,
+    required this.homeScrollController,
   });
 
   final VoidCallback onCompleted;
+  final ScrollController homeScrollController;
 
   @override
   Widget build(BuildContext context) {
+    final hasScrolled = _hasScrolled.bind(context, () => ValueNotifier(false));
+    _homeScrollController.bindValue(context, homeScrollController);
+    _homeScrollControllerListener.bind(
+      context,
+      () {
+        void listener() {
+          if (homeScrollController.offset != 0) {
+            hasScrolled.value = true;
+            homeScrollController.removeListener(listener);
+          }
+        }
+
+        homeScrollController.addListener(listener);
+        return listener;
+      },
+      dispose: homeScrollController.removeListener,
+      key: homeScrollController,
+    );
+
     final isShowcaseCompleted = _isShowcaseCompleted.bind(
       context,
       () {
@@ -667,11 +692,20 @@ class _ScrollDownArrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
+    final hasScrolled = _hasScrolled.watch(context);
+    final height = MediaQuery.sizeOf(context).height;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeOut,
-      opacity: isShowcaseCompleted ? 1 : 0,
-      child: const AnimatedArrowDown(),
+      opacity: isShowcaseCompleted && !hasScrolled ? 1 : 0,
+      child: GestureDetector(
+        onTap: () => _homeScrollController.of(context).animateTo(
+              height,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+            ),
+        child: const AnimatedArrowDown(),
+      ),
     );
   }
 }

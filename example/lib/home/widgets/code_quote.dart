@@ -64,6 +64,126 @@ class CodeQuote extends StatelessWidget {
   }
 }
 
+class CodeType extends StatelessWidget {
+  const CodeType({
+    super.key,
+    required this.type,
+    this.genericTypes = const [],
+    this.animate = true,
+    this.style = CodeStyle.gapStyle,
+  });
+
+  final String type;
+  final List<String> genericTypes;
+  final bool animate;
+  final CodeStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DefaultTextStyle.merge(
+          style: TextStyle(
+            fontFamily: _fontFamily,
+            color: switch (style) {
+              CodeStyle.gapStyle => _typeColor,
+              CodeStyle.vsCode => _typeColorVsCode,
+            },
+          ),
+          child: DynamicSectionText(
+            type,
+            animate: animate,
+          ),
+        ),
+        if (genericTypes.isNotEmpty) ...[
+          const Text('<'),
+          for (var i = 0; i < genericTypes.length; i++) ...[
+            CodeType(
+              type: genericTypes[i],
+              animate: animate,
+            ),
+            if (i < genericTypes.length - 1) const Text(', '),
+          ],
+          const Text('>'),
+        ],
+      ],
+    );
+  }
+}
+
+class CodeFunctionCall extends StatelessWidget {
+  const CodeFunctionCall({
+    super.key,
+    required this.name,
+    this.params = const [],
+    this.animate = true,
+    this.style = CodeStyle.gapStyle,
+  });
+
+  final String name;
+  final List<Widget> params;
+  final bool animate;
+  final CodeStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle.merge(
+      style: const TextStyle(fontFamily: _fontFamily),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('.'),
+          DefaultTextStyle.merge(
+            style: TextStyle(
+              color: switch (style) {
+                CodeStyle.gapStyle => _functionColor,
+                CodeStyle.vsCode => _functionColorVsCode,
+              },
+            ),
+            child: DynamicSectionText(
+              name,
+              animate: animate,
+            ),
+          ),
+          const Text('('),
+          for (var i = 0; i < params.length; i++) ...[
+            params[i],
+            if (i < params.length - 1) const Text(', '),
+          ],
+          const Text(')'),
+        ],
+      ),
+    );
+  }
+}
+
+class CodeParameter extends StatelessWidget {
+  const CodeParameter({
+    super.key,
+    required this.name,
+    this.animate = true,
+  });
+
+  final String name;
+  final bool animate;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle.merge(
+      style: const TextStyle(
+        fontFamily: _fontFamily,
+        color: _parameterColor,
+        fontWeight: FontWeight.w600,
+      ),
+      child: DynamicSectionText(
+        name,
+        animate: animate,
+      ),
+    );
+  }
+}
+
 class CodeMultilineQuote extends StatelessWidget {
   const CodeMultilineQuote({
     super.key,
@@ -184,126 +304,6 @@ class CodeMultilineQuote extends StatelessWidget {
       thumbVisibility: true,
       controller: scrollController,
       child: child,
-    );
-  }
-}
-
-class CodeType extends StatelessWidget {
-  const CodeType({
-    super.key,
-    required this.type,
-    this.genericTypes = const [],
-    this.animate = true,
-    this.style = CodeStyle.gapStyle,
-  });
-
-  final String type;
-  final List<String> genericTypes;
-  final bool animate;
-  final CodeStyle style;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        DefaultTextStyle.merge(
-          style: TextStyle(
-            fontFamily: _fontFamily,
-            color: switch (style) {
-              CodeStyle.gapStyle => _typeColor,
-              CodeStyle.vsCode => _typeColorVsCode,
-            },
-          ),
-          child: DynamicSectionText(
-            type,
-            animate: animate,
-          ),
-        ),
-        if (genericTypes.isNotEmpty) ...[
-          const Text('<'),
-          for (var i = 0; i < genericTypes.length; i++) ...[
-            CodeType(
-              type: genericTypes[i],
-              animate: animate,
-            ),
-            if (i < genericTypes.length - 1) const Text(', '),
-          ],
-          const Text('>'),
-        ],
-      ],
-    );
-  }
-}
-
-class CodeFunctionCall extends StatelessWidget {
-  const CodeFunctionCall({
-    super.key,
-    required this.name,
-    this.params = const [],
-    this.animate = true,
-    this.style = CodeStyle.gapStyle,
-  });
-
-  final String name;
-  final List<Widget> params;
-  final bool animate;
-  final CodeStyle style;
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTextStyle.merge(
-      style: const TextStyle(fontFamily: _fontFamily),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('.'),
-          DefaultTextStyle.merge(
-            style: TextStyle(
-              color: switch (style) {
-                CodeStyle.gapStyle => _functionColor,
-                CodeStyle.vsCode => _functionColorVsCode,
-              },
-            ),
-            child: DynamicSectionText(
-              name,
-              animate: animate,
-            ),
-          ),
-          const Text('('),
-          for (var i = 0; i < params.length; i++) ...[
-            params[i],
-            if (i < params.length - 1) const Text(', '),
-          ],
-          const Text(')'),
-        ],
-      ),
-    );
-  }
-}
-
-class CodeParameter extends StatelessWidget {
-  const CodeParameter({
-    super.key,
-    required this.name,
-    this.animate = true,
-  });
-
-  final String name;
-  final bool animate;
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTextStyle.merge(
-      style: const TextStyle(
-        fontFamily: _fontFamily,
-        color: _parameterColor,
-        fontWeight: FontWeight.w600,
-      ),
-      child: DynamicSectionText(
-        name,
-        animate: animate,
-      ),
     );
   }
 }

@@ -317,7 +317,7 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
     const padding = 12.0;
     return Row(
       key: ValueKey(codeFilePath),
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(
           width: _isMobileLayout(context) ? 28 : 32,
@@ -339,17 +339,17 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            controller: sourceScrollController,
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.symmetric(vertical: padding),
+          child: SelectionArea(
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: padding),
-              child: DefaultTextStyle.merge(
-                style: codeStyle,
-                child: SelectableText.rich(
-                  highlighter.highlight(code),
+              controller: sourceScrollController,
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.symmetric(vertical: padding),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: padding),
+                child: DefaultTextStyle.merge(
+                  style: codeStyle,
+                  child: Text.rich(highlighter.highlight(code)),
                 ),
               ),
             ),

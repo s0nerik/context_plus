@@ -158,15 +158,17 @@ class CodeMultilineQuote extends StatelessWidget {
     return Scrollbar(
       thumbVisibility: true,
       controller: scrollController,
-      child: SingleChildScrollView(
-        controller: scrollController,
-        scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SelectableText.rich(
-            highlighter.highlight(code),
-            textAlign: TextAlign.left,
-            style: const TextStyle(fontFamily: _fontFamily),
+      child: SelectionArea(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text.rich(
+              highlighter.highlight(code),
+              softWrap: false,
+              style: const TextStyle(fontFamily: _fontFamily),
+            ),
           ),
         ),
       ),

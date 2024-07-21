@@ -717,15 +717,18 @@ class _Title extends StatelessWidget {
               ),
             ),
             if (isMobileLayout) ...[
-              const Gap(2),
+              const Gap(8),
               Transform.rotate(
                 angle: descriptionVisibilityFactor * 0.5 * 2 * pi,
-                child: const Icon(
-                  MdiIcons.chevronUp,
+                child: Icon(
+                  descriptionVisibilityFactor > 0.5
+                      ? MdiIcons.arrowCollapse
+                      : MdiIcons.arrowExpand,
                   color: Colors.white,
                   size: 20,
                 ),
               ),
+              const Gap(10),
             ],
           ],
         ),

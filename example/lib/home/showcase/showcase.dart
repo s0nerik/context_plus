@@ -602,7 +602,9 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
             opacity: currentKeyframeTransitionProgress,
             translateY: -16 * (1 - currentKeyframeTransitionProgress),
           ),
-          if (nextKeyframe != null && nextKeyframeTransitionProgress != null)
+          if (nextKeyframe != null &&
+              nextKeyframeTransitionProgress != null &&
+              nextKeyframeTransitionProgress > 0)
             CodeShowcaseProgressStep(
               key: ValueKey(nextKeyframe),
               showcaseCtrl: showcaseCtrl,

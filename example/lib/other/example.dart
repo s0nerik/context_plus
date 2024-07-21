@@ -128,7 +128,7 @@ class _MobileLayout extends StatelessWidget {
             Positioned(
               left: 8,
               right: 8,
-              top: 8,
+              top: 64,
               bottom: 8,
               child: IndexedStack(
                 index: selected.watch(context),
@@ -139,8 +139,9 @@ class _MobileLayout extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: 16,
-              bottom: 16,
+              right: 8,
+              top: 8,
+              left: 8,
               child: SegmentedButton(
                 selected: {selected.watch(context)},
                 onSelectionChanged: (selection) =>

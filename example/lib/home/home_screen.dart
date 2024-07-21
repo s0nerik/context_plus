@@ -602,6 +602,8 @@ class _ExampleCard extends StatelessWidget {
                     children: [
                       for (final tag in tags)
                         Chip(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           label: Text(tag),
                         ),
                     ],

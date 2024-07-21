@@ -652,6 +652,7 @@ class _Layout extends StatelessWidget {
             child: BackgroundGradient(),
           ),
         Material(
+          clipBehavior: Clip.none,
           color:
               displayShadow ? BackgroundGradient.endColor : Colors.transparent,
           child: Column(

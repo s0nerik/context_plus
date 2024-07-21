@@ -333,7 +333,7 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
 
     if (!isMobileWebKit) {
       // Mobile WebKit doesn't handle text selection properly.
-      // So let's disable it.
+      // So let's enable it only for everything else.
       //
       // https://github.com/flutter/flutter/issues/95958
       // https://github.com/flutter/flutter/issues/122015

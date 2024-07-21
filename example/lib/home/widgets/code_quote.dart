@@ -205,6 +205,9 @@ class CodeMultilineQuote extends StatelessWidget {
       decoration: BoxDecoration(
         color: _codeBackground,
         borderRadius: BorderRadius.circular(12),
+      ),
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _borderColor),
       ),
       child: Column(
@@ -218,44 +221,48 @@ class CodeMultilineQuote extends StatelessWidget {
   }
 
   Widget _buildFilenameHeader(BuildContext context) {
-    return Container(
-      height: 28,
-      decoration: const BoxDecoration(
-        color: _codeFilenameBackground,
-        border: Border(
-          bottom: BorderSide(color: _borderColor),
-        ),
+    return Material(
+      color: _codeFilenameBackground,
+      shape: const LinearBorder(
+        side: BorderSide(color: _borderColor),
+        bottom: LinearBorderEdge(),
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Center(
-            child: Text(
-              fileName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: _fontFamily,
+      child: SizedBox(
+        height: 28,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Center(
+              child: Text(
+                fileName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: _fontFamily,
+                ),
               ),
             ),
-          ),
-          Positioned(
-            right: -6,
-            top: -6,
-            child: IconButton(
-              icon: const Icon(MdiIcons.contentCopy, size: 16),
-              onPressed: () {
-                Clipboard.setData(
-                  ClipboardData(text: copyableCode ?? code),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Copied to clipboard!'),
-                  ),
-                );
-              },
+            Positioned(
+              right: 0,
+              top: 0,
+              child: InkResponse(
+                onTap: () {
+                  Clipboard.setData(
+                    ClipboardData(text: copyableCode ?? code),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Copied to clipboard!'),
+                    ),
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 6, left: 8, right: 8),
+                  child: Icon(MdiIcons.contentCopy, size: 16),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

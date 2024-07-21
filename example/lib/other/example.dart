@@ -319,16 +319,26 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
 
     const padding = 12.0;
 
-    Widget child = SingleChildScrollView(
-      controller: sourceScrollController,
-      scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.symmetric(vertical: padding),
+    Widget child = Align(
+      alignment: Alignment.topLeft,
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: padding),
-        child: DefaultTextStyle.merge(
-          style: codeStyle,
-          child: Text.rich(highlighter.highlight(code)),
+        controller: sourceScrollController,
+        scrollDirection: Axis.vertical,
+        padding: const EdgeInsets.symmetric(vertical: padding),
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: padding),
+            child: DefaultTextStyle.merge(
+              style: codeStyle,
+              child: Text.rich(
+                highlighter.highlight(code),
+                textAlign: TextAlign.left,
+                softWrap: false,
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -1,6 +1,6 @@
-# [<img src="https://github.com/s0nerik/context_plus/raw/main/example/web/icons/Icon-192.png" alt="icon.png" width="192"/>](https://sonerik.dev/context_plus/) <br/> context_plus
+# [<img src="https://github.com/s0nerik/context_plus/raw/main/example/web/icons/Icon-192.png" alt="icon.png" width="192"/>](https://context-plus.sonerik.dev) <br/> context_plus
 
-[![showcase](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)](https://sonerik.dev/context_plus/)
+[![showcase](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)](https://context-plus.sonerik.dev)
 
 A set of packages that provide a convenient way to propagate a value from a parent widget to its descendants and observe changes to any observable value.
 

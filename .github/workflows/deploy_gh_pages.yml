@@ -15,4 +15,3 @@ jobs:
         with:
           webRenderer: canvaskit
           workingDir: example
-          baseHref: /context_plus/

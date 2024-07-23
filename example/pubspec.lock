@@ -173,14 +173,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  flutter_material_design_icons:
-    dependency: "direct main"
-    description:
-      name: flutter_material_design_icons
-      sha256: ffb0be14d206cb4cd8501ce738bdfc5654130cb5f70911905694a2c1ee9f05b1
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.7447"
   flutter_mobx:
     dependency: "direct main"
     description:
@@ -189,14 +181,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1+1"
-  flutter_sequence_animation:
-    dependency: "direct main"
-    description:
-      name: flutter_sequence_animation
-      sha256: "48f28a8395e410f5b4a47a86fe77974ee8fbab3db935d22933dbb3af27447d01"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -248,7 +232,7 @@ packages:
     source: hosted
     version: "1.7.0"
   http:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: http
       sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"

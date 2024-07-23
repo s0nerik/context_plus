@@ -1,11 +1,11 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:rive/rive.dart' hide LinearGradient, RadialGradient;
 
+import '../../other/svg_icon.dart';
 import '../widgets/animated_arrow_down.dart';
 import '../widgets/code_quote.dart';
 import '../widgets/typewriter_text.dart';
@@ -259,7 +259,11 @@ class _SkipIntroButton extends StatelessWidget {
                 Gap(18),
                 Text('Skip intro'),
                 Gap(8),
-                Icon(MdiIcons.skipNextCircle),
+                SvgIcon(
+                  'assets/svg/icon_skip_next_circle.svg',
+                  width: 24,
+                  height: 24,
+                ),
                 Gap(6),
               ],
             ),

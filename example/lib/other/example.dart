@@ -1,10 +1,10 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
 import 'code_highlighter_theme.dart';
+import 'svg_icon.dart';
 import 'user_agent/user_agent.dart';
 
 class ExampleVariant {
@@ -151,12 +151,20 @@ class _MobileLayout extends StatelessWidget {
                 segments: const [
                   ButtonSegment(
                     value: 0,
-                    icon: Icon(MdiIcons.codeBraces),
+                    icon: SvgIcon(
+                      'assets/svg/icon_code_braces.svg',
+                      width: 18,
+                      height: 18,
+                    ),
                     label: Text('Code'),
                   ),
                   ButtonSegment(
                     value: 1,
-                    icon: Icon(MdiIcons.applicationBraces),
+                    icon: SvgIcon(
+                      'assets/svg/icon_application_braces.svg',
+                      width: 18,
+                      height: 18,
+                    ),
                     label: Text('Example'),
                   ),
                 ],

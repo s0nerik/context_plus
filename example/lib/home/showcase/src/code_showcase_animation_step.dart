@@ -4,8 +4,8 @@ import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
+import 'package:example/other/svg_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
@@ -720,10 +720,10 @@ class _Title extends StatelessWidget {
               const Gap(8),
               Transform.rotate(
                 angle: descriptionVisibilityFactor * 0.5 * 2 * pi,
-                child: Icon(
+                child: SvgIcon(
                   descriptionVisibilityFactor > 0.5
-                      ? MdiIcons.arrowCollapse
-                      : MdiIcons.arrowExpand,
+                      ? 'assets/svg/icon_arrow_collapse.svg'
+                      : 'assets/svg/icon_arrow_expand.svg',
                   color: Colors.white,
                   size: 20,
                 ),

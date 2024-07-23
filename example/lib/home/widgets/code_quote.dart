@@ -4,7 +4,6 @@ import 'package:example/other/code_highlighter_theme.dart';
 import 'package:example/other/user_agent/user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
 const _codeFilenameBackground = Color(0xFF2F2F33);
@@ -257,7 +256,7 @@ class CodeMultilineQuote extends StatelessWidget {
                 },
                 child: const Padding(
                   padding: EdgeInsets.only(top: 6, left: 8, right: 8),
-                  child: Icon(MdiIcons.contentCopy, size: 16),
+                  child: Icon(Icons.content_copy, size: 16),
                 ),
               ),
             ),

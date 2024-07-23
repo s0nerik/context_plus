@@ -1,3 +1,7 @@
+## 2.3.1
+
+ - **DOCS**: removed outdated doc comment for Listenable.watch().
+
 ## 2.3.0
 
  - **FEAT**: async_listenable support integration.

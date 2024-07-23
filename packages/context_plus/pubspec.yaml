@@ -1,6 +1,6 @@
 name: context_plus
 description: Convenient value propagation and observing for Flutter
-version: 2.3.0
+version: 2.3.1
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 topics:
@@ -16,8 +16,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_ref: ^1.3.0
-  context_watch: ^3.2.0
+  context_ref: ^1.4.0
+  context_watch: ^3.3.0
   async_listenable: ^1.0.1
 
 dev_dependencies:

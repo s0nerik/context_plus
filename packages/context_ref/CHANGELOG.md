@@ -1,3 +1,8 @@
+## 1.4.0
+
+ - **FEAT**: improve rebuild scheduling for .bindValue().
+ - **FEAT**: Ref.bind<AnimationController?>() support.
+
 ## 1.3.0
 
  - **FEAT**: Per-element equality checks for List, Set and Map keys Ref.bind(key: ...).

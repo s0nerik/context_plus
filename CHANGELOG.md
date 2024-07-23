@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-07-24
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v2.3.1`](#context_plus---v231)
+ - [`context_ref` - `v1.4.0`](#context_ref---v140)
+ - [`context_watch` - `v3.3.0`](#context_watch---v330)
+ - [`context_watch_base` - `v3.1.2`](#context_watch_base---v312)
+ - [`context_watch_getx` - `v1.0.4`](#context_watch_getx---v104)
+ - [`context_watch_bloc` - `v1.0.6`](#context_watch_bloc---v106)
+ - [`context_watch_mobx` - `v1.0.6`](#context_watch_mobx---v106)
+ - [`context_watch_signals` - `v1.1.1`](#context_watch_signals---v111)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_watch_getx` - `v1.0.4`
+ - `context_watch_bloc` - `v1.0.6`
+ - `context_watch_mobx` - `v1.0.6`
+ - `context_watch_signals` - `v1.1.1`
+
+---
+
+#### `context_plus` - `v2.3.1`
+
+ - **DOCS**: removed outdated doc comment for Listenable.watch().
+
+#### `context_ref` - `v1.4.0`
+
+ - **FEAT**: improve rebuild scheduling for .bindValue().
+ - **FEAT**: Ref.bind<AnimationController?>() support.
+
+#### `context_watch` - `v3.3.0`
+
+ - **FEAT**: [context_watch] Removes the rxdart dependency, ValueStreams are still supported! (#14) by @passsy.
+ - **DOCS**: removed outdated doc comment for Listenable.watch().
+
+#### `context_watch_base` - `v3.1.2`
+
+ - **FIX**: ensure no markNeedsBuild() after element is unmounted.
+
+
 ## 2024-06-29
 
 ### Changes

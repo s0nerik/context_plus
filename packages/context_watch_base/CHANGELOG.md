@@ -1,3 +1,7 @@
+## 3.1.2
+
+ - **FIX**: ensure no markNeedsBuild() after element is unmounted.
+
 ## 3.1.1
 
  - **FIX**: proper handling of synchronous new value notifications during build().

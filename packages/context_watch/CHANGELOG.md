@@ -1,3 +1,8 @@
+## 3.3.0
+
+ - **FEAT**: [context_watch] Removes the rxdart dependency, ValueStreams are still supported! (#14) by @passsy.
+ - **DOCS**: removed outdated doc comment for Listenable.watch().
+
 ## 3.2.0
 
  - **FEAT**: async_listenable support integration.

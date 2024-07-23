@@ -1,3 +1,7 @@
+## 1.1.1
+
+ - Update a dependency to the latest release.
+
 ## 1.1.0
 
  - **FEAT**: Update signals_flutter in context_watch_signals to v5 (#11).

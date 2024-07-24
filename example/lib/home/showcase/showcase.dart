@@ -439,7 +439,7 @@ class _CodeAnimation extends StatelessWidget {
                         clipBehavior: Clip.hardEdge,
                         child: RiveAnimation.asset(
                           key: _codeAnimationKey,
-                          'assets/showcase/context_plus_showcase_v11.riv',
+                          'assets/showcase/context_plus_showcase_v12.riv',
                           controllers: [ctrl],
                           useArtboardSize: true,
                           onInit: (artboard) =>

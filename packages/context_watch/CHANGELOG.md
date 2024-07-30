@@ -4,6 +4,8 @@
 
  - **DOCS**: README.md update.
  - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+   
+   All cases of conditional `.watch()`'ing are now handled automatically.
 
 ## 3.3.0
 

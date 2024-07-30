@@ -4,6 +4,8 @@
 
  - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
 
+   All cases of conditional `.watch()`'ing are now handled automatically.
+
 ## 2.3.1
 
  - **DOCS**: removed outdated doc comment for Listenable.watch().

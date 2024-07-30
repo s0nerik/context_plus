@@ -17,7 +17,6 @@ void main() {
     widget = ContextWatch.root(
       child: Builder(
         builder: (context) {
-          context.unwatch();
           for (final listenable in observedListenables) {
             // watch the value to create a subscription
             listenable.watch(context);

@@ -69,13 +69,9 @@ void main() {
     'watchOnly() calls may appear and disappear from the build method, triggering rebuilds the same way as watch() does',
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
-      var unwatch = false;
       var watchA = true;
       var watchB = true;
       final (widget, rebuildsListenable) = _widget((context) {
-        if (unwatch) {
-          context.unwatch();
-        }
         if (watchA) {
           valueNotifier.watchOnly(context, (state) => state.value.a);
         }
@@ -89,6 +85,7 @@ void main() {
       expect(rebuildsListenable.value, 1);
 
       // Update only `a`
+      (watchA, watchB) = (true, true);
       valueNotifier.value = _State(a: 1, b: 0);
       await widgetTester.pumpAndSettle();
       // `valueNotifier.watchValue(context, (value) => value.a)` was present
@@ -96,6 +93,7 @@ void main() {
       expect(rebuildsListenable.value, 2);
 
       // Update only `b`
+      (watchA, watchB) = (true, true);
       valueNotifier.value = _State(a: 1, b: 1);
       await widgetTester.pumpAndSettle();
       // `valueNotifier.watchValue(context, (value) => value.b)` was present
@@ -104,7 +102,7 @@ void main() {
 
       // Remove `valueNotifier.watchValue(context, (value) => value.a)` from
       // the build method and update only `a`
-      watchA = false;
+      (watchA, watchB) = (false, true);
       valueNotifier.value = _State(a: 2, b: 1);
       await widgetTester.pumpAndSettle();
       // Rebuild is triggered because value selectors did_not change during
@@ -113,6 +111,7 @@ void main() {
       expect(rebuildsListenable.value, 4);
 
       // Update only `a` (1)
+      (watchA, watchB) = (false, true);
       valueNotifier.value = _State(a: 3, b: 1);
       await widgetTester.pumpAndSettle();
       // Rebuild is triggered because value selectors have changed during the
@@ -121,6 +120,7 @@ void main() {
       expect(rebuildsListenable.value, 5);
 
       // Update only `a`
+      (watchA, watchB) = (false, true);
       valueNotifier.value = _State(a: 4, b: 1);
       await widgetTester.pumpAndSettle();
       // No rebuild since value selectors did not change during the previous
@@ -129,41 +129,67 @@ void main() {
 
       // Remove `valueNotifier.watchValue(context, (value) => value.b)` from
       // the build method and update only `b`
-      watchB = false;
+      (watchA, watchB) = (false, false);
       valueNotifier.value = _State(a: 3, b: 2);
       await widgetTester.pumpAndSettle();
       // `valueNotifier.watchValue(context, (value) => value.b)` was present
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 6);
 
-      // Update only `b`
+      // Update only `b` #1. No rebuild.
+      (watchA, watchB) = (false, false);
       valueNotifier.value = _State(a: 3, b: 3);
       await widgetTester.pumpAndSettle();
-      // Even though `valueNotifier.watchValue(context, (value) => value.b)` was
-      // not present during the previous build, the rebuild is triggered because
-      // it was the last `watch*()` call that got removed. Unfortunately,
-      // it's impossible for [context_watch] to detect this automatically.
-      //
-      // This usually is not a problem, and in fact matches the behavior of
-      // any [InheritedWidget] subscription. If you want to avoid this behavior
-      // in a specific case, you can add an unconditional `context.unwatch()`
-      // call in your build method.
-      expect(rebuildsListenable.value, 7);
+      expect(rebuildsListenable.value, 6);
 
-      // Add `context.unwatch()` to the build method and update only `b`
-      unwatch = true;
+      // Update only `b` #2. No rebuild.
+      (watchA, watchB) = (false, false);
       valueNotifier.value = _State(a: 3, b: 4);
       await widgetTester.pumpAndSettle();
-      // Rebuild is triggered because `context.unwatch()` was not called during
-      // the previous build, while `valueNotifier.watchValue(context, (value) => value.b)`
-      // removal was not yet detected.
-      expect(rebuildsListenable.value, 8);
+      expect(rebuildsListenable.value, 6);
 
+      // Update both `a` and `b`. No rebuild.
+      (watchA, watchB) = (false, false);
       valueNotifier.value = _State(a: 4, b: 5);
       await widgetTester.pumpAndSettle();
-      // No rebuild since `context.unwatch()` was called during the previous
-      // build while no `watch*()` calls happened.
-      expect(rebuildsListenable.value, 8);
+      expect(rebuildsListenable.value, 6);
+    },
+  );
+  testWidgets(
+    '.watchOnly() calls are_not unsubscribed when selected value does_not change',
+    (tester) async {
+      var rebuilds = 0;
+      var selectedValue = '';
+      final notifier = ChangeNotifier();
+
+      await tester.pumpWidget(
+        ContextWatch.root(
+          child: Builder(
+            builder: (context) {
+              rebuilds++;
+              notifier.watchOnly(context, (_) => selectedValue);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+      expect(rebuilds, 1);
+
+      selectedValue = 'a';
+      notifier.notifyListeners();
+      await tester.pumpAndSettle();
+      notifier.notifyListeners();
+      await tester.pumpAndSettle();
+      notifier.notifyListeners();
+      await tester.pumpAndSettle();
+      // 3 notification, only one rebuild since selected value didn't change
+      expect(rebuilds, 2);
+
+      selectedValue = 'b';
+      notifier.notifyListeners();
+      await tester.pumpAndSettle();
+      // selected value changed, so rebuild happens, even though previous rebuilds were skipped
+      expect(rebuilds, 3);
     },
   );
   testWidgets(
@@ -207,7 +233,6 @@ void main() {
       final useWatch = ValueNotifier(true);
       final useWatchOnly = ValueNotifier(true);
       final (widget, rebuildsListenable) = _widget((context) {
-        context.unwatch();
         if (useWatch.watch(context)) {
           state.watch(context);
         }

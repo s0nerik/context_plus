@@ -82,7 +82,24 @@ class InheritedContextWatchElement extends InheritedElement {
     }
     SchedulerBinding.instance
         .addPostFrameCallback((_) => _isFirstFrame = false);
+    SchedulerBinding.instance.addPostFrameCallback(_onFrameEnd);
   }
+
+  void _onFrameEnd(_) {
+    for (final context in _potentiallyUnwatchedContexts) {
+      _unwatchContext(context);
+    }
+    _potentiallyUnwatchedContexts.clear();
+
+    SchedulerBinding.instance.addPostFrameCallback(_onFrameEnd);
+  }
+
+  /// Every time a [watch]'ed observable notifies of a change, the [context]
+  /// which invoked the [watch] method will be added to this set and scheduled
+  /// for rebuild. If after the frame is built, the [context] is not found in
+  /// the set, it means that the [context] still watches some observables and
+  /// should not be unwatched.
+  final _potentiallyUnwatchedContexts = HashSet<BuildContext>.identity();
 
   bool _isFirstFrame = true;
 
@@ -138,6 +155,8 @@ class InheritedContextWatchElement extends InheritedElement {
       return null;
     }
 
+    _potentiallyUnwatchedContexts.remove(context);
+
     contextData.observableLastFrame[observable] = _currentFrameTimeStamp;
 
     if (selector != null) {
@@ -163,11 +182,6 @@ class InheritedContextWatchElement extends InheritedElement {
     final subscription = watcher.createSubscription<T>(context, observable);
     contextData.observableSubscriptions[observable] = subscription;
     return subscription;
-  }
-
-  @nonVirtual
-  void updateContextLastFrame(BuildContext context) {
-    _fetchContextData(context);
   }
 
   @nonVirtual
@@ -301,13 +315,22 @@ class InheritedContextWatchElement extends InheritedElement {
       // callback to rebuild the context.
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (element.mounted) {
-          element.markNeedsBuild();
+          _doScheduleRebuild(element);
         }
       });
     } else {
       // If we are not in the build phase, we can rebuild immediately.
-      element.markNeedsBuild();
+      _doScheduleRebuild(element);
     }
+  }
+
+  @pragma('vm:prefer-inline')
+  void _doScheduleRebuild(Element element) {
+    // Let's add the element to the list of potentially unwatched contexts,
+    // so that we can unwatch it after the requested frame is built if
+    // no `watch()` calls are detected.
+    _potentiallyUnwatchedContexts.add(element);
+    element.markNeedsBuild();
   }
 
   void _unwatch(

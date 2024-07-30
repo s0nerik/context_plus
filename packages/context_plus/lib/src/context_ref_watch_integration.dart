@@ -4,69 +4,6 @@ import 'package:context_watch/context_watch.dart' as context_watch;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-extension RefAPI<T> on context_ref.Ref<T> {
-  /// Bind a value to this [Ref] for this and all descendant [BuildContext]s.
-  ///
-  /// [create] is called only once per [BuildContext] and the value remains
-  /// alive until the [BuildContext] is removed from the tree.
-  ///
-  /// [dispose] is called when the [BuildContext] is removed from the tree.
-  /// If [dispose] is not specified, the provided value will be disposed by
-  /// via `value.dispose()` if such method exists. Use [bindValue] if you don't
-  /// want the value to be disposed automatically.
-  ///
-  /// [key] is used to identify the value. If [key] changes, the old value
-  /// will be disposed and a new value will be created.
-  T bind(
-    BuildContext context,
-    T Function() create, {
-    void Function(T value)? dispose,
-    Object? key,
-  }) {
-    context.unwatch();
-    return context_ref.RefAPI(this)
-        .bind(context, create, dispose: dispose, key: key);
-  }
-
-  /// Same as [bind] but [create] is called lazily, i.e. only when the value
-  /// is requested for the first.
-  void bindLazy(
-    BuildContext context,
-    T Function() create, {
-    void Function(T value)? dispose,
-    Object? key,
-  }) {
-    context.unwatch();
-    context_ref.RefAPI(this)
-        .bindLazy(context, create, dispose: dispose, key: key);
-  }
-
-  /// Bind a value to this [Ref] for this and all descendant [BuildContext]s.
-  ///
-  /// [value] is used as the value of this [Ref]. If [value] changes, all
-  /// widgets that depend on this [Ref] will be rebuilt.
-  ///
-  /// This method doesn't manage the lifecycle of the value. It is up to the
-  /// caller to dispose the value when it is no longer needed.
-  ///
-  /// Use [bind] if you want the value to be disposed automatically.
-  T bindValue(
-    BuildContext context,
-    T value,
-  ) {
-    context.unwatch();
-    return context_ref.RefAPI(this).bindValue(context, value);
-  }
-}
-
-extension ReadOnlyRefAPI<T> on context_ref.ReadOnlyRef<T> {
-  /// Get the value of this [Ref] from the given [context].
-  T of(BuildContext context) {
-    context.unwatch();
-    return context_ref.ReadOnlyRefAPI(this).of(context);
-  }
-}
-
 extension ReadOnlyRefListenableWatchAPI on context_ref.ReadOnlyRef<Listenable> {
   /// Watch this [Listenable] for changes.
   ///
@@ -75,8 +12,7 @@ extension ReadOnlyRefListenableWatchAPI on context_ref.ReadOnlyRef<Listenable> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  void watch(BuildContext context) =>
-      ReadOnlyRefAPI(this).of(context).watch(context);
+  void watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefListenableWatchOnlyAPI<TListenable extends Listenable>
@@ -94,7 +30,7 @@ extension ReadOnlyRefListenableWatchOnlyAPI<TListenable extends Listenable>
     BuildContext context,
     R Function(TListenable listenable) selector,
   ) =>
-      ReadOnlyRefAPI(this).of(context).watchOnly(context, selector);
+      of(context).watchOnly(context, selector);
 }
 
 extension ReadOnlyRefValueListenableWatchAPI<T>
@@ -108,8 +44,7 @@ extension ReadOnlyRefValueListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watch(BuildContext context) =>
-      ReadOnlyRefAPI(this).of(context).watch(context);
+  T watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefAsyncListenableWatchAPI<T>
@@ -123,8 +58,7 @@ extension ReadOnlyRefAsyncListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) =>
-      ReadOnlyRefAPI(this).of(context).watch(context);
+  AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefFutureWatchAPI<T> on context_ref.ReadOnlyRef<Future<T>> {
@@ -134,8 +68,7 @@ extension ReadOnlyRefFutureWatchAPI<T> on context_ref.ReadOnlyRef<Future<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) =>
-      ReadOnlyRefAPI(this).of(context).watch(context);
+  AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefFutureWatchOnlyAPI<T>
@@ -153,7 +86,7 @@ extension ReadOnlyRefFutureWatchOnlyAPI<T>
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      ReadOnlyRefAPI(this).of(context).watchOnly(context, selector);
+      of(context).watchOnly(context, selector);
 }
 
 extension ReadOnlyRefStreamWatchAPI<T> on context_ref.ReadOnlyRef<Stream<T>> {
@@ -167,8 +100,7 @@ extension ReadOnlyRefStreamWatchAPI<T> on context_ref.ReadOnlyRef<Stream<T>> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) =>
-      ReadOnlyRefAPI(this).of(context).watch(context);
+  AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefStreamWatchOnlyAPI<T>
@@ -187,5 +119,5 @@ extension ReadOnlyRefStreamWatchOnlyAPI<T>
     BuildContext context,
     R Function(AsyncSnapshot<T> value) selector,
   ) =>
-      ReadOnlyRefAPI(this).of(context).watchOnly(context, selector);
+      of(context).watchOnly(context, selector);
 }

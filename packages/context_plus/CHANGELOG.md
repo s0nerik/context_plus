@@ -1,3 +1,9 @@
+## 3.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
 ## 2.3.1
 
  - **DOCS**: removed outdated doc comment for Listenable.watch().

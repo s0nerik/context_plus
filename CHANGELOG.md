@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-07-30
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus` - `v3.0.0`](#context_plus---v300)
+ - [`context_watch` - `v4.0.0`](#context_watch---v400)
+ - [`context_watch_base` - `v4.0.0`](#context_watch_base---v400)
+
+Packages with other changes:
+
+ - [`context_watch_mobx` - `v1.0.7`](#context_watch_mobx---v107)
+ - [`context_watch_bloc` - `v1.0.7`](#context_watch_bloc---v107)
+ - [`context_watch_signals` - `v1.1.2`](#context_watch_signals---v112)
+ - [`context_watch_getx` - `v1.0.5`](#context_watch_getx---v105)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_watch_mobx` - `v1.0.7`
+ - `context_watch_bloc` - `v1.0.7`
+ - `context_watch_signals` - `v1.1.2`
+ - `context_watch_getx` - `v1.0.5`
+
+---
+
+#### `context_plus` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
+#### `context_watch` - `v4.0.0`
+
+ - **DOCS**: README.md update.
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
+#### `context_watch_base` - `v4.0.0`
+
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
+
 ## 2024-07-24
 
 ### Changes

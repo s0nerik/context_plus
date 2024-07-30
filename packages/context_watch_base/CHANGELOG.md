@@ -1,3 +1,9 @@
+## 4.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
 ## 3.1.2
 
  - **FIX**: ensure no markNeedsBuild() after element is unmounted.

@@ -1,3 +1,10 @@
+## 4.0.0
+
+> Note: This release has breaking changes.
+
+ - **DOCS**: README.md update.
+ - **BREAKING** **FEAT**: goodbye, `context.unwatch()`!
+
 ## 3.3.0
 
  - **FEAT**: [context_watch] Removes the rxdart dependency, ValueStreams are still supported! (#14) by @passsy.

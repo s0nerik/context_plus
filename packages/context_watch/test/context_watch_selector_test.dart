@@ -100,59 +100,49 @@ void main() {
       // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 3);
 
-      // Remove `valueNotifier.watchValue(context, (value) => value.a)` from
-      // the build method and update only `a`
-      (watchA, watchB) = (false, true);
-      valueNotifier.value = _State(a: 2, b: 1);
+      (watchA, watchB) = (false, true); // Remove selector for `a`
+      valueNotifier.value = _State(a: 2, b: 1); // Update only `a` (1)
       await widgetTester.pumpAndSettle();
       // Rebuild is triggered because value selectors did_not change during
       // the previous build and their selected values got updated
-      // from (a: 1, b: 1) to (a: 2, b: 1).
+      // from (a: 1, b: 1) to (b: 1).
       expect(rebuildsListenable.value, 4);
 
-      // Update only `a` (1)
       (watchA, watchB) = (false, true);
-      valueNotifier.value = _State(a: 3, b: 1);
+      valueNotifier.value = _State(a: 3, b: 1); // Update only `a` (2)
       await widgetTester.pumpAndSettle();
-      // Rebuild is triggered because value selectors have changed during the
-      // previous build and their selected values got updated from (a: 2, b: 1)
-      // to (b: 1).
-      expect(rebuildsListenable.value, 5);
+      // Rebuild is_not triggered because value selector for `a` disappeared
+      // during the previous build.
+      expect(rebuildsListenable.value, 4);
 
-      // Update only `a`
       (watchA, watchB) = (false, true);
-      valueNotifier.value = _State(a: 4, b: 1);
+      valueNotifier.value = _State(a: 4, b: 1); // Update only `a` (3)
       await widgetTester.pumpAndSettle();
       // No rebuild since value selectors did not change during the previous
       // build and their selected values did not change either.
+      expect(rebuildsListenable.value, 4);
+
+      (watchA, watchB) = (false, false); // Remove selector for `b`
+      valueNotifier.value = _State(a: 3, b: 2); // Update only `b` (1)
+      await widgetTester.pumpAndSettle();
+      // `valueNotifier.watchOnly(context, (state) => state.value.b)` was present
+      // during the previous build, so the rebuild is triggered
       expect(rebuildsListenable.value, 5);
 
-      // Remove `valueNotifier.watchValue(context, (value) => value.b)` from
-      // the build method and update only `b`
       (watchA, watchB) = (false, false);
-      valueNotifier.value = _State(a: 3, b: 2);
+      valueNotifier.value = _State(a: 3, b: 3); // Update only `b` (2)
       await widgetTester.pumpAndSettle();
-      // `valueNotifier.watchValue(context, (value) => value.b)` was present
-      // during the previous build, so the rebuild is triggered
-      expect(rebuildsListenable.value, 6);
+      expect(rebuildsListenable.value, 5); // No rebuild
 
-      // Update only `b` #1. No rebuild.
       (watchA, watchB) = (false, false);
-      valueNotifier.value = _State(a: 3, b: 3);
+      valueNotifier.value = _State(a: 3, b: 4); // Update only `b` (3)
       await widgetTester.pumpAndSettle();
-      expect(rebuildsListenable.value, 6);
+      expect(rebuildsListenable.value, 5); // No rebuild
 
-      // Update only `b` #2. No rebuild.
       (watchA, watchB) = (false, false);
-      valueNotifier.value = _State(a: 3, b: 4);
+      valueNotifier.value = _State(a: 4, b: 5); // Update both `a` and `b`
       await widgetTester.pumpAndSettle();
-      expect(rebuildsListenable.value, 6);
-
-      // Update both `a` and `b`. No rebuild.
-      (watchA, watchB) = (false, false);
-      valueNotifier.value = _State(a: 4, b: 5);
-      await widgetTester.pumpAndSettle();
-      expect(rebuildsListenable.value, 6);
+      expect(rebuildsListenable.value, 5); // No rebuild
     },
   );
   testWidgets(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:context_watch_base/context_watch_base.dart';
@@ -5,12 +7,25 @@ import 'package:flutter/widgets.dart';
 
 class _StreamSubscription implements ContextWatchSubscription {
   _StreamSubscription({
-    required StreamSubscription<dynamic> streamSubscription,
+    required this.observable,
+    required StreamSubscription streamSubscription,
     required this.snapshot,
   }) : _sub = streamSubscription;
 
   final StreamSubscription _sub;
   AsyncSnapshot snapshot;
+
+  @override
+  final Stream observable;
+
+  @override
+  get hasValue => true;
+
+  @override
+  get value => snapshot;
+
+  @override
+  get selectorParameterType => ContextWatchSelectorParameterType.value;
 
   @override
   void cancel() => _sub.cancel();
@@ -29,19 +44,20 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
       final newSnapshot =
           AsyncSnapshot<T>.withData(ConnectionState.active, data);
       subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream, value: newSnapshot);
+      rebuildIfNeeded(context, stream);
     }, onError: (Object error, StackTrace stackTrace) {
       final newSnapshot =
           AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
       subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream, value: newSnapshot);
+      rebuildIfNeeded(context, stream);
     }, onDone: () {
       final newSnapshot = subscription.snapshot.inState(ConnectionState.done);
       subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream, value: newSnapshot);
+      rebuildIfNeeded(context, stream);
     });
 
     subscription = _StreamSubscription(
+      observable: stream,
       streamSubscription: streamSubscription,
       snapshot: _initialSnapshot<T>(stream),
     );
@@ -285,14 +301,13 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   AsyncSnapshot<T> watch(BuildContext context) {
-    final watchRoot = InheritedContextWatch.of(context);
-    final subscription =
-        watchRoot.watch<T>(context, this) as _StreamSubscription?;
-    if (subscription == null) {
-      // Subscription is null when the method is called outside of the build()
-      // method.
-      return AsyncSnapshot<T>.nothing();
-    }
+    final observable = InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(context, this);
+    if (observable == null) return AsyncSnapshot<T>.nothing();
+
+    observable.watch();
+
+    final subscription = observable.subscription as _StreamSubscription;
     return subscription.snapshot as AsyncSnapshot<T>;
   }
 }
@@ -310,16 +325,62 @@ extension StreamContextWatchOnlyExtension<T> on Stream<T> {
   /// method.
   R watchOnly<R>(
     BuildContext context,
-    R Function(AsyncSnapshot<T> value) selector,
+    R Function(AsyncSnapshot<T> snapshot) selector,
   ) {
-    final watchRoot = InheritedContextWatch.of(context);
-    final subscription = watchRoot.watch<T>(context, this, selector: selector)
-        as _StreamSubscription?;
-    if (subscription == null) {
-      // Subscription is null when the method is called outside of the build()
-      // method.
-      return selector(AsyncSnapshot<T>.nothing());
-    }
-    return selector(subscription.snapshot as AsyncSnapshot<T>);
+    final observable = InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(context, this);
+    if (observable == null) return selector(AsyncSnapshot<T>.nothing());
+
+    final subscription = observable.subscription as _StreamSubscription;
+    final selectedValue = selector(subscription.snapshot as AsyncSnapshot<T>);
+    observable.watchOnly(selector, selectedValue);
+
+    return selectedValue;
+  }
+}
+
+extension StreamContextWatchEffectExtension<T> on Stream<T> {
+  /// Watch this [Stream] for changes.
+  ///
+  /// Whenever this [Stream] emits new value, the [effect] will be called,
+  /// *without* rebuilding the widget.
+  ///
+  /// Conditional effects are supported, but it's highly recommended to specify
+  /// a unique [key] for all such effects followed by the [unwatchEffect] call
+  /// when condition is no longer met:
+  /// ```dart
+  /// if (condition) {
+  ///   stream.watchEffect(context, key: 'effect', (_) {...});
+  /// } else {
+  ///   stream.unwatchEffect(context, key: 'effect');
+  /// }
+  /// ```
+  ///
+  /// If [immediate] is `true`, the effect will be called upon effect
+  /// registration immediately. If [once] is `true`, the effect will be called
+  /// only once. These parameters can be combined.
+  ///
+  /// [immediate] and [once] parameters require a unique [key].
+  void watchEffect(
+    BuildContext context,
+    void Function(AsyncSnapshot<T> snapshot) effect, {
+    Object? key,
+    bool immediate = false,
+    bool once = false,
+  }) {
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(context, this)
+        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+  }
+}
+
+extension StreamContextUnwatchEffectExtension on Stream {
+  /// Remove the effect with the given [key] from the list of effects to be
+  /// called when this [Stream] notifies of a change.
+  void unwatchEffect(
+    BuildContext context, {
+    required Object key,
+  }) {
+    InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

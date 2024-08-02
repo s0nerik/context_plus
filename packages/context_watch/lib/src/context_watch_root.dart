@@ -23,9 +23,9 @@ class ContextWatchRoot extends StatefulWidget {
 
 class _ContextWatchRootState extends State<ContextWatchRoot> {
   final _builtInWatchers = <ContextWatcher>[
-    FutureContextWatcher(),
-    StreamContextWatcher(),
     ListenableContextWatcher(),
+    StreamContextWatcher(),
+    FutureContextWatcher(),
   ];
 
   late List<ContextWatcher> _watchers;

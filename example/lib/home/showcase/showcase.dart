@@ -18,7 +18,6 @@ final _isShowcaseCompleted = Ref<ValueNotifier<bool>>();
 final _showcaseCtrl = Ref<ShowcaseRiveController>();
 
 final _appearCtrl = Ref<AnimationController>();
-const _appearDuration = Duration(seconds: 1);
 
 final _isIntroCompleted = Ref<ValueNotifier<bool>>();
 final _introCtrl = Ref<AnimationController>();
@@ -26,12 +25,9 @@ const _introDuration = Duration(seconds: 6);
 
 final _mobileExpandShowcaseStepDescriptionCtrl = Ref<AnimationController?>();
 
-final _codeAnimationKey = GlobalKey();
-
 final _showcaseLayout = Ref<_ShowcaseLayout>();
 
 final _homeScrollController = Ref<ScrollController>();
-final _homeScrollControllerListener = Ref<VoidCallback>();
 final _hasScrolled = Ref<ValueNotifier<bool>>();
 
 enum _ShowcaseLayout { desktop, smallerDesktop, mobile }
@@ -49,60 +45,36 @@ class Showcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasScrolled = _hasScrolled.bind(context, () => ValueNotifier(false));
-    _homeScrollController.bindValue(context, homeScrollController);
-    _homeScrollControllerListener.bind(
-      context,
-      () {
-        void listener() {
-          if (homeScrollController.offset != 0) {
-            hasScrolled.value = true;
-            homeScrollController.removeListener(listener);
-          }
-        }
-
-        homeScrollController.addListener(listener);
-        return listener;
-      },
-      dispose: homeScrollController.removeListener,
-      key: homeScrollController,
-    );
-
-    final isShowcaseCompleted = _isShowcaseCompleted.bind(
-      context,
-      () {
-        final notifier = ValueNotifier(false);
-        return notifier
-          ..addListener(() {
-            if (notifier.value) {
-              onCompleted();
-            }
-          });
-      },
-    );
-    final showcaseCtrl = _showcaseCtrl.bind(context, () {
-      final ctrl = ShowcaseRiveController();
-      return ctrl
-        ..addListener(() {
-          if (ctrl.currentKeyframe.isFinal) {
-            isShowcaseCompleted.value = true;
-          }
-        });
+    _homeScrollController
+        .bindValue(context, homeScrollController)
+        .watchEffect(context, (ctrl) {
+      if (ctrl.offset > 120) hasScrolled.value = true;
     });
+
+    final isShowcaseCompleted =
+        _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
+
+    final showcaseCtrl = _showcaseCtrl.bind(context, ShowcaseRiveController.new)
+      ..watchEffect(context, (ctrl) {
+        if (ctrl.currentKeyframe.isFinal && !isShowcaseCompleted.value) {
+          isShowcaseCompleted.value = true;
+          onCompleted();
+        }
+      });
+
     final appearCtrl = _appearCtrl.bind(
       context,
       (vsync) => AnimationController(
         vsync: vsync,
-        duration: _appearDuration,
+        duration: const Duration(seconds: 1),
       )..addStatusListener((status) {
           if (status == AnimationStatus.completed) {
             showcaseCtrl.animateToKeyframe(ShowcaseKeyframe.values.last);
           }
         }),
     );
-    final isIntroCompleted = _isIntroCompleted.bind(
-      context,
-      () => ValueNotifier(false),
-    );
+    final isIntroCompleted =
+        _isIntroCompleted.bind(context, () => ValueNotifier(false));
     _introCtrl.bind(
       context,
       (vsync) => AnimationController(
@@ -218,25 +190,15 @@ class _IntroText extends StatelessWidget {
 class _SkipIntroButton extends StatelessWidget {
   const _SkipIntroButton();
 
-  static final _showButton = Ref<ValueNotifier<bool>>();
-
   @override
   Widget build(BuildContext context) {
     final introCtrl = _introCtrl.of(context);
     final showcaseCtrl = _showcaseCtrl.of(context);
     final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
-    final showButton = _showButton.bind(
-      context,
-      () => ValueNotifier(!isShowcaseCompleted),
-    );
-    if (!showButton.watch(context)) {
-      return const SizedBox.shrink();
-    }
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
       opacity: isShowcaseCompleted ? 0 : 1,
-      onEnd: () => showButton.value = !isShowcaseCompleted,
       child: Container(
         height: 48,
         alignment: Alignment.center,
@@ -386,6 +348,8 @@ class _MobileView extends StatelessWidget {
 
 class _CodeAnimation extends StatelessWidget {
   const _CodeAnimation();
+
+  static final _codeAnimationKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {

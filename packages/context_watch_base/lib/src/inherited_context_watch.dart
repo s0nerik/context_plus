@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -8,6 +7,11 @@ import 'package:meta/meta.dart';
 typedef WatchSelector = Object? Function(Object? value);
 
 abstract interface class ContextWatchSubscription {
+  Object get observable;
+  bool get hasValue;
+  Object? get value;
+  ContextWatchSelectorParameterType get selectorParameterType;
+
   void cancel();
 }
 
@@ -25,19 +29,8 @@ abstract class ContextWatcher<TObservable extends Object> {
   /// value change notification.
   @protected
   @nonVirtual
-  void rebuildIfNeeded(
-    BuildContext context,
-    Object observable, {
-    required Object? value,
-    ContextWatchSelectorParameterType selectorParameterType =
-        ContextWatchSelectorParameterType.value,
-  }) =>
-      _rebuildIfNeeded(
-        context,
-        observable,
-        value: value,
-        selectorParameterType: selectorParameterType,
-      );
+  void rebuildIfNeeded(BuildContext context, Object observable) =>
+      _rebuildIfNeeded(context, observable);
 
   @protected
   @useResult
@@ -135,12 +128,65 @@ class InheritedContextWatchElement extends InheritedElement {
     }
   }
 
+  /// Returns the [ContextWatchObservable] for the given [observable]
+  /// within a [context] or `null` if called outside of the build phase.
+  ///
+  /// When called within a build phase, automatically creates a
+  /// [ContextWatchSubscription].
   @nonVirtual
-  ContextWatchSubscription? watch<T>(
+  ContextWatchObservable? getOrCreateObservable<T>(
     BuildContext context,
-    Object observable, {
-    dynamic selector,
-  }) {
+    Object observable,
+  ) {
+    final contextData = _fetchContextDataForWatch(context);
+    if (contextData == null) {
+      return null;
+    }
+
+    var observableData = contextData.observables[observable];
+    if (observableData == null) {
+      final subscription =
+          _watcherFor(observable).createSubscription<T>(context, observable);
+      observableData = ContextWatchObservable._(subscription);
+      contextData.observables[observable] = observableData;
+    }
+    observableData._lastFrame = contextData.lastFrame;
+    return observableData;
+  }
+
+  @pragma('vm:prefer-inline')
+  ContextWatcher _watcherFor(Object observable) {
+    final watchers = (widget as InheritedContextWatch).watchers;
+    final length = watchers.length;
+    for (var i = 0; i < length; i++) {
+      final watcher = watchers[i];
+      if (watcher._canHandle(observable)) {
+        return watcher;
+      }
+    }
+    throw UnsupportedError(
+      'No ContextWatcher found for ${observable.runtimeType}',
+    );
+  }
+
+  @nonVirtual
+  void unwatchEffect(
+    BuildContext context,
+    Object observable,
+    Object effectKey,
+  ) {
+    final contextData = _contextData[context];
+    if (contextData == null) {
+      return;
+    }
+    final observableData = contextData.observables[observable];
+    if (observableData == null) {
+      return;
+    }
+    observableData._unwatchEffect(effectKey);
+  }
+
+  _ContextData? _fetchContextDataForWatch(BuildContext context) {
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
@@ -150,54 +196,21 @@ class InheritedContextWatchElement extends InheritedElement {
     // elements. This is important for handling the element re-parenting.
     _deactivatedElements.remove(context);
 
-    final contextData = _fetchContextData(context);
-    if (contextData == null) {
-      return null;
-    }
-
-    _potentiallyUnwatchedContexts.remove(context);
-
-    contextData.observableLastFrame[observable] = _currentFrameTimeStamp;
-
-    if (selector != null) {
-      final selectors = contextData.observableSelectors[observable] ??= {};
-      selectors.add(selector);
-    } else {
-      contextData.entirelyWatchedObservables.add(observable);
-    }
-
-    final existingSubscription =
-        contextData.observableSubscriptions[observable];
-    if (existingSubscription != null) {
-      return existingSubscription;
-    }
-
-    final watcher = (super.widget as InheritedContextWatch)
-        .watchers
-        .firstWhere((element) => element._canHandle(observable), orElse: () {
-      throw UnsupportedError(
-        'No ContextWatcher found for ${observable.runtimeType}',
-      );
-    });
-    final subscription = watcher.createSubscription<T>(context, observable);
-    contextData.observableSubscriptions[observable] = subscription;
-    return subscription;
-  }
-
-  @nonVirtual
-  _ContextData? _fetchContextData(BuildContext context) {
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method
       return null;
     }
+
+    _potentiallyUnwatchedContexts.remove(context);
 
     final contextData = _contextData[context] ??= _ContextData();
     final frame = _currentFrameTimeStamp;
 
     if (contextData.lastFrame != frame) {
       // It's a new frame, so let's clear all selectors as they might've changed
-      contextData.observableSelectors.clear();
-      contextData.entirelyWatchedObservables.clear();
+      for (final observableData in contextData.observables.values) {
+        observableData._prepareForRebuild();
+      }
       contextData.lastFrame = frame;
     }
     return contextData;
@@ -223,8 +236,8 @@ class InheritedContextWatchElement extends InheritedElement {
   void unmount() {
     _deactivatedElements.clear();
     for (final contextData in _contextData.values) {
-      for (final subscription in contextData.observableSubscriptions.values) {
-        subscription.cancel();
+      for (final observableData in contextData.observables.values) {
+        observableData.subscription.cancel();
       }
     }
     _contextData.clear();
@@ -234,75 +247,36 @@ class InheritedContextWatchElement extends InheritedElement {
     super.unmount();
   }
 
-  static void _neverRebuild(
-    BuildContext context,
-    Object observable, {
-    required Object? value,
-    required ContextWatchSelectorParameterType selectorParameterType,
-  }) {}
+  static void _neverRebuild(BuildContext context, Object observable) {}
 
-  void _rebuildIfNeeded(
-    BuildContext context,
-    Object observable, {
-    required Object? value,
-    required ContextWatchSelectorParameterType selectorParameterType,
-  }) {
+  void _rebuildIfNeeded(BuildContext context, Object observable) {
     if (!context.mounted) {
-      _unwatch(context, observable);
+      _unwatchContext(context);
       return;
     }
 
     final contextData = _contextData[context];
     if (contextData == null) {
-      _unwatch(context, observable);
+      _unwatchContext(context);
       return;
     }
 
-    final contextLastFrame = contextData.lastFrame;
-    final observableLastFrame = contextData.observableLastFrame[observable];
-    if (observableLastFrame != contextLastFrame) {
-      _unwatch(context, observable);
+    final observableData = contextData.observables[observable];
+    if (observableData == null) {
+      _unwatch(contextData, observable);
       return;
     }
 
-    final isWatchedEntirely =
-        contextData.entirelyWatchedObservables.contains(observable);
-    final selectors = contextData.observableSelectors[observable];
-
-    final oldSelectedValues = contextData.observableSelectedValues[observable];
-    if (selectors == null || selectors.isEmpty) {
-      /// `watchOnly()` was_not used during the last build
-
-      final shouldRebuild =
-          // If `watch()` was used during the last build, we need to rebuild
-          isWatchedEntirely ||
-              // If `watchOnly()` was used before, but not anymore, we need to rebuild
-              oldSelectedValues != null && oldSelectedValues.isNotEmpty;
-      contextData.observableSelectedValues.remove(observable);
-      if (shouldRebuild) {
-        _scheduleRebuild(context as Element);
-      }
+    if (contextData.lastFrame != observableData._lastFrame) {
+      _unwatch(contextData, observable);
       return;
     }
 
-    /// `watchOnly()` was used during the last build
-    final newSelectedValues = switch (selectorParameterType) {
-      ContextWatchSelectorParameterType.value => <Object?>[
-          for (final selector in selectors)
-            _select(selector: selector, argument: value),
-        ],
-      ContextWatchSelectorParameterType.observable => <Object?>[
-          for (final selector in selectors)
-            _select(selector: selector, argument: observable),
-        ],
-    };
-    final shouldRebuild =
-        // If `watch()` was used during the last build, we need to rebuild
-        isWatchedEntirely ||
-            // If old and new selected values are different, we need to rebuild
-            !listEquals(newSelectedValues, oldSelectedValues);
-    contextData.observableSelectedValues[observable] = newSelectedValues;
-    if (shouldRebuild) {
+    final selectedValuesChanged = observableData._invokeEffectsAndSelectors();
+
+    /// If either `watch()` was used during the last build, or the selected
+    /// values changed, we need to rebuild
+    if (observableData._isWatchedEntirely || selectedValuesChanged) {
       _scheduleRebuild(context as Element);
     }
   }
@@ -334,16 +308,11 @@ class InheritedContextWatchElement extends InheritedElement {
   }
 
   void _unwatch(
-    BuildContext context,
+    _ContextData contextData,
     Object observable,
   ) {
-    final contextData = _contextData[context];
-    if (contextData == null) {
-      return;
-    }
-
-    final subscription = contextData.observableSubscriptions.remove(observable);
-    subscription?.cancel();
+    final observableData = contextData.observables.remove(observable);
+    observableData?.subscription.cancel();
   }
 
   void _unwatchContext(BuildContext context) {
@@ -352,32 +321,195 @@ class InheritedContextWatchElement extends InheritedElement {
       return;
     }
 
-    for (final subscription in contextData.observableSubscriptions.values) {
-      subscription.cancel();
+    for (final observableData in contextData.observables.values) {
+      observableData.subscription.cancel();
     }
   }
 }
 
-class _ContextData {
-  Duration? lastFrame;
-  final observableLastFrame = HashMap<Object, Duration>.identity();
-  final observableSubscriptions =
-      HashMap<Object, ContextWatchSubscription>.identity();
-  final observableSelectors =
-      // Observable -> {Object? Function(Object?)}
-      HashMap<Object, Set<dynamic>>.identity();
-  final observableSelectedValues =
-      // Observable -> Selected values
-      HashMap<Object, List<Object?>?>.identity();
-  final entirelyWatchedObservables = HashSet<Object>.identity();
+final class _ContextData {
+  Duration lastFrame = const Duration(microseconds: -1);
+
+  /// Observable -> ContextWatchObservable
+  final observables = HashMap<Object, ContextWatchObservable>.identity();
 }
 
-Object? _select({
-  required dynamic selector,
-  required Object? argument,
-}) {
-  if (argument == null) {
-    return null;
+final class ContextWatchObservable {
+  ContextWatchObservable._(this.subscription);
+
+  final ContextWatchSubscription subscription;
+
+  Duration _lastFrame = const Duration(microseconds: -1);
+
+  /// Whether the observable was watched for any possible change via [watch]
+  bool _isWatchedEntirely = false;
+
+  /// Contains (flattened) selectors and effects in the following format:
+  ///   [0] bool: true if selector, false if effect
+  ///   [1] Function: selector or effect
+  ///   [2] Object?: selected value or effect key
+  final _selectorsAndEffects = List<Object?>.empty(growable: true);
+
+  /// Effect Key -> Effect state bitmask
+  final _keyedEffectStates = HashMap<Object, int>();
+
+  @pragma('vm:prefer-inline')
+  void watch() {
+    _isWatchedEntirely = true;
   }
-  return selector(argument);
+
+  @pragma('vm:prefer-inline')
+  void watchOnly(
+    Function selector,
+    Object? selectedValue,
+  ) {
+    final oldLength = _selectorsAndEffects.length;
+    _selectorsAndEffects.length += 3;
+    _selectorsAndEffects[oldLength] = true;
+    _selectorsAndEffects[oldLength + 1] = selector;
+    _selectorsAndEffects[oldLength + 2] = selectedValue;
+  }
+
+  @pragma('vm:prefer-inline')
+  void watchEffect(
+    Function effect, {
+    required Object? key,
+    required bool immediate,
+    required bool once,
+  }) {
+    assert(
+      !immediate || key != null,
+      'watchEffect(immediate: true) requires a unique key',
+    );
+    assert(
+      !once || key != null,
+      'watchEffect(once: true) requires a unique key',
+    );
+
+    final oldLength = _selectorsAndEffects.length;
+    _selectorsAndEffects.length += 3;
+    _selectorsAndEffects[oldLength] = false;
+    _selectorsAndEffects[oldLength + 1] = effect;
+    _selectorsAndEffects[oldLength + 2] = key;
+
+    if (key != null) {
+      final effectBitmask = _keyedEffectStates[key];
+      final shouldInvoke = immediate && effectBitmask == null;
+      if (shouldInvoke) {
+        switch (subscription.selectorParameterType) {
+          case ContextWatchSelectorParameterType.value:
+            assert(subscription.hasValue);
+            effect(subscription.value);
+          case ContextWatchSelectorParameterType.observable:
+            effect(subscription.observable);
+        }
+      }
+      _keyedEffectStates[key] = _effectBitmask(
+        once: once,
+        wasInvoked: shouldInvoke ||
+            effectBitmask != null && _effectBitmaskWasInvoked(effectBitmask),
+      );
+    }
+  }
+
+  void _unwatchEffect(Object effectKey) {
+    final length = _selectorsAndEffects.length;
+    for (var i = 2; i < length; i += 3) {
+      if (_selectorsAndEffects[i] == effectKey &&
+          _selectorsAndEffects[i - 2] == false) {
+        _selectorsAndEffects.removeRange(i - 2, i + 1);
+        return;
+      }
+    }
+  }
+
+  @pragma('vm:prefer-inline')
+  bool _invokeEffectsAndSelectors() {
+    assert(
+      subscription.selectorParameterType !=
+              ContextWatchSelectorParameterType.value ||
+          subscription.hasValue,
+    );
+
+    bool selectedValuesChanged = false;
+    final length = _selectorsAndEffects.length;
+    final callbackArg = switch (subscription.selectorParameterType) {
+      ContextWatchSelectorParameterType.value => subscription.value,
+      ContextWatchSelectorParameterType.observable => subscription.observable,
+    };
+    for (var i = 0; i < length; i += 3) {
+      selectedValuesChanged = _invokeSelectorOrEffect(
+            _selectorsAndEffects[i] as bool,
+            _selectorsAndEffects[i + 1] as Function,
+            _selectorsAndEffects[i + 2],
+            callbackArg,
+          ) ||
+          selectedValuesChanged;
+    }
+    return selectedValuesChanged;
+  }
+
+  @pragma('vm:prefer-inline')
+  bool _invokeSelectorOrEffect(
+    bool isSelector,
+    Function func,
+    Object? selectedValueOrEffectKey,
+    Object? arg,
+  ) {
+    if (isSelector) {
+      final selectedValue = func(arg);
+      return selectedValue != selectedValueOrEffectKey;
+    }
+
+    final effectKey = selectedValueOrEffectKey;
+    if (effectKey == null) {
+      func(arg);
+      return false;
+    }
+
+    final effectBitmask = _keyedEffectStates[effectKey]!;
+    final once = _effectBitmaskIsOnce(effectBitmask);
+    final wasInvoked = _effectBitmaskWasInvoked(effectBitmask);
+    if (once) {
+      if (wasInvoked) {
+        return false;
+      }
+      func(arg);
+      _keyedEffectStates[effectKey] =
+          _updateEffectBitmaskWithInvoked(effectBitmask);
+      return false;
+    }
+
+    func(arg);
+    if (!wasInvoked) {
+      _keyedEffectStates[effectKey] =
+          _updateEffectBitmaskWithInvoked(effectBitmask);
+    }
+    return false;
+  }
+
+  @pragma('vm:prefer-inline')
+  void _prepareForRebuild() {
+    _selectorsAndEffects.length = 0;
+    _isWatchedEntirely = false;
+  }
 }
+
+@pragma('vm:prefer-inline')
+int _effectBitmask({
+  required bool once,
+  required bool wasInvoked,
+}) {
+  var bitmask = once ? 1 : 0;
+  bitmask |= wasInvoked ? 2 : 0;
+  return bitmask;
+}
+
+@pragma('vm:prefer-inline')
+int _updateEffectBitmaskWithInvoked(int effectBitmask) => effectBitmask | 2;
+
+@pragma('vm:prefer-inline')
+bool _effectBitmaskIsOnce(int effectBitmask) => effectBitmask & 1 != 0;
+
+@pragma('vm:prefer-inline')
+bool _effectBitmaskWasInvoked(int effectBitmask) => effectBitmask & 2 != 0;

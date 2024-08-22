@@ -22,8 +22,10 @@ Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more info
     - [`Ref.bindLazy(context, () => ...)`](#api-ref-bind-lazy)
     - [`Ref.bindValue(context, ...)`](#api-ref-bind-value)
     - [`Ref.of(context)`](#api-ref-of)
-    - [`Ref<Observable>.watch(context)` and `Observable.watch(context)`](#api-watch)
-    - [`Ref<Observable>.watchOnly(context, ...)` and `Observable.watchOnly(context, ...)`](#api-watch-only)
+    - [`(Observable/Ref<Observable>).watch(context)`](#api-watch)
+    - [`(Observable/Ref<Observable>).watchOnly(context, ...)`](#api-watch-only)
+    - [`(Observable/Ref<Observable>).watchEffect(context, ...)`](#api-watch-effect)
+    - [`(Observable/Ref<Observable>).unwatchEffect(context, key: ...)`](#api-unwatch-effect)
 
 <a name="features"></a>
 ## Features
@@ -232,3 +234,69 @@ R Stream<T>.watchOnly<R>(
 - Invokes `selector` whenever the async value notifies about changes.
 - Rebuilds the widget whenever the `selector` returns a different value.
 - Returns the selected value.
+
+<a name="api-watch-effect"></a>
+### `Ref<Observable>.watchEffect()` and `Observable.watchEffect()`
+
+```dart
+void TListenable.watchEffect(
+  BuildContext context,
+  void Function(TListenable listenable) effect, {
+  Object? key,
+  bool immediate = false,
+  bool once = false,
+})
+
+void Future<T>.watchEffect(
+  BuildContext context,
+  void Function(AsyncSnapshot<T> snapshot) effect, {
+  Object? key,
+  bool immediate = false,
+  bool once = false,
+})
+
+void Stream<T>.watchEffect(
+  BuildContext context,
+  void Function(AsyncSnapshot<T> snapshot) effect, {
+  Object? key,
+  bool immediate = false,
+  bool once = false,
+})
+```
+- Invokes `effect` on each value change notification.
+- Does *not* rebuild the widget on changes.
+- `key` parameter allows for uniquely identifying the effect, which is needed
+  for conditional effects, `immeadiate` and `once` effects.
+- `immediate` parameter allows for invoking the effect immediately after binding.
+  Requires a unique `key`. Can be combined with `once`.
+- `once` parameter allows for invoking the effect only once. Requires a unique `key`.
+  Can be combined with `immediate`.
+
+<a name="api-unwatch-effect"></a>
+### `Ref<Observable>.unwatchEffect()` and `Observable.unwatchEffect()`
+
+```dart
+void Listenable.unwatchEffect(
+  BuildContext context, {
+  required Object key,
+})
+
+void Future.unwatchEffect(
+  BuildContext context, {
+  required Object key,
+})
+
+void Stream.unwatchEffect(
+  BuildContext context,
+  required Object key,
+)
+```
+- Unregisters the effect with the specified `key`.
+- Useful for conditional effects where removing the effect ASAP is needed:
+  ```dart
+  if (condition) {
+    observable.watchEffect(context, key: 'effect', ...);
+  } else {
+    observable.unwatchEffect(context, key: 'effect');
+  }
+  ```

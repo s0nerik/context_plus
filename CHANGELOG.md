@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-08-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus` - `v4.0.0`](#context_plus---v400)
+ - [`context_watch` - `v5.0.0`](#context_watch---v500)
+ - [`context_watch_base` - `v5.0.0`](#context_watch_base---v500)
+ - [`context_watch_bloc` - `v2.0.0`](#context_watch_bloc---v200)
+ - [`context_watch_getx` - `v2.0.0`](#context_watch_getx---v200)
+ - [`context_watch_mobx` - `v2.0.0`](#context_watch_mobx---v200)
+ - [`context_watch_signals` - `v2.0.0`](#context_watch_signals---v200)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `context_plus` - `v4.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch_base` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch_bloc` - `v2.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch_getx` - `v2.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch_mobx` - `v2.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+#### `context_watch_signals` - `v2.0.0`
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
+
 ## 2024-07-30
 
 ### Changes

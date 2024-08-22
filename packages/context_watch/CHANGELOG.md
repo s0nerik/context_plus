@@ -1,3 +1,9 @@
+## 5.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+
 ## 4.0.0
 
 > Note: This release has breaking changes.

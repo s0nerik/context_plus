@@ -1,5 +1,7 @@
 name: context_plus
-description: Convenient value propagation and observing for Flutter
+description: |
+  Convenient value propagation and observing for Flutter. Utilize existing
+  reactive value types more easily and with less boilerplate.
 version: 4.0.0
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus

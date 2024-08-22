@@ -111,6 +111,7 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
 
   @override
   void apply(RuntimeArtboard artboard, double elapsedSeconds) {
+    final oldFrame = frame;
     super.apply(artboard, elapsedSeconds);
 
     final direction = instance!.direction;
@@ -120,7 +121,9 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
       super.apply(artboard, 0);
     }
 
-    SchedulerBinding.instance.addPostFrameCallback((_) => notifyListeners());
+    if (oldFrame != frame) {
+      SchedulerBinding.instance.addPostFrameCallback((_) => notifyListeners());
+    }
   }
 }
 

@@ -581,6 +581,24 @@ const _watchDescription = TextSpan(
         text: ', which rebuilds the widget only if the selected value changes.',
       ),
     ],
+    TextSpan(text: '\n'),
+    ...[
+      _bulletPoint,
+      TextSpan(
+        text: 'Use ',
+      ),
+      CopyableWidgetSpan(
+        index: 2,
+        plainText: '`.watchEffect(context, ...)`',
+        child: CodeQuote(
+          child: CodeFunctionCall(name: 'watchEffect'),
+        ),
+      ),
+      TextSpan(
+        text:
+            " to register a callback for a value change, which never triggers a rebuild.",
+      ),
+    ],
     TextSpan(text: '\n\n'),
     ...[
       CopyableWidgetSpan(

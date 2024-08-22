@@ -1,8 +1,13 @@
 ## 2.0.0
 
-> Note: This release has breaking changes.
+> Note: This release does *not* contain any breaking API changes.
+>
+> This is a major release because the underlying implementation of
+> `InheritedContextWatch` and `ContextWatcher` had changed significantly and
+> the behavior of `watchOnly()` had been improved to reduce unnecessary rebuilds
+> in one of the edge cases.
 
- - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+ - **FEAT**: watchEffect() for attaching side effects to the observed data.
 
 ## 1.1.2
 

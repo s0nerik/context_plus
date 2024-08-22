@@ -3,6 +3,8 @@
 > Note: This release has breaking changes.
 
  - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+ - Enhanced `ContextWatchSubscription` interface
+ - Simplified and optimized the `InheritedContextWatch` implementation
 
 ## 4.0.0
 

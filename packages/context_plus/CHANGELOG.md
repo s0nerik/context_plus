@@ -1,3 +1,7 @@
+## 4.0.2
+
+ - **DOCS**: README.md update.
+
 ## 4.0.1
 
  - **DOCS**: README.md update.

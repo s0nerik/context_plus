@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`context_plus` - `v4.0.2`](#context_plus---v402)
+
+---
+
+#### `context_plus` - `v4.0.2`
+
+ - **DOCS**: README.md update.
+
+
+## 2024-08-24
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`context_plus` - `v4.0.1`](#context_plus---v401)
  - [`context_ref` - `v1.4.1`](#context_ref---v141)
  - [`context_watch` - `v5.0.1`](#context_watch---v501)

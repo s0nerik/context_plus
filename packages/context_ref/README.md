@@ -11,6 +11,14 @@ A more convenient `InheritedWidget` alternative.
 
 See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
 
+## Features
+
+- `Ref<T>` - a reference to a value of type `T` bound to a `context` or multiple `context`s.
+  - `.bind(context, () => Value())` - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
+  - `.bindLazy(context, () => Value())` - same as `.bind()`, but the value is created only when it's first accessed.
+  - `.bindValue(context, value)` - bind an already created value to a `context`. The value is not disposed automatically.
+  - `.of(context)` - get the value bound to the `context` or its nearest ancestor.
+
 ## Getting started
 
 ```shell

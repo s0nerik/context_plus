@@ -29,8 +29,8 @@ Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more info
     - [`.of(context)`](#api-ref-of) - get the value bound to the `context` or its nearest ancestor.
 - `Listenable`/`ValueListenable`/`AsyncListenable`/`Future`/`Stream` (and [more](#supported-observable-types)) or `Ref` of any of these types:
     - [`.watch(context)`](#api-watch) - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
-    - [`.watchOnly(context, ...)`](#api-watch-only) - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
-    - [`.watchEffect(context, ...)`](#api-watch-effect) - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
+    - [`.watchOnly(context, (...) => ...)`](#api-watch-only) - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
+    - [`.watchEffect(context, (...) => ...)`](#api-watch-effect) - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
 
 <a name="installation"></a>
 ## Installation

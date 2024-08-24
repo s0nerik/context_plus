@@ -12,28 +12,47 @@ This package combines [context_ref](https://pub.dev/packages/context_ref) and [c
 Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more information and interactive examples.
 
 ## Table of Contents
+
 1. [Features](#features)
-    - [Supported observable types for `Observable.watch()` and `Ref<Observable>.watch()`](#supported-observable-types)
-    - [3rd party supported observable types for `Observable.watch()` via separate packages](#3rd-party-supported-observable-types)
-2. [Installation](#installation)
-3. [API](#api)
-    - [`Ref`](#api-ref)
-    - [`Ref.bind(context, () => ...)`](#api-ref-bind)
-    - [`Ref.bindLazy(context, () => ...)`](#api-ref-bind-lazy)
-    - [`Ref.bindValue(context, ...)`](#api-ref-bind-value)
-    - [`Ref.of(context)`](#api-ref-of)
-    - [`(Observable/Ref<Observable>).watch(context)`](#api-watch)
-    - [`(Observable/Ref<Observable>).watchOnly(context, ...)`](#api-watch-only)
-    - [`(Observable/Ref<Observable>).watchEffect(context, ...)`](#api-watch-effect)
-    - [`(Observable/Ref<Observable>).unwatchEffect(context, key: ...)`](#api-unwatch-effect)
+1. [Installation](#installation)
+1. [Supported observable types for `.watch()`](#supported-observable-types)
+1. [3rd party supported observable types for `.watch()` via separate packages](#3rd-party-supported-observable-types)
+1. [API](#api)
 
 <a name="features"></a>
 ## Features
 
-- Provide any value to the descendant contexts with `Ref.bind(context, ...)` (or `.bindLazy()`, `.bindValue()`)
-- Fetch ancestor-provided value with `Ref.of(context)`
-- Make widget dependent on any observable value with `.watch(context)` (or `.watchOnly()`)
-- Make widget dependent on any observable value provided via a `Ref` with `Ref.watch(context)` (or `Ref.watchOnly()`)
+- [`Ref<T>`](#api-ref) - a reference to a value of type `T` bound to a `context` or multiple `context`s.
+    - [`.bind(context, () => ...)`](#api-ref-bind) - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
+    - [`.bindLazy(context, () => ...)`](#api-ref-bind-lazy) - same as `.bind()`, but the value is created only when it's first accessed.
+    - [`.bindValue(context, ...)`](#api-ref-bind-value) - bind an already created value to a `context`. The value is not disposed automatically.
+    - [`.of(context)`](#api-ref-of) - get the value bound to the `context` or its nearest ancestor.
+- `Listenable`/`ValueListenable`/`AsyncListenable`/`Future`/`Stream` (and [more](#supported-observable-types)) or `Ref` of any of these types:
+    - [`.watch(context)`](#api-watch) - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
+    - [`.watchOnly(context, ...)`](#api-watch-only) - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
+    - [`.watchEffect(context, ...)`](#api-watch-effect) - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
+
+<a name="installation"></a>
+## Installation
+
+1. Add `context_plus` to your `pubspec.yaml`:
+   ```dart
+   flutter pub add context_plus
+   ```
+2. Wrap your app in `ContextPlus.root`:
+    ```dart
+    ContextPlus.root(
+      child: MaterialApp(...),
+    );
+    ```
+3. (Optional, but recommended) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages:
+    ```dart
+    void main() {
+      ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
+      FlutterError.onError = ContextPlus.onError(FlutterError.onError);
+    }
+    ```
+4. (Optional) Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them.
 
 <a name="supported-observable-types"></a>
 ### Supported observable types for `Observable.watch()` and `Ref<Observable>.watch()`:
@@ -60,28 +79,6 @@ Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more info
 - `Observable` (from [mobx](https://pub.dev/packages/mobx), using [context_watch_mobx](https://pub.dev/packages/context_watch_mobx))
 - `Rx` (from [get](https://pub.dev/packages/get), using [context_watch_getx](https://pub.dev/packages/context_watch_getx))
 - `Signal` (from [signals](https://pub.dev/packages/signals), using [context_watch_signals](https://pub.dev/packages/context_watch_signals))
-
-<a name="installation"></a>
-## Installation
-
-1. Add `context_plus` to your `pubspec.yaml`:
-   ```dart
-   flutter pub add context_plus
-   ```
-2. Wrap your app in `ContextPlus.root`:
-    ```dart
-    ContextPlus.root(
-      child: MaterialApp(...),
-    );
-    ```
-3. (Optional, but recommended) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages:
-    ```dart
-    void main() {
-      ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
-      FlutterError.onError = ContextPlus.onError(FlutterError.onError);
-    }
-    ```
-4. (Optional) Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them.
 
 <a name="api"></a>
 ## API
@@ -271,9 +268,10 @@ void Stream<T>.watchEffect(
   Requires a unique `key`. Can be combined with `once`.
 - `once` parameter allows for invoking the effect only once. Requires a unique `key`.
   Can be combined with `immediate`.
+- Can be used conditionally, in which case the [`.unwatchEffect()`](#api-unwatch-effect) usage is recommended as well.
 
 <a name="api-unwatch-effect"></a>
-### `Ref<Observable>.unwatchEffect()` and `Observable.unwatchEffect()`
+#### `Ref<Observable>.unwatchEffect()` and `Observable.unwatchEffect()`
 
 ```dart
 void Listenable.unwatchEffect(

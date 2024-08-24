@@ -1,3 +1,7 @@
+## 5.0.1
+
+ - **DOCS**: README.md update.
+
 ## 5.0.0
 
 > Note: This release does *not* contain any breaking API changes.

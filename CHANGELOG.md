@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-08-24
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v4.0.1`](#context_plus---v401)
+ - [`context_ref` - `v1.4.1`](#context_ref---v141)
+ - [`context_watch` - `v5.0.1`](#context_watch---v501)
+
+---
+
+#### `context_plus` - `v4.0.1`
+
+ - **DOCS**: README.md update.
+
+#### `context_ref` - `v1.4.1`
+
+ - **DOCS**: README.md update.
+
+#### `context_watch` - `v5.0.1`
+
+ - **DOCS**: README.md update.
+
+
 ## 2024-08-22
 
 ### Changes

@@ -1,3 +1,7 @@
+## 1.4.1
+
+ - **DOCS**: README.md update.
+
 ## 1.4.0
 
  - **FEAT**: improve rebuild scheduling for .bindValue().

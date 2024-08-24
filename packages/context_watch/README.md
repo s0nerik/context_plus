@@ -11,6 +11,12 @@ Subscribe widgets to any observable value using `observable.watch(context)`. No 
 
 See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
 
+## Features
+
+- `.watch(context)` - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
+- `.watchOnly(context, (...) => ...)` - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
+- `.watchEffect(context, (...) => ...)` - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
+
 ## Supported observable types
 
 ### Built-in
@@ -19,14 +25,14 @@ See [context_plus](https://pub.dev/packages/context_plus) for the ultimate conve
 - `Stream`/`ValueStream`
 - `Future`/`SynchronousFuture`
 
-### Integrations
+## Integrations
 
-| Package                                                                                                   | Pub                                                                                                                            | Description                                                                                                                              |
-|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| [context_watch_bloc](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_bloc)       | [![context_watch_bloc](https://img.shields.io/pub/v/context_watch_bloc)](https://pub.dev/packages/context_watch_bloc)          | `Bloc.watch(context)`<br/>`Bloc.watchOnly(context, () => ...)`<br/><br/>`Cubit.watch(context)`<br/>`Cubit.watchOnly(context, () => ...)` |
-| [context_watch_mobx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_mobx)       | [![context_watch_mobx](https://img.shields.io/pub/v/context_watch_mobx)](https://pub.dev/packages/context_watch_mobx)          | `Observable.watch(context)`<br/>`Observable.watchOnly(context, () => ...)`                                                               |
-| [context_watch_getx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_getx)       | [![context_watch_getx](https://img.shields.io/pub/v/context_watch_getx)](https://pub.dev/packages/context_watch_getx)          | `Rx.watch(context)`<br/>`Rx.watchOnly(context, () => ...)`                                                                               |
-| [context_watch_signals](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_signals) | [![context_watch_signals](https://img.shields.io/pub/v/context_watch_signals)](https://pub.dev/packages/context_watch_signals) | `Signal.watch(context)`<br/>`Signal.watchOnly(context, () => ...)`                                                                       |
+| Package                                                                                                   | Pub                                                                                                                            | Description                                                                                                                   |
+|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| [context_watch_bloc](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_bloc)       | [![context_watch_bloc](https://img.shields.io/pub/v/context_watch_bloc)](https://pub.dev/packages/context_watch_bloc)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Bloc` and `Cubit` |
+| [context_watch_mobx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_mobx)       | [![context_watch_mobx](https://img.shields.io/pub/v/context_watch_mobx)](https://pub.dev/packages/context_watch_mobx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Observable`       |
+| [context_watch_getx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_getx)       | [![context_watch_getx](https://img.shields.io/pub/v/context_watch_getx)](https://pub.dev/packages/context_watch_getx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Rx`               |
+| [context_watch_signals](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_signals) | [![context_watch_signals](https://img.shields.io/pub/v/context_watch_signals)](https://pub.dev/packages/context_watch_signals) | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Signal`           |
 
 ## Getting started
 

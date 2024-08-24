@@ -1,6 +1,5 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:rive/rive.dart';
 
 enum ShowcaseKeyframe {
@@ -111,18 +110,16 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
 
   @override
   void apply(RuntimeArtboard artboard, double elapsedSeconds) {
-    final oldFrame = frame;
     super.apply(artboard, elapsedSeconds);
+    notifyListeners();
 
+    final frame = this.frame;
     final direction = instance!.direction;
     if (direction > 0 && frame >= _targetKeyframe.frame ||
         direction < 0 && frame <= _targetKeyframe.frame) {
       isActive = false;
       super.apply(artboard, 0);
-    }
-
-    if (oldFrame != frame) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => notifyListeners());
+      notifyListeners();
     }
   }
 }

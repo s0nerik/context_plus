@@ -5,26 +5,10 @@ import 'src/context_watch_root.dart';
 
 export 'package:context_watch_base/context_watch_base.dart' show ContextWatcher;
 
-export 'src/watchers/future_context_watcher.dart'
-    show
-        FutureContextWatchExtension,
-        FutureContextWatchOnlyExtension,
-        FutureContextWatchEffectExtension,
-        FutureContextUnwatchEffectExtension;
+export 'src/watchers/future_context_watcher.dart' hide FutureContextWatcher;
 export 'src/watchers/listenable_context_watcher.dart'
-    show
-        ListenableContextWatchExtension,
-        ListenableContextWatchOnlyExtension,
-        ListenableContextWatchEffectExtension,
-        ListenableContextUnwatchEffectExtension,
-        ValueListenableContextWatchExtension,
-        AsyncListenableContextWatchExtension;
-export 'src/watchers/stream_context_watcher.dart'
-    show
-        StreamContextWatchExtension,
-        StreamContextWatchOnlyExtension,
-        StreamContextWatchEffectExtension,
-        StreamContextUnwatchEffectExtension;
+    hide ListenableContextWatcher;
+export 'src/watchers/stream_context_watcher.dart' hide StreamContextWatcher;
 
 class ContextWatch {
   /// Provides the ability to watch observable values using

@@ -2,6 +2,7 @@ import 'package:async_listenable/async_listenable.dart';
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 class _ListenableSubscription implements ContextWatchSubscription {
   _ListenableSubscription({
@@ -29,6 +30,7 @@ class _ListenableSubscription implements ContextWatchSubscription {
   void cancel() => observable.removeListener(listener);
 }
 
+@internal
 class ListenableContextWatcher extends ContextWatcher<Listenable> {
   @override
   ContextWatchSubscription createSubscription<T>(

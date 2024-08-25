@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 class _FutureSubscription implements ContextWatchSubscription {
   _FutureSubscription({
@@ -32,6 +33,7 @@ class _FutureSubscription implements ContextWatchSubscription {
   void cancel() => _isCanceled = true;
 }
 
+@internal
 class FutureContextWatcher extends ContextWatcher<Future> {
   @override
   ContextWatchSubscription createSubscription<T>(

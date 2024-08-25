@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 class _StreamSubscription implements ContextWatchSubscription {
   _StreamSubscription({
@@ -31,6 +32,7 @@ class _StreamSubscription implements ContextWatchSubscription {
   void cancel() => _sub.cancel();
 }
 
+@internal
 class StreamContextWatcher extends ContextWatcher<Stream> {
   @override
   ContextWatchSubscription createSubscription<T>(

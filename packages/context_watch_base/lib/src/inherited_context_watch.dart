@@ -352,6 +352,15 @@ final class ContextWatchObservable {
   final _keyedEffectStates = HashMap<Object, int>();
 
   @pragma('vm:prefer-inline')
+  bool wasEffectInvoked(Object key) {
+    final effectBitmask = _keyedEffectStates[key];
+    if (effectBitmask == null) {
+      return false;
+    }
+    return _effectBitmaskWasInvoked(effectBitmask);
+  }
+
+  @pragma('vm:prefer-inline')
   void watch() {
     _isWatchedEntirely = true;
   }

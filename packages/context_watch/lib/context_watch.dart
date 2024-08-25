@@ -5,6 +5,8 @@ import 'src/context_watch_root.dart';
 
 export 'package:context_watch_base/context_watch_base.dart' show ContextWatcher;
 
+export 'src/watch_callback_record_combinations.dart';
+export 'src/watch_record_combinations.dart';
 export 'src/watchers/future_context_watcher.dart' hide FutureContextWatcher;
 export 'src/watchers/listenable_context_watcher.dart'
     hide ListenableContextWatcher;

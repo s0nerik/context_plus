@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 
 class _StreamSubscription implements ContextWatchSubscription {
   _StreamSubscription({
-    required this.observable,
     required StreamSubscription streamSubscription,
     required this.snapshot,
   }) : _sub = streamSubscription;
@@ -17,16 +16,7 @@ class _StreamSubscription implements ContextWatchSubscription {
   AsyncSnapshot snapshot;
 
   @override
-  final Stream observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => snapshot;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  Object? get callbackArgument => snapshot;
 
   @override
   void cancel() => _sub.cancel();
@@ -59,7 +49,6 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
     });
 
     subscription = _StreamSubscription(
-      observable: stream,
       streamSubscription: streamSubscription,
       snapshot: _initialSnapshot<T>(stream),
     );

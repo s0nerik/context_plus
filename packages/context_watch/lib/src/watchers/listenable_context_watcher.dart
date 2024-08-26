@@ -6,28 +6,20 @@ import 'package:meta/meta.dart';
 
 class _ListenableSubscription implements ContextWatchSubscription {
   _ListenableSubscription({
-    required this.observable,
+    required this.listenable,
     required this.listener,
   }) {
-    observable.addListener(listener);
+    listenable.addListener(listener);
   }
 
+  final Listenable listenable;
   final VoidCallback listener;
 
   @override
-  final Listenable observable;
+  get callbackArgument => listenable;
 
   @override
-  get hasValue => false;
-
-  @override
-  get value => null;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.observable;
-
-  @override
-  void cancel() => observable.removeListener(listener);
+  void cancel() => listenable.removeListener(listener);
 }
 
 @internal
@@ -46,7 +38,7 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
     Listenable listenable,
   ) {
     return _ListenableSubscription(
-      observable: listenable,
+      listenable: listenable,
       listener: () => rebuildIfNeeded(element, listenable),
     );
   }

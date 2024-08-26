@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 
 class _FutureSubscription implements ContextWatchSubscription {
   _FutureSubscription({
-    required this.observable,
     required this.snapshot,
   });
 
@@ -18,16 +17,7 @@ class _FutureSubscription implements ContextWatchSubscription {
   AsyncSnapshot snapshot;
 
   @override
-  final Future observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => snapshot;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => snapshot;
 
   @override
   void cancel() => _isCanceled = true;
@@ -41,7 +31,6 @@ class FutureContextWatcher extends ContextWatcher<Future> {
     Future observable,
   ) {
     final subscription = _FutureSubscription(
-      observable: observable,
       snapshot: AsyncSnapshot<T>.nothing(),
     );
     observable.then((data) {

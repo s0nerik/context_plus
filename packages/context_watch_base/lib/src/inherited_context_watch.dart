@@ -7,10 +7,8 @@ import 'package:meta/meta.dart';
 typedef WatchSelector = Object? Function(Object? value);
 
 abstract interface class ContextWatchSubscription {
-  Object get observable;
-  bool get hasValue;
-  Object? get value;
-  ContextWatchSelectorParameterType get selectorParameterType;
+  /// The argument passed to the .watchOnly() and .watchEffect() callbacks.
+  Object? get callbackArgument;
 
   void cancel();
 }
@@ -396,13 +394,7 @@ final class ContextWatchObservable {
       final effectBitmask = _keyedEffectStates[key];
       final shouldInvoke = immediate && effectBitmask == null;
       if (shouldInvoke) {
-        switch (subscription.selectorParameterType) {
-          case ContextWatchSelectorParameterType.value:
-            assert(subscription.hasValue);
-            effect(subscription.value);
-          case ContextWatchSelectorParameterType.observable:
-            effect(subscription.observable);
-        }
+        effect(subscription.callbackArgument);
       }
       _keyedEffectStates[key] = _effectBitmask(
         once: once,
@@ -425,18 +417,9 @@ final class ContextWatchObservable {
 
   @pragma('vm:prefer-inline')
   bool _invokeEffectsAndSelectors() {
-    assert(
-      subscription.selectorParameterType !=
-              ContextWatchSelectorParameterType.value ||
-          subscription.hasValue,
-    );
-
     bool selectedValuesChanged = false;
     final length = _selectorsAndEffects.length;
-    final callbackArg = switch (subscription.selectorParameterType) {
-      ContextWatchSelectorParameterType.value => subscription.value,
-      ContextWatchSelectorParameterType.observable => subscription.observable,
-    };
+    final callbackArg = subscription.callbackArgument;
     for (var i = 0; i < length; i += 3) {
       selectedValuesChanged = _invokeSelectorOrEffect(
             _selectorsAndEffects[i] as bool,

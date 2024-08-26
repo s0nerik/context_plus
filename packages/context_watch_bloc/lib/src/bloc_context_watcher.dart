@@ -6,25 +6,17 @@ import 'package:bloc/bloc.dart';
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 
-class _BlocSubscription implements ContextWatchSubscription {
+final class _BlocSubscription implements ContextWatchSubscription {
   _BlocSubscription({
-    required this.observable,
+    required this.bloc,
     required StreamSubscription streamSubscription,
   }) : _sub = streamSubscription;
 
+  final StateStreamable bloc;
   final StreamSubscription _sub;
 
   @override
-  final StateStreamable observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => observable.state;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => bloc.state;
 
   @override
   void cancel() => _sub.cancel();
@@ -39,7 +31,7 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, StateStreamable observable) {
     return _BlocSubscription(
-      observable: observable,
+      bloc: observable,
       streamSubscription: observable.stream.listen(
         (_) => rebuildIfNeeded(context, observable),
       ),

@@ -2,25 +2,17 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:state_beacon/state_beacon.dart';
 
-class _BeaconSubscription implements ContextWatchSubscription {
+final class _BeaconSubscription implements ContextWatchSubscription {
   _BeaconSubscription({
-    required this.observable,
+    required this.beacon,
     required this.dispose,
   });
 
+  final ReadableBeacon beacon;
   final VoidCallback dispose;
 
   @override
-  final ReadableBeacon observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => observable.value;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => beacon.value;
 
   @override
   void cancel() => dispose();
@@ -35,7 +27,7 @@ class BeaconContextWatcher extends ContextWatcher<ReadableBeacon> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, ReadableBeacon observable) {
     return _BeaconSubscription(
-      observable: observable,
+      beacon: observable,
       dispose: observable.subscribe(
         (_) => rebuildIfNeeded(context, observable),
       ),

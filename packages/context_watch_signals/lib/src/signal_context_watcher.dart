@@ -2,25 +2,17 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
-class _SignalsSubscription implements ContextWatchSubscription {
+final class _SignalsSubscription implements ContextWatchSubscription {
   _SignalsSubscription({
-    required this.observable,
+    required this.signal,
     required this.dispose,
   });
 
+  final ReadonlySignal signal;
   final VoidCallback dispose;
 
   @override
-  final ReadonlySignal observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => observable.value;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => signal.value;
 
   @override
   void cancel() => dispose();
@@ -35,7 +27,7 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
   ContextWatchSubscription createSubscription<T>(
       BuildContext context, ReadonlySignal observable) {
     return _SignalsSubscription(
-      observable: observable,
+      signal: observable,
       dispose: observable.subscribe(
         (_) => rebuildIfNeeded(context, observable),
       ),

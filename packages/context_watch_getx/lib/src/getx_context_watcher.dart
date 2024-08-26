@@ -6,25 +6,17 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class _GetxSubscription implements ContextWatchSubscription {
+final class _GetxSubscription implements ContextWatchSubscription {
   _GetxSubscription({
     required this.observable,
     required StreamSubscription streamSubscription,
   }) : _sub = streamSubscription;
 
+  final Rx observable;
   final StreamSubscription _sub;
 
   @override
-  final Rx observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => observable.value;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => observable.value;
 
   @override
   void cancel() => _sub.cancel();

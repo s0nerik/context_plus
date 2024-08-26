@@ -2,25 +2,17 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
-class _MobxSubscription implements ContextWatchSubscription {
+final class _MobxSubscription implements ContextWatchSubscription {
   _MobxSubscription({
     required this.observable,
     required this.dispose,
   });
 
+  final Observable observable;
   final VoidCallback dispose;
 
   @override
-  final Observable observable;
-
-  @override
-  get hasValue => true;
-
-  @override
-  get value => observable.value;
-
-  @override
-  get selectorParameterType => ContextWatchSelectorParameterType.value;
+  get callbackArgument => observable.value;
 
   @override
   void cancel() => dispose();

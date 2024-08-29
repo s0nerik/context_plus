@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
-import 'package:context_watch/src/watchers/stream_context_watcher.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rxdart/rxdart.dart';

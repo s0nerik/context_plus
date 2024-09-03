@@ -7,6 +7,8 @@ export 'package:context_ref/context_ref.dart';
 export 'package:context_watch/context_watch.dart';
 
 export 'src/context_ref_watch_integration.dart';
+export 'src/watch_callback_record_combinations.dart';
+export 'src/watch_record_combinations.dart';
 
 final class ContextPlus {
   ContextPlus._();

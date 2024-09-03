@@ -20,6 +20,7 @@ dependencies:
     sdk: flutter
   context_ref: ^1.4.1
   context_watch: ^5.0.1
+  context_watch_base: ^5.1.0
   async_listenable: ^1.0.1
 
 dev_dependencies:

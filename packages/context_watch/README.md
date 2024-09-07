@@ -16,6 +16,19 @@ See [context_plus](https://pub.dev/packages/context_plus) for the ultimate conve
 - `.watch(context)` - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
 - `.watchOnly(context, (...) => ...)` - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
 - `.watchEffect(context, (...) => ...)` - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
+- Multi-value observing of up to 4 observables:
+
+  ```dart
+  final (value, futureSnap, streamSnap) =
+      (valueListenable, future, stream).watch(context);
+  // or in different order
+  final (streamSnap, value, futureSnap) =
+      (stream, valueListenable, future).watch(context);
+  ```
+  
+  All three methods are available for all combinations of observables.
+
+  ** *Note*: IDE suggestions for `watch*()` methods on records work only with Dart 3.6 and newer (see [dart-lang/sdk#56572](https://github.com/dart-lang/sdk/issues/56572)).
 
 ## Supported observable types
 

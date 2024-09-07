@@ -1,3 +1,9 @@
+## 5.1.0
+
+ - **REFACTOR**: simplified callback argument selection API for ContextWatchSubscription.
+ - **REFACTOR**: simplified exports.
+ - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).
+
 ## 5.0.1
 
  - **DOCS**: README.md update.

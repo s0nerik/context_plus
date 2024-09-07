@@ -1,3 +1,10 @@
+## 6.0.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
 ## 5.0.0
 
 > Note: This release has breaking changes.

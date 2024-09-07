@@ -1,3 +1,7 @@
+## 4.1.0
+
+ - **FEAT**: Multi-value watching via (ref1, ref2, ...).watch*(context).
+
 ## 4.0.2
 
  - **DOCS**: README.md update.

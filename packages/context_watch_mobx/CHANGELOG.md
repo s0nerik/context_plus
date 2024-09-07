@@ -1,3 +1,9 @@
+## 3.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
 ## 2.0.0
 
 > Note: This release does *not* contain any breaking API changes.

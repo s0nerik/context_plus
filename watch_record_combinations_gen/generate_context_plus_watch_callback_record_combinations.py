@@ -258,9 +258,9 @@ with open('../packages/context_plus/lib/src/watch_callback_record_combinations.d
         /// when condition is no longer met:
         /// ```dart
         /// if (condition) {
-        ///   (listenable, stream, future).watchEffect(context, key: 'effect', (_, _, _) {...});
+        ///   (_listenableRef, _streamRef, _futureRef).watchEffect(context, key: 'effect', (_, _, _) {...});
         /// } else {
-        ///   (listenable, stream, future).unwatchEffect(context, key: 'effect');
+        ///   (_listenableRef, _streamRef, _futureRef).unwatchEffect(context, key: 'effect');
         /// }
         /// ```
         ///

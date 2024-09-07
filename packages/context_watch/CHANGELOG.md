@@ -1,3 +1,7 @@
+## 5.1.0
+
+ - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).
+
 ## 5.0.1
 
  - **DOCS**: README.md update.

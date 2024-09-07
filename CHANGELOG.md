@@ -3,6 +3,59 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-09-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_watch_base` - `v6.0.0`](#context_watch_base---v600)
+ - [`context_watch_bloc` - `v3.0.0`](#context_watch_bloc---v300)
+ - [`context_watch_getx` - `v3.0.0`](#context_watch_getx---v300)
+ - [`context_watch_mobx` - `v3.0.0`](#context_watch_mobx---v300)
+ - [`context_watch_signals` - `v3.0.0`](#context_watch_signals---v300)
+
+Packages with other changes:
+
+ - [`context_plus` - `v4.1.0`](#context_plus---v410)
+ - [`context_watch` - `v5.1.0`](#context_watch---v510)
+
+---
+
+#### `context_watch_base` - `v6.0.0`
+
+ - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
+#### `context_watch_bloc` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
+#### `context_watch_getx` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
+#### `context_watch_mobx` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
+#### `context_watch_signals` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+
+#### `context_plus` - `v4.1.0`
+
+ - **FEAT**: Multi-value watching via (ref1, ref2, ...).watch*(context).
+
+#### `context_watch` - `v5.1.0`
+
+ - **REFACTOR**: simplified callback argument selection API for ContextWatchSubscription.
+ - **REFACTOR**: simplified exports.
+ - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).
+
+
 ## 2024-08-24
 
 ### Changes

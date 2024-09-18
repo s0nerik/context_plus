@@ -1,3 +1,7 @@
+## 4.1.1
+
+ - Update a dependency to the latest release.
+
 ## 4.1.0
 
  - **FEAT**: Multi-value watching via (ref1, ref2, ...).watch*(context).

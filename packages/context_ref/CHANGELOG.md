@@ -1,3 +1,7 @@
+## 1.4.2
+
+ - **FIX**: fixed a rare case where re-activated Element could lose its Ref providers.
+
 ## 1.4.1
 
  - **DOCS**: README.md update.

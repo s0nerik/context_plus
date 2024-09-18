@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-09-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_ref` - `v1.4.2`](#context_ref---v142)
+ - [`context_plus` - `v4.1.1`](#context_plus---v411)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v4.1.1`
+
+---
+
+#### `context_ref` - `v1.4.2`
+
+ - **FIX**: fixed a rare case where re-activated Element could lose its Ref providers.
+
+
 ## 2024-09-07
 
 ### Changes

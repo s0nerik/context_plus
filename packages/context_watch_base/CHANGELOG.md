@@ -1,3 +1,7 @@
+## 6.0.1
+
+ - **FIX**: fixed a rare case where re-activated Element could lose track of its watched variables.
+
 ## 6.0.0
 
 > Note: This release has breaking changes.

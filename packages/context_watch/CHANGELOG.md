@@ -1,3 +1,7 @@
+## 5.1.1
+
+ - Update a dependency to the latest release.
+
 ## 5.1.0
 
  - **FEAT**: Multi-value watching via (obs1, obs2, ...).watch*(context).

@@ -15,6 +15,44 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`context_watch_base` - `v6.0.1`](#context_watch_base---v601)
+ - [`context_plus` - `v4.1.2`](#context_plus---v412)
+ - [`context_watch_bloc` - `v3.0.1`](#context_watch_bloc---v301)
+ - [`context_watch_mobx` - `v3.0.1`](#context_watch_mobx---v301)
+ - [`context_watch_getx` - `v3.0.1`](#context_watch_getx---v301)
+ - [`context_watch_signals` - `v3.0.1`](#context_watch_signals---v301)
+ - [`context_watch` - `v5.1.1`](#context_watch---v511)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v4.1.2`
+ - `context_watch_bloc` - `v3.0.1`
+ - `context_watch_mobx` - `v3.0.1`
+ - `context_watch_getx` - `v3.0.1`
+ - `context_watch_signals` - `v3.0.1`
+ - `context_watch` - `v5.1.1`
+
+---
+
+#### `context_watch_base` - `v6.0.1`
+
+ - **FIX**: fixed a rare case where re-activated Element could lose track of its watched variables.
+
+
+## 2024-09-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`context_ref` - `v1.4.2`](#context_ref---v142)
  - [`context_plus` - `v4.1.1`](#context_plus---v411)
 

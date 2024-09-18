@@ -52,6 +52,10 @@ class InheritedContextRefElement extends InheritedElement {
     required Object? key,
   }) {
     assert(context is Element);
+    assert(
+      context.debugDoingBuild,
+      'Calling bind*() outside the build() method of a widget is not allowed.',
+    );
 
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
@@ -71,6 +75,10 @@ class InheritedContextRefElement extends InheritedElement {
     required T value,
   }) {
     assert(context is Element);
+    assert(
+      context.debugDoingBuild,
+      'Calling bind*() outside the build() method of a widget is not allowed.',
+    );
 
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.

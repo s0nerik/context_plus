@@ -1,6 +1,6 @@
 name: context_watch_bloc
 description: "context_watch adapter for the bloc package"
-version: 3.0.1
+version: 3.0.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 topics:
@@ -17,7 +17,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_watch_base: ^6.0.1
+  context_watch_base: ^6.0.2
   bloc: ^8.1.2
 
 dev_dependencies:

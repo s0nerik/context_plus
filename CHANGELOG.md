@@ -15,6 +15,49 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`context_ref` - `v1.4.3`](#context_ref---v143)
+ - [`context_watch_base` - `v6.0.2`](#context_watch_base---v602)
+ - [`context_plus` - `v4.1.3`](#context_plus---v413)
+ - [`context_watch` - `v5.1.2`](#context_watch---v512)
+ - [`context_watch_getx` - `v3.0.2`](#context_watch_getx---v302)
+ - [`context_watch_bloc` - `v3.0.2`](#context_watch_bloc---v302)
+ - [`context_watch_signals` - `v3.0.2`](#context_watch_signals---v302)
+ - [`context_watch_mobx` - `v3.0.2`](#context_watch_mobx---v302)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v4.1.3`
+ - `context_watch` - `v5.1.2`
+ - `context_watch_getx` - `v3.0.2`
+ - `context_watch_bloc` - `v3.0.2`
+ - `context_watch_signals` - `v3.0.2`
+ - `context_watch_mobx` - `v3.0.2`
+
+---
+
+#### `context_ref` - `v1.4.3`
+
+ - **FIX**: added an assert to enforce that bind*() is not called outside the build() method of a BuildContext.
+
+#### `context_watch_base` - `v6.0.2`
+
+ - **FIX**: added an assert to enforce that watch*() is not called outside the build() method of a BuildContext.
+
+
+## 2024-09-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`context_watch_base` - `v6.0.1`](#context_watch_base---v601)
  - [`context_plus` - `v4.1.2`](#context_plus---v412)
  - [`context_watch_bloc` - `v3.0.1`](#context_watch_bloc---v301)

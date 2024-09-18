@@ -1,3 +1,7 @@
+## 1.4.3
+
+ - **FIX**: added an assert to enforce that bind*() is not called outside the build() method of a BuildContext.
+
 ## 1.4.2
 
  - **FIX**: fixed a rare case where re-activated Element could lose its Ref providers.

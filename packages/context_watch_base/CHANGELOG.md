@@ -1,3 +1,7 @@
+## 6.0.2
+
+ - **FIX**: added an assert to enforce that watch*() is not called outside the build() method of a BuildContext.
+
 ## 6.0.1
 
  - **FIX**: fixed a rare case where re-activated Element could lose track of its watched variables.

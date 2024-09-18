@@ -96,12 +96,6 @@ class InheritedContextWatchElement extends InheritedElement {
 
   final _contextData = HashMap<BuildContext, _ContextData>.identity();
 
-  /// This is used to keep track of the dependent [Element]s that have been
-  /// deactivated in the current frame. We need to keep track of them to
-  /// not dispose of the [ValueProvider]s too early, while the [Element] can
-  /// still be reactivated in the same frame.
-  final _deactivatedElements = HashSet<Element>.identity();
-
   bool get _isBuildPhase {
     final phase = SchedulerBinding.instance.schedulerPhase;
     return phase == SchedulerPhase.persistentCallbacks ||
@@ -189,11 +183,6 @@ class InheritedContextWatchElement extends InheritedElement {
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
-    // If [watch] is called, it means the element is active. If it was
-    // previously deactivated - remove it from the list of deactivated
-    // elements. This is important for handling the element re-parenting.
-    _deactivatedElements.remove(context);
-
     if (!_isBuildPhase) {
       // Don't update subscriptions outside of the widget's build() method
       return null;
@@ -220,11 +209,9 @@ class InheritedContextWatchElement extends InheritedElement {
     // yet unmounted. The element can be reactivated during the same fame.
     // So, let's not dispose the context data immediately, but rather wait
     // until the end of the frame to see if the element is reactivated.
-    _deactivatedElements.add(dependent);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (_deactivatedElements.contains(dependent)) {
+      if (!dependent.mounted) {
         _unwatchContext(dependent);
-        _deactivatedElements.remove(dependent);
       }
     });
     super.removeDependent(dependent);
@@ -232,7 +219,6 @@ class InheritedContextWatchElement extends InheritedElement {
 
   @override
   void unmount() {
-    _deactivatedElements.clear();
     for (final contextData in _contextData.values) {
       for (final observableData in contextData.observables.values) {
         observableData.subscription.cancel();

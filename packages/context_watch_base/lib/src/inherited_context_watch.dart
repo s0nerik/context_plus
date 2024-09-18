@@ -179,6 +179,11 @@ class InheritedContextWatchElement extends InheritedElement {
   }
 
   _ContextData? _fetchContextDataForWatch(BuildContext context) {
+    assert(
+      context.debugDoingBuild,
+      'Calling watch*() outside the build() method of a widget is not allowed.',
+    );
+
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);

@@ -44,12 +44,6 @@ class InheritedContextRefElement extends InheritedElement {
     refs.add(ref);
   }
 
-  /// This is used to keep track of the dependent [Element]s that have been
-  /// deactivated in the current frame. We need to keep track of them to
-  /// not dispose of the [ValueProvider]s too early, while the [Element] can
-  /// still be reactivated in the same frame.
-  final _deactivatedElements = HashSet<Element>.identity();
-
   ValueProvider<T> bind<T>({
     required BuildContext context,
     required Ref<T> ref,
@@ -58,11 +52,6 @@ class InheritedContextRefElement extends InheritedElement {
     required Object? key,
   }) {
     assert(context is Element);
-
-    // If bind is called, it means the element is active. If it was
-    // previously deactivated - remove it from the list of deactivated
-    // elements. This is important to handle the element re-parenting.
-    _deactivatedElements.remove(context);
 
     // Make [context] dependent on this element so that we can get notified
     // when the [context] is removed from the tree.
@@ -139,11 +128,9 @@ class InheritedContextRefElement extends InheritedElement {
     // yet unmounted. The element can be reactivated during the same fame.
     // So, let's not dispose the context data immediately, but rather wait
     // until the end of the frame to see if the element is reactivated.
-    _deactivatedElements.add(dependent);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (_deactivatedElements.contains(dependent)) {
+      if (!dependent.mounted) {
         _disposeContextData(dependent);
-        _deactivatedElements.remove(dependent);
       }
     });
     super.removeDependent(dependent);
@@ -163,7 +150,6 @@ class InheritedContextRefElement extends InheritedElement {
 
   @override
   void unmount() {
-    _deactivatedElements.clear();
     for (final element in _refs.keys.toList(growable: false)) {
       _disposeContextData(element);
     }

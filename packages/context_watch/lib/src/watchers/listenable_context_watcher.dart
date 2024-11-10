@@ -44,18 +44,23 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
   }
 }
 
-extension ListenableContextWatchExtension on Listenable {
+extension ListenableContextWatchExtension <TListenable extends Listenable>
+    on TListenable {
   /// Watch this [Listenable] for changes.
   ///
   /// Whenever this [Listenable] notifies of a change, the [context] will be
   /// rebuilt.
   ///
+  /// Returns the current [Listenable] object.
+  ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  void watch(BuildContext context) {
+  TListenable watch(BuildContext context) {
     InheritedContextWatch.of(context)
         .getOrCreateObservable(context, this)
         ?.watch();
+
+    return this;
   }
 }
 

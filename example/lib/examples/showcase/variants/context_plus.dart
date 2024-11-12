@@ -29,7 +29,7 @@ class _AnimatedFlutterLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scale: _scaleController.watch(context),
+      scale: _scaleController.watchValue(context),
       child: FlutterLogo(
         size: 200,
         style: FlutterLogoStyle.stacked,

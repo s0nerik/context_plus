@@ -49,7 +49,7 @@ class _SearchField extends StatelessWidget {
         suffixIcon: IconButton(
           onPressed: () => _showOnlyFavorites.of(context).value =
               !_showOnlyFavorites.of(context).value,
-          icon: _showOnlyFavorites.watch(context)
+          icon: _showOnlyFavorites.watchValue(context)
               ? const Icon(Icons.favorite)
               : const Icon(Icons.favorite_border),
         ),
@@ -63,7 +63,7 @@ class _CountriesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final countriesSnapshot = _countries.watch(context);
+    final countriesSnapshot = _countries.watchValue(context);
     if (countriesSnapshot.hasError) {
       return Center(
         child: Text('Error fetching countries:\n${countriesSnapshot.error}'),
@@ -74,9 +74,9 @@ class _CountriesList extends StatelessWidget {
     }
 
     var countries = countriesSnapshot.data ?? const [];
-    final showOnlyFavorites = _showOnlyFavorites.watch(context);
+    final showOnlyFavorites = _showOnlyFavorites.watchValue(context);
     if (showOnlyFavorites) {
-      final favorites = _favorites.watch(context);
+      final favorites = _favorites.watchValue(context);
       countries = countries
           .where((country) => favorites.contains(country.name))
           .toList();
@@ -118,7 +118,7 @@ class _CountryTile extends StatelessWidget {
           }
           _favorites.of(context).value = favorites;
         },
-        icon: _favorites.watch(context).contains(country.name)
+        icon: _favorites.watchValue(context).contains(country.name)
             ? const Icon(Icons.favorite)
             : const Icon(Icons.favorite_border),
       ),
@@ -136,7 +136,7 @@ class _CountryTileTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words =
-        _query.watch(context).split(' ').where((word) => word.isNotEmpty);
+        _query.watchValue(context).split(' ').where((word) => word.isNotEmpty);
     return TextHighlight(
       text: country.name,
       words: {

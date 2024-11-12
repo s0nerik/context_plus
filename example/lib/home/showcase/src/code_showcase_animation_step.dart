@@ -35,7 +35,7 @@ class CodeShowcaseProgressStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var expandProgress = expandCtrl?.watch(context);
+    var expandProgress = expandCtrl?.watchValue(context);
     expandProgress = expandProgress != null
         ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
         : null;

@@ -92,7 +92,7 @@ extension ReadOnlyRefValueListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watch(BuildContext context) => of(context).watch(context);
+  T watchValue(BuildContext context) => of(context).watchValue(context);
 }
 
 extension ReadOnlyRefAsyncListenableWatchAPI<T>
@@ -106,7 +106,8 @@ extension ReadOnlyRefAsyncListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
+  AsyncSnapshot<T> watchValue(BuildContext context) =>
+      of(context).watchValue(context);
 }
 
 extension ReadOnlyRefFutureWatchAPI<T> on context_ref.ReadOnlyRef<Future<T>> {

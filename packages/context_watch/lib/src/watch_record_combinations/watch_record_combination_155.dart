@@ -7,8 +7,19 @@ import '../watchers/future_context_watcher.dart';
 import '../watchers/listenable_context_watcher.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchRecordExt155<T0, T2, T3> on (ValueListenable<T0>, Listenable, Future<T2>, Future<T3>) {
+extension ContextWatchRecordExt155<T0, T2, T3> on (
+  ValueListenable<T0>,
+  Listenable,
+  Future<T2>,
+  Future<T3>
+) {
   /// {@macro mass_watch_explanation}
-  (T0, void, AsyncSnapshot<T2>, AsyncSnapshot<T3>) watch(BuildContext context) =>
-      ($1.watch(context), $2.watch(context) as Null, $3.watch(context), $4.watch(context),);
+  (T0, void, AsyncSnapshot<T2>, AsyncSnapshot<T3>) watch(
+          BuildContext context) =>
+      (
+        $1.watchValue(context),
+        $2.watch(context) as Null,
+        $3.watch(context),
+        $4.watch(context),
+      );
 }

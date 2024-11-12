@@ -6,8 +6,17 @@ import 'package:flutter/widgets.dart';
 import '../watchers/listenable_context_watcher.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchRecordExt149<T0, T2> on (ValueListenable<T0>, Listenable, ValueListenable<T2>, Listenable) {
+extension ContextWatchRecordExt149<T0, T2> on (
+  ValueListenable<T0>,
+  Listenable,
+  ValueListenable<T2>,
+  Listenable
+) {
   /// {@macro mass_watch_explanation}
-  (T0, void, T2, void) watch(BuildContext context) =>
-      ($1.watch(context), $2.watch(context) as Null, $3.watch(context), $4.watch(context) as Null,);
+  (T0, void, T2, void) watch(BuildContext context) => (
+        $1.watchValue(context),
+        $2.watch(context) as Null,
+        $3.watchValue(context),
+        $4.watch(context) as Null,
+      );
 }

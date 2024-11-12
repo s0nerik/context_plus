@@ -44,7 +44,7 @@ void main() {
     final shouldWatchEffect = ValueNotifier(false);
     final (widget, rebuilds) = _widget(
       (context) {
-        if (shouldWatchEffect.watch(context)) {
+        if (shouldWatchEffect.watchValue(context)) {
           notifier.watchEffect(context, (_) => effectCalls++);
         }
         return const SizedBox.shrink();
@@ -85,7 +85,7 @@ void main() {
     var effectCalls = [0, 0];
     final watchedEffects = ValueNotifier(const {0, 1});
     final (widget, rebuilds) = _widget((context) {
-      final effects = watchedEffects.watch(context);
+      final effects = watchedEffects.watchValue(context);
       if (effects.contains(0)) {
         notifier.watchEffect(context, (_) {
           effectCalls[0] += 1;
@@ -206,7 +206,7 @@ void main() {
       final shouldWatchEffect = ValueNotifier(true);
       final (widget, rebuilds) = _widget(
         (context) {
-          if (shouldWatchEffect.watch(context)) {
+          if (shouldWatchEffect.watchValue(context)) {
             notifier.watchEffect(context, (_) => effectCalls++);
           }
           return const SizedBox.shrink();
@@ -340,12 +340,12 @@ void main() {
       var effect2Calls = 0;
       final (widget, rebuilds) = _widget(
         (context) {
-          if (watchEffect1.watch(context)) {
+          if (watchEffect1.watchValue(context)) {
             notifier.watchEffect(context, (_) {
               effect1Calls++;
             });
           }
-          if (watchEffect2.watch(context)) {
+          if (watchEffect2.watchValue(context)) {
             notifier.watchEffect(context, (_) {
               effect2Calls++;
             });
@@ -420,7 +420,7 @@ void main() {
             (context) {
               notifier.watchEffect(context, (value) {
                 effectCalls++;
-              }, key: 'effect', immediate: immediate.watch(context));
+              }, key: 'effect', immediate: immediate.watchValue(context));
               return const SizedBox.shrink();
             },
           );
@@ -481,7 +481,7 @@ void main() {
             (context) {
               notifier.watchEffect(context, (value) {
                 effectCalls++;
-              }, key: 'effect', once: once.watch(context));
+              }, key: 'effect', once: once.watchValue(context));
               return const SizedBox.shrink();
             },
           );
@@ -550,7 +550,7 @@ void main() {
           var effect2Calls = 0;
           final (widget, rebuilds) = _widget(
             (context) {
-              if (useEffect1.watch(context)) {
+              if (useEffect1.watchValue(context)) {
                 notifier.watchEffect(context, (value) {
                   effect1Calls++;
                 }, key: 1, immediate: true);

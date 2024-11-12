@@ -101,9 +101,10 @@ List<_Section> _getSections(
     }, key: value);
 
     final currentDynamicSection = dynamicSectionVariants[
-        dynamicSectionIndex.watch(context) % dynamicSectionVariants.length];
+        dynamicSectionIndex.watchValue(context) %
+            dynamicSectionVariants.length];
     final nextDynamicSection = dynamicSectionVariants[
-        (dynamicSectionIndex.watch(context) + 1) %
+        (dynamicSectionIndex.watchValue(context) + 1) %
             dynamicSectionVariants.length];
     return [
       _StaticSection(value: staticSection1),

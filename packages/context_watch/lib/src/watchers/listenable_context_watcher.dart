@@ -44,7 +44,7 @@ class ListenableContextWatcher extends ContextWatcher<Listenable> {
   }
 }
 
-extension ListenableContextWatchExtension <TListenable extends Listenable>
+extension ListenableContextWatchExtension<TListenable extends Listenable>
     on TListenable {
   /// Watch this [Listenable] for changes.
   ///
@@ -147,7 +147,7 @@ extension ValueListenableContextWatchExtension<T> on ValueListenable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watch(BuildContext context) {
+  T watchValue(BuildContext context) {
     InheritedContextWatch.of(context)
         .getOrCreateObservable(context, this)
         ?.watch();
@@ -165,7 +165,7 @@ extension AsyncListenableContextWatchExtension<T> on AsyncListenable<T> {
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) {
+  AsyncSnapshot<T> watchValue(BuildContext context) {
     InheritedContextWatch.of(context)
         .getOrCreateObservable(context, this)
         ?.watch();

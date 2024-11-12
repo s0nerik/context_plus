@@ -131,7 +131,7 @@ class _MobileLayout extends StatelessWidget {
               top: 64,
               bottom: 8,
               child: IndexedStack(
-                index: selected.watch(context),
+                index: selected.watchValue(context),
                 sizing: StackFit.expand,
                 children: const [
                   _SourceCode(),
@@ -144,7 +144,7 @@ class _MobileLayout extends StatelessWidget {
               top: 8,
               left: 8,
               child: SegmentedButton(
-                selected: {selected.watch(context)},
+                selected: {selected.watchValue(context)},
                 onSelectionChanged: (selection) =>
                     selected.value = selection.first,
                 showSelectedIcon: false,

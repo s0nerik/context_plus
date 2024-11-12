@@ -12,7 +12,7 @@ void main() {
       ContextWatch.root(
         child: Builder(
           builder: (context) {
-            final snapshot = asyncNotifier.watch(context);
+            final snapshot = asyncNotifier.watchValue(context);
             snapshots.add(snapshot);
             return const SizedBox.shrink();
           },

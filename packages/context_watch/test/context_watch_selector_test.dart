@@ -223,10 +223,10 @@ void main() {
       final useWatch = ValueNotifier(true);
       final useWatchOnly = ValueNotifier(true);
       final (widget, rebuildsListenable) = _widget((context) {
-        if (useWatch.watch(context)) {
+        if (useWatch.watchValue(context)) {
           state.watch(context);
         }
-        if (useWatchOnly.watch(context)) {
+        if (useWatchOnly.watchValue(context)) {
           state.watchOnly(context, (state) => state.counter1);
         }
         return const SizedBox.shrink();

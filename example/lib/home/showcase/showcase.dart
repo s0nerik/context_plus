@@ -145,7 +145,7 @@ class _IntroText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = _introCtrl.watch(context);
+    final progress = _introCtrl.watchValue(context);
     if (progress == 0 || progress == 1) {
       return const SizedBox.shrink();
     }
@@ -194,7 +194,7 @@ class _SkipIntroButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final introCtrl = _introCtrl.of(context);
     final showcaseCtrl = _showcaseCtrl.of(context);
-    final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
+    final isShowcaseCompleted = _isShowcaseCompleted.watchValue(context);
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
@@ -555,7 +555,7 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isIntroCompleted = _isIntroCompleted.watch(context);
+    final isIntroCompleted = _isIntroCompleted.watchValue(context);
     if (!isIntroCompleted) {
       return const SizedBox.shrink();
     }
@@ -659,8 +659,8 @@ class _ScrollDownArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isShowcaseCompleted = _isShowcaseCompleted.watch(context);
-    final hasScrolled = _hasScrolled.watch(context);
+    final isShowcaseCompleted = _isShowcaseCompleted.watchValue(context);
+    final hasScrolled = _hasScrolled.watchValue(context);
     final height = MediaQuery.sizeOf(context).height;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 1000),
@@ -695,7 +695,7 @@ class _AppearAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     final curve = Interval(beginAt, endAt, curve: Curves.linearToEaseOut);
     final opacity = curve
-        .transform(_appearCtrl.watch(context))
+        .transform(_appearCtrl.watchValue(context))
         .clamp(0.0, 1.0)
         .toPrecision(2);
     final translateY = (curve.transform(1 - opacity) * 16);

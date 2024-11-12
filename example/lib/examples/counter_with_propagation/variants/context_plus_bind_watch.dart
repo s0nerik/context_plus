@@ -31,7 +31,7 @@ class _Child2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return CounterExample(
       onTap: () => _counter.of(context).value += 1,
-      counter: _counter.watch(context),
+      counter: _counter.watchValue(context),
     );
   }
 }

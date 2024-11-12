@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _ShowcasePage(),
-            if (isShowcaseCompleted.watch(context))
+            if (isShowcaseCompleted.watchValue(context))
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,

@@ -145,7 +145,7 @@ void main() {
       ContextWatch.root(
         child: Builder(
           builder: (context) {
-            if (returnChildImmediately.watch(context)) {
+            if (returnChildImmediately.watchValue(context)) {
               return _ReparentedChild(
                 key: globalKey,
                 listenable: notifier,
@@ -182,7 +182,7 @@ void main() {
       ContextWatch.root(
         child: Builder(
           builder: (context) {
-            if (returnChildImmediately.watch(context)) {
+            if (returnChildImmediately.watchValue(context)) {
               return SizedBox(
                 key: globalKey,
                 child: _ReparentedChild(

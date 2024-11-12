@@ -188,10 +188,11 @@ T Ref<T>.of(BuildContext context)
 ### `Ref<Observable>.watch()` and `Observable.watch()`
 
 ```dart
-void Listenable.watch(BuildContext context)
-void Ref<Listenable>.watch(BuildContext context)
+TListenable TListenable.watch(BuildContext context)
+TListenable Ref<TListenable>.watch(BuildContext context)
 ```
-- Rebuilds the widget whenever the `Listenable` notifies about changes.
+- Rebuilds the widget whenever the `TListenable` notifies about changes.
+- Returns the current object of the `TListenable`.
 
 ```dart
 T ValueListenable<T>.watch(BuildContext context)

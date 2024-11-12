@@ -29,7 +29,7 @@ class _Counter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counter = _counter.watch(context);
+    final counter = _counter.watchValue(context);
     return Text('Counter: $counter');
   }
 }

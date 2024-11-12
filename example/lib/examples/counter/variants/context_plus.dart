@@ -13,7 +13,7 @@ class Example extends StatelessWidget {
     _counter.bind(context, () => ValueNotifier(0));
     return CounterExample(
       onTap: () => _counter.of(context).value += 1,
-      counter: _counter.watch(context),
+      counter: _counter.watchValue(context),
     );
   }
 }

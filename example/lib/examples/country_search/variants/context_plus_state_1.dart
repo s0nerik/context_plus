@@ -56,7 +56,7 @@ class _SearchField extends StatelessWidget {
         suffixIcon: IconButton(
           onPressed: () =>
               state.showOnlyFavorites.value = !state.showOnlyFavorites.value,
-          icon: state.showOnlyFavorites.watch(context)
+          icon: state.showOnlyFavorites.watchValue(context)
               ? const Icon(Icons.favorite)
               : const Icon(Icons.favorite_border),
         ),
@@ -72,7 +72,7 @@ class _CountriesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = _state.of(context);
 
-    final countriesSnapshot = state.countries.watch(context);
+    final countriesSnapshot = state.countries.watchValue(context);
     if (countriesSnapshot.hasError) {
       return Center(
         child: Text('Error fetching countries:\n${countriesSnapshot.error}'),
@@ -83,9 +83,9 @@ class _CountriesList extends StatelessWidget {
     }
 
     var countries = countriesSnapshot.data ?? const [];
-    final showOnlyFavorites = state.showOnlyFavorites.watch(context);
+    final showOnlyFavorites = state.showOnlyFavorites.watchValue(context);
     if (showOnlyFavorites) {
-      final favorites = state.favorites.watch(context);
+      final favorites = state.favorites.watchValue(context);
       countries = countries
           .where((country) => favorites.contains(country.name))
           .toList();
@@ -128,7 +128,7 @@ class _CountryTile extends StatelessWidget {
           }
           state.favorites.value = favorites;
         },
-        icon: state.favorites.watch(context).contains(country.name)
+        icon: state.favorites.watchValue(context).contains(country.name)
             ? const Icon(Icons.favorite)
             : const Icon(Icons.favorite_border),
       ),
@@ -146,8 +146,10 @@ class _CountryTileTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = _state.of(context);
-    final words =
-        state.query.watch(context).split(' ').where((word) => word.isNotEmpty);
+    final words = state.query
+        .watchValue(context)
+        .split(' ')
+        .where((word) => word.isNotEmpty);
     return TextHighlight(
       text: country.name,
       words: {

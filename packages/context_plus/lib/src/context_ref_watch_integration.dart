@@ -4,15 +4,18 @@ import 'package:context_watch/context_watch.dart' as context_watch;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-extension ReadOnlyRefListenableWatchAPI on context_ref.ReadOnlyRef<Listenable> {
+extension ReadOnlyRefListenableWatchAPI<TListenable extends Listenable>
+    on context_ref.ReadOnlyRef<TListenable> {
   /// Watch this [Listenable] for changes.
   ///
   /// Whenever this [Listenable] notifies of a change, the [context] will be
   /// rebuilt.
   ///
+  /// Returns the current [Listenable] object.
+  ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  void watch(BuildContext context) => of(context).watch(context);
+  TListenable watch(BuildContext context) => of(context).watch(context);
 }
 
 extension ReadOnlyRefListenableWatchOnlyAPI<TListenable extends Listenable>
@@ -89,7 +92,7 @@ extension ReadOnlyRefValueListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  T watch(BuildContext context) => of(context).watch(context);
+  T watchValue(BuildContext context) => of(context).watchValue(context);
 }
 
 extension ReadOnlyRefAsyncListenableWatchAPI<T>
@@ -103,7 +106,8 @@ extension ReadOnlyRefAsyncListenableWatchAPI<T>
   ///
   /// It is safe to call this method multiple times within the same build
   /// method.
-  AsyncSnapshot<T> watch(BuildContext context) => of(context).watch(context);
+  AsyncSnapshot<T> watchValue(BuildContext context) =>
+      of(context).watchValue(context);
 }
 
 extension ReadOnlyRefFutureWatchAPI<T> on context_ref.ReadOnlyRef<Future<T>> {

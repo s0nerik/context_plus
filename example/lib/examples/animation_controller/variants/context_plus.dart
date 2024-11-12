@@ -16,7 +16,7 @@ class Example extends StatelessWidget {
       )..repeat(min: 0.5, max: 1, reverse: true),
     );
     return Transform.scale(
-      scale: _animCtrl.watch(context),
+      scale: _animCtrl.watchValue(context),
       child: const FlutterLogo(size: 200),
     );
   }

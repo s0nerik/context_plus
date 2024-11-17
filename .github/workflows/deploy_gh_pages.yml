@@ -11,7 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
+        with:
+          channel: beta
+          flutter-version: 3.27.0-0.2.pre
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
           webRenderer: canvaskit
           workingDir: example
+          customArgs: --wasm

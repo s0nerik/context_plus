@@ -40,7 +40,7 @@ class _CounterSquared extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final counterSquared =
-        _counter.watchOnly(context, (_) => _squared(_.value));
+        _counter.watchOnly(context, (it) => _squared(it.value));
     return Text('Counter²: $counterSquared');
   }
 }

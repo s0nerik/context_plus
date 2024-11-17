@@ -45,7 +45,7 @@ class DynamicSectionText extends StatelessWidget {
   }
 }
 
-/// (<end of static section>, <start of next static section>)
+/// (< end of static section >, < start of next static section >)
 final _staticSectionBounds = Ref<(int, int)?>();
 final _dynamicSectionVariants = Ref<List<String>>();
 final _dynamicSectionAnimCtrl = Ref<AnimationController>();

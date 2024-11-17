@@ -113,7 +113,7 @@ packages:
       path: "../packages/context_watch_getx"
       relative: true
     source: path
-    version: "4.0.0-rc.1"
+    version: "4.0.0-rc.2"
   context_watch_mobx:
     dependency: "direct main"
     description:

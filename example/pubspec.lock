@@ -113,7 +113,7 @@ packages:
       path: "../packages/context_watch_getx"
       relative: true
     source: path
-    version: "3.0.2"
+    version: "4.0.0"
   context_watch_mobx:
     dependency: "direct main"
     description:
@@ -127,7 +127,7 @@ packages:
       path: "../packages/context_watch_signals"
       relative: true
     source: path
-    version: "3.0.2"
+    version: "3.0.3"
   dolumns:
     dependency: "direct main"
     description:

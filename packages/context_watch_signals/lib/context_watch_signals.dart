@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:signals_flutter/signals_flutter.dart' as signals;
 
-export 'src/signal_context_watcher.dart';
-
 export 'package:signals_flutter/signals_flutter.dart'
     hide FlutterReadonlySignalUtils;
+
+export 'src/signal_context_watcher.dart';
 
 /// Overrides some of the [signals.FlutterReadonlySignalUtils] extensions
 /// to replace observing methods with context_watch-based ones.
@@ -32,6 +32,7 @@ extension FlutterReadonlySignalUtils<T> on signals.ReadonlySignal<T> {
   /// ...
   /// }
   /// ```
+  @Deprecated('use SignalsMixin in StatefulWidget')
   void listen(
     BuildContext context,
     void Function() callback, {

@@ -28,7 +28,7 @@ dependencies:
 
   # Signals
   signals_flutter: ^5.5.1
-  context_watch_signals: ^3.0.2
+  context_watch_signals: ^3.0.3
 
   # MobX
   mobx: ^2.4.0
@@ -45,7 +45,7 @@ dependencies:
 
   # GetX
   get: ^5.0.0-release-candidate-9.2.1
-  context_watch_getx: ^3.0.2
+  context_watch_getx: ^4.0.0
 
 dev_dependencies:
   flutter_test:

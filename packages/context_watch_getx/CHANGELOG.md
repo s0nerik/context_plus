@@ -1,3 +1,9 @@
+## 4.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **CHORE**: updated get to 5.0.0 RC.
+
 ## 3.0.2
 
  - Update a dependency to the latest release.

@@ -1,3 +1,7 @@
+## 3.0.3
+
+ - **DOCS**: applied deprecation annotation from updated signals_flutter.
+
 ## 3.0.2
 
  - Update a dependency to the latest release.

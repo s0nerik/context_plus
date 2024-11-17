@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-11-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_watch_getx` - `v4.0.0`](#context_watch_getx---v400)
+
+Packages with other changes:
+
+ - [`context_watch_signals` - `v3.0.3`](#context_watch_signals---v303)
+
+---
+
+#### `context_watch_getx` - `v4.0.0`
+
+ - **BREAKING** **CHORE**: updated get to 5.0.0 RC.
+
+#### `context_watch_signals` - `v3.0.3`
+
+ - **DOCS**: applied deprecation annotation from updated signals_flutter.
+
+
 ## 2024-09-19
 
 ### Changes

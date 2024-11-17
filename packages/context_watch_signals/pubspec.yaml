@@ -1,6 +1,6 @@
 name: context_watch_signals
 description: "context_watch adapter for signals package"
-version: 3.0.2
+version: 3.0.3
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 

@@ -2,7 +2,7 @@ name: Deploy examples to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -14,7 +14,8 @@ jobs:
         with:
           channel: beta
           flutter-version: 3.27.0-0.2.pre
-      - uses: bluefireteam/flutter-gh-pages@v7
+        # A fork that allows for wasm compilation
+      - uses: TesteurManiak/flutter-gh-pages@7ffcd0a663bf42b8d2fd77245a0159443427ce8e
         with:
           workingDir: example
-          customArgs: --wasm
+          compileToWasm: true

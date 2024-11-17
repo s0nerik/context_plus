@@ -58,7 +58,7 @@ class ScrollDownArrowsPainter extends CustomPainter {
           (size.height - yOffset * 1.1).clamp(0.0, fadeDistance) / fadeDistance;
       final opacity = math.min(topFade, bottomFade);
 
-      paint.color = Colors.white.withOpacity(opacity);
+      paint.color = Colors.white.withValues(alpha: opacity);
 
       final path = Path()
         ..moveTo(size.width / 2 - arrowWidth / 2, yOffset)

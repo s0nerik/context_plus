@@ -95,9 +95,9 @@ class _AppState extends State<_App> {
             style: SegmentedButton.styleFrom(
               foregroundColor: Colors.grey,
               selectedForegroundColor: Colors.white,
-              backgroundColor: Colors.black.withOpacity(0.85),
+              backgroundColor: Colors.black.withValues(alpha: 0.85),
               selectedBackgroundColor:
-                  const Color(0xFF353535).withOpacity(0.85),
+                  const Color(0xFF353535).withValues(alpha: 0.85),
               side: const BorderSide(color: Colors.white24),
             ),
           ),

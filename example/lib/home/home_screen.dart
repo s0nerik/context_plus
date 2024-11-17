@@ -363,7 +363,7 @@ class _SetupStep extends StatelessWidget {
   Widget build(BuildContext context) {
     var indexStyle = Theme.of(context).textTheme.displayLarge!;
     indexStyle = indexStyle.copyWith(
-      color: indexStyle.color!.withOpacity(0.05),
+      color: indexStyle.color!.withValues(alpha: 0.05),
       height: 1,
       fontFamily: 'JetBrains Mono',
     );

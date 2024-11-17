@@ -74,7 +74,7 @@ class _LissajousOrbitPainter extends CustomPainter {
       final y = center.dy + amplitude * sin(2 * t);
 
       final paint = Paint()
-        ..color = colors[i].withOpacity(0.4 * opacity)
+        ..color = colors[i].withValues(alpha: 0.4 * opacity)
         ..style = PaintingStyle.fill
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 36);
 

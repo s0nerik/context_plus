@@ -11,6 +11,32 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`context_watch_getx` - `v4.0.0-rc.2`](#context_watch_getx---v400-rc2)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `context_watch_getx` - `v4.0.0-rc.2`
+
+ - **REFACTOR**: context_watch v3 migration.
+ - **REFACTOR**: pubspec.yaml: Updated homepage/repository with proper branch name.
+ - **FEAT**: prepare context_watch_getx for initial release.
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+ - **BREAKING** **CHORE**: updated get to 5.0.0 RC.
+
+
+## 2024-11-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`context_watch_getx` - `v4.0.0`](#context_watch_getx---v400)
 
 Packages with other changes:

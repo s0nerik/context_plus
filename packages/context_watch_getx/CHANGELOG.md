@@ -1,3 +1,14 @@
+## 4.0.0-rc.2
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: context_watch v3 migration.
+ - **REFACTOR**: pubspec.yaml: Updated homepage/repository with proper branch name.
+ - **FEAT**: prepare context_watch_getx for initial release.
+ - **BREAKING** **FEAT**: simplified callback argument selection API for ContextWatchSubscription.
+ - **BREAKING** **FEAT**: watchEffect() for attaching side effects to the observed data.
+ - **BREAKING** **CHORE**: updated get to 5.0.0 RC.
+
 ## 4.0.0
 
 > Note: This release has breaking changes.

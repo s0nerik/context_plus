@@ -3,9 +3,10 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-export 'package:context_ref/context_ref.dart';
+export 'package:context_ref/context_ref.dart' hide RefAPI;
 export 'package:context_watch/context_watch.dart';
 
+export 'src/context_plus_ref_api.dart';
 export 'src/context_ref_watch_integration.dart';
 export 'src/watch_callback_record_combinations.dart';
 export 'src/watch_record_combinations.dart';

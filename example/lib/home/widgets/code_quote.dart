@@ -280,7 +280,7 @@ class CodeMultilineQuote extends StatelessWidget {
     };
 
     final scrollController =
-        _codeScrollController.bind(context, ScrollController.new);
+        _codeScrollController.bind(context, (context) => ScrollController());
 
     Widget child = SingleChildScrollView(
       controller: scrollController,

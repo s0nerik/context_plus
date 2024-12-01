@@ -5,13 +5,14 @@ homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_wat
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: ">=3.0.6 <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"
 
 dependencies:
   flutter:
     sdk: flutter
   meta: ^1.9.1
+  context_plus_build_context: ^1.0.0
 
 dev_dependencies:
   flutter_test:

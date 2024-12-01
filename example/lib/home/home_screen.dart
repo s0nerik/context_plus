@@ -31,9 +31,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = _scrollController.bind(context, ScrollController.new);
+    final controller =
+        _scrollController.bind(context, (context) => ScrollController());
     final isShowcaseCompleted =
-        _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
+        _isShowcaseCompleted.bind(context, (context) => ValueNotifier(false));
     return Scaffold(
       body: SingleChildScrollView(
         controller: controller,
@@ -155,7 +156,7 @@ class _SetupStep1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final version = _contextPlusVersion
-        .bind(context, () async {
+        .bind(context, (context) async {
           final yamlString =
               await DefaultAssetBundle.of(context).loadString('pubspec.yaml');
           final yaml = loadYaml(yamlString);

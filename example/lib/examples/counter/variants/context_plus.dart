@@ -10,7 +10,7 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _counter.bind(context, () => ValueNotifier(0));
+    _counter.bind(context, (context) => ValueNotifier(0));
     return CounterExample(
       onTap: () => _counter.of(context).value += 1,
       counter: _counter.watch(context),

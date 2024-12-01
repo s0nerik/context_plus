@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../other/example.dart';
 import 'variants/context_plus_change_notifier.dart'
     as context_plus_change_notifier;
+import 'variants/context_plus_value_notifier_bind_watch.dart'
+    as context_plus_value_notifier_bind_watch;
 import 'variants/context_plus_value_notifier_function.dart'
     as context_plus_value_notifier_function;
 
@@ -36,6 +38,11 @@ class DerivedStateExample extends StatelessWidget {
           file: 'context_plus_value_notifier_function.dart',
           title: 'context_plus: ValueNotifier + computed function',
           widget: context_plus_value_notifier_function.Example(),
+        ),
+        ExampleVariant(
+          file: 'context_plus_value_notifier_bind_watch.dart',
+          title: 'context_plus: watch() inside bind()',
+          widget: context_plus_value_notifier_bind_watch.Example(),
         ),
       ],
     );

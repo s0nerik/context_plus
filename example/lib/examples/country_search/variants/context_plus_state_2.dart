@@ -59,7 +59,7 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _state.bind(context, () => _State());
+    _state.bind(context, (context) => _State());
     return const Column(
       children: [
         _SearchField(),

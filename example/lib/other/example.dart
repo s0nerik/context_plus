@@ -105,7 +105,7 @@ class _MobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selected = _selected.bind(context, () => ValueNotifier(0));
+    final selected = _selected.bind(context, (context) => ValueNotifier(0));
     final title = _title.of(context);
     final exampleDir = _exampleDir.of(context);
     return Scaffold(
@@ -304,12 +304,21 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watchOnly(context, (snap) => snap.data);
 
-    final scrollControllersGroup = _scrollControllersGroup
-        .bind(context, LinkedScrollControllerGroup.new, key: codeFilePath);
-    final lineNumbersController = _lineNumbersScrollController
-        .bind(context, scrollControllersGroup.addAndGet, key: codeFilePath);
-    final sourceScrollController = _sourceScrollController
-        .bind(context, scrollControllersGroup.addAndGet, key: codeFilePath);
+    final scrollControllersGroup = _scrollControllersGroup.bind(
+      context,
+      (context) => LinkedScrollControllerGroup(),
+      key: codeFilePath,
+    );
+    final lineNumbersController = _lineNumbersScrollController.bind(
+      context,
+      (context) => scrollControllersGroup.addAndGet(),
+      key: codeFilePath,
+    );
+    final sourceScrollController = _sourceScrollController.bind(
+      context,
+      (context) => scrollControllersGroup.addAndGet(),
+      key: codeFilePath,
+    );
 
     if (highlighter == null || code == null) {
       return const SizedBox.shrink();

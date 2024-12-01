@@ -57,7 +57,7 @@ List<_Section> _getSections(
   BuildContext context, {
   required String value,
 }) {
-  final staticSectionBounds = _staticSectionBounds.bind(context, () {
+  final staticSectionBounds = _staticSectionBounds.bind(context, (context) {
     final startDynamic = value.indexOf('{');
     final endDynamic = value.lastIndexOf('}');
     if (startDynamic == -1 || endDynamic == -1) {
@@ -66,7 +66,8 @@ List<_Section> _getSections(
     return (startDynamic, endDynamic + 1);
   }, key: value);
 
-  final dynamicSectionVariants = _dynamicSectionVariants.bind(context, () {
+  final dynamicSectionVariants =
+      _dynamicSectionVariants.bind(context, (context) {
     if (staticSectionBounds == null) {
       return const [];
     }
@@ -81,8 +82,8 @@ List<_Section> _getSections(
       value.substring(staticSectionBounds.$2),
     );
 
-    final dynamicSectionIndex =
-        _dynamicSectionIndex.bind(context, () => ValueNotifier(0), key: value);
+    final dynamicSectionIndex = _dynamicSectionIndex
+        .bind(context, (context) => ValueNotifier(0), key: value);
     _dynamicSectionAnimCtrl.bind(context, (vsync) {
       final ctrl = AnimationController(
         vsync: vsync,

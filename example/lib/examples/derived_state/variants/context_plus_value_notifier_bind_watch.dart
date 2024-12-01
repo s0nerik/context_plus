@@ -2,7 +2,17 @@ import 'package:context_plus/context_plus.dart';
 import 'package:flutter/material.dart';
 
 final _counter = Ref<ValueNotifier<int>>();
-int _squared(int value) => value * value;
+final _counterSquared = Ref<_Squared>();
+
+class _Squared extends ValueNotifier<int> {
+  _Squared(super.value);
+
+  @override
+  void dispose() {
+    debugPrint('dispose $_counterSquared');
+    super.dispose();
+  }
+}
 
 class Example extends StatelessWidget {
   const Example({super.key});
@@ -10,6 +20,13 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _counter.bind(context, (context) => ValueNotifier(0));
+    _counterSquared.bind(
+      context,
+      (context) {
+        final counter = _counter.watch(context);
+        return _Squared(counter);
+      },
+    );
     return const Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -39,8 +56,7 @@ class _CounterSquared extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterSquared =
-        _counter.watchOnly(context, (it) => _squared(it.value));
+    final counterSquared = _counterSquared.watch(context);
     return Text('Counter²: $counterSquared');
   }
 }

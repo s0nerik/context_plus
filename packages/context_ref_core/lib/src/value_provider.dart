@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
-@internal
 class ValueProvider<T> {
   Object? _key;
   set key(Object? key) {
@@ -73,7 +72,6 @@ bool _isSameKey(Object? key1, Object? key2) {
   };
 }
 
-@internal
 void tryDispose(dynamic obj) {
   runZonedGuarded(
     () => obj.dispose(),

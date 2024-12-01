@@ -15,13 +15,13 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _query.bind(context, () => ValueNotifier(''));
+    _query.bind(context, (context) => ValueNotifier(''));
     _countries.bind(
       context,
-      () => AsyncNotifier()..setFuture(CountriesAPI.searchCountries('')),
+      (context) => AsyncNotifier()..setFuture(CountriesAPI.searchCountries('')),
     );
-    _showOnlyFavorites.bind(context, () => ValueNotifier(false));
-    _favorites.bind(context, () => ValueNotifier(const {}));
+    _showOnlyFavorites.bind(context, (context) => ValueNotifier(false));
+    _favorites.bind(context, (context) => ValueNotifier(const {}));
     return const Column(
       children: [
         _SearchField(),

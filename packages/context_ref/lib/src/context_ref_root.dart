@@ -112,7 +112,7 @@ class InheritedContextRefElement extends InheritedElement {
     var provider =
         ref.dependentProvidersCache[context] ?? ref.providers[context];
     if (provider == null) {
-      context.visitAncestorElements((element) {
+      bool visitDependent(Element element) {
         final p = ref.providers[element];
         if (p != null) {
           provider = p;
@@ -120,11 +120,17 @@ class InheritedContextRefElement extends InheritedElement {
           return false;
         }
         return true;
-      });
+      }
+
+      // Usually faster to visit ancestors first.
+      context.visitAncestorElements(visitDependent);
+
+      // With this, we can depend on siblings routes/dialogs.
+      visitChildrenElements(visitDependent);
     }
     assert(
       provider != null,
-      '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
+      '$ref is not bound. You probably forgot to call Ref.bind() on a context.',
     );
 
     return provider!.value;
@@ -200,3 +206,16 @@ void _disposeProvider<T>(ValueProvider<T> provider) {
 }
 
 void _noopDispose(_) {}
+
+extension on InheritedElement {
+  /// Similar to [visitAncestorElements], but downward.
+  void visitChildrenElements(ConditionalElementVisitor visitor) {
+    void visit(Element element) {
+      if (visitor(element)) {
+        element.visitChildren(visit);
+      }
+    }
+
+    visitChildren(visit);
+  }
+}

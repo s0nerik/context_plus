@@ -14,6 +14,8 @@ class ValueProvider<T> {
     _key = key;
   }
 
+  bool isSameKey(Object? key) => _isSameKey(_key, key);
+
   T Function()? _creator;
   set creator(T Function()? creator) {
     _creator = creator;

@@ -99,7 +99,7 @@ class InheritedContextRefElement extends InheritedElement {
     return provider;
   }
 
-  T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
+  T get<T>(BuildContext context, ReadOnlyRef<T> ref, Object? key) {
     assert(context is Element);
 
     // Make [context] dependent on this element so that we can get notified
@@ -112,12 +112,17 @@ class InheritedContextRefElement extends InheritedElement {
     var provider =
         ref.dependentProvidersCache[context] ?? ref.providers[context];
     if (provider == null) {
+      bool visitLast = false;
       bool visitDependent(Element element) {
         final p = ref.providers[element];
-        if (p != null) {
+        if (p != null && (key == null || p.isSameKey(key))) {
+          assert(
+            provider == null,
+            'Multiple binds found. Specify an unique key to disambiguate.',
+          );
           provider = p;
           ref.dependentProvidersCache[context] = p;
-          return false;
+          return visitLast;
         }
         return true;
       }
@@ -125,6 +130,7 @@ class InheritedContextRefElement extends InheritedElement {
       // Usually faster to visit ancestors first.
       context.visitAncestorElements(visitDependent);
 
+      visitLast = kDebugMode; // for assertion
       // With this, we can depend on siblings routes/dialogs.
       visitChildrenElements(visitDependent);
     }

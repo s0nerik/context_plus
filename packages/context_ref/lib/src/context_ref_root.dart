@@ -99,7 +99,7 @@ class InheritedContextRefElement extends InheritedElement {
     return provider;
   }
 
-  T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
+  T get<T>(BuildContext context, ReadOnlyRef<T> ref, Object? key) {
     assert(context is Element);
 
     // Make [context] dependent on this element so that we can get notified
@@ -112,19 +112,31 @@ class InheritedContextRefElement extends InheritedElement {
     var provider =
         ref.dependentProvidersCache[context] ?? ref.providers[context];
     if (provider == null) {
-      context.visitAncestorElements((element) {
+      bool visitLast = false;
+      bool visitDependent(Element element) {
         final p = ref.providers[element];
-        if (p != null) {
+        if (p != null && (key == null || p.isSameKey(key))) {
+          assert(
+            provider == null,
+            'Multiple binds found. Specify an unique key to disambiguate.',
+          );
           provider = p;
           ref.dependentProvidersCache[context] = p;
-          return false;
+          return visitLast;
         }
         return true;
-      });
+      }
+
+      // Usually faster to visit ancestors first.
+      context.visitAncestorElements(visitDependent);
+
+      visitLast = kDebugMode; // for assertion
+      // With this, we can depend on siblings routes/dialogs.
+      visitChildrenElements(visitDependent);
     }
     assert(
       provider != null,
-      '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
+      '$ref is not bound. You probably forgot to call Ref.bind() on a context.',
     );
 
     return provider!.value;
@@ -200,3 +212,16 @@ void _disposeProvider<T>(ValueProvider<T> provider) {
 }
 
 void _noopDispose(_) {}
+
+extension on InheritedElement {
+  /// Similar to [visitAncestorElements], but downward.
+  void visitChildrenElements(ConditionalElementVisitor visitor) {
+    void visit(Element element) {
+      if (visitor(element)) {
+        element.visitChildren(visit);
+      }
+    }
+
+    visitChildren(visit);
+  }
+}

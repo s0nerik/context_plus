@@ -48,7 +48,9 @@ class Ref<T> extends ReadOnlyRef<T> {
 
 extension ReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   /// Get the value of this [Ref] from the given [context].
-  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
+  T of(BuildContext context, {Object? key}) {
+    return ContextRefRoot.of(context).get(context, this, key);
+  }
 }
 
 extension RefAPI<T> on Ref<T> {

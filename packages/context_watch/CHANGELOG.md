@@ -1,3 +1,7 @@
+## 5.1.3
+
+ - **FIX**: allow .watch(context) inside LayoutBuilder.
+
 ## 5.1.2
 
  - Update a dependency to the latest release.

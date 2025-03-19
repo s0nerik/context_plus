@@ -1,3 +1,7 @@
+## 4.0.0-rc.3
+
+ - Update a dependency to the latest release.
+
 ## 4.0.0-rc.2
 
 > Note: This release has breaking changes.

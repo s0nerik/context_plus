@@ -1,3 +1,7 @@
+## 6.0.3
+
+ - **FIX**: allow .watch(context) inside LayoutBuilder.
+
 ## 6.0.2
 
  - **FIX**: added an assert to enforce that watch*() is not called outside the build() method of a BuildContext.

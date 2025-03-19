@@ -1,3 +1,8 @@
+## 1.4.4
+
+ - **FIX**: allow .bind*() inside LayoutBuilder.
+ - **FIX**: rebuild dependent widgets upon the key change in .bind(key: ).
+
 ## 1.4.3
 
  - **FIX**: added an assert to enforce that bind*() is not called outside the build() method of a BuildContext.

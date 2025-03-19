@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-03-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_ref` - `v1.4.4`](#context_ref---v144)
+ - [`context_watch` - `v5.1.3`](#context_watch---v513)
+ - [`context_watch_base` - `v6.0.3`](#context_watch_base---v603)
+ - [`context_plus` - `v4.1.4`](#context_plus---v414)
+ - [`context_watch_mobx` - `v3.0.3`](#context_watch_mobx---v303)
+ - [`context_watch_getx` - `v4.0.0-rc.3`](#context_watch_getx---v400-rc3)
+ - [`context_watch_bloc` - `v3.0.3`](#context_watch_bloc---v303)
+ - [`context_watch_signals` - `v3.0.4`](#context_watch_signals---v304)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v4.1.4`
+ - `context_watch_mobx` - `v3.0.3`
+ - `context_watch_getx` - `v4.0.0-rc.3`
+ - `context_watch_bloc` - `v3.0.3`
+ - `context_watch_signals` - `v3.0.4`
+
+---
+
+#### `context_ref` - `v1.4.4`
+
+ - **FIX**: allow .bind*() inside LayoutBuilder.
+ - **FIX**: rebuild dependent widgets upon the key change in .bind(key: ).
+
+#### `context_watch` - `v5.1.3`
+
+ - **FIX**: allow .watch(context) inside LayoutBuilder.
+
+#### `context_watch_base` - `v6.0.3`
+
+ - **FIX**: allow .watch(context) inside LayoutBuilder.
+
+
 ## 2024-11-17
 
 ### Changes

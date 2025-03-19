@@ -180,7 +180,8 @@ class InheritedContextWatchElement extends InheritedElement {
 
   _ContextData? _fetchContextDataForWatch(BuildContext context) {
     assert(
-      context.debugDoingBuild,
+      context.debugDoingBuild ||
+          (context.widget is LayoutBuilder && _isBuildPhase),
       'Calling watch*() outside the build() method of a widget is not allowed.',
     );
 

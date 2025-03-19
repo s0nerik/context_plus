@@ -212,6 +212,28 @@ void main() {
     expect(notifier.addListenerCalls, 1);
     expect(notifier.removeListenerCalls, 0);
   });
+
+  testWidgets('.watch(context) works inside a LayoutBuilder',
+      (widgetTester) async {
+    var builds = 0;
+    final changeNotifier = ChangeNotifier();
+    await widgetTester.pumpWidget(
+      ContextWatch.root(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            builds++;
+            changeNotifier.watch(context);
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    expect(builds, 1);
+
+    changeNotifier.notifyListeners();
+    await widgetTester.pumpAndSettle();
+    expect(builds, 2);
+  });
 }
 
 class _ReparentedChild extends StatelessWidget {

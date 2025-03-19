@@ -36,7 +36,18 @@ class ContextRefRoot extends InheritedWidget {
 
 @internal
 class InheritedContextRefElement extends InheritedElement {
-  InheritedContextRefElement(super.widget);
+  InheritedContextRefElement(super.widget) {
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => _isFirstFrame = false);
+  }
+
+  bool _isFirstFrame = true;
+
+  bool get _isBuildPhase {
+    final phase = SchedulerBinding.instance.schedulerPhase;
+    return phase == SchedulerPhase.persistentCallbacks ||
+        _isFirstFrame && phase == SchedulerPhase.idle;
+  }
 
   final _refs = HashMap<Element, HashSet<ReadOnlyRef>>.identity();
   void _addRef(Element element, ReadOnlyRef ref) {
@@ -53,7 +64,8 @@ class InheritedContextRefElement extends InheritedElement {
   }) {
     assert(context is Element);
     assert(
-      context.debugDoingBuild,
+      context.debugDoingBuild ||
+          (context.widget is LayoutBuilder && _isBuildPhase),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
 
@@ -87,7 +99,8 @@ class InheritedContextRefElement extends InheritedElement {
   }) {
     assert(context is Element);
     assert(
-      context.debugDoingBuild,
+      context.debugDoingBuild ||
+          (context.widget is LayoutBuilder && _isBuildPhase),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
 

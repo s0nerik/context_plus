@@ -5,14 +5,7 @@ import 'package:meta/meta.dart';
 
 @internal
 class ValueProvider<T> {
-  Object? _key;
-  set key(Object? key) {
-    if (_isSameKey(_key, key)) {
-      return;
-    }
-    dispose();
-    _key = key;
-  }
+  Object? key;
 
   T Function()? _creator;
   set creator(T Function()? creator) {
@@ -59,18 +52,6 @@ class _ValueWrapper<T> {
   _ValueWrapper(this.value);
 
   T value;
-}
-
-bool _isSameKey(Object? key1, Object? key2) {
-  if (key1 == key2) {
-    return true;
-  }
-  return switch (key1) {
-    List() => key2 is List && listEquals(key1, key2),
-    Set() => key2 is Set && setEquals(key1, key2),
-    Map() => key2 is Map && mapEquals(key1, key2),
-    _ => false,
-  };
 }
 
 @internal

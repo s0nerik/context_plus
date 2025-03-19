@@ -63,9 +63,20 @@ class InheritedContextRefElement extends InheritedElement {
     _addRef(context as Element, ref);
 
     final provider = ref.getOrCreateProvider(context);
-    provider.key = key;
+    final didChangeKey = !_isSameKey(provider.key, key);
+    if (didChangeKey) {
+      _disposeProvider(provider);
+      provider.key = key;
+    }
     provider.creator = create;
     provider.disposer = dispose;
+    if (didChangeKey) {
+      for (final element in ref.dependents) {
+        if (element.mounted) {
+          _scheduleRebuild(element);
+        }
+      }
+    }
     return provider;
   }
 
@@ -200,3 +211,15 @@ void _disposeProvider<T>(ValueProvider<T> provider) {
 }
 
 void _noopDispose(_) {}
+
+bool _isSameKey(Object? key1, Object? key2) {
+  if (key1 == key2) {
+    return true;
+  }
+  return switch (key1) {
+    List() => key2 is List && listEquals(key1, key2),
+    Set() => key2 is Set && setEquals(key1, key2),
+    Map() => key2 is Map && mapEquals(key1, key2),
+    _ => false,
+  };
+}

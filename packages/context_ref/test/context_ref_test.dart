@@ -147,6 +147,82 @@ void main() {
   });
 
   testWidgets(
+      'Ref.bind(key: ) rebuilds all dependent widgets when the key changes',
+      (widgetTester) async {
+    final ref = Ref<Object>();
+    Object? key;
+
+    late Object boundObject;
+    late Object observedObject;
+
+    var parentBuilds = 0;
+    var childBuilds = 0;
+
+    late Function(Function()) parentSetState;
+    late Function(Function()) childSetState;
+
+    final child = StatefulBuilder(
+      builder: (context, setState) {
+        childBuilds++;
+        childSetState = setState;
+        observedObject = ref.of(context);
+        return const SizedBox.shrink();
+      },
+    );
+
+    final parent = StatefulBuilder(
+      builder: (context, setState) {
+        parentBuilds++;
+        parentSetState = setState;
+        ref.bind(context, () {
+          boundObject = Object();
+          return boundObject;
+        }, key: key);
+        return child;
+      },
+    );
+
+    await widgetTester.pumpWidget(
+      ContextRef.root(child: parent),
+    );
+    expect(parentBuilds, 1);
+    expect(childBuilds, 1);
+    expect(boundObject, same(observedObject));
+
+    key = 2;
+    parentSetState(() {});
+    await widgetTester.pumpAndSettle();
+    expect(parentBuilds, 2);
+    // Rebuild child since the key changed
+    expect(childBuilds, 2);
+    expect(boundObject, same(observedObject));
+
+    key = [3];
+    parentSetState(() {});
+    await widgetTester.pumpAndSettle();
+    expect(parentBuilds, 3);
+    // Rebuild child since the key changed
+    expect(childBuilds, 3);
+    expect(boundObject, same(observedObject));
+
+    key = [4];
+    parentSetState(() {});
+    await widgetTester.pumpAndSettle();
+    expect(parentBuilds, 4);
+    // Rebuild child since key's list elements changed
+    expect(childBuilds, 4);
+    expect(boundObject, same(observedObject));
+
+    key = [4];
+    parentSetState(() {});
+    await widgetTester.pumpAndSettle();
+    expect(parentBuilds, 5);
+    // No child rebuild since key's list elements didn't change
+    expect(childBuilds, 4);
+    expect(boundObject, same(observedObject));
+  });
+
+  testWidgets(
       'Ref.bind(key: ) disposes old value right away upon changing a key',
       (widgetTester) async {
     final valueRef = Ref<_TestChangeNotifier>();

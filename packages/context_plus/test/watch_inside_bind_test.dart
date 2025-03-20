@@ -42,29 +42,27 @@ void main() {
     );
   });
 
-  testWidgets('watch inside bind', (tester) async {
-    dependencyValueNotifiers = [
-      ValueNotifier(1),
-    ];
-    await tester.pumpWidget(widget);
-    expect(widgetRebuilds, 1);
-    expect(lastProvidedDerivedSumValue, 1);
-    expect(bindClosureInvocations, 1);
+  group('watch() inside bind()', () {
+    testWidgets('does_not rebuild widget when dependency value changes',
+        (tester) async {
+      dependencyValueNotifiers = [
+        ValueNotifier(1),
+      ];
+      await tester.pumpWidget(widget);
+      expect(widgetRebuilds, 1);
+      expect(lastProvidedDerivedSumValue, 1);
+      expect(bindClosureInvocations, 1);
 
-    dependencyValueNotifiers[0].value = 2;
-    await tester.pump();
-    dependencyValueNotifiers[0].value = 2;
-    await tester.pump();
-    dependencyValueNotifiers[0].value = 3;
-    await tester.pump();
-    expect(widgetRebuilds, 1);
-    expect(bindClosureInvocations, 3);
-    expect(lastObservedDerivedSumValue, 3);
-
-    // dependencyValueNotifiers[0].value = 2;
-    // await tester.pump();
-    // expect(widgetRebuilds, 1); // No widget rebuild
-    // expect(bindClosureInvocations, 2); // bind() closure re-invocation
-    // expect(lastDerivedSumValue, 2); // provided sum is updated
+      dependencyValueNotifiers[0].value = 2;
+      await tester.pump();
+      dependencyValueNotifiers[0].value = 2;
+      await tester.pump();
+      dependencyValueNotifiers[0].value = 3;
+      await tester.pump();
+      expect(widgetRebuilds, 1);
+      expect(bindClosureInvocations, 3);
+      expect(lastObservedDerivedSumValue, 3);
+      expect(lastProvidedDerivedSumValue, 3);
+    });
   });
 }

@@ -1,0 +1,21 @@
+name: context_plus_build_context
+description: "A common dependency for all context_plus-related packages"
+version: 1.0.0-rc.1
+homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
+repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
+
+environment:
+  sdk: ">=3.0.6 <4.0.0"
+  flutter: ">=3.17.0-1.0.pre.38"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter: {}

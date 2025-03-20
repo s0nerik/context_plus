@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:context_plus_build_context/context_plus_build_context.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -16,10 +15,6 @@ class ContextRefRoot extends InheritedWidget {
   });
 
   static InheritedContextRefElement of(BuildContext context) {
-    if (context is ContextPlusElementProxy) {
-      context = context.actualElement;
-    }
-
     final element =
         context.getElementForInheritedWidgetOfExactType<ContextRefRoot>()
             as InheritedContextRefElement?;
@@ -66,10 +61,6 @@ class InheritedContextRefElement extends InheritedElement {
     required void Function(T value)? dispose,
     required Object? key,
   }) {
-    if (context is ContextPlusElementProxy) {
-      context = context.actualElement;
-    }
-
     assert(context is Element);
     assert(
       context.debugDoingBuild ||
@@ -105,10 +96,6 @@ class InheritedContextRefElement extends InheritedElement {
     required Ref<T> ref,
     required T value,
   }) {
-    if (context is ContextPlusElementProxy) {
-      context = context.actualElement;
-    }
-
     assert(context is Element);
     assert(
       context.debugDoingBuild ||
@@ -136,10 +123,6 @@ class InheritedContextRefElement extends InheritedElement {
   }
 
   T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
-    if (context is ContextPlusElementProxy) {
-      context = context.actualElement;
-    }
-
     assert(context is Element);
 
     // Make [context] dependent on this element so that we can get notified
@@ -156,7 +139,7 @@ class InheritedContextRefElement extends InheritedElement {
         final p = ref.providers[element];
         if (p != null) {
           provider = p;
-          ref.dependentProvidersCache[context as Element] = p;
+          ref.dependentProvidersCache[context] = p;
           return false;
         }
         return true;

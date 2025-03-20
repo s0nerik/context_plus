@@ -89,7 +89,7 @@ class InheritedContextRefElement extends InheritedElement {
     if (didChangeKey) {
       for (final element in ref.dependents) {
         if (element.mounted) {
-          _scheduleRebuild(element);
+          scheduleElementRebuild(element);
         }
       }
     }

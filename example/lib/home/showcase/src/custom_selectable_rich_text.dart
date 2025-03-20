@@ -40,10 +40,10 @@ class CustomSelectableRichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final focusNode = _focusNode.bind(context, () => FocusNode());
+    final focusNode = _focusNode.bind(context, (context) => FocusNode());
     final textSelection =
-        _textSelection.bind(context, () => ValueNotifier(null));
-    _pressedKeys.bind(context, () => ValueNotifier(const {}));
+        _textSelection.bind(context, (context) => ValueNotifier(null));
+    _pressedKeys.bind(context, (context) => ValueNotifier(const {}));
 
     final Widget child;
     if (!isMobileWebKit) {

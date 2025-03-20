@@ -1,13 +1,14 @@
 import 'dart:developer' as developer;
 
+import 'package:context_ref_core/context_ref_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'src/context_ref_root.dart';
 import 'src/hot_reload.dart';
-import 'src/ref.dart';
 
-export 'src/ref.dart' hide InternalReadOnlyRefAPI;
+export 'package:context_ref_core/context_ref_core.dart'
+    hide ContextRefRoot, ValueProvider, tryDispose;
+
 export 'src/special_cases/vsync_ref_api.dart';
 
 class ContextRef {

@@ -31,9 +31,9 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _globalScope.bind(context, () => _Scope(scopeName: 'Global scope'));
+    _globalScope.bind(context, (context) => _Scope(scopeName: 'Global scope'));
     final childrenAmount =
-        _childrenAmount.bind(context, () => ValueNotifier(3));
+        _childrenAmount.bind(context, (context) => ValueNotifier(3));
 
     return Column(
       children: [
@@ -104,7 +104,7 @@ class _ChildWrapperState extends State<_ChildWrapper> {
     final name = _name.bindValue(context, 'Scope ${widget.depth}');
     _message.bindValue(context, 'Hello from $name');
 
-    _scope.bind(context, () => _Scope(scopeName: name));
+    _scope.bind(context, (context) => _Scope(scopeName: name));
 
     final parentColor = widget.parentContext != null
         ? _childColor.of(widget.parentContext!)

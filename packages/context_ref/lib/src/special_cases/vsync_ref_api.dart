@@ -1,10 +1,7 @@
-import 'package:context_ref/src/value_provider.dart';
+import 'package:context_ref_core/context_ref_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
-import '../context_ref_root.dart';
-import '../ref.dart';
 
 extension AnimationControllerRefAPI<
         TAnimationController extends AnimationController>

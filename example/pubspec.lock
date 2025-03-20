@@ -72,6 +72,13 @@ packages:
       relative: true
     source: path
     version: "4.1.4"
+  context_plus_build_context:
+    dependency: "direct overridden"
+    description:
+      path: "../packages/context_plus_build_context"
+      relative: true
+    source: path
+    version: "1.0.0-rc.1"
   context_ref:
     dependency: "direct overridden"
     description:
@@ -79,6 +86,13 @@ packages:
       relative: true
     source: path
     version: "1.4.4"
+  context_ref_core:
+    dependency: "direct overridden"
+    description:
+      path: "../packages/context_ref_core"
+      relative: true
+    source: path
+    version: "1.0.0-rc.1"
   context_watch:
     dependency: "direct overridden"
     description:

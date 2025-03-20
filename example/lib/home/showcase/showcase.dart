@@ -44,7 +44,8 @@ class Showcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasScrolled = _hasScrolled.bind(context, () => ValueNotifier(false));
+    final hasScrolled =
+        _hasScrolled.bind(context, (context) => ValueNotifier(false));
     _homeScrollController
         .bindValue(context, homeScrollController)
         .watchEffect(context, (ctrl) {
@@ -52,15 +53,16 @@ class Showcase extends StatelessWidget {
     });
 
     final isShowcaseCompleted =
-        _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
+        _isShowcaseCompleted.bind(context, (context) => ValueNotifier(false));
 
-    final showcaseCtrl = _showcaseCtrl.bind(context, ShowcaseRiveController.new)
-      ..watchEffect(context, (ctrl) {
-        if (ctrl.currentKeyframe.isFinal && !isShowcaseCompleted.value) {
-          isShowcaseCompleted.value = true;
-          onCompleted();
-        }
-      });
+    final showcaseCtrl =
+        _showcaseCtrl.bind(context, (context) => ShowcaseRiveController())
+          ..watchEffect(context, (ctrl) {
+            if (ctrl.currentKeyframe.isFinal && !isShowcaseCompleted.value) {
+              isShowcaseCompleted.value = true;
+              onCompleted();
+            }
+          });
 
     final appearCtrl = _appearCtrl.bind(
       context,
@@ -74,7 +76,7 @@ class Showcase extends StatelessWidget {
         }),
     );
     final isIntroCompleted =
-        _isIntroCompleted.bind(context, () => ValueNotifier(false));
+        _isIntroCompleted.bind(context, (context) => ValueNotifier(false));
     _introCtrl.bind(
       context,
       (vsync) => AnimationController(

@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:context_plus_build_context/context_plus_build_context.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -130,15 +131,18 @@ class InheritedContextWatchElement extends InheritedElement {
     BuildContext context,
     Object observable,
   ) {
-    final contextData = _fetchContextDataForWatch(context);
+    final actualContext =
+        context is ContextPlusElementProxy ? context.actualElement : context;
+
+    final contextData = _fetchContextDataForWatch(actualContext);
     if (contextData == null) {
       return null;
     }
 
     var observableData = contextData.observables[observable];
     if (observableData == null) {
-      final subscription =
-          _watcherFor(observable).createSubscription<T>(context, observable);
+      final subscription = _watcherFor(observable)
+          .createSubscription<T>(actualContext, observable);
       observableData = ContextWatchObservable._(subscription);
       contextData.observables[observable] = observableData;
     }

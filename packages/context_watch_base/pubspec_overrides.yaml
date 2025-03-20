@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: context_plus_build_context
+dependency_overrides:
+  context_plus_build_context:
+    path: ../context_plus_build_context

@@ -19,7 +19,7 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _state.bind(context, _State.new);
+    _state.bind(context, (context) => _State());
     return const Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,

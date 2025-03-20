@@ -9,7 +9,7 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _scrollController.bind(context, ScrollController.new);
+    _scrollController.bind(context, (context) => ScrollController());
     return LayoutBuilder(
       builder: (context, constraints) {
         _itemHeight.bindValue(

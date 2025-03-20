@@ -11,7 +11,7 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _colorStream.bind(context, createColorStream);
+    _colorStream.bind(context, (context) => createColorStream());
     _scaleController.bind(
       context,
       (vsync) => AnimationController(

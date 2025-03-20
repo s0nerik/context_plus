@@ -50,7 +50,22 @@ class Ref<T> extends ReadOnlyRef<T> {
 
 extension ReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   /// Get the value of this [Ref] from the given [context].
-  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
+  ///
+  /// Throws an exception if the [Ref] is not bound to the given [context] or its parents.
+  T of(BuildContext context) {
+    final provider = ContextRefRoot.of(context).get(context, this);
+    assert(
+      provider != null,
+      '$this is not bound. You probably forgot to call Ref.bind() on a parent context.',
+    );
+    return provider!.value;
+  }
+
+  /// Get the value of this [Ref] from the given [context].
+  ///
+  /// Returns `null` if the [Ref] is not bound to the given [context] or its parents.
+  T? maybeOf(BuildContext context) =>
+      ContextRefRoot.of(context).get(context, this)?.value;
 }
 
 extension RefAPI<T> on Ref<T> {

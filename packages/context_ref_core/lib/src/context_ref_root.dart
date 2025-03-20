@@ -124,7 +124,7 @@ class InheritedContextRefElement extends InheritedElement {
     return provider;
   }
 
-  T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
+  ValueProvider<T>? get<T>(BuildContext context, ReadOnlyRef<T> ref) {
     assert(context is Element);
 
     // Make [context] dependent on this element so that we can get notified
@@ -147,12 +147,8 @@ class InheritedContextRefElement extends InheritedElement {
         return true;
       });
     }
-    assert(
-      provider != null,
-      '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
-    );
 
-    return provider!.value;
+    return provider;
   }
 
   @override

@@ -26,15 +26,24 @@ extension ContextPlusRefAPI<T> on Ref<T> {
     void Function(T value)? dispose,
     Object? key,
   }) {
-    final provider = ContextRefRoot.of(context).bind(
-      context: context,
+    late ContextPlusElementProxy elementProxy;
+    late ValueProvider<T> provider;
+    void onMarkNeedsBuild() {
+      provider.dispose();
+      for (final element in dependents) {
+        scheduleElementRebuild(element);
+      }
+    }
+
+    elementProxy = _elementProxies[context] ??=
+        ContextPlusElementProxy(context as Element, onMarkNeedsBuild);
+    provider = ContextRefRoot.of(context).bind(
+      context: elementProxy,
       ref: this,
-      create: () => create(_elementProxies[context]!),
+      create: () => create(elementProxy),
       dispose: dispose,
       key: key,
     );
-    _elementProxies[context] ??=
-        ContextPlusElementProxy(context as Element, provider.dispose);
     return provider.value;
   }
 

@@ -1,7 +1,7 @@
 import 'dart:collection';
 
+import 'package:context_plus_build_context/context_plus_build_context.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 import 'context_ref_root.dart';
 import 'value_provider.dart';
@@ -16,7 +16,6 @@ abstract class ReadOnlyRef<T> {
   var _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
 }
 
-@internal
 extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   HashMap<Element, ValueProvider<T>> get providers => _providers;
   HashSet<Element> get dependents => _dependents;
@@ -31,6 +30,9 @@ extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
 
     final provider = ValueProvider<T>();
     _providers[element] = provider;
+    if (element is ContextPlusElementProxy) {
+      _providers[element.actualElement] = provider;
+    }
     _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
     return provider;
   }

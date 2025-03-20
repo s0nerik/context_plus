@@ -7,7 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'src/hot_reload.dart';
 
 export 'package:context_ref_core/context_ref_core.dart'
-    hide ContextRefRoot, ValueProvider, tryDispose;
+    hide
+        ContextRefRoot,
+        ValueProvider,
+        tryDispose,
+        scheduleElementRebuild,
+        InternalReadOnlyRefAPI;
 
 export 'src/special_cases/vsync_ref_api.dart';
 

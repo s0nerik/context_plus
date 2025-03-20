@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:context_plus_build_context/context_plus_build_context.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -48,6 +49,11 @@ class InheritedContextRefElement extends InheritedElement {
         _isFirstFrame && phase == SchedulerPhase.idle;
   }
 
+  bool _debugDoingBuild(BuildContext context) =>
+      context.debugDoingBuild ||
+      context is ContextPlusElementProxy ||
+      (context.widget is LayoutBuilder && _isBuildPhase);
+
   final _refs = HashMap<Element, HashSet<ReadOnlyRef>>.identity();
   void _addRef(Element element, ReadOnlyRef ref) {
     final refs = _refs[element] ??= HashSet<ReadOnlyRef>.identity();
@@ -63,8 +69,7 @@ class InheritedContextRefElement extends InheritedElement {
   }) {
     assert(context is Element);
     assert(
-      context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
+      _debugDoingBuild(context),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
 
@@ -98,8 +103,7 @@ class InheritedContextRefElement extends InheritedElement {
   }) {
     assert(context is Element);
     assert(
-      context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
+      _debugDoingBuild(context),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
 
@@ -114,9 +118,7 @@ class InheritedContextRefElement extends InheritedElement {
     if (provider.shouldUpdateValue(value)) {
       provider.value = value;
       for (final element in ref.dependents) {
-        if (element.mounted) {
-          _scheduleRebuild(element);
-        }
+        scheduleElementRebuild(element);
       }
     }
     return provider;
@@ -189,7 +191,14 @@ class InheritedContextRefElement extends InheritedElement {
 }
 
 @pragma('vm:prefer-inline')
-void _scheduleRebuild(Element element) {
+void scheduleElementRebuild(Element element) {
+  if (!element.mounted) return;
+
+  if (element is ContextPlusElementProxy) {
+    element.markNeedsBuild();
+    return;
+  }
+
   if (SchedulerBinding.instance.schedulerPhase ==
       SchedulerPhase.persistentCallbacks) {
     // If we are in the persistent callbacks phase, we need to defer

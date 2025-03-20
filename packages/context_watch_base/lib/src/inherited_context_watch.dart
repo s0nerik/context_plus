@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:context_plus_build_context/context_plus_build_context.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
@@ -102,6 +103,11 @@ class InheritedContextWatchElement extends InheritedElement {
         _isFirstFrame && phase == SchedulerPhase.idle;
   }
 
+  bool _debugDoingBuild(BuildContext context) =>
+      context.debugDoingBuild ||
+      context is ContextPlusElementProxy ||
+      (context.widget is LayoutBuilder && _isBuildPhase);
+
   Duration get _currentFrameTimeStamp {
     if (_isFirstFrame) {
       return Duration.zero;
@@ -180,8 +186,7 @@ class InheritedContextWatchElement extends InheritedElement {
 
   _ContextData? _fetchContextDataForWatch(BuildContext context) {
     assert(
-      context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
+      _debugDoingBuild(context),
       'Calling watch*() outside the build() method of a widget is not allowed.',
     );
 

@@ -7,6 +7,7 @@ class ValueProvider<T> {
   Object? key;
 
   T Function()? _creator;
+  T Function()? get creator => _creator;
   set creator(T Function()? creator) {
     _creator = creator;
   }
@@ -19,6 +20,8 @@ class ValueProvider<T> {
   _ValueWrapper<T>? _valueWrapper;
   T get value => (_valueWrapper ??= _ValueWrapper(_creator!())).value;
   set value(T value) => (_valueWrapper ??= _ValueWrapper(value)).value = value;
+
+  T? get valueOrNull => _valueWrapper?.value;
 
   void dispose() {
     if (_valueWrapper == null) return;

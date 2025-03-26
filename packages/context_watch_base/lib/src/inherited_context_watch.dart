@@ -108,8 +108,11 @@ class InheritedContextWatchElement extends InheritedElement {
       context is ContextPlusElementProxy ||
       (context.widget is LayoutBuilder && _isBuildPhase);
 
-  Duration get _currentFrameTimeStamp {
+  Duration _currentFrameTimeStamp(BuildContext context) {
     if (_isFirstFrame) {
+      return Duration.zero;
+    }
+    if (context is ContextPlusElementProxy) {
       return Duration.zero;
     }
     return SchedulerBinding.instance.currentFrameTimeStamp;
@@ -194,7 +197,7 @@ class InheritedContextWatchElement extends InheritedElement {
     // when the [context] is removed from the tree.
     context.dependOnInheritedElement(this);
 
-    if (!_isBuildPhase) {
+    if (!_isBuildPhase && context is! ContextPlusElementProxy) {
       // Don't update subscriptions outside of the widget's build() method
       return null;
     }
@@ -202,7 +205,7 @@ class InheritedContextWatchElement extends InheritedElement {
     _potentiallyUnwatchedContexts.remove(context);
 
     final contextData = _contextData[context] ??= _ContextData();
-    final frame = _currentFrameTimeStamp;
+    final frame = _currentFrameTimeStamp(context);
 
     if (contextData.lastFrame != frame) {
       // It's a new frame, so let's clear all selectors as they might've changed

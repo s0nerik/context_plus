@@ -29,7 +29,15 @@ extension ContextPlusRefAPI<T> on Ref<T> {
     late ContextPlusElementProxy elementProxy;
     late ValueProvider<T> provider;
     void onMarkNeedsBuild() {
+      final creator = provider.creator;
+      if (creator == null) return;
+
+      final updatedValue = creator();
+      if (updatedValue == provider.value) return;
+
       provider.dispose();
+      provider.value = updatedValue;
+      scheduleElementRebuild(context as Element);
       for (final element in dependents) {
         scheduleElementRebuild(element);
       }

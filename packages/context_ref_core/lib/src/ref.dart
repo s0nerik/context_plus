@@ -65,7 +65,7 @@ extension ReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   ///
   /// Returns `null` if the [Ref] is not bound to the given [context] or its parents.
   T? maybeOf(BuildContext context) =>
-      ContextRefRoot.of(context).get(context, this)?.value;
+      ContextRefRoot.of(context).get(context, this)?.valueOrNull;
 }
 
 extension RefAPI<T> on Ref<T> {

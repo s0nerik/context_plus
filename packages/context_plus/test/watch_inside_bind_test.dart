@@ -336,4 +336,94 @@ void main() {
     // observed derived value is up-to-date
     expect(observedDerivedValue, '1');
   });
+
+  testWidgets(
+      'inherited widget dependency inside bind() doesn\'t rebuild the context unless returned value changes',
+      (tester) async {
+    final ref = Ref<int>();
+
+    int childRebuilds = 0;
+    late int observedRefValue;
+    final child = Builder(
+      builder: (context) {
+        childRebuilds++;
+        observedRefValue = ref.of(context);
+        return const SizedBox.shrink();
+      },
+    );
+
+    int parentRebuilds = 0;
+    int rebinds = 0;
+    late int boundRefValue;
+    late int returnedRefValue;
+    late int observedInheritedValue;
+    final parent = Builder(
+      builder: (context) {
+        parentRebuilds++;
+        returnedRefValue = ref.bind(context, (context) {
+          rebinds++;
+          observedInheritedValue = _TestInheritedWidget.of(context);
+          boundRefValue = observedInheritedValue ~/ 2;
+          return boundRefValue;
+        });
+        return child;
+      },
+    );
+
+    int inheritedValue = 0;
+    int inheritedValueProviderRebuilds = 0;
+    late Function(Function()) setStateInheritedValueProvider;
+    final inheritedValueProvider = StatefulBuilder(
+      builder: (context, setState) {
+        inheritedValueProviderRebuilds++;
+        setStateInheritedValueProvider = setState;
+        return _TestInheritedWidget(
+          value: inheritedValue,
+          child: parent,
+        );
+      },
+    );
+
+    await tester.pumpWidget(ContextPlus.root(child: inheritedValueProvider));
+    expect(childRebuilds, 1);
+    expect(parentRebuilds, 1);
+    expect(inheritedValueProviderRebuilds, 1);
+    expect(rebinds, 1);
+    expect(boundRefValue, 0);
+    expect(observedInheritedValue, 0);
+    expect(returnedRefValue, 0);
+    expect(observedRefValue, 0);
+
+    // notify inherited widget change
+    setStateInheritedValueProvider(() => inheritedValue = 1);
+    await tester.pumpAndSettle();
+    // inherited widget is rebuilt with a new value
+    expect(inheritedValueProviderRebuilds, 2);
+    // no child rebuild as Ref's value is the same
+    expect(childRebuilds, 1);
+    // no parent rebuild as Ref's value is the same
+    expect(parentRebuilds, 1);
+    // bind() is invoked again since the inherited widget value changed
+    expect(rebinds, 2);
+    expect(observedInheritedValue, 1);
+    expect(boundRefValue, 0);
+    expect(returnedRefValue, 0);
+    expect(observedRefValue, 0);
+  });
+}
+
+class _TestInheritedWidget extends InheritedWidget {
+  const _TestInheritedWidget({
+    required super.child,
+    required this.value,
+  });
+
+  final int value;
+
+  @override
+  bool updateShouldNotify(covariant _TestInheritedWidget oldWidget) =>
+      value != oldWidget.value;
+
+  static int of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_TestInheritedWidget>()!.value;
 }

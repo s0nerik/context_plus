@@ -1,13 +1,11 @@
-// ignore_for_file: use_of_void_result
-
 import 'package:context_ref/context_ref.dart' as context_ref;
 import 'package:context_watch/context_watch.dart' as context_watch;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchRecordRefExt33<T0> on (context_ref.ReadOnlyRef<ValueListenable<T0>>, context_ref.ReadOnlyRef<Listenable>, context_ref.ReadOnlyRef<Listenable>) {
+extension ContextWatchRecordRefExt33<TListenable0 extends ValueListenable<T1>, T1, TListenable2 extends Listenable, TListenable3 extends ValueListenable<T4>, T4> on (context_ref.ReadOnlyRef<TListenable0>, context_ref.ReadOnlyRef<TListenable2>, context_ref.ReadOnlyRef<TListenable3>) {
   /// {@macro mass_watch_explanation}
-  (T0, void, void) watch(BuildContext context) =>
-      ($1.of(context).watch(context), $2.of(context).watch(context) as Null, $3.of(context).watch(context) as Null,);
+  (T1, TListenable2, T4) watch(BuildContext context) =>
+      ($1.of(context).watch(context), $2.of(context).watch(context), $3.of(context).watch(context),);
 }

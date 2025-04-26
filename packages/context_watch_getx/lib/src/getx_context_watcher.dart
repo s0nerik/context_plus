@@ -29,11 +29,14 @@ class GetxContextWatcher extends ContextWatcher<Rx> {
 
   @override
   ContextWatchSubscription createSubscription<T>(
-      BuildContext context, Rx observable) {
+    BuildContext context,
+    Rx observable,
+  ) {
     return _GetxSubscription(
       observable: observable,
-      streamSubscription:
-          observable.stream.listen((_) => rebuildIfNeeded(context, observable)),
+      streamSubscription: observable.stream.listen(
+        (_) => rebuildIfNeeded(context, observable),
+      ),
     );
   }
 }
@@ -47,14 +50,12 @@ extension GetxContextWatchExtension<T> on Rx<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watch();
+    InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this)?.watch();
     return value;
   }
-}
 
-extension GetxContextWatchOnlyExtension<T> on Rx<T> {
   /// Watch this [Rx] for changes.
   ///
   /// Whenever this [Rx] emits new value, if [selector]
@@ -65,8 +66,9 @@ extension GetxContextWatchOnlyExtension<T> on Rx<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
+    final observable = InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this);
     if (observable == null) return selector(value);
 
     final selectedValue = selector(value);
@@ -74,9 +76,7 @@ extension GetxContextWatchOnlyExtension<T> on Rx<T> {
 
     return selectedValue;
   }
-}
 
-extension ListenableContextWatchEffectExtension<T> on Rx<T> {
   /// Watch this [Rx] for changes.
   ///
   /// Whenever this [Rx] notifies of a change, the [effect] will be
@@ -109,15 +109,10 @@ extension ListenableContextWatchEffectExtension<T> on Rx<T> {
         .getOrCreateObservable(context, this)
         ?.watchEffect(effect, key: key, immediate: immediate, once: once);
   }
-}
 
-extension ListenableContextUnwatchEffectExtension on Rx {
   /// Remove the effect with the given [key] from the list of effects to be
   /// called when this [Rx] notifies of a change.
-  void unwatchEffect(
-    BuildContext context, {
-    required Object key,
-  }) {
+  void unwatchEffect(BuildContext context, {required Object key}) {
     InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

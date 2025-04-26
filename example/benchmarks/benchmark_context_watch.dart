@@ -15,20 +15,19 @@ class _Benchmark {
     int singleObservableSubscriptionsCount = 500,
     int tilesCount = 500,
     int observablesPerTile = 2,
-    this.minimumMillis = 2000, // ignore: unused_element
-    this.warmupMillis = 100, // ignore: unused_element
+    this.minimumMillis = 2000, // ignore: unused_element_parameter
+    this.warmupMillis = 100, // ignore: unused_element_parameter
   }) : benchmark = BenchmarkScreen(
-          observableType: dataType,
-          listenerType: listenerType,
-          singleObservableSubscriptionsCount:
-              singleObservableSubscriptionsCount,
-          tilesCount: tilesCount,
-          observablesPerTile: observablesPerTile,
-          tileObservableNotifyInterval: const Duration(milliseconds: 10),
-          runOnStart: false,
-          showPerformanceOverlay: false,
-          visualize: false,
-        );
+         observableType: dataType,
+         listenerType: listenerType,
+         singleObservableSubscriptionsCount: singleObservableSubscriptionsCount,
+         tilesCount: tilesCount,
+         observablesPerTile: observablesPerTile,
+         tileObservableNotifyInterval: const Duration(milliseconds: 10),
+         runOnStart: false,
+         showPerformanceOverlay: false,
+         visualize: false,
+       );
 
   final BenchmarkScreen benchmark;
   final int minimumMillis;
@@ -51,9 +50,7 @@ main() async {
       await tester.pumpWidget(
         ContextPlus.root(
           key: UniqueKey(),
-          child: MaterialApp(
-            home: benchmark.benchmark,
-          ),
+          child: MaterialApp(home: benchmark.benchmark),
         ),
       );
       await tester.pumpAndSettle();
@@ -90,70 +87,73 @@ main() async {
     });
   }
 
-  final tileBenchmarks = [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
-      .expand((tilesCount) => [
-            _Benchmark(
-              dataType: ObservableType.stream,
-              listenerType: ListenerType.contextWatch,
-              singleObservableSubscriptionsCount: 0,
-              tilesCount: tilesCount,
-            ),
-            _Benchmark(
-              dataType: ObservableType.stream,
-              listenerType: ListenerType.streamBuilder,
-              singleObservableSubscriptionsCount: 0,
-              tilesCount: tilesCount,
-            ),
-            _Benchmark(
-              dataType: ObservableType.valueListenable,
-              listenerType: ListenerType.contextWatch,
-              singleObservableSubscriptionsCount: 0,
-              tilesCount: tilesCount,
-            ),
-            _Benchmark(
-              dataType: ObservableType.valueListenable,
-              listenerType: ListenerType.valueListenableBuilder,
-              singleObservableSubscriptionsCount: 0,
-              tilesCount: tilesCount,
-            ),
-          ])
-      .toList();
-  final singleObservableBenchmarks = [1, 10, 100, 200, 500, 750, 1000]
-      .expand((singleObservableSubscriptionsCount) => [
-            _Benchmark(
-              dataType: ObservableType.stream,
-              listenerType: ListenerType.contextWatch,
-              singleObservableSubscriptionsCount:
-                  singleObservableSubscriptionsCount,
-              tilesCount: 0,
-            ),
-            _Benchmark(
-              dataType: ObservableType.stream,
-              listenerType: ListenerType.streamBuilder,
-              singleObservableSubscriptionsCount:
-                  singleObservableSubscriptionsCount,
-              tilesCount: 0,
-            ),
-            _Benchmark(
-              dataType: ObservableType.valueListenable,
-              listenerType: ListenerType.contextWatch,
-              singleObservableSubscriptionsCount:
-                  singleObservableSubscriptionsCount,
-              tilesCount: 0,
-            ),
-            _Benchmark(
-              dataType: ObservableType.valueListenable,
-              listenerType: ListenerType.valueListenableBuilder,
-              singleObservableSubscriptionsCount:
-                  singleObservableSubscriptionsCount,
-              tilesCount: 0,
-            ),
-          ])
-      .toList();
-  final benchmarks = [
-    ...tileBenchmarks,
-    ...singleObservableBenchmarks,
-  ];
+  final tileBenchmarks =
+      [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
+          .expand(
+            (tilesCount) => [
+              _Benchmark(
+                dataType: ObservableType.stream,
+                listenerType: ListenerType.contextWatch,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+              _Benchmark(
+                dataType: ObservableType.stream,
+                listenerType: ListenerType.streamBuilder,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+              _Benchmark(
+                dataType: ObservableType.valueListenable,
+                listenerType: ListenerType.contextWatch,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+              _Benchmark(
+                dataType: ObservableType.valueListenable,
+                listenerType: ListenerType.valueListenableBuilder,
+                singleObservableSubscriptionsCount: 0,
+                tilesCount: tilesCount,
+              ),
+            ],
+          )
+          .toList();
+  final singleObservableBenchmarks =
+      [1, 10, 100, 200, 500, 750, 1000]
+          .expand(
+            (singleObservableSubscriptionsCount) => [
+              _Benchmark(
+                dataType: ObservableType.stream,
+                listenerType: ListenerType.contextWatch,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+              _Benchmark(
+                dataType: ObservableType.stream,
+                listenerType: ListenerType.streamBuilder,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+              _Benchmark(
+                dataType: ObservableType.valueListenable,
+                listenerType: ListenerType.contextWatch,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+              _Benchmark(
+                dataType: ObservableType.valueListenable,
+                listenerType: ListenerType.valueListenableBuilder,
+                singleObservableSubscriptionsCount:
+                    singleObservableSubscriptionsCount,
+                tilesCount: 0,
+              ),
+            ],
+          )
+          .toList();
+  final benchmarks = [...tileBenchmarks, ...singleObservableBenchmarks];
 
   for (final benchmark in benchmarks) {
     await runBenchmark(benchmark);
@@ -202,10 +202,12 @@ main() async {
     final contextWatchTime = contextWatchResult.resultMicroseconds;
     final otherTime = otherResult.resultMicroseconds;
 
-    final contextWatchName =
-        benchmark.listenerType.displayName(benchmark.observableType);
-    final otherName =
-        otherBenchmark.listenerType.displayName(otherBenchmark.observableType);
+    final contextWatchName = benchmark.listenerType.displayName(
+      benchmark.observableType,
+    );
+    final otherName = otherBenchmark.listenerType.displayName(
+      otherBenchmark.observableType,
+    );
 
     final ratio = contextWatchTime / otherTime;
     final ratioStr = '${ratio.toStringAsFixed(2)}x';
@@ -231,11 +233,13 @@ void _printRow({
   required String subscriptionsDescription,
   required String frameTimes,
 }) {
-  print([
-    summary.padRight(60),
-    ratio.padRight(7),
-    totalSubscriptions.padRight(20),
-    subscriptionsDescription.padRight(32),
-    frameTimes.padRight(42),
-  ].join('    '));
+  print(
+    [
+      summary.padRight(60),
+      ratio.padRight(7),
+      totalSubscriptions.padRight(20),
+      subscriptionsDescription.padRight(32),
+      frameTimes.padRight(42),
+    ].join('    '),
+  );
 }

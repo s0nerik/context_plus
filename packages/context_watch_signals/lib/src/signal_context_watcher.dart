@@ -1,12 +1,9 @@
 import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
-import 'package:signals_flutter/signals_flutter.dart';
+import 'package:signals/signals.dart';
 
 final class _SignalsSubscription implements ContextWatchSubscription {
-  _SignalsSubscription({
-    required this.signal,
-    required this.dispose,
-  });
+  _SignalsSubscription({required this.signal, required this.dispose});
 
   final ReadonlySignal signal;
   final VoidCallback dispose;
@@ -25,7 +22,9 @@ class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
 
   @override
   ContextWatchSubscription createSubscription<T>(
-      BuildContext context, ReadonlySignal observable) {
+    BuildContext context,
+    ReadonlySignal observable,
+  ) {
     return _SignalsSubscription(
       signal: observable,
       dispose: observable.subscribe(
@@ -44,14 +43,12 @@ extension SignalContextWatchExtension<T> on ReadonlySignal<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watch();
+    InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this)?.watch();
     return value;
   }
-}
 
-extension SignalContextWatchValueExtension<T> on ReadonlySignal<T> {
   /// Watch this [Signal] for changes.
   ///
   /// Whenever this [Signal] emits new value, if [selector]
@@ -62,8 +59,9 @@ extension SignalContextWatchValueExtension<T> on ReadonlySignal<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
+    final observable = InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this);
     if (observable == null) return selector(value);
 
     final selectedValue = selector(value);
@@ -71,9 +69,7 @@ extension SignalContextWatchValueExtension<T> on ReadonlySignal<T> {
 
     return selectedValue;
   }
-}
 
-extension ListenableContextWatchEffectExtension<T> on ReadonlySignal<T> {
   /// Watch this [Signal] for changes.
   ///
   /// Whenever this [Signal] notifies of a change, the [effect] will be
@@ -106,15 +102,10 @@ extension ListenableContextWatchEffectExtension<T> on ReadonlySignal<T> {
         .getOrCreateObservable(context, this)
         ?.watchEffect(effect, key: key, immediate: immediate, once: once);
   }
-}
 
-extension ListenableContextUnwatchEffectExtension on ReadonlySignal {
   /// Remove the effect with the given [key] from the list of effects to be
   /// called when this [Signal] notifies of a change.
-  void unwatchEffect(
-    BuildContext context, {
-    required Object key,
-  }) {
+  void unwatchEffect(BuildContext context, {required Object key}) {
     InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

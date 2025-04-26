@@ -11,14 +11,14 @@ topics:
   - state-management
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"
 
 dependencies:
   flutter:
     sdk: flutter
   context_watch_base: ^6.0.3
-  get: ^5.0.0-release-candidate-9.2.1
+  get: ^5.0.0-release-candidate-9.3.2
 
 dev_dependencies:
   flutter_test:

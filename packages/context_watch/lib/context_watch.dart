@@ -5,12 +5,11 @@ import 'src/context_watch_root.dart';
 
 export 'package:context_watch_base/context_watch_base.dart' show ContextWatcher;
 
-export 'src/watch_callback_record_combinations.dart';
-export 'src/watch_record_combinations.dart';
-export 'src/watchers/future_context_watcher.dart' hide FutureContextWatcher;
-export 'src/watchers/listenable_context_watcher.dart'
-    hide ListenableContextWatcher;
-export 'src/watchers/stream_context_watcher.dart' hide StreamContextWatcher;
+export 'src/api/future.dart';
+export 'src/api/listenable.dart';
+export 'src/api/stream.dart';
+export 'src/api/watch_callback_record_combinations.dart';
+export 'src/api/watch_record_combinations.dart';
 
 class ContextWatch {
   /// Provides the ability to watch observable values using
@@ -23,10 +22,9 @@ class ContextWatch {
     Key? key,
     List<ContextWatcher> additionalWatchers = const [],
     required Widget child,
-  }) =>
-      ContextWatchRoot(
-        key: key,
-        additionalWatchers: additionalWatchers,
-        child: child,
-      );
+  }) => ContextWatchRoot(
+    key: key,
+    additionalWatchers: additionalWatchers,
+    child: child,
+  );
 }

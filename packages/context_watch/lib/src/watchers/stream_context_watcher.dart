@@ -6,8 +6,9 @@ import 'package:context_watch_base/context_watch_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-class _StreamSubscription implements ContextWatchSubscription {
-  _StreamSubscription({
+@internal
+class ContextWatchStreamSubscription implements ContextWatchSubscription {
+  ContextWatchStreamSubscription({
     required StreamSubscription streamSubscription,
     required this.snapshot,
   }) : _sub = streamSubscription;
@@ -31,24 +32,33 @@ class StreamContextWatcher extends ContextWatcher<Stream> {
   ) {
     final stream = observable as Stream<T>;
 
-    late final _StreamSubscription subscription;
-    final streamSubscription = stream.listen((data) {
-      final newSnapshot =
-          AsyncSnapshot<T>.withData(ConnectionState.active, data);
-      subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream);
-    }, onError: (Object error, StackTrace stackTrace) {
-      final newSnapshot =
-          AsyncSnapshot<T>.withError(ConnectionState.active, error, stackTrace);
-      subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream);
-    }, onDone: () {
-      final newSnapshot = subscription.snapshot.inState(ConnectionState.done);
-      subscription.snapshot = newSnapshot;
-      rebuildIfNeeded(context, stream);
-    });
+    late final ContextWatchStreamSubscription subscription;
+    final streamSubscription = stream.listen(
+      (data) {
+        final newSnapshot = AsyncSnapshot<T>.withData(
+          ConnectionState.active,
+          data,
+        );
+        subscription.snapshot = newSnapshot;
+        rebuildIfNeeded(context, stream);
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        final newSnapshot = AsyncSnapshot<T>.withError(
+          ConnectionState.active,
+          error,
+          stackTrace,
+        );
+        subscription.snapshot = newSnapshot;
+        rebuildIfNeeded(context, stream);
+      },
+      onDone: () {
+        final newSnapshot = subscription.snapshot.inState(ConnectionState.done);
+        subscription.snapshot = newSnapshot;
+        rebuildIfNeeded(context, stream);
+      },
+    );
 
-    subscription = _StreamSubscription(
+    subscription = ContextWatchStreamSubscription(
       streamSubscription: streamSubscription,
       snapshot: _initialSnapshot<T>(stream),
     );
@@ -146,7 +156,8 @@ class SupportValueStream27to28<T> implements SupportValueStream<T> {
       return result;
     }
     throw StateError(
-        'Stream.hasValue does not return a boolean, but ${result.runtimeType}');
+      'Stream.hasValue does not return a boolean, but ${result.runtimeType}',
+    );
   }
 
   @override
@@ -167,7 +178,8 @@ class SupportValueStream27to28<T> implements SupportValueStream<T> {
       return result;
     }
     throw StateError(
-        'Stream.hasError does not return a boolean, but ${result.runtimeType}');
+      'Stream.hasError does not return a boolean, but ${result.runtimeType}',
+    );
   }
 
   @override
@@ -178,7 +190,8 @@ class SupportValueStream27to28<T> implements SupportValueStream<T> {
       return result;
     }
     throw StateError(
-        'Stream.error is of type ${result.runtimeType}, not Object');
+      'Stream.error is of type ${result.runtimeType}, not Object',
+    );
   }
 
   @override
@@ -189,7 +202,8 @@ class SupportValueStream27to28<T> implements SupportValueStream<T> {
       return result;
     }
     throw StateError(
-        'Stream.stackTrace is of type ${result.runtimeType}, not StackTrace');
+      'Stream.stackTrace is of type ${result.runtimeType}, not StackTrace',
+    );
   }
 }
 
@@ -227,7 +241,8 @@ class SupportValueStream26<T> implements SupportValueStream<T> {
       return wrapper;
     }
     throw StateError(
-        'Stream.valueWrapper.value is of type ${value.runtimeType}, not $T');
+      'Stream.valueWrapper.value is of type ${value.runtimeType}, not $T',
+    );
   }
 
   dynamic /*ErrorAndStackTrace?*/ get errorAndStackTrace {
@@ -239,12 +254,14 @@ class SupportValueStream26<T> implements SupportValueStream<T> {
     final error = union.error;
     if (error is! Object) {
       throw StateError(
-          'Stream.errorAndStackTrace.error is of type ${error.runtimeType}, not Object');
+        'Stream.errorAndStackTrace.error is of type ${error.runtimeType}, not Object',
+      );
     }
     final stackTrace = union.stackTrace;
     if (stackTrace is! StackTrace?) {
       throw StateError(
-          'Stream.errorAndStackTrace.stackTrace is of type ${stackTrace.runtimeType}, not StackTrace?');
+        'Stream.errorAndStackTrace.stackTrace is of type ${stackTrace.runtimeType}, not StackTrace?',
+      );
     }
     return union;
   }
@@ -277,101 +294,5 @@ class SupportValueStream26<T> implements SupportValueStream<T> {
   StackTrace? get stackTrace {
     // access https://github.com/ReactiveX/rxdart/blob/0.26.0/lib/src/utils/error_and_stacktrace.dart#L8
     return errorAndStackTrace?.stackTrace;
-  }
-}
-
-extension StreamContextWatchExtension<T> on Stream<T> {
-  /// Watch this [Stream] for changes.
-  ///
-  /// Whenever this [Stream] emits new value, the [context] will be
-  /// rebuilt.
-  ///
-  /// If this [Stream] is a [ValueStream], the initial value will be used
-  /// as the initial value of the [AsyncSnapshot].
-  ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  AsyncSnapshot<T> watch(BuildContext context) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
-    if (observable == null) return AsyncSnapshot<T>.nothing();
-
-    observable.watch();
-
-    final subscription = observable.subscription as _StreamSubscription;
-    return subscription.snapshot as AsyncSnapshot<T>;
-  }
-}
-
-extension StreamContextWatchOnlyExtension<T> on Stream<T> {
-  /// Watch this [Stream] for changes.
-  ///
-  /// Whenever this [Stream] emits new value, if [selector]
-  /// returns a different value, the [context] will be rebuilt.
-  ///
-  /// If this [Stream] is a [ValueStream], the initial value will be used
-  /// as the initial value of the [AsyncSnapshot].
-  ///
-  /// It is safe to call this method multiple times within the same build
-  /// method.
-  R watchOnly<R>(
-    BuildContext context,
-    R Function(AsyncSnapshot<T> snapshot) selector,
-  ) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(AsyncSnapshot<T>.nothing());
-
-    final subscription = observable.subscription as _StreamSubscription;
-    final selectedValue = selector(subscription.snapshot as AsyncSnapshot<T>);
-    observable.watchOnly(selector, selectedValue);
-
-    return selectedValue;
-  }
-}
-
-extension StreamContextWatchEffectExtension<T> on Stream<T> {
-  /// Watch this [Stream] for changes.
-  ///
-  /// Whenever this [Stream] emits new value, the [effect] will be called,
-  /// *without* rebuilding the widget.
-  ///
-  /// Conditional effects are supported, but it's highly recommended to specify
-  /// a unique [key] for all such effects followed by the [unwatchEffect] call
-  /// when condition is no longer met:
-  /// ```dart
-  /// if (condition) {
-  ///   stream.watchEffect(context, key: 'effect', (_) {...});
-  /// } else {
-  ///   stream.unwatchEffect(context, key: 'effect');
-  /// }
-  /// ```
-  ///
-  /// If [immediate] is `true`, the effect will be called upon effect
-  /// registration immediately. If [once] is `true`, the effect will be called
-  /// only once. These parameters can be combined.
-  ///
-  /// [immediate] and [once] parameters require a unique [key].
-  void watchEffect(
-    BuildContext context,
-    void Function(AsyncSnapshot<T> snapshot) effect, {
-    Object? key,
-    bool immediate = false,
-    bool once = false,
-  }) {
-    InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
-  }
-}
-
-extension StreamContextUnwatchEffectExtension on Stream {
-  /// Remove the effect with the given [key] from the list of effects to be
-  /// called when this [Stream] notifies of a change.
-  void unwatchEffect(
-    BuildContext context, {
-    required Object key,
-  }) {
-    InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

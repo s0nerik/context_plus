@@ -53,9 +53,7 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
         ?.watch();
     return state;
   }
-}
 
-extension BlocContextWatchOnlyExtension<T> on StateStreamable<T> {
   /// Watch this [StateStreamable] for changes.
   ///
   /// Whenever this [StateStreamable] emits new value, if [selector]
@@ -75,9 +73,7 @@ extension BlocContextWatchOnlyExtension<T> on StateStreamable<T> {
 
     return selectedValue;
   }
-}
 
-extension ListenableContextWatchEffectExtension<T> on StateStreamable<T> {
   /// Watch this [StateStreamable] for changes.
   ///
   /// Whenever this [StateStreamable] notifies of a change, the [effect] will be
@@ -110,9 +106,7 @@ extension ListenableContextWatchEffectExtension<T> on StateStreamable<T> {
         .getOrCreateObservable(context, this)
         ?.watchEffect(effect, key: key, immediate: immediate, once: once);
   }
-}
 
-extension ListenableContextUnwatchEffectExtension on StateStreamable {
   /// Remove the effect with the given [key] from the list of effects to be
   /// called when this [StateStreamable] notifies of a change.
   void unwatchEffect(

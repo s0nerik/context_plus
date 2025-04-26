@@ -11,7 +11,7 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchOnly(context, (state) => state.value.a);
+        valueNotifier.watchOnly(context, (state) => state.a);
         return const SizedBox.shrink();
       });
 
@@ -40,8 +40,8 @@ void main() {
     (widgetTester) async {
       final valueNotifier = ValueNotifier(_State(a: 0, b: 0));
       final (widget, rebuildsListenable) = _widget((context) {
-        valueNotifier.watchOnly(context, (state) => state.value.a);
-        valueNotifier.watchOnly(context, (state) => state.value.a);
+        valueNotifier.watchOnly(context, (state) => state.a);
+        valueNotifier.watchOnly(context, (state) => state.a);
         return const SizedBox.shrink();
       });
 
@@ -73,10 +73,10 @@ void main() {
       var watchB = true;
       final (widget, rebuildsListenable) = _widget((context) {
         if (watchA) {
-          valueNotifier.watchOnly(context, (state) => state.value.a);
+          valueNotifier.watchOnly(context, (state) => state.a);
         }
         if (watchB) {
-          valueNotifier.watchOnly(context, (state) => state.value.b);
+          valueNotifier.watchOnly(context, (state) => state.b);
         }
         return const SizedBox.shrink();
       });
@@ -370,10 +370,7 @@ class _State {
   final int a;
   final int b;
 
-  _State({
-    required this.a,
-    required this.b,
-  });
+  _State({required this.a, required this.b});
 }
 
 class _StateChangeNotifier with ChangeNotifier {

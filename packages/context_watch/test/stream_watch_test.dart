@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:context_watch/context_watch.dart';
+import 'package:context_watch/src/watchers/stream_context_watcher.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rxdart/rxdart.dart';
@@ -24,9 +25,7 @@ void main() {
         ),
       );
       await widgetTester.pumpWidget(widget);
-      expect(snapshots, [
-        const AsyncSnapshot.waiting(),
-      ]);
+      expect(snapshots, [const AsyncSnapshot.waiting()]);
 
       streamController.add(0);
       await widgetTester.pumpAndSettle();
@@ -139,12 +138,8 @@ void main() {
       );
 
       await widgetTester.pumpWidget(widget);
-      expect(snapshots1, [
-        const AsyncSnapshot.waiting(),
-      ]);
-      expect(snapshots2, [
-        const AsyncSnapshot.waiting(),
-      ]);
+      expect(snapshots1, [const AsyncSnapshot.waiting()]);
+      expect(snapshots2, [const AsyncSnapshot.waiting()]);
 
       streamController.add(0);
       await widgetTester.pumpAndSettle();
@@ -177,8 +172,9 @@ void main() {
         expect(() => stream.hasValue, throwsNoSuchMethodError);
       });
       test('hasValue wrong type', () {
-        final stream =
-            SupportValueStream27to28(_SupportValueStream_hasValueWrongType());
+        final stream = SupportValueStream27to28(
+          _SupportValueStream_hasValueWrongType(),
+        );
         expect(() => stream.hasValue, throwsStateError);
       });
       test('value does not exist', () {
@@ -186,8 +182,9 @@ void main() {
         expect(() => stream.value, throwsNoSuchMethodError);
       });
       test('value wrong type', () {
-        final stream =
-            SupportValueStream27to28(_SupportValueStream_valueWrongType());
+        final stream = SupportValueStream27to28(
+          _SupportValueStream_valueWrongType(),
+        );
         expect(() => stream.value, throwsStateError);
       });
       test('hasError does not exist', () {
@@ -195,8 +192,9 @@ void main() {
         expect(() => stream.hasError, throwsNoSuchMethodError);
       });
       test('hasError wrong type', () {
-        final stream =
-            SupportValueStream27to28(_SupportValueStream_hasErrorWrongType());
+        final stream = SupportValueStream27to28(
+          _SupportValueStream_hasErrorWrongType(),
+        );
         expect(() => stream.hasError, throwsStateError);
       });
       test('error does not exist', () {
@@ -204,8 +202,9 @@ void main() {
         expect(() => stream.error, throwsNoSuchMethodError);
       });
       test('error wrong type', () {
-        final stream =
-            SupportValueStream27to28(_SupportValueStream_errorWrongType());
+        final stream = SupportValueStream27to28(
+          _SupportValueStream_errorWrongType(),
+        );
         expect(() => stream.error, throwsStateError);
       });
       test('stackTrace does not exist', () {
@@ -213,8 +212,9 @@ void main() {
         expect(() => stream.stackTrace, throwsNoSuchMethodError);
       });
       test('stackTrace wrong type', () {
-        final stream =
-            SupportValueStream27to28(_SupportValueStream_stacktraceWrongType());
+        final stream = SupportValueStream27to28(
+          _SupportValueStream_stacktraceWrongType(),
+        );
         expect(() => stream.stackTrace, throwsStateError);
       });
     });
@@ -225,18 +225,21 @@ void main() {
         expect(() => stream.valueWrapper, throwsNoSuchMethodError);
       });
       test('valueWrapper wrong type', () {
-        final stream =
-            SupportValueStream26(_SupportValueStream_valueWrapperWrongType());
+        final stream = SupportValueStream26(
+          _SupportValueStream_valueWrapperWrongType(),
+        );
         expect(() => stream.valueWrapper, throwsNoSuchMethodError);
       });
       test('valueWrapper.value does not exist', () {
-        final stream =
-            SupportValueStream26(_SupportValueStream_valueWrapperMissesValue());
+        final stream = SupportValueStream26(
+          _SupportValueStream_valueWrapperMissesValue(),
+        );
         expect(() => stream.valueWrapper, throwsNoSuchMethodError);
       });
       test('valueWrapper.value wrong type', () {
         final stream = SupportValueStream26(
-            _SupportValueStream_valueWrapperValueWrongType());
+          _SupportValueStream_valueWrapperValueWrongType(),
+        );
         expect(() => stream.valueWrapper, throwsStateError);
       });
       test('errorAndStackTrace does not exist', () {
@@ -245,17 +248,20 @@ void main() {
       });
       test('errorAndStackTrace wrong type', () {
         final stream = SupportValueStream26(
-            _SupportValueStream_errorAndStackTraceWrongType());
+          _SupportValueStream_errorAndStackTraceWrongType(),
+        );
         expect(() => stream.errorAndStackTrace, throwsNoSuchMethodError);
       });
       test('errorAndStackTrace.stackTrace wrong type', () {
         final stream = SupportValueStream26(
-            _SupportValueStream_errorAndStackTrace_StackTraceWrongType());
+          _SupportValueStream_errorAndStackTrace_StackTraceWrongType(),
+        );
         expect(() => stream.errorAndStackTrace, throwsStateError);
       });
       test('errorAndStackTrace.error wrong type', () {
         final stream = SupportValueStream26(
-            _SupportValueStream_errorAndStackTrace_ErrorWrongType());
+          _SupportValueStream_errorAndStackTrace_ErrorWrongType(),
+        );
         expect(() => stream.errorAndStackTrace, throwsStateError);
       });
     });
@@ -332,8 +338,12 @@ class _ErrorAndStackTrace_StackTraceWrongType {
 
 class _UnimplementedStream<T> extends Stream<T> {
   @override
-  StreamSubscription<T> listen(void Function(T event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
     throw UnimplementedError();
   }
 }

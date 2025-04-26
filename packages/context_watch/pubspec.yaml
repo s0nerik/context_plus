@@ -10,13 +10,12 @@ topics:
   - extension
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"
 
 dependencies:
   flutter:
     sdk: flutter
-  async_listenable: ^1.0.1
   meta: ^1.9.1
   context_watch_base: ^6.0.3
 
@@ -25,5 +24,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.1
   rxdart: ">=0.26.0 <0.29.0"
+  async_listenable: ^1.2.0
 
 flutter:

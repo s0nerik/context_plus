@@ -4,7 +4,7 @@ publish_to: "none"
 version: 1.0.0
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -27,24 +27,20 @@ dependencies:
   web: ^1.1.0
 
   # Signals
-  signals_flutter: ^5.5.1
+  signals_flutter: ^6.0.2
   context_watch_signals: ^3.0.4
 
   # MobX
-  mobx: ^2.4.0
-  flutter_mobx: ^2.2.1
+  mobx: ^2.5.0
+  flutter_mobx: ^2.3.0
   context_watch_mobx: ^3.0.3
 
-  # Beacon
-  state_beacon: ^0.14.6
-  context_watch_beacon: ^1.0.0-dev.2
-
   # Bloc
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.0.0
   context_watch_bloc: ^3.0.3
 
   # GetX
-  get: ^5.0.0-release-candidate-9.2.1
+  get: ^5.0.0-release-candidate-9.3.2
   context_watch_getx: ^4.0.0-rc.3
 
 dev_dependencies:

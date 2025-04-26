@@ -44,69 +44,68 @@ class Showcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasScrolled = _hasScrolled.bind(context, () => ValueNotifier(false));
-    _homeScrollController
-        .bindValue(context, homeScrollController)
-        .watchEffect(context, (ctrl) {
-      if (ctrl.offset > 120) hasScrolled.value = true;
-    });
+    final width = MediaQuery.sizeOf(context).width;
 
-    final isShowcaseCompleted =
-        _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
-
-    final showcaseCtrl = _showcaseCtrl.bind(context, ShowcaseRiveController.new)
-      ..watchEffect(context, (ctrl) {
-        if (ctrl.currentKeyframe.isFinal && !isShowcaseCompleted.value) {
-          isShowcaseCompleted.value = true;
+    _hasScrolled.bind(context, () => ValueNotifier(false));
+    _homeScrollController.bindValue(context, homeScrollController).watchEffect(
+      context,
+      (ctrl) {
+        if (ctrl.offset > 120) _hasScrolled.of(context).value = true;
+      },
+    );
+    _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
+    _showcaseCtrl.bind(context, ShowcaseRiveController.new).watchEffect(
+      context,
+      (ctrl) {
+        if (ctrl.currentKeyframe.isFinal &&
+            !_isShowcaseCompleted.of(context).value) {
+          _isShowcaseCompleted.of(context).value = true;
           onCompleted();
         }
-      });
-
-    final appearCtrl = _appearCtrl.bind(
+      },
+    );
+    _appearCtrl.bind(
       context,
       (vsync) => AnimationController(
         vsync: vsync,
         duration: const Duration(seconds: 1),
       )..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            showcaseCtrl.animateToKeyframe(ShowcaseKeyframe.values.last);
-          }
-        }),
+        if (status == AnimationStatus.completed) {
+          _showcaseCtrl
+              .of(context)
+              .animateToKeyframe(ShowcaseKeyframe.values.last);
+        }
+      }),
     );
-    final isIntroCompleted =
-        _isIntroCompleted.bind(context, () => ValueNotifier(false));
+    _isIntroCompleted.bind(context, () => ValueNotifier(false));
     _introCtrl.bind(
       context,
-      (vsync) => AnimationController(
-        vsync: vsync,
-        duration: _introDuration,
-      )..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            isIntroCompleted.value = true;
-            appearCtrl.forward();
-          }
-        }),
+      (vsync) =>
+          AnimationController(vsync: vsync, duration: _introDuration)
+            ..addStatusListener((status) {
+              if (status == AnimationStatus.completed) {
+                _isIntroCompleted.of(context).value = true;
+                _appearCtrl.of(context).forward();
+              }
+            }),
     );
-
-    final width = MediaQuery.of(context).size.width;
-    final layout = _showcaseLayout.bindValue(
+    _showcaseLayout.bindValue(
       context,
       width >= 1280
           ? _ShowcaseLayout.desktop
           : width >= 890
-              ? _ShowcaseLayout.smallerDesktop
-              : _ShowcaseLayout.mobile,
+          ? _ShowcaseLayout.smallerDesktop
+          : _ShowcaseLayout.mobile,
     );
-
     _mobileExpandShowcaseStepDescriptionCtrl.bind(context, (vsync) {
-      if (layout != _ShowcaseLayout.mobile) {
+      if (_showcaseLayout.of(context) != _ShowcaseLayout.mobile) {
         return null;
       }
       return AnimationController(
         vsync: vsync,
         duration: const Duration(milliseconds: 300),
       );
-    }, key: layout);
+    }, key: _showcaseLayout.of(context));
 
     return CustomPaint(
       isComplex: true,
@@ -117,22 +116,15 @@ class Showcase extends StatelessWidget {
           clipBehavior: Clip.none,
           fit: StackFit.expand,
           children: [
-            const Center(
-              child: _IntroText(),
-            ),
+            const Center(child: _IntroText()),
             RepaintBoundary(
-              child: switch (layout) {
+              child: switch (_showcaseLayout.of(context)) {
                 _ShowcaseLayout.desktop ||
-                _ShowcaseLayout.smallerDesktop =>
-                  const _DesktopView(),
+                _ShowcaseLayout.smallerDesktop => const _DesktopView(),
                 _ShowcaseLayout.mobile => const _MobileView(),
               },
             ),
-            const Positioned(
-              right: 16,
-              bottom: 12,
-              child: _SkipIntroButton(),
-            ),
+            const Positioned(right: 16, bottom: 12, child: _SkipIntroButton()),
           ],
         ),
       ),
@@ -153,11 +145,12 @@ class _IntroText extends StatelessWidget {
     const curve = Curves.easeOutCubic;
     const hideAt = 0.95;
     const hideIntervalDuration = 1 - hideAt;
-    final opacity = progress > hideAt
-        ? curve
-            .transform(1 - (progress - hideAt) / hideIntervalDuration)
-            .clamp(0.0, 1.0)
-        : 1.0;
+    final opacity =
+        progress > hideAt
+            ? curve
+                .transform(1 - (progress - hideAt) / hideIntervalDuration)
+                .clamp(0.0, 1.0)
+            : 1.0;
     final translateY = curve.transform(1 - opacity) * -120;
 
     return Transform.translate(
@@ -168,18 +161,14 @@ class _IntroText extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: TypewriterText(
             progress: progress,
-            intervals: const [
-              (0.1, 0.5),
-              (0.6, 0.8),
-            ],
+            intervals: const [(0.1, 0.5), (0.6, 0.8)],
             rows: const [
               'Value propagation in Flutter can get bulky sometimes...',
               '\nCan we make it easier?',
             ],
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(fontFamily: 'Fira Code'),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontFamily: 'Fira Code'),
           ),
         ),
       ),
@@ -211,9 +200,7 @@ class _SkipIntroButton extends StatelessWidget {
               jump: true,
             );
           },
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.zero,
-          ),
+          style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
           child: const SizedBox(
             height: 36,
             child: Row(
@@ -269,25 +256,19 @@ class _DesktopView extends StatelessWidget {
           right: 0,
           bottom: 0,
           height: 128,
-          child: IgnorePointer(
-            child: BackgroundGradient(),
-          ),
+          child: IgnorePointer(child: BackgroundGradient()),
         ),
         const Positioned(
           left: 0,
           right: 0,
           bottom: 32,
-          child: IgnorePointer(
-            child: _ShortPackageDescription(),
-          ),
+          child: IgnorePointer(child: _ShortPackageDescription()),
         ),
         const Positioned(
           left: 0,
           right: 0,
           bottom: 4,
-          child: IgnorePointer(
-            child: _ScrollDownArrow(),
-          ),
+          child: IgnorePointer(child: _ScrollDownArrow()),
         ),
       ],
     );
@@ -314,9 +295,7 @@ class _MobileView extends StatelessWidget {
           right: 0,
           top: 0,
           height: 128,
-          child: BackgroundGradient(
-            direction: BackgroundGradientDirection.top,
-          ),
+          child: BackgroundGradient(direction: BackgroundGradientDirection.top),
         ),
         Positioned(
           left: 0,
@@ -336,11 +315,7 @@ class _MobileView extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(
-          right: 24,
-          bottom: 24,
-          child: _ScrollDownArrow(),
-        ),
+        Positioned(right: 24, bottom: 24, child: _ScrollDownArrow()),
       ],
     );
   }
@@ -353,7 +328,7 @@ class _CodeAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = _showcaseCtrl.of(context)..watch(context);
+    final ctrl = _showcaseCtrl.watch(context);
 
     // Rive doesn't support artboard size animations yet, so we need to
     // cut the window out of the animation ourselves.
@@ -374,8 +349,10 @@ class _CodeAnimation extends StatelessWidget {
 
     final windowAspectRatio =
         ShowcaseRiveController.windowWidth / estimatedWindowHeight;
-    final windowSize =
-        Size(ShowcaseRiveController.windowWidth, estimatedWindowHeight);
+    final windowSize = Size(
+      ShowcaseRiveController.windowWidth,
+      estimatedWindowHeight,
+    );
 
     return _AppearAnimation(
       beginAt: 0,
@@ -391,10 +368,7 @@ class _CodeAnimation extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  HaloBox(
-                    size: windowSize,
-                    opacity: animationProgress,
-                  ),
+                  HaloBox(size: windowSize, opacity: animationProgress),
                   SizedBox.fromSize(
                     size: windowSize,
                     child: SizedOverflowBox(
@@ -406,8 +380,8 @@ class _CodeAnimation extends StatelessWidget {
                           'assets/showcase/context_plus_showcase_v12.riv',
                           controllers: [ctrl],
                           useArtboardSize: true,
-                          onInit: (artboard) =>
-                              _introCtrl.of(context).forward(),
+                          onInit:
+                              (artboard) => _introCtrl.of(context).forward(),
                         ),
                       ),
                     ),
@@ -449,16 +423,16 @@ class _DesktopCodeAnimationStepButtons extends StatelessWidget {
 }
 
 class _DesktopCodeAnimationStepButton extends StatelessWidget {
-  const _DesktopCodeAnimationStepButton({
-    required this.keyframe,
-  });
+  const _DesktopCodeAnimationStepButton({required this.keyframe});
 
   final ShowcaseKeyframe keyframe;
 
   @override
   Widget build(BuildContext context) {
-    final progress =
-        _watchKeyframeTransitionProgress(context: context, keyframe: keyframe);
+    final progress = _watchKeyframeTransitionProgress(
+      context: context,
+      keyframe: keyframe,
+    );
     final opacity = (1 / 3 + 2 / 3 * progress).clamp(0.0, 1.0).toPrecision(2);
 
     return CodeShowcaseProgressStep(
@@ -499,21 +473,22 @@ class _MobileCodeAnimationStepButtons extends StatelessWidget {
 }
 
 class _MobileCodeAnimationStepButton extends StatelessWidget {
-  const _MobileCodeAnimationStepButton({
-    required this.keyframe,
-  });
+  const _MobileCodeAnimationStepButton({required this.keyframe});
 
   final ShowcaseKeyframe keyframe;
 
   @override
   Widget build(BuildContext context) {
-    final progress =
-        _watchKeyframeTransitionProgress(context: context, keyframe: keyframe);
+    final progress = _watchKeyframeTransitionProgress(
+      context: context,
+      keyframe: keyframe,
+    );
 
-    final borderColor = ColorTween(
-      begin: const Color(0x22FFFFFF),
-      end: const Color(0x80FFFFFF),
-    ).transform(progress)!;
+    final borderColor =
+        ColorTween(
+          begin: const Color(0x22FFFFFF),
+          end: const Color(0x80FFFFFF),
+        ).transform(progress)!;
 
     return SizedBox.square(
       dimension: 48,
@@ -523,10 +498,7 @@ class _MobileCodeAnimationStepButton extends StatelessWidget {
         color: const Color(0xB0000000),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: borderColor,
-            width: 1,
-          ),
+          side: BorderSide(color: borderColor, width: 1),
         ),
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -560,7 +532,7 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final showcaseCtrl = _showcaseCtrl.of(context)..watch(context);
+    final showcaseCtrl = _showcaseCtrl.watch(context);
     final expandCtrl = _mobileExpandShowcaseStepDescriptionCtrl.of(context);
 
     final currentKeyframe = showcaseCtrl.currentKeyframe;
@@ -638,9 +610,7 @@ class _ShortPackageDescription extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CodeQuote(
-                        child: CodeType(type: 'BuildContext'),
-                      ),
+                      CodeQuote(child: CodeType(type: 'BuildContext')),
                       Text(', conveniently.'),
                     ],
                   ),
@@ -667,11 +637,14 @@ class _ScrollDownArrow extends StatelessWidget {
       curve: Curves.easeOut,
       opacity: isShowcaseCompleted && !hasScrolled ? 1 : 0,
       child: GestureDetector(
-        onTap: () => _homeScrollController.of(context).animateTo(
-              height,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOut,
-            ),
+        onTap:
+            () => _homeScrollController
+                .of(context)
+                .animateTo(
+                  height,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeOut,
+                ),
         child: const AnimatedArrowDown(),
       ),
     );
@@ -701,10 +674,7 @@ class _AppearAnimation extends StatelessWidget {
     final translateY = (curve.transform(1 - opacity) * 16);
     return Transform.translate(
       offset: Offset(0, translateY),
-      child: Opacity(
-        opacity: opacity,
-        child: child,
-      ),
+      child: Opacity(opacity: opacity, child: child),
     );
   }
 }
@@ -714,9 +684,10 @@ class _BlueprintPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0x03FFFFFF)
-      ..strokeWidth = 1;
+    final paint =
+        Paint()
+          ..color = const Color(0x03FFFFFF)
+          ..strokeWidth = 1;
 
     const step = 16.0;
     for (var x = 0.0; x < size.width; x += step) {
@@ -743,7 +714,7 @@ double _watchKeyframeTransitionProgress({
   required BuildContext context,
   required ShowcaseKeyframe keyframe,
 }) {
-  final ctrl = _showcaseCtrl.of(context)..watch(context);
+  final ctrl = _showcaseCtrl.watch(context);
 
   final currentKeyframe = ctrl.currentKeyframe;
   final nextKeyframe = ctrl.nextKeyframe;
@@ -757,18 +728,17 @@ double _watchKeyframeTransitionProgress({
 
   final rawKeyframeTransitionProgress =
       (ctrl.frame - currentKeyframe.frame).abs() /
-          (nextKeyframe.frame - currentKeyframe.frame).abs();
+      (nextKeyframe.frame - currentKeyframe.frame).abs();
 
-  final keyframeTransitionProgress = const ElasticInOutCurve(1).transform(
-    rawKeyframeTransitionProgress.clamp(0.0, 1.0),
-  );
+  final keyframeTransitionProgress = const ElasticInOutCurve(
+    1,
+  ).transform(rawKeyframeTransitionProgress.clamp(0.0, 1.0));
 
   final progress = switch (keyframe) {
     _ when keyframe == currentKeyframe => 1 - keyframeTransitionProgress,
     _ when keyframe == nextKeyframe => keyframeTransitionProgress,
     _ => 0.0,
-  }
-      .clamp(0.0, 1.0);
+  }.clamp(0.0, 1.0);
 
   return progress.toPrecision(2);
 }

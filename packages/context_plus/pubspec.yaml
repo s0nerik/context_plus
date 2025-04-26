@@ -12,7 +12,7 @@ topics:
   - extension
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"
 
 dependencies:
@@ -21,7 +21,6 @@ dependencies:
   context_ref: ^1.4.4
   context_watch: ^5.1.3
   context_watch_base: ^6.0.3
-  async_listenable: ^1.0.1
 
 dev_dependencies:
   flutter_test:

@@ -10,7 +10,7 @@ topics:
   - extension
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.7.0 <4.0.0"
   flutter: ">=3.17.0-1.0.pre.38"
 
 dependencies:

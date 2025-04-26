@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element
 
 import 'package:context_plus/context_plus.dart';
-import 'package:context_watch_beacon/context_watch_beacon.dart';
 import 'package:context_watch_bloc/context_watch_bloc.dart';
 import 'package:context_watch_getx/context_watch_getx.dart';
 import 'package:context_watch_mobx/context_watch_mobx.dart';
@@ -14,7 +13,6 @@ import 'package:flutter_mobx/flutter_mobx.dart' as mobx;
 import 'package:get/get.dart' as getx;
 import 'package:mobx/mobx.dart' as mobx;
 import 'package:signals_flutter/signals_flutter.dart' as sgnls;
-import 'package:state_beacon/state_beacon.dart' as bcn;
 
 import 'observable_listener_types.dart';
 
@@ -34,14 +32,13 @@ class Observer extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (publisher) {
       StreamPublisher(:final streams) ||
-      ValueStreamPublisher(:final streams) =>
-        _buildStreamObserver(streams),
+      ValueStreamPublisher(:final streams) => _buildStreamObserver(streams),
       ValueNotifierPublisher(:final valueListenables) =>
         _buildValueListenableObserver(valueListenables),
       SignalPublisher(:final signals) => _buildSignalObserver(signals),
-      MobxObservablePublisher(:final observables) =>
-        _buildMobxObserver(observables),
-      BeaconPublisher(:final beacons) => _buildBeaconObserver(beacons),
+      MobxObservablePublisher(:final observables) => _buildMobxObserver(
+        observables,
+      ),
       CubitPublisher(:final cubits) => _buildCubitObserver(cubits),
       GetxPublisher(:final observables) => _buildGetxObserver(observables),
     };
@@ -49,11 +46,16 @@ class Observer extends StatelessWidget {
 
   Widget _buildStreamObserver(List<Stream<int>> streams) {
     return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchStream(streams: streams, visualize: visualize),
-      ListenerType.streamBuilder =>
-        _StreamBuilder(streams: streams, visualize: visualize),
-      _ => throw UnsupportedError(
+      ListenerType.contextWatch => _ContextWatchStream(
+        streams: streams,
+        visualize: visualize,
+      ),
+      ListenerType.streamBuilder => _StreamBuilder(
+        streams: streams,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Stream',
         ),
     };
@@ -64,18 +66,19 @@ class Observer extends StatelessWidget {
   ) {
     return switch (listenerType) {
       ListenerType.contextWatch => _ContextWatchValueListenable(
-          valueListenables: valueListenables,
-          visualize: visualize,
-        ),
+        valueListenables: valueListenables,
+        visualize: visualize,
+      ),
       ListenerType.listenableBuilder => _ValueListenableBuilder(
-          valueListenables: valueListenables,
-          visualize: visualize,
-        ),
+        valueListenables: valueListenables,
+        visualize: visualize,
+      ),
       ListenerType.valueListenableBuilder => _ValueListenableBuilder(
-          valueListenables: valueListenables,
-          visualize: visualize,
-        ),
-      _ => throw UnsupportedError(
+        valueListenables: valueListenables,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a ValueListenable',
         ),
     };
@@ -83,37 +86,37 @@ class Observer extends StatelessWidget {
 
   Widget _buildSignalObserver(List<sgnls.ReadonlySignal<int>> signals) {
     return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchSignal(signals: signals, visualize: visualize),
-      ListenerType.signalsWatch =>
-        _SignalsWatch(signals: signals, visualize: visualize),
-      ListenerType.signalsWatchExt =>
-        _SignalsWatchExt(signals: signals, visualize: visualize),
-      _ => throw UnsupportedError(
+      ListenerType.contextWatch => _ContextWatchSignal(
+        signals: signals,
+        visualize: visualize,
+      ),
+      ListenerType.signalsWatch => _SignalsWatch(
+        signals: signals,
+        visualize: visualize,
+      ),
+      ListenerType.signalsWatchExt => _SignalsWatchExt(
+        signals: signals,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Signal',
-        ),
-    };
-  }
-
-  Widget _buildBeaconObserver(List<bcn.ReadableBeacon<int>> beacons) {
-    return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchBeacon(beacons: beacons, visualize: visualize),
-      ListenerType.beaconWatchExt =>
-        _BeaconsWatchExt(beacons: beacons, visualize: visualize),
-      _ => throw UnsupportedError(
-          'ListenerType $listenerType is not supported for a Beacon',
         ),
     };
   }
 
   Widget _buildMobxObserver(List<mobx.Observable<int>> observables) {
     return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchMobx(observables: observables, visualize: visualize),
-      ListenerType.mobxObserver =>
-        _MobxObserver(observables: observables, visualize: visualize),
-      _ => throw UnsupportedError(
+      ListenerType.contextWatch => _ContextWatchMobx(
+        observables: observables,
+        visualize: visualize,
+      ),
+      ListenerType.mobxObserver => _MobxObserver(
+        observables: observables,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a mobx.Observable',
         ),
     };
@@ -121,11 +124,16 @@ class Observer extends StatelessWidget {
 
   Widget _buildCubitObserver(List<bloc.Cubit<int>> cubits) {
     return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchCubit(cubits: cubits, visualize: visualize),
-      ListenerType.blocBuilder =>
-        _BlocBuilder(cubits: cubits, visualize: visualize),
-      _ => throw UnsupportedError(
+      ListenerType.contextWatch => _ContextWatchCubit(
+        cubits: cubits,
+        visualize: visualize,
+      ),
+      ListenerType.blocBuilder => _BlocBuilder(
+        cubits: cubits,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a Cubit',
         ),
     };
@@ -133,11 +141,16 @@ class Observer extends StatelessWidget {
 
   Widget _buildGetxObserver(List<getx.Rx<int>> observables) {
     return switch (listenerType) {
-      ListenerType.contextWatch =>
-        _ContextWatchGetx(observables: observables, visualize: visualize),
-      ListenerType.getxObx =>
-        _GetxObx(observables: observables, visualize: visualize),
-      _ => throw UnsupportedError(
+      ListenerType.contextWatch => _ContextWatchGetx(
+        observables: observables,
+        visualize: visualize,
+      ),
+      ListenerType.getxObx => _GetxObx(
+        observables: observables,
+        visualize: visualize,
+      ),
+      _ =>
+        throw UnsupportedError(
           'ListenerType $listenerType is not supported for a getx.Rx',
         ),
     };
@@ -146,7 +159,6 @@ class Observer extends StatelessWidget {
 
 class _ContextWatchValueListenable extends StatelessWidget {
   const _ContextWatchValueListenable({
-    super.key,
     required this.valueListenables,
     required this.visualize,
   });
@@ -170,21 +182,19 @@ class _ContextWatchValueListenable extends StatelessWidget {
 }
 
 class _ContextWatchStream extends StatelessWidget {
-  const _ContextWatchStream({
-    super.key,
-    required this.streams,
-    required this.visualize,
-  });
+  const _ContextWatchStream({required this.streams, required this.visualize});
 
   final List<Stream<int>> streams;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
-    AsyncSnapshot<int>? colorIndexSnapshot =
-        streams.firstOrNull?.watch(context);
-    AsyncSnapshot<int>? scaleIndexSnapshot =
-        streams.secondOrNull?.watch(context);
+    AsyncSnapshot<int>? colorIndexSnapshot = streams.firstOrNull?.watch(
+      context,
+    );
+    AsyncSnapshot<int>? scaleIndexSnapshot = streams.secondOrNull?.watch(
+      context,
+    );
     for (final stream in streams.skip(2)) {
       stream.watch(context);
     }
@@ -197,21 +207,19 @@ class _ContextWatchStream extends StatelessWidget {
 }
 
 class _ContextWatchSignal extends StatelessWidget {
-  const _ContextWatchSignal({
-    super.key,
-    required this.signals,
-    required this.visualize,
-  });
+  const _ContextWatchSignal({required this.signals, required this.visualize});
 
   final List<sgnls.ReadonlySignal<int>> signals;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
-    final colorIndex =
-        SignalContextWatchExtension(signals.firstOrNull)?.watch(context);
-    final scaleIndex =
-        SignalContextWatchExtension(signals.secondOrNull)?.watch(context);
+    final colorIndex = SignalContextWatchExtension(
+      signals.firstOrNull,
+    )?.watch(context);
+    final scaleIndex = SignalContextWatchExtension(
+      signals.secondOrNull,
+    )?.watch(context);
     for (final signal in signals.skip(2)) {
       SignalContextWatchExtension(signal).watch(context);
     }
@@ -223,39 +231,8 @@ class _ContextWatchSignal extends StatelessWidget {
   }
 }
 
-class _ContextWatchBeacon extends StatelessWidget {
-  const _ContextWatchBeacon({
-    super.key,
-    required this.beacons,
-    required this.visualize,
-  });
-
-  final List<bcn.ReadableBeacon<int>> beacons;
-  final bool visualize;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorIndex =
-        BeaconContextWatchExtension(beacons.firstOrNull)?.watch(context);
-    final scaleIndex =
-        BeaconContextWatchExtension(beacons.secondOrNull)?.watch(context);
-    for (final signal in beacons.skip(2)) {
-      BeaconContextWatchExtension(signal).watch(context);
-    }
-    return _buildFromValues(
-      colorIndex: colorIndex,
-      scaleIndex: scaleIndex,
-      visualize: visualize,
-    );
-  }
-}
-
 class _ContextWatchMobx extends StatelessWidget {
-  const _ContextWatchMobx({
-    super.key,
-    required this.observables,
-    required this.visualize,
-  });
+  const _ContextWatchMobx({required this.observables, required this.visualize});
 
   final List<mobx.Observable<int>> observables;
   final bool visualize;
@@ -276,11 +253,7 @@ class _ContextWatchMobx extends StatelessWidget {
 }
 
 class _ContextWatchCubit extends StatelessWidget {
-  const _ContextWatchCubit({
-    super.key,
-    required this.cubits,
-    required this.visualize,
-  });
+  const _ContextWatchCubit({required this.cubits, required this.visualize});
 
   final List<bloc.Cubit<int>> cubits;
   final bool visualize;
@@ -301,11 +274,7 @@ class _ContextWatchCubit extends StatelessWidget {
 }
 
 class _ContextWatchGetx extends StatelessWidget {
-  const _ContextWatchGetx({
-    super.key,
-    required this.observables,
-    required this.visualize,
-  });
+  const _ContextWatchGetx({required this.observables, required this.visualize});
 
   final List<getx.Rx<int>> observables;
   final bool visualize;
@@ -327,7 +296,6 @@ class _ContextWatchGetx extends StatelessWidget {
 
 class _ListenableBuilder extends StatelessWidget {
   const _ListenableBuilder({
-    super.key,
     required this.listenables,
     required this.visualize,
   });
@@ -366,7 +334,6 @@ class _ListenableBuilder extends StatelessWidget {
 
 class _ValueListenableBuilder extends StatelessWidget {
   const _ValueListenableBuilder({
-    super.key,
     required this.valueListenables,
     required this.visualize,
   });
@@ -405,11 +372,7 @@ class _ValueListenableBuilder extends StatelessWidget {
 }
 
 class _StreamBuilder extends StatelessWidget {
-  const _StreamBuilder({
-    super.key,
-    required this.streams,
-    required this.visualize,
-  });
+  const _StreamBuilder({required this.streams, required this.visualize});
 
   final List<Stream<int>> streams;
   final bool visualize;
@@ -445,11 +408,7 @@ class _StreamBuilder extends StatelessWidget {
 }
 
 class _SignalsWatch extends StatelessWidget {
-  const _SignalsWatch({
-    super.key,
-    required this.signals,
-    required this.visualize,
-  });
+  const _SignalsWatch({required this.signals, required this.visualize});
 
   final List<sgnls.ReadonlySignal<int>> signals;
   final bool visualize;
@@ -472,21 +431,19 @@ class _SignalsWatch extends StatelessWidget {
 }
 
 class _SignalsWatchExt extends StatelessWidget {
-  const _SignalsWatchExt({
-    super.key,
-    required this.signals,
-    required this.visualize,
-  });
+  const _SignalsWatchExt({required this.signals, required this.visualize});
 
   final List<sgnls.ReadonlySignal<int>> signals;
   final bool visualize;
 
   @override
   Widget build(BuildContext context) {
-    final colorIndex =
-        sgnls.FlutterReadonlySignalUtils(signals.firstOrNull)?.watch(context);
-    final scaleIndex =
-        sgnls.FlutterReadonlySignalUtils(signals.secondOrNull)?.watch(context);
+    final colorIndex = sgnls.FlutterReadonlySignalUtils(
+      signals.firstOrNull,
+    )?.watch(context);
+    final scaleIndex = sgnls.FlutterReadonlySignalUtils(
+      signals.secondOrNull,
+    )?.watch(context);
     for (final signal in signals.skip(2)) {
       sgnls.FlutterReadonlySignalUtils(signal).watch(context);
     }
@@ -498,37 +455,8 @@ class _SignalsWatchExt extends StatelessWidget {
   }
 }
 
-class _BeaconsWatchExt extends StatelessWidget {
-  const _BeaconsWatchExt({
-    super.key,
-    required this.beacons,
-    required this.visualize,
-  });
-
-  final List<bcn.ReadableBeacon<int>> beacons;
-  final bool visualize;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorIndex = beacons.firstOrNull?.watch(context);
-    final scaleIndex = beacons.secondOrNull?.watch(context);
-    for (final signal in beacons.skip(2)) {
-      signal.watch(context);
-    }
-    return _buildFromValues(
-      colorIndex: colorIndex,
-      scaleIndex: scaleIndex,
-      visualize: visualize,
-    );
-  }
-}
-
 class _MobxObserver extends StatelessWidget {
-  const _MobxObserver({
-    super.key,
-    required this.observables,
-    required this.visualize,
-  });
+  const _MobxObserver({required this.observables, required this.visualize});
 
   final List<mobx.Observable<int>> observables;
   final bool visualize;
@@ -559,11 +487,7 @@ class _FallbackCubit extends bloc.Cubit<int> {
 }
 
 class _BlocBuilder extends StatelessWidget {
-  const _BlocBuilder({
-    super.key,
-    required this.cubits,
-    required this.visualize,
-  });
+  const _BlocBuilder({required this.cubits, required this.visualize});
 
   final List<bloc.Cubit<int>> cubits;
   final bool visualize;
@@ -597,11 +521,7 @@ class _BlocBuilder extends StatelessWidget {
 }
 
 class _GetxObx extends StatelessWidget {
-  const _GetxObx({
-    super.key,
-    required this.observables,
-    required this.visualize,
-  });
+  const _GetxObx({required this.observables, required this.visualize});
 
   final List<getx.Rx<int>> observables;
   final bool visualize;
@@ -635,8 +555,9 @@ Widget _buildAsyncSnapshot({
   const loadingColor = Color(0xFFFFFACA);
 
   final child = switch (colorIndexSnapshot) {
-    AsyncSnapshot(hasData: true, requireData: final colorIndex) =>
-      ColoredBox(color: _colors[colorIndex % _colors.length]),
+    AsyncSnapshot(hasData: true, requireData: final colorIndex) => ColoredBox(
+      color: _colors[colorIndex % _colors.length],
+    ),
     AsyncSnapshot(hasError: false) => const ColoredBox(color: loadingColor),
     AsyncSnapshot(hasError: true) => const ColoredBox(color: Colors.red),
     null => ColoredBox(color: Colors.grey.shade300),
@@ -673,9 +594,9 @@ Widget _buildFromValues({
   final scaledChild = switch (scaleIndex) {
     -1 || null => child,
     int() => Transform.scale(
-        scale: _scales[scaleIndex % _scales.length],
-        child: child,
-      ),
+      scale: _scales[scaleIndex % _scales.length],
+      child: child,
+    ),
   };
 
   return scaledChild;

@@ -14,7 +14,7 @@ void main() {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
 
-      final results = <(int, void, AsyncSnapshot<int>)>[];
+      final results = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, _) = _widget((context) {
         final result = (valueNotifier, changeNotifier, stream).watch(context);
         results.add(result);
@@ -22,44 +22,50 @@ void main() {
 
       await tester.pumpWidget(widget);
       expect(rebuilds.value, 1);
-      expect(results, [
-        (0, null, const AsyncSnapshot.waiting()),
-      ]);
+      expect(results, [(0, changeNotifier, const AsyncSnapshot.waiting())]);
 
       valueNotifier.value++;
       await tester.pumpAndSettle();
       expect(rebuilds.value, 2);
       expect(results, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       changeNotifier.notifyListeners();
       await tester.pumpAndSettle();
       expect(rebuilds.value, 3);
       expect(results, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       streamController.add(0);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 4);
       expect(results, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       await tester.pumpAndSettle();
       expect(rebuilds.value, 4); // No notification - no rebuild
       expect(results, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
     },
   );
@@ -73,70 +79,87 @@ void main() {
       final stream = streamController.stream;
 
       var selectorResult = 0;
-      final selectorParamValues = <(int, void, AsyncSnapshot<int>)>[];
+      final selectorParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, triggerRebuild) = _widget((context) {
-        (valueNotifier, changeNotifier, stream).watchOnly(
-          context,
-          (valueNotifier, changeNotifier, snap) {
-            selectorParamValues.add((valueNotifier.value, null, snap));
-            return selectorResult;
-          },
-        );
+        (valueNotifier, changeNotifier, stream).watchOnly(context, (
+          value,
+          changeNotifier,
+          snap,
+        ) {
+          selectorParamValues.add((value, changeNotifier, snap));
+          return selectorResult;
+        });
       });
 
       await tester.pumpWidget(widget);
       expect(rebuilds.value, 1);
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       valueNotifier.value++;
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // selectorResult did not change, so no rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       changeNotifier.notifyListeners();
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // selectorResult did not change, so no rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       streamController.add(0);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // selectorResult did not change, so no rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No notification - no rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       streamController.add(0);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // selectorResult did not change, so no rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // Even though the stream produced the equal value, the selector was
         // still invoked since the stream notified that it is indeed a new value.
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       selectorResult = 1;
@@ -144,91 +167,139 @@ void main() {
       await tester.pumpAndSettle();
       expect(rebuilds.value, 2); // selectorResult changed, so rebuild
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // ↓ Parameters for the selector that was invoked to decide whether to rebuild
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // ↓ Parameters for the selector that was invoked *during* the rebuild
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       triggerRebuild(() {});
       await tester.pumpAndSettle();
       expect(rebuilds.value, 3); // Rebuild due to setState()
       expect(selectorParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // ↓ Parameters for the selector that was invoked to decide whether to rebuild
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // ↓ Parameters for the selector that was invoked *during* the previous rebuild
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // ↓ Parameters for the selector that was invoked *during* the rebuild
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
     },
   );
 
   testWidgets(
-      "if any of the .watchEffect()'d observables notifies of a change, the effect is called, without rebuilding the widget",
-      (tester) async {
-    final valueNotifier = ValueNotifier(0);
-    final changeNotifier = ChangeNotifier();
-    final streamController = StreamController<int>();
-    final stream = streamController.stream;
+    "if any of the .watchEffect()'d observables notifies of a change, the effect is called, without rebuilding the widget",
+    (tester) async {
+      final valueNotifier = ValueNotifier(0);
+      final changeNotifier = ChangeNotifier();
+      final streamController = StreamController<int>();
+      final stream = streamController.stream;
 
-    final effectParamValues = <(int, void, AsyncSnapshot<int>)>[];
-    final (widget, rebuilds, triggerRebuild) = _widget((context) {
-      (valueNotifier, changeNotifier, stream).watchEffect(
-        context,
-        (valueNotifier, changeNotifier, snap) {
-          effectParamValues.add((valueNotifier.value, null, snap));
-        },
-      );
-    });
+      final effectParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
+      final (widget, rebuilds, triggerRebuild) = _widget((context) {
+        (valueNotifier, changeNotifier, stream).watchEffect(context, (
+          value,
+          changeNotifier,
+          snap,
+        ) {
+          effectParamValues.add((value, changeNotifier, snap));
+        });
+      });
 
-    await tester.pumpWidget(widget);
-    expect(effectParamValues, isEmpty);
-    expect(rebuilds.value, 1);
+      await tester.pumpWidget(widget);
+      expect(effectParamValues, isEmpty);
+      expect(rebuilds.value, 1);
 
-    valueNotifier.value = 1;
-    expect(effectParamValues, [(1, null, const AsyncSnapshot.waiting())]);
-    await tester.pumpAndSettle();
-    expect(rebuilds.value, 1); // No rebuild
+      valueNotifier.value = 1;
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
+      await tester.pumpAndSettle();
+      expect(rebuilds.value, 1); // No rebuild
 
-    changeNotifier.notifyListeners();
-    expect(effectParamValues, [
-      (1, null, const AsyncSnapshot.waiting()),
-      (1, null, const AsyncSnapshot.waiting()),
-    ]);
-    await tester.pumpAndSettle();
-    expect(rebuilds.value, 1); // No rebuild
+      changeNotifier.notifyListeners();
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
+      await tester.pumpAndSettle();
+      expect(rebuilds.value, 1); // No rebuild
 
-    streamController.add(0);
-    await Future.value(); // Let the stream notify
-    expect(effectParamValues, [
-      (1, null, const AsyncSnapshot.waiting()),
-      (1, null, const AsyncSnapshot.waiting()),
-      (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
-    ]);
-    await tester.pumpAndSettle();
-    expect(rebuilds.value, 1); // No rebuild
+      streamController.add(0);
+      await Future.value(); // Let the stream notify
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
+      ]);
+      await tester.pumpAndSettle();
+      expect(rebuilds.value, 1); // No rebuild
 
-    triggerRebuild(() {});
-    await tester.pumpAndSettle();
-    expect(rebuilds.value, 2); // Rebuild
-    // No effects are called during rebuild
-    expect(effectParamValues, [
-      (1, null, const AsyncSnapshot.waiting()),
-      (1, null, const AsyncSnapshot.waiting()),
-      (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
-    ]);
-  });
+      triggerRebuild(() {});
+      await tester.pumpAndSettle();
+      expect(rebuilds.value, 2); // Rebuild
+      // No effects are called during rebuild
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
+      ]);
+    },
+  );
 
   testWidgets(
     ".watchEffect() on a group of observable allows the same 'once' parameter as the .watchEffect() on a single observable",
@@ -238,12 +309,12 @@ void main() {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
 
-      final effectParamValues = <(int, void, AsyncSnapshot<int>)>[];
+      final effectParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, triggerRebuild) = _widget((context) {
         (valueNotifier, changeNotifier, stream).watchEffect(
           context,
-          (valueNotifier, changeNotifier, snap) {
-            effectParamValues.add((valueNotifier.value, null, snap));
+          (value, changeNotifier, snap) {
+            effectParamValues.add((value, changeNotifier, snap));
           },
           once: true,
           key: 'effect',
@@ -255,20 +326,26 @@ void main() {
       expect(rebuilds.value, 1);
 
       valueNotifier.value = 1;
-      expect(effectParamValues, [(1, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
 
       changeNotifier.notifyListeners();
       // No effect called since the 'once' parameter is true
-      expect(effectParamValues, [(1, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
 
       streamController.add(0);
       await Future.value(); // Let the stream notify
       // No effect called since the 'once' parameter is true
-      expect(effectParamValues, [(1, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
 
@@ -276,7 +353,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(rebuilds.value, 2); // Rebuild
       // No effects are called during rebuild
-      expect(effectParamValues, [(1, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
     },
   );
 
@@ -288,12 +367,12 @@ void main() {
       final streamController = StreamController<int>();
       final stream = streamController.stream;
 
-      final effectParamValues = <(int, void, AsyncSnapshot<int>)>[];
+      final effectParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, triggerRebuild) = _widget((context) {
         (valueNotifier, changeNotifier, stream).watchEffect(
           context,
-          (valueNotifier, changeNotifier, snap) {
-            effectParamValues.add((valueNotifier.value, null, snap));
+          (value, changeNotifier, snap) {
+            effectParamValues.add((value, changeNotifier, snap));
           },
           immediate: true,
           key: 'effect',
@@ -303,22 +382,24 @@ void main() {
       await tester.pumpWidget(widget);
       // Effect is called once immediately during the build since
       // the 'immediate' parameter is true
-      expect(effectParamValues, [(0, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
       expect(rebuilds.value, 1);
 
       valueNotifier.value = 1;
       expect(effectParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
 
       changeNotifier.notifyListeners();
       expect(effectParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
@@ -326,10 +407,14 @@ void main() {
       streamController.add(0);
       await Future.value(); // Let the stream notify
       expect(effectParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
       await tester.pumpAndSettle();
       expect(rebuilds.value, 1); // No rebuild
@@ -339,10 +424,14 @@ void main() {
       expect(rebuilds.value, 2); // Rebuild
       // No effects are called during rebuild
       expect(effectParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
     },
   );
@@ -356,34 +445,43 @@ void main() {
       final stream = streamController.stream;
 
       var shouldWatchEffect = true;
-      final effectParamValues = <(int, void, AsyncSnapshot<int>)>[];
+      final effectParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, triggerRebuild) = _widget((context) {
         if (shouldWatchEffect) {
           (valueNotifier, changeNotifier, stream).watchEffect(
             context,
-            (valueNotifier, changeNotifier, snap) {
-              effectParamValues.add((valueNotifier.value, null, snap));
+            (value, changeNotifier, snap) {
+              effectParamValues.add((value, changeNotifier, snap));
             },
             immediate: true,
             key: 'effect',
           );
         } else {
-          (valueNotifier, changeNotifier, stream)
-              .unwatchEffect(context, key: 'effect');
+          (
+            valueNotifier,
+            changeNotifier,
+            stream,
+          ).unwatchEffect(context, key: 'effect');
         }
       });
 
       await tester.pumpWidget(widget);
       // Effect is called once immediately during the build since
       // the 'immediate' parameter is true
-      expect(effectParamValues, [(0, null, const AsyncSnapshot.waiting())]);
+      expect(effectParamValues, [
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+      ]);
       expect(rebuilds.value, 1);
 
       streamController.add(0);
       await Future.value(); // Let the stream notify
       expect(effectParamValues, [
-        (0, null, const AsyncSnapshot.waiting()),
-        (0, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          0,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       triggerRebuild(() => shouldWatchEffect = false);
@@ -398,8 +496,12 @@ void main() {
       expect(rebuilds.value, 2); // No rebuild
       expect(effectParamValues, [
         // No new effect calls
-        (0, null, const AsyncSnapshot.waiting()),
-        (0, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (0, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          0,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
     },
   );
@@ -413,16 +515,16 @@ void main() {
       final stream = streamController.stream;
 
       var shouldWatchEffect = true;
-      final effectParamValues = <(int, void, AsyncSnapshot<int>)>[];
+      final effectParamValues = <(int, ChangeNotifier, AsyncSnapshot<int>)>[];
       final (widget, rebuilds, triggerRebuild) = _widget((context) {
         if (shouldWatchEffect) {
-          (valueNotifier, changeNotifier, stream).watchEffect(
-            context,
-            (valueNotifier, changeNotifier, snap) {
-              effectParamValues.add((valueNotifier.value, null, snap));
-            },
-            key: 'effect',
-          );
+          (valueNotifier, changeNotifier, stream).watchEffect(context, (
+            value,
+            changeNotifier,
+            snap,
+          ) {
+            effectParamValues.add((value, changeNotifier, snap));
+          }, key: 'effect');
         } else {
           // Simulate we forgot to unwatch the [valueNotifier]
           (changeNotifier, stream).unwatchEffect(context, key: 'effect');
@@ -434,21 +536,25 @@ void main() {
 
       valueNotifier.value = 1;
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       changeNotifier.notifyListeners();
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
       ]);
 
       streamController.add(0);
       await Future.value(); // Let the stream notify
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       triggerRebuild(() => shouldWatchEffect = false);
@@ -458,30 +564,46 @@ void main() {
       changeNotifier.notifyListeners();
       // [changeNotifier] is unwatched
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       streamController.add(1);
       await Future.value(); // Let the stream notify
       // [stream] is unwatched
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
       ]);
 
       valueNotifier.value = 2;
       // [valueNotifier] is **not** unwatched
       expect(effectParamValues, [
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.waiting()),
-        (1, null, const AsyncSnapshot.withData(ConnectionState.active, 0)),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (1, changeNotifier, const AsyncSnapshot.waiting()),
+        (
+          1,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 0),
+        ),
         // Not only the [valueNotifier] value updated, but the [stream]
         // value as well. That's because the observable subscription
         // is kept until all watch() calls are removed.
-        (2, null, const AsyncSnapshot.withData(ConnectionState.active, 1)),
+        (
+          2,
+          changeNotifier,
+          const AsyncSnapshot.withData(ConnectionState.active, 1),
+        ),
       ]);
     },
   );

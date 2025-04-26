@@ -3,10 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
 final class _MobxSubscription implements ContextWatchSubscription {
-  _MobxSubscription({
-    required this.observable,
-    required this.dispose,
-  });
+  _MobxSubscription({required this.observable, required this.dispose});
 
   final Observable observable;
   final VoidCallback dispose;
@@ -30,9 +27,7 @@ class MobxObservableWatcher extends ContextWatcher<Observable> {
   ) {
     return _MobxSubscription(
       observable: observable,
-      dispose: observable.observe(
-        (_) => rebuildIfNeeded(context, observable),
-      ),
+      dispose: observable.observe((_) => rebuildIfNeeded(context, observable)),
     );
   }
 }
@@ -46,14 +41,12 @@ extension MobxObservableContextWatchExtension<T> on Observable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watch();
+    InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this)?.watch();
     return value;
   }
-}
 
-extension MobxObservableContextWatchOnlyExtension<T> on Observable<T> {
   /// Watch this [Observable] for changes.
   ///
   /// Whenever this [Observable] emits new value, if [selector]
@@ -64,8 +57,9 @@ extension MobxObservableContextWatchOnlyExtension<T> on Observable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
+    final observable = InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this);
     if (observable == null) return selector(value);
 
     final selectedValue = selector(value);
@@ -73,9 +67,7 @@ extension MobxObservableContextWatchOnlyExtension<T> on Observable<T> {
 
     return selectedValue;
   }
-}
 
-extension ListenableContextWatchEffectExtension<T> on Observable<T> {
   /// Watch this [Observable] for changes.
   ///
   /// Whenever this [Observable] notifies of a change, the [effect] will be
@@ -108,15 +100,10 @@ extension ListenableContextWatchEffectExtension<T> on Observable<T> {
         .getOrCreateObservable(context, this)
         ?.watchEffect(effect, key: key, immediate: immediate, once: once);
   }
-}
 
-extension ListenableContextUnwatchEffectExtension on Observable {
   /// Remove the effect with the given [key] from the list of effects to be
   /// called when this [Observable] notifies of a change.
-  void unwatchEffect(
-    BuildContext context, {
-    required Object key,
-  }) {
+  void unwatchEffect(BuildContext context, {required Object key}) {
     InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

@@ -5,7 +5,7 @@
 [![context_plus](https://img.shields.io/pub/v/context_plus)](https://pub.dev/packages/context_plus)
 [![context_plus](https://img.shields.io/pub/likes/context_plus)](https://pub.dev/packages/context_plus)
 [![context_plus](https://img.shields.io/pub/points/context_plus)](https://pub.dev/packages/context_plus)
-[![context_plus](https://img.shields.io/pub/popularity/context_plus)](https://pub.dev/packages/context_plus)
+[![context_plus](https://img.shields.io/pub/dm/context_plus)](https://pub.dev/packages/context_plus)
 
 This package combines [context_ref](https://pub.dev/packages/context_ref) and [context_watch](https://pub.dev/packages/context_watch) into a single, more convenient package.
 

@@ -5,7 +5,7 @@
 [![context_watch](https://img.shields.io/pub/v/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/likes/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/points/context_watch)](https://pub.dev/packages/context_watch)
-[![context_watch](https://img.shields.io/pub/popularity/context_watch)](https://pub.dev/packages/context_watch)
+[![context_watch](https://img.shields.io/pub/dm/context_watch)](https://pub.dev/packages/context_watch)
 
 Subscribe widgets to any observable value using `observable.watch(context)`. No strings attached.
 
@@ -21,14 +21,9 @@ See [context_plus](https://pub.dev/packages/context_plus) for the ultimate conve
   ```dart
   final (value, futureSnap, streamSnap) =
       (valueListenable, future, stream).watch(context);
-  // or in different order
-  final (streamSnap, value, futureSnap) =
-      (stream, valueListenable, future).watch(context);
   ```
   
   All three methods are available for all combinations of observables.
-
-  ** *Note*: IDE suggestions for `watch*()` methods on records work only with Dart 3.6 and newer (see [dart-lang/sdk#56572](https://github.com/dart-lang/sdk/issues/56572)).
 
 ## Supported observable types
 

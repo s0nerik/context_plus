@@ -5,7 +5,7 @@
 [![context_ref](https://img.shields.io/pub/v/context_ref)](https://pub.dev/packages/context_ref)
 [![context_ref](https://img.shields.io/pub/likes/context_ref)](https://pub.dev/packages/context_ref)
 [![context_ref](https://img.shields.io/pub/points/context_ref)](https://pub.dev/packages/context_ref)
-[![context_ref](https://img.shields.io/pub/popularity/context_ref)](https://pub.dev/packages/context_ref)
+[![context_ref](https://img.shields.io/pub/dm/context_ref)](https://pub.dev/packages/context_ref)
 
 A more convenient `InheritedWidget` alternative.
 

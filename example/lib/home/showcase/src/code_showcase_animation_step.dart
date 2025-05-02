@@ -185,9 +185,7 @@ const _refDescription = TextSpan(
       child: CodeQuote(
         child: CodeType(
           type: 'Ref',
-          genericTypes: [
-            '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
-          ],
+          genericTypes: ['{Stream|Future|Listenable|ValueListenable}'],
         ),
       ),
     ),
@@ -448,10 +446,7 @@ const _watchDescription = TextSpan(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CodeType(
-                    type:
-                        '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
-                  ),
+                  CodeType(type: '{Stream|Future|Listenable|ValueListenable}'),
                   CodeFunctionCall(
                     name: 'watch',
                     params: [CodeParameter(name: 'context')],
@@ -467,7 +462,7 @@ const _watchDescription = TextSpan(
                   CodeType(
                     type: 'Ref',
                     genericTypes: [
-                      '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
+                      '{Stream|Future|Listenable|ValueListenable}',
                     ],
                   ),
                   CodeFunctionCall(
@@ -547,8 +542,7 @@ const _watchDescription = TextSpan(
         plainText: '`<Observable>Builder`',
         child: CodeQuote(
           child: CodeType(
-            type:
-                '{Stream|Future|Listenable|ValueListenable|AsyncListenable}Builder',
+            type: '{Stream|Future|Listenable|ValueListenable}Builder',
           ),
         ),
       ),

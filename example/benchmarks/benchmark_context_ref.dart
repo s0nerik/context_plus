@@ -3,10 +3,7 @@ import 'package:dolumns/dolumns.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-enum _BenchmarkType {
-  inheritedWidget,
-  contextRef,
-}
+enum _BenchmarkType { inheritedWidget, contextRef }
 
 class _Benchmark {
   _Benchmark({
@@ -98,7 +95,7 @@ main() async {
   }
 
   Future<(_Benchmark inheritedWidget, _Benchmark contextRef)>
-      runComparisonBenchmarks({
+  runComparisonBenchmarks({
     required int depth,
     int? extraBreadthEvery,
     int? extraBreadthAmount,
@@ -148,30 +145,35 @@ main() async {
     ),
   ];
 
-  final resultTable = dolumnify([
+  final resultTable = dolumnify(
     [
-      'total widgets',
-      'depth',
-      'extra breadth every Nth depth',
-      'extra breadth amount',
-      'ratio',
-      'ContextRef (μs)',
-      'InheritedWidget (μs)'
+      [
+        'total widgets',
+        'depth',
+        'extra breadth every Nth depth',
+        'extra breadth amount',
+        'ratio',
+        'ContextRef (μs)',
+        'InheritedWidget (μs)',
+      ],
+      ...results.map((result) {
+        final (inheritedWidget, contextRef) = result;
+        return [
+          contextRef.totalWidgets,
+          contextRef.depth,
+          contextRef.extraBreadthEvery?.toString() ?? 'none',
+          contextRef.extraBreadthAmount.toString(),
+          (contextRef.resultMicroseconds / inheritedWidget.resultMicroseconds)
+              .toStringAsFixed(2),
+          (contextRef.resultMicroseconds).toStringAsFixed(2),
+          (inheritedWidget.resultMicroseconds).toStringAsFixed(2),
+        ];
+      }),
     ],
-    ...results.map((result) {
-      final (inheritedWidget, contextRef) = result;
-      return [
-        contextRef.totalWidgets,
-        contextRef.depth,
-        contextRef.extraBreadthEvery?.toString() ?? 'none',
-        contextRef.extraBreadthAmount.toString(),
-        (contextRef.resultMicroseconds / inheritedWidget.resultMicroseconds)
-            .toStringAsFixed(2),
-        (contextRef.resultMicroseconds).toStringAsFixed(2),
-        (inheritedWidget.resultMicroseconds).toStringAsFixed(2),
-      ];
-    }),
-  ], headerIncluded: true, headerSeparator: '-', columnSplitter: ' | ');
+    headerIncluded: true,
+    headerSeparator: '-',
+    columnSplitter: ' | ',
+  );
 
   for (final line in resultTable.split('\n')) {
     print(line); // ignore: avoid_print
@@ -214,26 +216,21 @@ class _ContextRefBenchmarkScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ContextRef Benchmark'),
-      ),
+      appBar: AppBar(title: const Text('ContextRef Benchmark')),
       body: switch (widget.benchmark.type) {
         _BenchmarkType.inheritedWidget => _InheritedProvider(
+          value: 1,
+          child: KeyedSubtree(key: UniqueKey(), child: widget.benchmark.widget),
+        ),
+        _BenchmarkType.contextRef => ContextPlus.root(
+          child: _ContextRefProvider(
             value: 1,
             child: KeyedSubtree(
               key: UniqueKey(),
               child: widget.benchmark.widget,
             ),
           ),
-        _BenchmarkType.contextRef => ContextPlus.root(
-            child: _ContextRefProvider(
-              value: 1,
-              child: KeyedSubtree(
-                key: UniqueKey(),
-                child: widget.benchmark.widget,
-              ),
-            ),
-          ),
+        ),
       },
     );
   }
@@ -242,10 +239,7 @@ class _ContextRefBenchmarkScreenState
 final _ref = Ref<int>();
 
 class _ContextRefProvider extends StatelessWidget {
-  const _ContextRefProvider({
-    required this.value,
-    required this.child,
-  });
+  const _ContextRefProvider({required this.value, required this.child});
 
   final int value;
   final Widget child;
@@ -268,10 +262,7 @@ class _ContextRefReader extends StatelessWidget {
 }
 
 class _InheritedProvider extends InheritedWidget {
-  const _InheritedProvider({
-    required this.value,
-    required super.child,
-  });
+  const _InheritedProvider({required this.value, required super.child});
 
   final int value;
 
@@ -319,10 +310,12 @@ class _InheritedReader extends StatelessWidget {
     final shouldAddExtraBreadth =
         extraBreadthEvery != null && currentDepth % extraBreadthEvery == 0;
 
-    final totalWidgets =
-        depthWidgets.values.reduce((value, element) => value + element);
+    final totalWidgets = depthWidgets.values.reduce(
+      (value, element) => value + element,
+    );
     // Column + all existing widgets (if extra breadth is requested)
-    depthWidgets[currentDepth] = (depthWidgets[currentDepth] ?? 0) +
+    depthWidgets[currentDepth] =
+        (depthWidgets[currentDepth] ?? 0) +
         1 +
         (shouldAddExtraBreadth ? extraBreadthAmount * totalWidgets : 0);
 
@@ -335,7 +328,8 @@ class _InheritedReader extends StatelessWidget {
     );
   }
 
-  final totalWidgets =
-      depthWidgets.values.reduce((value, element) => value + element);
+  final totalWidgets = depthWidgets.values.reduce(
+    (value, element) => value + element,
+  );
   return (widget, totalWidgets);
 }

@@ -40,8 +40,9 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   final _query = ValueNotifier('');
-  late final _countries = AsyncNotifier<List<CountryInfo>>()
-    ..setFuture(CountriesAPI.searchCountries(''));
+  late final _countries =
+      AsyncNotifier<List<CountryInfo>>()
+        ..setFuture(CountriesAPI.searchCountries(''));
   final _showOnlyFavorites = ValueNotifier(false);
   final _favorites = ValueNotifier(const <String>{});
 
@@ -53,12 +54,7 @@ class _ExampleState extends State<Example> {
       showOnlyFavorites: _showOnlyFavorites,
       favorites: _favorites,
       child: const Column(
-        children: [
-          _SearchField(),
-          Expanded(
-            child: _CountriesList(),
-          ),
-        ],
+        children: [_SearchField(), Expanded(child: _CountriesList())],
       ),
     );
   }
@@ -72,23 +68,27 @@ class _SearchField extends StatelessWidget {
     final state = _State.of(context);
     return ValueListenableBuilder(
       valueListenable: state.showOnlyFavorites,
-      builder: (context, showOnlyFavorites, _) => TextField(
-        onChanged: (query) {
-          state.query.value = query;
-          state.countries.setFuture(CountriesAPI.searchCountries(query));
-        },
-        decoration: InputDecoration(
-          labelText: 'Search',
-          hintText: 'Enter country name',
-          suffixIcon: IconButton(
-            onPressed: () =>
-                state.showOnlyFavorites.value = !state.showOnlyFavorites.value,
-            icon: showOnlyFavorites
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_border),
+      builder:
+          (context, showOnlyFavorites, _) => TextField(
+            onChanged: (query) {
+              state.query.value = query;
+              state.countries.setFuture(CountriesAPI.searchCountries(query));
+            },
+            decoration: InputDecoration(
+              labelText: 'Search',
+              hintText: 'Enter country name',
+              suffixIcon: IconButton(
+                onPressed:
+                    () =>
+                        state.showOnlyFavorites.value =
+                            !state.showOnlyFavorites.value,
+                icon:
+                    showOnlyFavorites
+                        ? const Icon(Icons.favorite)
+                        : const Icon(Icons.favorite_border),
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 }
@@ -101,48 +101,51 @@ class _CountriesList extends StatelessWidget {
     final state = _State.of(context);
     return AsyncListenableBuilder(
       asyncListenable: state.countries,
-      builder: (context, countriesSnapshot) => ValueListenableBuilder(
-        valueListenable: state.showOnlyFavorites,
-        builder: (context, showOnlyFavorites, _) => ValueListenableBuilder(
-          valueListenable: state.favorites,
-          builder: (context, favorites, _) {
-            if (countriesSnapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Error fetching countries:\n${countriesSnapshot.error}',
+      builder:
+          (context, countriesSnapshot) => ValueListenableBuilder(
+            valueListenable: state.showOnlyFavorites,
+            builder:
+                (context, showOnlyFavorites, _) => ValueListenableBuilder(
+                  valueListenable: state.favorites,
+                  builder: (context, favorites, _) {
+                    if (countriesSnapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error fetching countries:\n${countriesSnapshot.error}',
+                        ),
+                      );
+                    }
+                    if (!countriesSnapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    var countries = countriesSnapshot.data ?? const [];
+                    if (showOnlyFavorites) {
+                      countries =
+                          countries
+                              .where(
+                                (country) => favorites.contains(country.name),
+                              )
+                              .toList();
+                    }
+
+                    return ListView.builder(
+                      itemCount: countries.length,
+                      itemBuilder:
+                          (context, index) => _CountryTile(
+                            key: ValueKey(countries[index].name),
+                            country: countries[index],
+                          ),
+                    );
+                  },
                 ),
-              );
-            }
-            if (!countriesSnapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            var countries = countriesSnapshot.data ?? const [];
-            if (showOnlyFavorites) {
-              countries = countries
-                  .where((country) => favorites.contains(country.name))
-                  .toList();
-            }
-
-            return ListView.builder(
-              itemCount: countries.length,
-              itemBuilder: (context, index) => _CountryTile(
-                key: ValueKey(countries[index].name),
-                country: countries[index],
-              ),
-            );
-          },
-        ),
-      ),
+          ),
     );
   }
 }
 
 class _CountryTile extends StatelessWidget {
-  const _CountryTile({
-    super.key,
-    required this.country,
-  });
+  const _CountryTile({super.key, required this.country});
 
   final CountryInfo country;
 
@@ -155,9 +158,10 @@ class _CountryTile extends StatelessWidget {
         return ListTile(
           title: _CountryTileTitle(country: country),
           subtitle: country.capital != null ? Text(country.capital!) : null,
-          leading: country.flag != null
-              ? Image.network(country.flag!, width: 48, height: 48)
-              : null,
+          leading:
+              country.flag != null
+                  ? Image.network(country.flag!, width: 48, height: 48)
+                  : null,
           trailing: IconButton(
             onPressed: () {
               final favorites = state.favorites.value.toSet();
@@ -168,9 +172,10 @@ class _CountryTile extends StatelessWidget {
               }
               state.favorites.value = favorites;
             },
-            icon: favorites.contains(country.name)
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_border),
+            icon:
+                favorites.contains(country.name)
+                    ? const Icon(Icons.favorite)
+                    : const Icon(Icons.favorite_border),
           ),
         );
       },
@@ -179,9 +184,7 @@ class _CountryTile extends StatelessWidget {
 }
 
 class _CountryTileTitle extends StatelessWidget {
-  const _CountryTileTitle({
-    required this.country,
-  });
+  const _CountryTileTitle({required this.country});
 
   final CountryInfo country;
 
@@ -196,9 +199,7 @@ class _CountryTileTitle extends StatelessWidget {
           words: {
             for (final word in words)
               word: HighlightedWord(
-                textStyle: TextStyle(
-                  backgroundColor: Colors.yellow[900],
-                ),
+                textStyle: TextStyle(backgroundColor: Colors.yellow[900]),
               ),
           },
         );

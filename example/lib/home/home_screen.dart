@@ -32,8 +32,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = _scrollController.bind(context, ScrollController.new);
-    final isShowcaseCompleted =
-        _isShowcaseCompleted.bind(context, () => ValueNotifier(false));
+    final isShowcaseCompleted = _isShowcaseCompleted.bind(
+      context,
+      () => ValueNotifier(false),
+    );
     return Scaffold(
       body: SingleChildScrollView(
         controller: controller,
@@ -69,8 +71,10 @@ class _ShowcasePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final allowAnimations =
-        _scrollController.watchOnly(context, (ctrl) => ctrl.offset < height);
+    final allowAnimations = _scrollController.watchOnly(
+      context,
+      (ctrl) => ctrl.offset < height,
+    );
     return SizedBox(
       height: height,
       child: TickerMode(
@@ -89,7 +93,8 @@ class _SetupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayAsRow = MediaQuery.sizeOf(context).width >=
+    final displayAsRow =
+        MediaQuery.sizeOf(context).width >=
         _horizontalMargin +
             _SetupStep1.minWidth +
             _gap +
@@ -98,7 +103,8 @@ class _SetupSection extends StatelessWidget {
             _SetupStep3.minWidth +
             _horizontalMargin;
 
-    final displayStep1AndStep2InRow = MediaQuery.sizeOf(context).width >=
+    final displayStep1AndStep2InRow =
+        MediaQuery.sizeOf(context).width >=
         _horizontalMargin +
             _SetupStep1.minWidth +
             _gap +
@@ -107,40 +113,34 @@ class _SetupSection extends StatelessWidget {
 
     return _Section(
       header: const _SectionHeader(title: 'Setup'),
-      child: displayAsRow
-          ? const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _SetupStep1(),
-                Gap(_gap),
-                _SetupStep2(),
-                Gap(_gap),
-                Flexible(child: _SetupStep3()),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: displayStep1AndStep2InRow
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.stretch,
-              children: [
-                if (displayStep1AndStep2InRow)
-                  const Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SetupStep1(),
-                      Gap(_gap),
-                      _SetupStep2(),
-                    ],
-                  )
-                else ...const [
+      child:
+          displayAsRow
+              ? const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   _SetupStep1(),
                   Gap(_gap),
                   _SetupStep2(),
+                  Gap(_gap),
+                  Flexible(child: _SetupStep3()),
                 ],
-                const Gap(_gap),
-                const _SetupStep3(),
-              ],
-            ),
+              )
+              : Column(
+                crossAxisAlignment:
+                    displayStep1AndStep2InRow
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.stretch,
+                children: [
+                  if (displayStep1AndStep2InRow)
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [_SetupStep1(), Gap(_gap), _SetupStep2()],
+                    )
+                  else ...const [_SetupStep1(), Gap(_gap), _SetupStep2()],
+                  const Gap(_gap),
+                  const _SetupStep3(),
+                ],
+              ),
     );
   }
 }
@@ -154,16 +154,18 @@ class _SetupStep1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final version = _contextPlusVersion
-        .bind(context, () async {
-          final yamlString =
-              await DefaultAssetBundle.of(context).loadString('pubspec.yaml');
-          final yaml = loadYaml(yamlString);
-          final version = yaml['dependencies']['context_plus'] as String;
-          return version;
-        })
-        .watch(context)
-        .data;
+    final version =
+        _contextPlusVersion
+            .bind(context, () async {
+              final yamlString = await DefaultAssetBundle.of(
+                context,
+              ).loadString('pubspec.yaml');
+              final yaml = loadYaml(yamlString);
+              final version = yaml['dependencies']['context_plus'] as String;
+              return version;
+            })
+            .watch(context)
+            .data;
 
     return _SetupStep(
       index: '1',
@@ -174,11 +176,7 @@ class _SetupStep1 extends StatelessWidget {
             TextSpan(
               children: [
                 TextSpan(text: 'Add the package to your\n'),
-                WidgetSpan(
-                  child: CodeQuote(
-                    child: Text('pubspec.yaml'),
-                  ),
-                ),
+                WidgetSpan(child: CodeQuote(child: Text('pubspec.yaml'))),
               ],
             ),
           ),
@@ -218,7 +216,8 @@ class _SetupStep2 extends StatelessWidget {
           Gap(24),
           CodeMultilineQuote(
             fileName: 'lib/main.dart',
-            code: 'void main() {\n'
+            code:
+                'void main() {\n'
                 '  runApp(\n'
                 '    ContextPlus.root(\n'
                 '      MaterialApp(...),\n'
@@ -239,17 +238,17 @@ class _SetupStep3 extends StatelessWidget {
   static const midWidth = 568.0;
   static const maxWidth = 724.0;
 
-  static final _copyableCode = '''
+  static final _copyableCode =
+      '''
     void main() {
       ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
       FlutterError.onError = ContextPlus.onError(FlutterError.onError);
       runApp(...);
     }
-  '''
-      .unindent()
-      .trim();
+  '''.unindent().trim();
 
-  static final _midWidthCode = '''
+  static final _midWidthCode =
+      '''
     void main() {
       ErrorWidget.builder =
           ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
@@ -257,11 +256,10 @@ class _SetupStep3 extends StatelessWidget {
           ContextPlus.onError(FlutterError.onError);
       runApp(...);
     }
-  '''
-      .unindent()
-      .trim();
+  '''.unindent().trim();
 
-  static final _minWidthCode = '''
+  static final _minWidthCode =
+      '''
     void main() {
       ErrorWidget.builder =
           ContextPlus.errorWidgetBuilder(
@@ -273,22 +271,23 @@ class _SetupStep3 extends StatelessWidget {
           );
       runApp(...);
     }
-  '''
-      .unindent()
-      .trim();
+  '''.unindent().trim();
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final code = constraints.maxWidth >= maxWidth
-            ? _copyableCode
-            : constraints.maxWidth >= midWidth
+        final code =
+            constraints.maxWidth >= maxWidth
+                ? _copyableCode
+                : constraints.maxWidth >= midWidth
                 ? _midWidthCode
                 : _minWidthCode;
         return ConstrainedBox(
-          constraints:
-              const BoxConstraints(minWidth: minWidth, maxWidth: maxWidth),
+          constraints: const BoxConstraints(
+            minWidth: minWidth,
+            maxWidth: maxWidth,
+          ),
           child: _SetupStep(
             index: '3',
             child: Column(
@@ -298,18 +297,22 @@ class _SetupStep3 extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                          text:
-                              '(Optional, but recommended) Wrap default error handlers with '),
+                        text:
+                            '(Optional, but recommended) Wrap default error handlers with ',
+                      ),
                       WidgetSpan(
                         child: CodeQuote(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               CodeType(
-                                  type: 'ContextPlus', style: CodeStyle.vsCode),
+                                type: 'ContextPlus',
+                                style: CodeStyle.vsCode,
+                              ),
                               CodeFunctionCall(
-                                  name: 'errorWidgetBuilder',
-                                  style: CodeStyle.vsCode),
+                                name: 'errorWidgetBuilder',
+                                style: CodeStyle.vsCode,
+                              ),
                             ],
                           ),
                         ),
@@ -321,9 +324,13 @@ class _SetupStep3 extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               CodeType(
-                                  type: 'ContextPlus', style: CodeStyle.vsCode),
+                                type: 'ContextPlus',
+                                style: CodeStyle.vsCode,
+                              ),
                               CodeFunctionCall(
-                                  name: 'onError', style: CodeStyle.vsCode),
+                                name: 'onError',
+                                style: CodeStyle.vsCode,
+                              ),
                             ],
                           ),
                         ),
@@ -331,7 +338,7 @@ class _SetupStep3 extends StatelessWidget {
                       TextSpan(
                         text:
                             ' to get more user-friendly error messages when known hot reload-preventing errors occur',
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -351,10 +358,7 @@ class _SetupStep3 extends StatelessWidget {
 }
 
 class _SetupStep extends StatelessWidget {
-  const _SetupStep({
-    required this.index,
-    required this.child,
-  });
+  const _SetupStep({required this.index, required this.child});
 
   final String index;
   final Widget child;
@@ -376,10 +380,7 @@ class _SetupStep extends StatelessWidget {
           Positioned(
             top: -8,
             left: -8,
-            child: Text(
-              '#$index',
-              style: indexStyle,
-            ),
+            child: Text('#$index', style: indexStyle),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -419,8 +420,8 @@ class _ExamplesSection extends StatelessWidget {
             tags: CounterExample.tags,
           ),
           _ExampleCard(
-            onPressed: () =>
-                context.url = CounterWithPropagationExample.urlPath,
+            onPressed:
+                () => context.url = CounterWithPropagationExample.urlPath,
             title: const Text(CounterWithPropagationExample.title),
             description: const Text(CounterWithPropagationExample.description),
             tags: CounterWithPropagationExample.tags,
@@ -455,9 +456,7 @@ class _DemonstrationsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Section(
-      header: const _SectionHeader(
-        title: 'Demonstrations',
-      ),
+      header: const _SectionHeader(title: 'Demonstrations'),
       child: Wrap(
         spacing: _gap,
         runSpacing: _gap,
@@ -482,11 +481,12 @@ class _DemonstrationsSection extends StatelessWidget {
           ),
           if (kDebugMode)
             _ExampleCard(
-              onPressed: () =>
-                  context.url = ContextWatchHotReloadTestScreen.urlPath,
+              onPressed:
+                  () => context.url = ContextWatchHotReloadTestScreen.urlPath,
               title: const Text(ContextWatchHotReloadTestScreen.title),
-              description:
-                  const Text(ContextWatchHotReloadTestScreen.description),
+              description: const Text(
+                ContextWatchHotReloadTestScreen.description,
+              ),
               tags: ContextWatchHotReloadTestScreen.tags,
             ),
         ],
@@ -496,10 +496,7 @@ class _DemonstrationsSection extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
-  const _Section({
-    required this.header,
-    required this.child,
-  });
+  const _Section({required this.header, required this.child});
 
   final Widget header;
   final Widget child;
@@ -520,10 +517,7 @@ class _Section extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    this.subtitle,
-  });
+  const _SectionHeader({required this.title, this.subtitle});
 
   final String title;
   final String? subtitle;
@@ -540,16 +534,13 @@ class _SectionHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
+          Text(title, style: Theme.of(context).textTheme.displayMedium),
           if (subtitle != null) ...[
             Text(
               subtitle!,
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ],

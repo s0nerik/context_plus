@@ -23,10 +23,11 @@ class _ExampleState extends State<Example> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animCtrl,
-      builder: (context, child) => Transform.scale(
-        scale: _animCtrl.value,
-        child: const FlutterLogo(size: 200),
-      ),
+      builder:
+          (context, child) => Transform.scale(
+            scale: _animCtrl.value,
+            child: const FlutterLogo(size: 200),
+          ),
     );
   }
 }

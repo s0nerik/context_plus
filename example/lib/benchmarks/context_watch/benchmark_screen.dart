@@ -66,10 +66,7 @@ class BenchmarkScreen extends StatefulWidget {
   static const title = 'Value observing benchmark';
   static const description =
       'Compare performance of different value observing mechanisms/libraries.';
-  static const tags = [
-    'ValueListenable.watch()',
-    'Stream.watch()',
-  ];
+  static const tags = ['ValueListenable.watch()', 'Stream.watch()'];
 
   static const urlPath = '/context_watch_benchmark';
 
@@ -144,11 +141,12 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
             _buildControlButtons(),
             const SizedBox(height: 16),
             Expanded(
-              child: _runBenchmark
-                  ? _buildGrid()
-                  : const Center(
-                      child: Text('Press "Start" to run benchmark'),
-                    ),
+              child:
+                  _runBenchmark
+                      ? _buildGrid()
+                      : const Center(
+                        child: Text('Press "Start" to run benchmark'),
+                      ),
             ),
             if (_runBenchmark)
               for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
@@ -201,10 +199,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         DropdownButton<int>(
           isDense: true,
           value: _singleObservableSubscriptionsCount,
-          onChanged: (value) => setState(() {
-            _singleObservableSubscriptionsCount = value!;
-            _bodyKey = UniqueKey();
-          }),
+          onChanged:
+              (value) => setState(() {
+                _singleObservableSubscriptionsCount = value!;
+                _bodyKey = UniqueKey();
+              }),
           items: [
             for (final singleObservableSubscriptionsCount
                 in widget.singleObservableSubscriptionCountOptions)
@@ -227,10 +226,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         DropdownButton<int>(
           isDense: true,
           value: _tilesCount,
-          onChanged: (value) => setState(() {
-            _tilesCount = value!;
-            _bodyKey = UniqueKey();
-          }),
+          onChanged:
+              (value) => setState(() {
+                _tilesCount = value!;
+                _bodyKey = UniqueKey();
+              }),
           items: [
             for (final tilesCount in widget.tileCountOptions)
               DropdownMenuItem(
@@ -252,10 +252,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         DropdownButton<int>(
           isDense: true,
           value: _observablesPerTile,
-          onChanged: (value) => setState(() {
-            _observablesPerTile = value!;
-            _bodyKey = UniqueKey();
-          }),
+          onChanged:
+              (value) => setState(() {
+                _observablesPerTile = value!;
+                _bodyKey = UniqueKey();
+              }),
           items: [
             for (final observablesPerTile in widget.observablesPerTileOptions)
               DropdownMenuItem(
@@ -277,18 +278,19 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         DropdownButton<ObservableType>(
           isDense: true,
           value: _observableType,
-          onChanged: (value) => setState(() {
-            _listenerType = value!.listenerTypes.first;
-            _observableType = value;
-            _commonPublisher.dispose();
-            _commonPublisher = Publisher(
-              observableType: _observableType,
-              observableCount: _singleObservableSubscriptionsCount,
-              initialDelay: Duration.zero,
-              interval: widget.tileObservableNotifyInterval,
-            )..publishWhileMounted(context);
-            _bodyKey = UniqueKey();
-          }),
+          onChanged:
+              (value) => setState(() {
+                _listenerType = value!.listenerTypes.first;
+                _observableType = value;
+                _commonPublisher.dispose();
+                _commonPublisher = Publisher(
+                  observableType: _observableType,
+                  observableCount: _singleObservableSubscriptionsCount,
+                  initialDelay: Duration.zero,
+                  interval: widget.tileObservableNotifyInterval,
+                )..publishWhileMounted(context);
+                _bodyKey = UniqueKey();
+              }),
           items: [
             for (final observableType in ObservableType.values)
               DropdownMenuItem(
@@ -309,10 +311,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         DropdownButton<ListenerType>(
           isDense: true,
           value: _listenerType,
-          onChanged: (value) => setState(() {
-            _listenerType = value!;
-            _bodyKey = UniqueKey();
-          }),
+          onChanged:
+              (value) => setState(() {
+                _listenerType = value!;
+                _bodyKey = UniqueKey();
+              }),
           items: [
             for (final listenerType in _observableType.listenerTypes)
               DropdownMenuItem(
@@ -347,12 +350,13 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           style: OutlinedButton.styleFrom(
             splashFactory: NoSplash.splashFactory,
           ),
-          onPressed: !_runBenchmark
-              ? () => setState(() {
+          onPressed:
+              !_runBenchmark
+                  ? () => setState(() {
                     _bodyKey = UniqueKey();
                     _runBenchmark = true;
                   })
-              : null,
+                  : null,
           child: const Text('Start'),
         ),
         OutlinedButton(
@@ -360,12 +364,13 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           style: OutlinedButton.styleFrom(
             splashFactory: NoSplash.splashFactory,
           ),
-          onPressed: _runBenchmark
-              ? () => setState(() {
+          onPressed:
+              _runBenchmark
+                  ? () => setState(() {
                     _bodyKey = UniqueKey();
                     _runBenchmark = false;
                   })
-              : null,
+                  : null,
           child: const Text('Stop'),
         ),
         Row(
@@ -373,10 +378,11 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           children: [
             Checkbox(
               value: _visualize,
-              onChanged: (value) => setState(() {
-                _visualize = value!;
-                _bodyKey = UniqueKey();
-              }),
+              onChanged:
+                  (value) => setState(() {
+                    _visualize = value!;
+                    _bodyKey = UniqueKey();
+                  }),
             ),
             const Text('Visualize'),
           ],
@@ -440,11 +446,12 @@ class _Tile extends StatelessWidget {
       observableNotifyInterval: observableNotifyInterval,
       observableType: observableType,
       observablesPerTile: observablesPerTile,
-      builder: (context, publisher) => Observer(
-        publisher: publisher,
-        listenerType: listenerType,
-        visualize: visualize,
-      ),
+      builder:
+          (context, publisher) => Observer(
+            publisher: publisher,
+            listenerType: listenerType,
+            visualize: visualize,
+          ),
     );
   }
 }
@@ -463,10 +470,7 @@ class _PublisherProvider extends StatefulWidget {
   final Duration observableNotifyInterval;
   final ObservableType observableType;
   final int observablesPerTile;
-  final Widget Function(
-    BuildContext context,
-    Publisher publisher,
-  ) builder;
+  final Widget Function(BuildContext context, Publisher publisher) builder;
 
   @override
   State<_PublisherProvider> createState() => _PublisherProviderState();

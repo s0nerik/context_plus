@@ -9,9 +9,7 @@ class ContextWatchHotReloadTestScreen extends StatefulWidget {
   static const title = 'Hot Reload Test';
   static const description =
       'Example demonstrating that observables can be watched/unwatched dynamically and safely.';
-  static const tags = [
-    'Stream.watch()',
-  ];
+  static const tags = ['Stream.watch()'];
 
   static const urlPath = '/context_watch_hot_reload_test';
 
@@ -93,9 +91,7 @@ class _ContextWatchHotReloadTestScreenState
     final stream2Value =
         _watchStream2 ? _stream2.watch(context).data ?? '' : '';
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(ContextWatchHotReloadTestScreen.title),
-      ),
+      appBar: AppBar(title: const Text(ContextWatchHotReloadTestScreen.title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

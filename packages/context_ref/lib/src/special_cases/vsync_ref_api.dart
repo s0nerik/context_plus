@@ -7,7 +7,8 @@ import '../context_ref_root.dart';
 import '../ref.dart';
 
 extension AnimationControllerRefAPI<
-        TAnimationController extends AnimationController>
+  TAnimationController extends AnimationController
+>
     on Ref<TAnimationController> {
   /// Binds the provided [TAnimationController] to the [context].
   TAnimationController bind(
@@ -44,7 +45,8 @@ extension AnimationControllerRefAPI<
 }
 
 extension NullableAnimationControllerRefAPI<
-        TAnimationController extends AnimationController>
+  TAnimationController extends AnimationController
+>
     on Ref<TAnimationController?> {
   /// Optionally binds the provided [TAnimationController] to the [context].
   TAnimationController? bind(
@@ -126,8 +128,9 @@ ValueProvider<T> _bindWithVsync<T>({
 }) {
   final shouldEnableTicker = TickerMode.of(context);
   final isTickerEnabled = _isTickerEnabled.bind(
-      context, () => ValueNotifier(shouldEnableTicker))
-    ..value = shouldEnableTicker;
+    context,
+    () => ValueNotifier(shouldEnableTicker),
+  )..value = shouldEnableTicker;
 
   _SingleTickerProvider? vsync;
   return ContextRefRoot.of(context).bind(
@@ -151,7 +154,7 @@ ValueProvider<T> _bindWithVsync<T>({
 
 class _SingleTickerProvider implements TickerProvider {
   _SingleTickerProvider(ValueListenable<bool> tickerModeNotifier)
-      : _tickerModeNotifier = tickerModeNotifier {
+    : _tickerModeNotifier = tickerModeNotifier {
     tickerModeNotifier.addListener(_updateTickerMode);
     _updateTickerMode();
   }

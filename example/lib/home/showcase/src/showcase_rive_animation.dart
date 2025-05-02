@@ -11,8 +11,7 @@ enum ShowcaseKeyframe {
   bind(frame: 112, lastFrame: 154, windowHeight: 572),
   // Bye, Builders! Hello, .watch()!
   // (context_plus migration is complete)
-  watch(frame: 155, lastFrame: 155, windowHeight: 494),
-  ;
+  watch(frame: 155, lastFrame: 155, windowHeight: 494);
 
   final int frame;
   final int lastFrame;
@@ -96,10 +95,7 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
     return result;
   }
 
-  void animateToKeyframe(
-    ShowcaseKeyframe keyframe, {
-    bool jump = false,
-  }) {
+  void animateToKeyframe(ShowcaseKeyframe keyframe, {bool jump = false}) {
     isActive = false;
 
     instance!.animation.speed = jump ? 10000 : 0.5;
@@ -129,17 +125,23 @@ class ShowcaseRiveController extends SimpleAnimation with ChangeNotifier {
 double _calculateWindowHeight(num frame) {
   const epsilon = 0.0001;
 
-  final transition = _windowHeightTransitions
-      .where(
-        (t) => t.startFrame - epsilon <= frame && frame <= t.endFrame + epsilon,
-      )
-      .first;
+  final transition =
+      _windowHeightTransitions
+          .where(
+            (t) =>
+                t.startFrame - epsilon <= frame &&
+                frame <= t.endFrame + epsilon,
+          )
+          .first;
 
-  final rawProgress = (frame - transition.startFrame) /
+  final rawProgress =
+      (frame - transition.startFrame) /
       (transition.endFrame - transition.startFrame);
-  final progress =
-      const ElasticOutCurve(1).transform(rawProgress.clamp(0.0, 1.0));
-  final result = transition.startHeight +
+  final progress = const ElasticOutCurve(
+    1,
+  ).transform(rawProgress.clamp(0.0, 1.0));
+  final result =
+      transition.startHeight +
       (transition.endHeight - transition.startHeight) * progress;
   return result;
 }

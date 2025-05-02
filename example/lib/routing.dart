@@ -33,10 +33,10 @@ Iterable<Widget?> _generatePageWidgets(UrlRouter router) sync* {
 }
 
 UrlRouter createRouter() {
-  List<Page> generatePages(UrlRouter router) => _generatePageWidgets(router)
-      .nonNulls
-      .map((screen) => MaterialPage(child: screen))
-      .toList();
+  List<Page> generatePages(UrlRouter router) =>
+      _generatePageWidgets(
+        router,
+      ).nonNulls.map((screen) => MaterialPage(child: screen)).toList();
 
   late final UrlRouter router;
   return router = UrlRouter(
@@ -45,8 +45,9 @@ UrlRouter createRouter() {
       final pages = generatePages(router);
       if (pages.length > 1 && route.didPop(result)) {
         final uri = Uri.parse(router.url);
-        final newPathSegments =
-            uri.pathSegments.take(uri.pathSegments.length - 1);
+        final newPathSegments = uri.pathSegments.take(
+          uri.pathSegments.length - 1,
+        );
         router.url = uri.replace(pathSegments: newPathSegments).toString();
         return true;
       }

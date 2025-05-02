@@ -3,13 +3,40 @@ import 'package:context_watch_base/watch_callback_record_util.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordRefExt24<TListenable0 extends Listenable, T1, TListenable2 extends Listenable> on (context_ref.ReadOnlyRef<TListenable0>, context_ref.ReadOnlyRef<Future<T1>>, context_ref.ReadOnlyRef<TListenable2>) {
+extension ContextWatchCallbackRecordRefExt24<
+  TListenable0 extends Listenable,
+  T1,
+  TListenable2 extends Listenable
+>
+    on
+        (
+          context_ref.ReadOnlyRef<TListenable0>,
+          context_ref.ReadOnlyRef<Future<T1>>,
+          context_ref.ReadOnlyRef<TListenable2>,
+        ) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(TListenable0, AsyncSnapshot<T1>, TListenable2) selector,
   ) {
-    return watchOnly3<R, TListenable0, AsyncSnapshot<T1>, TListenable2, TListenable0, T1, TListenable2>(context, selector, $1.of(context), $2.of(context), $3.of(context), $1.of(context), AsyncSnapshot<T1>.nothing(), $3.of(context));
+    return watchOnly3<
+      R,
+      TListenable0,
+      AsyncSnapshot<T1>,
+      TListenable2,
+      TListenable0,
+      T1,
+      TListenable2
+    >(
+      context,
+      selector,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      $1.of(context),
+      AsyncSnapshot<T1>.nothing(),
+      $3.of(context),
+    );
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -20,11 +47,33 @@ extension ContextWatchCallbackRecordRefExt24<TListenable0 extends Listenable, T1
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect3<TListenable0, AsyncSnapshot<T1>, TListenable2, TListenable0, T1, TListenable2>(context, effect, $1.of(context), $2.of(context), $3.of(context), key: key, immediate: immediate, once: once);
+    return watchEffect3<
+      TListenable0,
+      AsyncSnapshot<T1>,
+      TListenable2,
+      TListenable0,
+      T1,
+      TListenable2
+    >(
+      context,
+      effect,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      key: key,
+      immediate: immediate,
+      once: once,
+    );
   }
-  
+
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
-    return unwatchEffect3(context, $1.of(context), $2.of(context), $3.of(context), key: key);
+    return unwatchEffect3(
+      context,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      key: key,
+    );
   }
 }

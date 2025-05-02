@@ -29,7 +29,9 @@ class BlocContextWatcher extends ContextWatcher<StateStreamable> {
 
   @override
   ContextWatchSubscription createSubscription<T>(
-      BuildContext context, StateStreamable observable) {
+    BuildContext context,
+    StateStreamable observable,
+  ) {
     return _BlocSubscription(
       bloc: observable,
       streamSubscription: observable.stream.listen(
@@ -48,9 +50,9 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watch();
+    InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this)?.watch();
     return state;
   }
 
@@ -64,8 +66,9 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
-    final observable = InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this);
+    final observable = InheritedContextWatch.of(
+      context,
+    ).getOrCreateObservable<T>(context, this);
     if (observable == null) return selector(state);
 
     final selectedValue = selector(state);
@@ -109,10 +112,7 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
 
   /// Remove the effect with the given [key] from the list of effects to be
   /// called when this [StateStreamable] notifies of a change.
-  void unwatchEffect(
-    BuildContext context, {
-    required Object key,
-  }) {
+  void unwatchEffect(BuildContext context, {required Object key}) {
     InheritedContextWatch.of(context).unwatchEffect(context, this, key);
   }
 }

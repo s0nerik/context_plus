@@ -10,10 +10,11 @@ class SvgIcon extends StatelessWidget {
     this.height,
     this.size,
   }) : assert(
-            size == null && width == null && height == null ||
-                size != null && width == null && height == null ||
-                size == null && width != null && height != null,
-            'Specify either size or width and height');
+         size == null && width == null && height == null ||
+             size != null && width == null && height == null ||
+             size == null && width != null && height != null,
+         'Specify either size or width and height',
+       );
 
   final String path;
   final Color? color;

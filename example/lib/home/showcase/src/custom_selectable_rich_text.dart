@@ -9,10 +9,7 @@ final _textSelection = Ref<ValueNotifier<TextSelection?>>();
 final _pressedKeys = Ref<ValueNotifier<Set<LogicalKeyboardKey>>>();
 
 class CustomSelectableRichText extends StatelessWidget {
-  const CustomSelectableRichText(
-    this.span, {
-    super.key,
-  });
+  const CustomSelectableRichText(this.span, {super.key});
 
   final TextSpan span;
   void _handleKey(BuildContext context, KeyEvent event) {
@@ -27,9 +24,10 @@ class CustomSelectableRichText extends StatelessWidget {
 
     final copyRequested =
         (oldPressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
-                oldPressedKeys.contains(LogicalKeyboardKey.metaRight)) &&
-            oldPressedKeys.contains(LogicalKeyboardKey.keyC);
-    final copyConfirmed = pressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
+            oldPressedKeys.contains(LogicalKeyboardKey.metaRight)) &&
+        oldPressedKeys.contains(LogicalKeyboardKey.keyC);
+    final copyConfirmed =
+        pressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
         pressedKeys.contains(LogicalKeyboardKey.metaRight) ||
         pressedKeys.contains(LogicalKeyboardKey.keyC);
 
@@ -41,8 +39,10 @@ class CustomSelectableRichText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusNode = _focusNode.bind(context, () => FocusNode());
-    final textSelection =
-        _textSelection.bind(context, () => ValueNotifier(null));
+    final textSelection = _textSelection.bind(
+      context,
+      () => ValueNotifier(null),
+    );
     _pressedKeys.bind(context, () => ValueNotifier(const {}));
 
     final Widget child;
@@ -54,12 +54,13 @@ class CustomSelectableRichText extends StatelessWidget {
       // https://github.com/flutter/flutter/issues/122015
       child = SelectableText.rich(
         span,
-        onSelectionChanged: (selection, source) =>
-            textSelection.value = selection,
+        onSelectionChanged:
+            (selection, source) => textSelection.value = selection,
         contextMenuBuilder: (context, editableTextState) {
           final buttonItems = editableTextState.contextMenuButtonItems;
-          final copyButtonIndex = buttonItems
-              .indexWhere((btn) => btn.type == ContextMenuButtonType.copy);
+          final copyButtonIndex = buttonItems.indexWhere(
+            (btn) => btn.type == ContextMenuButtonType.copy,
+          );
           if (copyButtonIndex >= 0) {
             final copyButtonItem = buttonItems[copyButtonIndex];
             buttonItems[copyButtonIndex] = copyButtonItem.copyWith(
@@ -110,7 +111,7 @@ void _copyToClipboard(
   }
   Clipboard.setData(ClipboardData(text: copyContent));
 
-  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    content: Text('Copied to clipboard!'),
-  ));
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(const SnackBar(content: Text('Copied to clipboard!')));
 }

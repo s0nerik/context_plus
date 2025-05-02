@@ -12,9 +12,7 @@ final _message = Ref<String>();
 final _scope = Ref<_Scope>();
 
 class _Scope {
-  _Scope({
-    required this.scopeName,
-  });
+  _Scope({required this.scopeName});
 
   final String scopeName;
 
@@ -32,8 +30,10 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _globalScope.bind(context, () => _Scope(scopeName: 'Global scope'));
-    final childrenAmount =
-        _childrenAmount.bind(context, () => ValueNotifier(3));
+    final childrenAmount = _childrenAmount.bind(
+      context,
+      () => ValueNotifier(3),
+    );
 
     return Column(
       children: [
@@ -42,9 +42,7 @@ class Example extends StatelessWidget {
             child: Theme(
               data: ThemeData.dark(),
               child: DefaultTextStyle.merge(
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                style: const TextStyle(color: Colors.white),
                 child: _ChildWrapper(
                   depth: 1,
                   maxDepth: childrenAmount.watch(context),
@@ -63,12 +61,10 @@ class Example extends StatelessWidget {
             TextButton(
               onPressed: () => childrenAmount.value--,
               child: const Text('Remove scope'),
-            )
+            ),
           ],
         ),
-        SizedBox(
-          height: MediaQuery.paddingOf(context).bottom,
-        ),
+        SizedBox(height: MediaQuery.paddingOf(context).bottom),
       ],
     );
   }
@@ -106,34 +102,37 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 
     _scope.bind(context, () => _Scope(scopeName: name));
 
-    final parentColor = widget.parentContext != null
-        ? _childColor.of(widget.parentContext!)
-        : null;
+    final parentColor =
+        widget.parentContext != null
+            ? _childColor.of(widget.parentContext!)
+            : null;
 
     return Stack(
       children: [
         _Child(
           parentColor: parentColor,
-          child: widget.depth >= widget.maxDepth
-              ? const SizedBox.shrink()
-              : _ChildWrapper(
-                  depth: widget.depth + 1,
-                  maxDepth: widget.maxDepth,
-                  parentContext: context,
-                ),
+          child:
+              widget.depth >= widget.maxDepth
+                  ? const SizedBox.shrink()
+                  : _ChildWrapper(
+                    depth: widget.depth + 1,
+                    maxDepth: widget.maxDepth,
+                    parentContext: context,
+                  ),
         ),
         Positioned(
           top: 0,
           right: 0,
           child: TextButton(
-            onPressed: () => setState(() {
-              _color = Color.fromARGB(
-                255,
-                Random().nextInt(128),
-                Random().nextInt(128),
-                Random().nextInt(128),
-              );
-            }),
+            onPressed:
+                () => setState(() {
+                  _color = Color.fromARGB(
+                    255,
+                    Random().nextInt(128),
+                    Random().nextInt(128),
+                    Random().nextInt(128),
+                  );
+                }),
             child: const Text('Set random color'),
           ),
         ),
@@ -143,10 +142,7 @@ class _ChildWrapperState extends State<_ChildWrapper> {
 }
 
 class _Child extends StatelessWidget {
-  const _Child({
-    required this.parentColor,
-    this.child,
-  });
+  const _Child({required this.parentColor, this.child});
 
   final Color? parentColor;
   final Widget? child;
@@ -180,10 +176,7 @@ class _Child extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: parentColor!,
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: Colors.grey.shade400,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey.shade400, width: 1),
                   ),
                 ),
               ],

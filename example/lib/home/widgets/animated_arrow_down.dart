@@ -34,15 +34,16 @@ class AnimatedArrowDown extends StatelessWidget {
 
 class ScrollDownArrowsPainter extends CustomPainter {
   ScrollDownArrowsPainter({required this.animation})
-      : super(repaint: animation);
+    : super(repaint: animation);
 
   final Animation<double> animation;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    final paint =
+        Paint()
+          ..strokeWidth = 2
+          ..style = PaintingStyle.stroke;
 
     final arrowWidth = size.width * 0.6;
     final arrowHeight = size.height * 0.25;
@@ -60,10 +61,11 @@ class ScrollDownArrowsPainter extends CustomPainter {
 
       paint.color = Colors.white.withValues(alpha: opacity);
 
-      final path = Path()
-        ..moveTo(size.width / 2 - arrowWidth / 2, yOffset)
-        ..lineTo(size.width / 2, yOffset + arrowHeight)
-        ..lineTo(size.width / 2 + arrowWidth / 2, yOffset);
+      final path =
+          Path()
+            ..moveTo(size.width / 2 - arrowWidth / 2, yOffset)
+            ..lineTo(size.width / 2, yOffset + arrowHeight)
+            ..lineTo(size.width / 2 + arrowWidth / 2, yOffset);
 
       canvas.drawPath(path, paint);
     }

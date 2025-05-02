@@ -36,9 +36,10 @@ class CodeShowcaseProgressStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var expandProgress = expandCtrl?.watch(context);
-    expandProgress = expandProgress != null
-        ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
-        : null;
+    expandProgress =
+        expandProgress != null
+            ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
+            : null;
 
     return Transform.translate(
       offset: translateY != null ? Offset(0, translateY!) : Offset.zero,
@@ -81,214 +82,189 @@ const _descriptions = {
   ShowcaseKeyframe.watch: _watchDescription,
 };
 
-const _vanillaFlutterTitle = TextSpan(children: [
-  WidgetSpan(
-    child: Padding(
-      padding: EdgeInsets.only(bottom: 2),
+const _vanillaFlutterTitle = TextSpan(
+  children: [
+    WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 2),
+        child: SvgPicture(
+          SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+          width: 16,
+          height: 16,
+        ),
+      ),
+    ),
+    TextSpan(text: '  '),
+    TextSpan(text: 'Meet '),
+    WidgetSpan(child: CodeQuote(child: CodeType(type: 'context_plus'))),
+    TextSpan(text: '!'),
+  ],
+);
+const _vanillaFlutterDescription = TextSpan(
+  children: [
+    TextSpan(text: 'See this bulky piece of pure Flutter code?'),
+    TextSpan(text: '\n\n'),
+    TextSpan(text: 'We can halve it!'),
+    TextSpan(text: '\n'),
+    TextSpan(text: 'Let me show you how.'),
+    TextSpan(text: ' '),
+    CopyableWidgetSpan(
+      index: 0,
+      plainText: '🚀',
       child: SvgPicture(
-        SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+        SvgAssetLoader('assets/svg/emoji_u1f680.svg'), // 🚀
         width: 16,
         height: 16,
       ),
     ),
-  ),
-  TextSpan(text: '  '),
-  TextSpan(text: 'Meet '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeType(type: 'context_plus'),
-    ),
-  ),
-  TextSpan(text: '!'),
-]);
-const _vanillaFlutterDescription = TextSpan(children: [
-  TextSpan(text: 'See this bulky piece of pure Flutter code?'),
-  TextSpan(text: '\n\n'),
-  TextSpan(text: 'We can halve it!'),
-  TextSpan(text: '\n'),
-  TextSpan(text: 'Let me show you how.'),
-  TextSpan(text: ' '),
-  CopyableWidgetSpan(
-    index: 0,
-    plainText: '🚀',
-    child: SvgPicture(
-      SvgAssetLoader('assets/svg/emoji_u1f680.svg'), // 🚀
-      width: 16,
-      height: 16,
-    ),
-  ),
-]);
+  ],
+);
 
-const _refTitle = TextSpan(children: [
-  WidgetSpan(
-    child: Padding(
-      padding: EdgeInsets.only(bottom: 2),
-      child: SvgPicture(
-        SvgAssetLoader('assets/svg/emoji_u1f517.svg'), // 🔗
-        width: 16,
-        height: 16,
+const _refTitle = TextSpan(
+  children: [
+    WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 2),
+        child: SvgPicture(
+          SvgAssetLoader('assets/svg/emoji_u1f517.svg'), // 🔗
+          width: 16,
+          height: 16,
+        ),
       ),
     ),
-  ),
-  TextSpan(text: '  '),
-  TextSpan(text: 'Create a '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeType(type: 'Ref'),
+    TextSpan(text: '  '),
+    TextSpan(text: 'Create a '),
+    WidgetSpan(child: CodeQuote(child: CodeType(type: 'Ref'))),
+  ],
+);
+const _refDescription = TextSpan(
+  children: [
+    CopyableWidgetSpan(
+      index: 0,
+      plainText: '`Ref<T>`',
+      child: CodeQuote(child: CodeType(type: 'Ref', genericTypes: ['T'])),
     ),
-  ),
-]);
-const _refDescription = TextSpan(children: [
-  CopyableWidgetSpan(
-    index: 0,
-    plainText: '`Ref<T>`',
-    child: CodeQuote(
-      child: CodeType(type: 'Ref', genericTypes: ['T']),
+    TextSpan(text: ' is a reference to a value of type '),
+    CopyableWidgetSpan(
+      index: 1,
+      plainText: '`T`',
+      child: CodeQuote(child: CodeType(type: 'T')),
     ),
-  ),
-  TextSpan(text: ' is a reference to a value of type '),
-  CopyableWidgetSpan(
-    index: 1,
-    plainText: '`T`',
-    child: CodeQuote(
-      child: CodeType(type: 'T'),
+    TextSpan(text: ' provided by a parent '),
+    CopyableWidgetSpan(
+      index: 2,
+      plainText: '`BuildContext`',
+      child: CodeQuote(child: CodeType(type: 'BuildContext')),
     ),
-  ),
-  TextSpan(text: ' provided by a parent '),
-  CopyableWidgetSpan(
-    index: 2,
-    plainText: '`BuildContext`',
-    child: CodeQuote(
-      child: CodeType(type: 'BuildContext'),
+    TextSpan(text: '.'),
+    TextSpan(text: '\n\n'),
+    TextSpan(text: 'It behaves similarly to '),
+    CopyableWidgetSpan(
+      index: 3,
+      plainText: '`InheritedWidget`',
+      child: CodeQuote(child: CodeType(type: 'InheritedWidget')),
     ),
-  ),
-  TextSpan(text: '.'),
-  TextSpan(text: '\n\n'),
-  TextSpan(text: 'It behaves similarly to '),
-  CopyableWidgetSpan(
-    index: 3,
-    plainText: '`InheritedWidget`',
-    child: CodeQuote(
-      child: CodeType(type: 'InheritedWidget'),
+    TextSpan(
+      text: ' with a single value property and provides a conventional ',
     ),
-  ),
-  TextSpan(
-    text: ' with a single value property and provides a conventional ',
-  ),
-  CopyableWidgetSpan(
-    index: 4,
-    plainText: '`.of(context)`',
-    child: CodeQuote(
-      child: CodeFunctionCall(name: 'of', params: [
-        CodeParameter(name: 'context'),
-      ]),
-    ),
-  ),
-  TextSpan(text: ' method to access the value.'),
-  TextSpan(text: '\n\n'),
-  CopyableWidgetSpan(
-    index: 5,
-    plainText: '`Ref<AnyObservableType>`',
-    child: CodeQuote(
-      child: CodeType(
-        type: 'Ref',
-        genericTypes: [
-          '{Stream|Future|Listenable|ValueListenable|AsyncListenable}'
-        ],
+    CopyableWidgetSpan(
+      index: 4,
+      plainText: '`.of(context)`',
+      child: CodeQuote(
+        child: CodeFunctionCall(
+          name: 'of',
+          params: [CodeParameter(name: 'context')],
+        ),
       ),
     ),
-  ),
-  TextSpan(text: ' also provides\n'),
-  CopyableWidgetSpan(
-    index: 6,
-    plainText: '`.watch()`',
-    child: CodeQuote(
-      child: CodeFunctionCall(name: 'watch'),
-    ),
-  ),
-  TextSpan(text: ' and '),
-  CopyableWidgetSpan(
-    index: 7,
-    plainText: '`.watchOnly()`',
-    child: CodeQuote(
-      child: CodeFunctionCall(name: 'watchOnly'),
-    ),
-  ),
-  TextSpan(text: ' methods to observe the value conveniently.'),
-  TextSpan(text: '\n\n'),
-  CopyableWidgetSpan(
-    index: 8,
-    plainText: '`Ref`',
-    child: CodeQuote(
-      child: CodeType(type: 'Ref'),
-    ),
-  ),
-  TextSpan(text: ' can be bound only to a single value per '),
-  CopyableWidgetSpan(
-    index: 9,
-    plainText: '`BuildContext`',
-    child: CodeQuote(
-      child: CodeType(type: 'BuildContext'),
-    ),
-  ),
-  TextSpan(text: '. Child contexts can override their parents\' '),
-  CopyableWidgetSpan(
-    index: 10,
-    plainText: '`Ref`',
-    child: CodeQuote(
-      child: CodeType(type: 'Ref'),
-    ),
-  ),
-  TextSpan(text: ' bindings.'),
-  TextSpan(text: '\n\n'),
-  CopyableWidgetSpan(
-    index: 11,
-    plainText: '👋',
-    child: Padding(
-      padding: EdgeInsets.only(right: 4),
-      child: SvgPicture(
-        SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
-        width: 16,
-        height: 16,
+    TextSpan(text: ' method to access the value.'),
+    TextSpan(text: '\n\n'),
+    CopyableWidgetSpan(
+      index: 5,
+      plainText: '`Ref<AnyObservableType>`',
+      child: CodeQuote(
+        child: CodeType(
+          type: 'Ref',
+          genericTypes: [
+            '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
+          ],
+        ),
       ),
     ),
-  ),
-  TextSpan(text: ' '),
-  TextSpan(text: 'Bye, '),
-  CopyableWidgetSpan(
-    index: 12,
-    plainText: '`InheritedWidget`',
-    child: CodeQuote(
-      child: CodeType(type: 'InheritedWidget'),
+    TextSpan(text: ' also provides\n'),
+    CopyableWidgetSpan(
+      index: 6,
+      plainText: '`.watch()`',
+      child: CodeQuote(child: CodeFunctionCall(name: 'watch')),
     ),
-  ),
-  TextSpan(text: '!'),
-]);
+    TextSpan(text: ' and '),
+    CopyableWidgetSpan(
+      index: 7,
+      plainText: '`.watchOnly()`',
+      child: CodeQuote(child: CodeFunctionCall(name: 'watchOnly')),
+    ),
+    TextSpan(text: ' methods to observe the value conveniently.'),
+    TextSpan(text: '\n\n'),
+    CopyableWidgetSpan(
+      index: 8,
+      plainText: '`Ref`',
+      child: CodeQuote(child: CodeType(type: 'Ref')),
+    ),
+    TextSpan(text: ' can be bound only to a single value per '),
+    CopyableWidgetSpan(
+      index: 9,
+      plainText: '`BuildContext`',
+      child: CodeQuote(child: CodeType(type: 'BuildContext')),
+    ),
+    TextSpan(text: '. Child contexts can override their parents\' '),
+    CopyableWidgetSpan(
+      index: 10,
+      plainText: '`Ref`',
+      child: CodeQuote(child: CodeType(type: 'Ref')),
+    ),
+    TextSpan(text: ' bindings.'),
+    TextSpan(text: '\n\n'),
+    CopyableWidgetSpan(
+      index: 11,
+      plainText: '👋',
+      child: Padding(
+        padding: EdgeInsets.only(right: 4),
+        child: SvgPicture(
+          SvgAssetLoader('assets/svg/emoji_u1f44b.svg'), // 👋
+          width: 16,
+          height: 16,
+        ),
+      ),
+    ),
+    TextSpan(text: ' '),
+    TextSpan(text: 'Bye, '),
+    CopyableWidgetSpan(
+      index: 12,
+      plainText: '`InheritedWidget`',
+      child: CodeQuote(child: CodeType(type: 'InheritedWidget')),
+    ),
+    TextSpan(text: '!'),
+  ],
+);
 
-const _bindTitle = TextSpan(children: [
-  WidgetSpan(
-    child: Padding(
-      padding: EdgeInsets.only(bottom: 2),
-      child: SvgPicture(
-        SvgAssetLoader('assets/svg/emoji_u1f91d.svg'), // 🤝
-        width: 16,
-        height: 16,
+const _bindTitle = TextSpan(
+  children: [
+    WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 2),
+        child: SvgPicture(
+          SvgAssetLoader('assets/svg/emoji_u1f91d.svg'), // 🤝
+          width: 16,
+          height: 16,
+        ),
       ),
     ),
-  ),
-  TextSpan(text: '  '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeFunctionCall(name: 'bind'),
-    ),
-  ),
-  TextSpan(text: ' it to a '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeType(type: 'BuildContext'),
-    ),
-  ),
-]);
+    TextSpan(text: '  '),
+    WidgetSpan(child: CodeQuote(child: CodeFunctionCall(name: 'bind'))),
+    TextSpan(text: ' it to a '),
+    WidgetSpan(child: CodeQuote(child: CodeType(type: 'BuildContext'))),
+  ],
+);
 const _bindDescription = TextSpan(
   children: [
     CopyableWidgetSpan(
@@ -302,10 +278,7 @@ const _bindDescription = TextSpan(
             CodeType(type: 'Ref'),
             CodeFunctionCall(
               name: 'bind',
-              params: [
-                CodeParameter(name: 'context'),
-                Text('() => ...'),
-              ],
+              params: [CodeParameter(name: 'context'), Text('() => ...')],
             ),
           ],
         ),
@@ -318,32 +291,24 @@ const _bindDescription = TextSpan(
       CopyableWidgetSpan(
         index: 1,
         plainText: '`Ref`',
-        child: CodeQuote(
-          child: CodeType(type: 'Ref'),
-        ),
+        child: CodeQuote(child: CodeType(type: 'Ref')),
       ),
       TextSpan(text: ' to the '),
       TextSpan(
         text: 'value initializer',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
       TextSpan(text: '.'),
     ],
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
-      TextSpan(
-        text: 'Value initialization happens immediately.',
-      ),
+      TextSpan(text: 'Value initialization happens immediately.'),
       TextSpan(text: ' Use '),
       CopyableWidgetSpan(
         index: 2,
         plainText: '`.bindLazy()`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'bindLazy'),
-        ),
+        child: CodeQuote(child: CodeFunctionCall(name: 'bindLazy')),
       ),
       TextSpan(text: ' if you need it lazy.'),
     ],
@@ -354,24 +319,16 @@ const _bindDescription = TextSpan(
       CopyableWidgetSpan(
         index: 3,
         plainText: '`.dispose()`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'dispose'),
-        ),
+        child: CodeQuote(child: CodeFunctionCall(name: 'dispose')),
       ),
-      TextSpan(
-        text: '\'d automatically when the widget is disposed.',
-      ),
+      TextSpan(text: '\'d automatically when the widget is disposed.'),
       TextSpan(text: ' Provide a '),
       CopyableWidgetSpan(
         index: 4,
         plainText: '`dispose`',
-        child: CodeQuote(
-          child: CodeParameter(name: 'dispose'),
-        ),
+        child: CodeQuote(child: CodeParameter(name: 'dispose')),
       ),
-      TextSpan(
-        text: ' callback to customize the disposal if needed.',
-      ),
+      TextSpan(text: ' callback to customize the disposal if needed.'),
     ],
     TextSpan(text: '\n'),
     ...[
@@ -380,9 +337,7 @@ const _bindDescription = TextSpan(
       CopyableWidgetSpan(
         index: 5,
         plainText: '`key`',
-        child: CodeQuote(
-          child: CodeParameter(name: 'key'),
-        ),
+        child: CodeQuote(child: CodeParameter(name: 'key')),
       ),
       TextSpan(
         text:
@@ -401,10 +356,7 @@ const _bindDescription = TextSpan(
             CodeType(type: 'Ref'),
             CodeFunctionCall(
               name: 'bindValue',
-              params: [
-                CodeParameter(name: 'context'),
-                Text('...'),
-              ],
+              params: [CodeParameter(name: 'context'), Text('...')],
             ),
           ],
         ),
@@ -414,17 +366,12 @@ const _bindDescription = TextSpan(
     ...[
       _bulletPoint,
       TextSpan(text: 'Binds the '),
-      TextSpan(
-        text: 'value',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      TextSpan(text: 'value', style: TextStyle(fontWeight: FontWeight.bold)),
       TextSpan(text: ' to the '),
       CopyableWidgetSpan(
         index: 7,
         plainText: '`context`',
-        child: CodeQuote(
-          child: CodeParameter(name: 'context'),
-        ),
+        child: CodeQuote(child: CodeParameter(name: 'context')),
       ),
       TextSpan(text: '.'),
     ],
@@ -440,10 +387,7 @@ const _bindDescription = TextSpan(
     ...[
       _bulletPoint,
       TextSpan(text: 'Values provided this way are '),
-      TextSpan(
-        text: 'not',
-        style: TextStyle(fontStyle: FontStyle.italic),
-      ),
+      TextSpan(text: 'not', style: TextStyle(fontStyle: FontStyle.italic)),
       TextSpan(text: ' disposed automatically.'),
     ],
     TextSpan(text: '\n\n'),
@@ -465,39 +409,31 @@ const _bindDescription = TextSpan(
       CopyableWidgetSpan(
         index: 9,
         plainText: '`StatefulWidget`',
-        child: CodeQuote(
-          child: CodeType(type: 'StatefulWidget'),
-        ),
+        child: CodeQuote(child: CodeType(type: 'StatefulWidget')),
       ),
       TextSpan(text: '!'),
     ],
   ],
 );
 
-const _watchTitle = TextSpan(children: [
-  WidgetSpan(
-    child: Padding(
-      padding: EdgeInsets.only(bottom: 2),
-      child: SvgPicture(
-        SvgAssetLoader('assets/svg/emoji_u1f440.svg'), // 👀
-        width: 16,
-        height: 16,
+const _watchTitle = TextSpan(
+  children: [
+    WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 2),
+        child: SvgPicture(
+          SvgAssetLoader('assets/svg/emoji_u1f440.svg'), // 👀
+          width: 16,
+          height: 16,
+        ),
       ),
     ),
-  ),
-  TextSpan(text: '  '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeFunctionCall(name: 'watch'),
-    ),
-  ),
-  TextSpan(text: ' it from a '),
-  WidgetSpan(
-    child: CodeQuote(
-      child: CodeType(type: 'BuildContext'),
-    ),
-  ),
-]);
+    TextSpan(text: '  '),
+    WidgetSpan(child: CodeQuote(child: CodeFunctionCall(name: 'watch'))),
+    TextSpan(text: ' it from a '),
+    WidgetSpan(child: CodeQuote(child: CodeType(type: 'BuildContext'))),
+  ],
+);
 const _watchDescription = TextSpan(
   children: [
     CopyableWidgetSpan(
@@ -531,7 +467,7 @@ const _watchDescription = TextSpan(
                   CodeType(
                     type: 'Ref',
                     genericTypes: [
-                      '{Stream|Future|Listenable|ValueListenable|AsyncListenable}'
+                      '{Stream|Future|Listenable|ValueListenable|AsyncListenable}',
                     ],
                   ),
                   CodeFunctionCall(
@@ -552,9 +488,7 @@ const _watchDescription = TextSpan(
       CopyableWidgetSpan(
         index: 1,
         plainText: '`context`',
-        child: CodeQuote(
-          child: CodeParameter(name: 'context'),
-        ),
+        child: CodeQuote(child: CodeParameter(name: 'context')),
       ),
       TextSpan(text: ' whenever the observable value notifies of changes.'),
     ],
@@ -562,20 +496,17 @@ const _watchDescription = TextSpan(
     ...[
       _bulletPoint,
       TextSpan(
-          text: 'Provides the same data as the corresponding builder widget.'),
+        text: 'Provides the same data as the corresponding builder widget.',
+      ),
     ],
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
-      TextSpan(
-        text: 'When more granular rebuild control is desired, use ',
-      ),
+      TextSpan(text: 'When more granular rebuild control is desired, use '),
       CopyableWidgetSpan(
         index: 2,
         plainText: '`.watchOnly(context)`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'watchOnly'),
-        ),
+        child: CodeQuote(child: CodeFunctionCall(name: 'watchOnly')),
       ),
       TextSpan(
         text: ', which rebuilds the widget only if the selected value changes.',
@@ -584,15 +515,11 @@ const _watchDescription = TextSpan(
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
-      TextSpan(
-        text: 'Use ',
-      ),
+      TextSpan(text: 'Use '),
       CopyableWidgetSpan(
         index: 2,
         plainText: '`.watchEffect(context, ...)`',
-        child: CodeQuote(
-          child: CodeFunctionCall(name: 'watchEffect'),
-        ),
+        child: CodeQuote(child: CodeFunctionCall(name: 'watchEffect')),
       ),
       TextSpan(
         text:
@@ -632,9 +559,7 @@ const _watchDescription = TextSpan(
 
 const _bulletPoint = TextSpan(
   text: '• ',
-  style: TextStyle(
-    fontWeight: FontWeight.bold,
-  ),
+  style: TextStyle(fontWeight: FontWeight.bold),
 );
 
 class _Layout extends StatelessWidget {
@@ -654,9 +579,10 @@ class _Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleMargin = isMobileLayout
-        ? const EdgeInsets.symmetric(horizontal: 8)
-        : const EdgeInsets.only(top: 0);
+    final titleMargin =
+        isMobileLayout
+            ? const EdgeInsets.symmetric(horizontal: 8)
+            : const EdgeInsets.only(top: 0);
 
     final displayShadow = isMobileLayout;
 
@@ -665,10 +591,7 @@ class _Layout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (displayShadow)
-          const SizedBox(
-            height: 56,
-            child: BackgroundGradient(),
-          ),
+          const SizedBox(height: 56, child: BackgroundGradient()),
         Material(
           clipBehavior: Clip.none,
           color:
@@ -687,9 +610,10 @@ class _Layout extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: isMobileLayout
-                    ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
-                    : const EdgeInsets.only(left: 34),
+                padding:
+                    isMobileLayout
+                        ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
+                        : const EdgeInsets.only(left: 34),
                 child: _Description(
                   descriptionVisibilityFactor: descriptionVisibilityFactor,
                   description: description,
@@ -727,10 +651,9 @@ class _Title extends StatelessWidget {
           children: [
             Expanded(
               child: DefaultTextStyle.merge(
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Colors.white),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium!.copyWith(color: Colors.white),
                 child: Text.rich(title),
               ),
             ),
@@ -783,10 +706,9 @@ class _Description extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               child: DefaultTextStyle(
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Colors.grey[300]),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
                 child: TickerMode(
                   enabled: descriptionVisibilityFactor == 1,
                   child: CustomSelectableRichText(description),

@@ -43,8 +43,8 @@ class _Child2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CounterExample(
-      onTap: () =>
-          context.findAncestorStateOfType<_ExampleState>()!.increment(),
+      onTap:
+          () => context.findAncestorStateOfType<_ExampleState>()!.increment(),
       counter: counter,
     );
   }

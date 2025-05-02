@@ -13,14 +13,11 @@ class Example extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         _itemHeight.bindValue(
-            context, constraints.maxHeight * 2 / _colors.length);
+          context,
+          constraints.maxHeight * 2 / _colors.length,
+        );
         return const Column(
-          children: [
-            _CurrentColor(),
-            Expanded(
-              child: _ColorsList(),
-            ),
-          ],
+          children: [_CurrentColor(), Expanded(child: _ColorsList())],
         );
       },
     );
@@ -34,8 +31,10 @@ class _CurrentColor extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _scrollController.watchOnly(context, (ctrl) {
       final scrollPosition = ctrl.positions.firstOrNull;
-      final scrolledPixels = (scrollPosition?.pixels ?? 0)
-          .clamp(0, scrollPosition?.maxScrollExtent ?? 0);
+      final scrolledPixels = (scrollPosition?.pixels ?? 0).clamp(
+        0,
+        scrollPosition?.maxScrollExtent ?? 0,
+      );
       final colorIndex = (scrolledPixels / _itemHeight.of(context)).floor();
       return _colors[colorIndex];
     });
@@ -70,18 +69,13 @@ class _ColorsList extends StatelessWidget {
 }
 
 class _ColorItem extends StatelessWidget {
-  const _ColorItem({
-    required this.color,
-  });
+  const _ColorItem({required this.color});
 
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: _itemHeight.of(context),
-      color: color,
-    );
+    return Container(height: _itemHeight.of(context), color: color);
   }
 }
 

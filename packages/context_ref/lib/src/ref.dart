@@ -106,15 +106,10 @@ extension RefAPI<T> on Ref<T> {
   /// caller to dispose the value when it is no longer needed.
   ///
   /// Use [bind] if you want the value to be disposed automatically.
-  T bindValue(
-    BuildContext context,
-    T value,
-  ) {
-    final provider = ContextRefRoot.of(context).bindValue(
-      context: context,
-      ref: this,
-      value: value,
-    );
+  T bindValue(BuildContext context, T value) {
+    final provider = ContextRefRoot.of(
+      context,
+    ).bindValue(context: context, ref: this, value: value);
     return provider.value;
   }
 }

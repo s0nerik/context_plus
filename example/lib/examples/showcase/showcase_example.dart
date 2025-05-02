@@ -10,10 +10,7 @@ class ShowcaseExample extends StatelessWidget {
   static const title = 'Showcase';
   static const description =
       'Example using the code showcased on the animation at the top of the home page.';
-  static const tags = [
-    'Ref.bind()',
-    'Ref.watch()',
-  ];
+  static const tags = ['Ref.bind()', 'Ref.watch()'];
 
   static const urlPath = '/showcase_example';
 
@@ -26,16 +23,12 @@ class ShowcaseExample extends StatelessWidget {
         ExampleVariant(
           file: 'context_plus.dart',
           title: 'context_plus',
-          widget: Center(
-            child: context_plus.Example(),
-          ),
+          widget: Center(child: context_plus.Example()),
         ),
         ExampleVariant(
           file: 'pure_flutter.dart',
           title: 'Pure Flutter',
-          widget: Center(
-            child: pure_flutter.Example(),
-          ),
+          widget: Center(child: pure_flutter.Example()),
         ),
       ],
     );

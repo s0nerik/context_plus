@@ -24,8 +24,9 @@ class CountriesAPI {
   static Future<List<CountryInfo>> _fetchCountries() =>
       _countries ??= () async {
         // Fetched from https://restcountries.com/v3.1/all?fields=name,capital,area,population,flags
-        final countriesJsonBuffer = await rootBundle
-            .load('lib/examples/country_search/util/countries.json');
+        final countriesJsonBuffer = await rootBundle.load(
+          'lib/examples/country_search/util/countries.json',
+        );
         final countriesJsonBytes = countriesJsonBuffer.buffer.asUint8List();
         final countriesJson = utf8.decode(countriesJsonBytes);
         final List<dynamic> data = json.decode(countriesJson);

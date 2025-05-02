@@ -58,17 +58,19 @@ class _AnimatedFlutterLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: _InheritedState.of(context).colorStream,
-      builder: (context, colorSnapshot) => ValueListenableBuilder(
-        valueListenable: _InheritedState.of(context).scaleController,
-        builder: (context, scale, _) => Transform.scale(
-          scale: scale,
-          child: FlutterLogo(
-            size: 200,
-            style: FlutterLogoStyle.stacked,
-            textColor: colorSnapshot.data ?? Colors.transparent,
+      builder:
+          (context, colorSnapshot) => ValueListenableBuilder(
+            valueListenable: _InheritedState.of(context).scaleController,
+            builder:
+                (context, scale, _) => Transform.scale(
+                  scale: scale,
+                  child: FlutterLogo(
+                    size: 200,
+                    style: FlutterLogoStyle.stacked,
+                    textColor: colorSnapshot.data ?? Colors.transparent,
+                  ),
+                ),
           ),
-        ),
-      ),
     );
   }
 }

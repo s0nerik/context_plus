@@ -28,9 +28,7 @@ class NestedScopesExample extends StatelessWidget {
         ExampleVariant(
           file: 'context_plus.dart',
           title: 'context_plus',
-          widget: Center(
-            child: context_plus.Example(),
-          ),
+          widget: Center(child: context_plus.Example()),
         ),
       ],
     );

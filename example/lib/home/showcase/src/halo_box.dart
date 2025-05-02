@@ -3,11 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class HaloBox extends StatefulWidget {
-  const HaloBox({
-    super.key,
-    required this.size,
-    required this.opacity,
-  });
+  const HaloBox({super.key, required this.size, required this.opacity});
 
   final Size size;
   final double opacity;
@@ -52,10 +48,8 @@ class _HaloBoxState extends State<HaloBox> with SingleTickerProviderStateMixin {
 }
 
 class _LissajousOrbitPainter extends CustomPainter {
-  _LissajousOrbitPainter({
-    required this.animation,
-    required this.opacity,
-  }) : super(repaint: animation);
+  _LissajousOrbitPainter({required this.animation, required this.opacity})
+    : super(repaint: animation);
 
   final Animation<double> animation;
   final double opacity;
@@ -73,10 +67,11 @@ class _LissajousOrbitPainter extends CustomPainter {
       final x = center.dx + amplitude * sin(3 * t + i * pi / 3);
       final y = center.dy + amplitude * sin(2 * t);
 
-      final paint = Paint()
-        ..color = colors[i].withValues(alpha: 0.4 * opacity)
-        ..style = PaintingStyle.fill
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 36);
+      final paint =
+          Paint()
+            ..color = colors[i].withValues(alpha: 0.4 * opacity)
+            ..style = PaintingStyle.fill
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 36);
 
       canvas.drawCircle(Offset(x, y), radius, paint);
     }

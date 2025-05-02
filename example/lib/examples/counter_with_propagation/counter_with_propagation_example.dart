@@ -33,30 +33,22 @@ class CounterWithPropagationExample extends StatelessWidget {
         ExampleVariant(
           file: 'context_plus_bind_watch.dart',
           title: 'context_plus #1',
-          widget: Center(
-            child: context_plus_bind_watch_value.Example(),
-          ),
+          widget: Center(child: context_plus_bind_watch_value.Example()),
         ),
         ExampleVariant(
           file: 'context_plus_stateful_bind_value.dart',
           title: 'context_plus #2',
-          widget: Center(
-            child: context_plus_stateful_bind_value.Example(),
-          ),
+          widget: Center(child: context_plus_stateful_bind_value.Example()),
         ),
         ExampleVariant(
           file: 'stateful_widget_explicit_params.dart',
           title: 'StatefulWidget (explicit params propagation)',
-          widget: Center(
-            child: stateful_widget_explicit_params.Example(),
-          ),
+          widget: Center(child: stateful_widget_explicit_params.Example()),
         ),
         ExampleVariant(
           file: 'stateful_widget_inherited_widget.dart',
           title: 'StatefulWidget + InheritedWidget',
-          widget: Center(
-            child: stateful_widget_inherited_widget.Example(),
-          ),
+          widget: Center(child: stateful_widget_inherited_widget.Example()),
         ),
       ],
     );

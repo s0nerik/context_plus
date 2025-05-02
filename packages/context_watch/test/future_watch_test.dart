@@ -19,9 +19,7 @@ void main() {
         ),
       );
       await widgetTester.pumpWidget(widget);
-      expect(snapshots, [
-        const AsyncSnapshot.waiting(),
-      ]);
+      expect(snapshots, [const AsyncSnapshot.waiting()]);
 
       await widgetTester.pumpAndSettle();
       expect(snapshots, [
@@ -50,9 +48,7 @@ void main() {
         ),
       );
       await widgetTester.pumpWidget(widget);
-      expect(snapshots, [
-        const AsyncSnapshot.waiting(),
-      ]);
+      expect(snapshots, [const AsyncSnapshot.waiting()]);
 
       await widgetTester.pumpAndSettle();
       expect(snapshots, [

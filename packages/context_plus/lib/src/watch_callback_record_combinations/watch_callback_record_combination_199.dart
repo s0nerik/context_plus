@@ -4,13 +4,48 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordRefExt199<TListenable0 extends ValueListenable<T1>, T1, T2, TListenable3 extends ValueListenable<T4>, T4, T5> on (context_ref.ReadOnlyRef<TListenable0>, context_ref.ReadOnlyRef<Stream<T2>>, context_ref.ReadOnlyRef<TListenable3>, context_ref.ReadOnlyRef<Stream<T5>>) {
+extension ContextWatchCallbackRecordRefExt199<
+  TListenable0 extends ValueListenable<T1>,
+  T1,
+  T2,
+  TListenable3 extends ValueListenable<T4>,
+  T4,
+  T5
+>
+    on
+        (
+          context_ref.ReadOnlyRef<TListenable0>,
+          context_ref.ReadOnlyRef<Stream<T2>>,
+          context_ref.ReadOnlyRef<TListenable3>,
+          context_ref.ReadOnlyRef<Stream<T5>>,
+        ) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(T1, AsyncSnapshot<T2>, T4, AsyncSnapshot<T5>) selector,
   ) {
-    return watchOnly4<R, T1, AsyncSnapshot<T2>, T4, AsyncSnapshot<T5>, T1, T2, T4, T5>(context, selector, $1.of(context), $2.of(context), $3.of(context), $4.of(context), $1.of(context).value, AsyncSnapshot<T2>.nothing(), $3.of(context).value, AsyncSnapshot<T5>.nothing());
+    return watchOnly4<
+      R,
+      T1,
+      AsyncSnapshot<T2>,
+      T4,
+      AsyncSnapshot<T5>,
+      T1,
+      T2,
+      T4,
+      T5
+    >(
+      context,
+      selector,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      $4.of(context),
+      $1.of(context).value,
+      AsyncSnapshot<T2>.nothing(),
+      $3.of(context).value,
+      AsyncSnapshot<T5>.nothing(),
+    );
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -21,11 +56,37 @@ extension ContextWatchCallbackRecordRefExt199<TListenable0 extends ValueListenab
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect4<T1, AsyncSnapshot<T2>, T4, AsyncSnapshot<T5>, T1, T2, T4, T5>(context, effect, $1.of(context), $2.of(context), $3.of(context), $4.of(context), key: key, immediate: immediate, once: once);
+    return watchEffect4<
+      T1,
+      AsyncSnapshot<T2>,
+      T4,
+      AsyncSnapshot<T5>,
+      T1,
+      T2,
+      T4,
+      T5
+    >(
+      context,
+      effect,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      $4.of(context),
+      key: key,
+      immediate: immediate,
+      once: once,
+    );
   }
-  
+
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
-    return unwatchEffect4(context, $1.of(context), $2.of(context), $3.of(context), $4.of(context), key: key);
+    return unwatchEffect4(
+      context,
+      $1.of(context),
+      $2.of(context),
+      $3.of(context),
+      $4.of(context),
+      key: key,
+    );
   }
 }

@@ -55,8 +55,10 @@ class _CurrentColor extends StatelessWidget {
       listenable: scrollController,
       builder: (context, _) {
         final scrollPosition = scrollController.positions.firstOrNull;
-        final scrolledPixels = (scrollPosition?.pixels ?? 0)
-            .clamp(0, scrollPosition?.maxScrollExtent ?? 0);
+        final scrolledPixels = (scrollPosition?.pixels ?? 0).clamp(
+          0,
+          scrollPosition?.maxScrollExtent ?? 0,
+        );
         final colorIndex = (scrolledPixels / itemHeight).floor();
         final color = _colors[colorIndex];
         return Container(
@@ -79,10 +81,7 @@ class _CurrentColor extends StatelessWidget {
 }
 
 class _ColorsList extends StatelessWidget {
-  const _ColorsList({
-    required this.scrollController,
-    required this.itemHeight,
-  });
+  const _ColorsList({required this.scrollController, required this.itemHeight});
 
   final ScrollController scrollController;
   final double itemHeight;
@@ -92,29 +91,22 @@ class _ColorsList extends StatelessWidget {
     return ListView.builder(
       controller: scrollController,
       itemCount: _colors.length,
-      itemBuilder: (context, index) => _ColorItem(
-        height: itemHeight,
-        color: _colors[index],
-      ),
+      itemBuilder:
+          (context, index) =>
+              _ColorItem(height: itemHeight, color: _colors[index]),
     );
   }
 }
 
 class _ColorItem extends StatelessWidget {
-  const _ColorItem({
-    required this.height,
-    required this.color,
-  });
+  const _ColorItem({required this.height, required this.color});
 
   final double height;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      color: color,
-    );
+    return Container(height: height, color: color);
   }
 }
 

@@ -76,7 +76,8 @@ class _AppState extends State<_App> {
               foregroundColor: WidgetStateProperty.all(Colors.white),
               overlayColor: WidgetStateProperty.all(Colors.white12),
               side: WidgetStateProperty.all(
-                  const BorderSide(color: Colors.white24)),
+                const BorderSide(color: Colors.white24),
+              ),
             ),
           ),
           snackBarTheme: const SnackBarThemeData(
@@ -96,8 +97,9 @@ class _AppState extends State<_App> {
               foregroundColor: Colors.grey,
               selectedForegroundColor: Colors.white,
               backgroundColor: Colors.black.withValues(alpha: 0.85),
-              selectedBackgroundColor:
-                  const Color(0xFF353535).withValues(alpha: 0.85),
+              selectedBackgroundColor: const Color(
+                0xFF353535,
+              ).withValues(alpha: 0.85),
               side: const BorderSide(color: Colors.white24),
             ),
           ),

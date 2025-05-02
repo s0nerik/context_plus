@@ -90,18 +90,12 @@ class CodeType extends StatelessWidget {
               CodeStyle.vsCode => _typeColorVsCode,
             },
           ),
-          child: DynamicSectionText(
-            type,
-            animate: animate,
-          ),
+          child: DynamicSectionText(type, animate: animate),
         ),
         if (genericTypes.isNotEmpty) ...[
           const Text('<'),
           for (var i = 0; i < genericTypes.length; i++) ...[
-            CodeType(
-              type: genericTypes[i],
-              animate: animate,
-            ),
+            CodeType(type: genericTypes[i], animate: animate),
             if (i < genericTypes.length - 1) const Text(', '),
           ],
           const Text('>'),
@@ -140,10 +134,7 @@ class CodeFunctionCall extends StatelessWidget {
                 CodeStyle.vsCode => _functionColorVsCode,
               },
             ),
-            child: DynamicSectionText(
-              name,
-              animate: animate,
-            ),
+            child: DynamicSectionText(name, animate: animate),
           ),
           const Text('('),
           for (var i = 0; i < params.length; i++) ...[
@@ -158,11 +149,7 @@ class CodeFunctionCall extends StatelessWidget {
 }
 
 class CodeParameter extends StatelessWidget {
-  const CodeParameter({
-    super.key,
-    required this.name,
-    this.animate = true,
-  });
+  const CodeParameter({super.key, required this.name, this.animate = true});
 
   final String name;
   final bool animate;
@@ -175,10 +162,7 @@ class CodeParameter extends StatelessWidget {
         color: _parameterColor,
         fontWeight: FontWeight.w600,
       ),
-      child: DynamicSectionText(
-        name,
-        animate: animate,
-      ),
+      child: DynamicSectionText(name, animate: animate),
     );
   }
 }
@@ -211,10 +195,7 @@ class CodeMultilineQuote extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildFilenameHeader(context),
-          _buildCodeArea(context),
-        ],
+        children: [_buildFilenameHeader(context), _buildCodeArea(context)],
       ),
     );
   }
@@ -245,13 +226,9 @@ class CodeMultilineQuote extends StatelessWidget {
               top: 0,
               child: InkResponse(
                 onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: copyableCode ?? code),
-                  );
+                  Clipboard.setData(ClipboardData(text: copyableCode ?? code));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Copied to clipboard!'),
-                    ),
+                    const SnackBar(content: Text('Copied to clipboard!')),
                   );
                 },
                 child: const Padding(
@@ -279,8 +256,10 @@ class CodeMultilineQuote extends StatelessWidget {
       _ => throw UnsupportedError('Unsupported file extension: $fileExt'),
     };
 
-    final scrollController =
-        _codeScrollController.bind(context, ScrollController.new);
+    final scrollController = _codeScrollController.bind(
+      context,
+      ScrollController.new,
+    );
 
     Widget child = SingleChildScrollView(
       controller: scrollController,
@@ -301,9 +280,7 @@ class CodeMultilineQuote extends StatelessWidget {
       //
       // https://github.com/flutter/flutter/issues/95958
       // https://github.com/flutter/flutter/issues/122015
-      child = SelectionArea(
-        child: child,
-      );
+      child = SelectionArea(child: child);
     }
 
     return Scrollbar(

@@ -76,20 +76,15 @@ class _DesktopLayout extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8) +
+        padding:
+            const EdgeInsets.symmetric(vertical: 8) +
             MediaQuery.paddingOf(context),
         child: const Row(
           children: [
             SizedBox(width: 8),
-            Expanded(
-              flex: 1,
-              child: _SelectedExample(),
-            ),
+            Expanded(flex: 1, child: _SelectedExample()),
             SizedBox(width: 8),
-            Expanded(
-              flex: 2,
-              child: _SourceCode(),
-            ),
+            Expanded(flex: 2, child: _SourceCode()),
             SizedBox(width: 8),
           ],
         ),
@@ -133,10 +128,7 @@ class _MobileLayout extends StatelessWidget {
               child: IndexedStack(
                 index: selected.watch(context),
                 sizing: StackFit.expand,
-                children: const [
-                  _SourceCode(),
-                  _SelectedExample(),
-                ],
+                children: const [_SourceCode(), _SelectedExample()],
               ),
             ),
             Positioned(
@@ -145,8 +137,8 @@ class _MobileLayout extends StatelessWidget {
               left: 8,
               child: SegmentedButton(
                 selected: {selected.watch(context)},
-                onSelectionChanged: (selection) =>
-                    selected.value = selection.first,
+                onSelectionChanged:
+                    (selection) => selected.value = selection.first,
                 showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(
@@ -182,8 +174,10 @@ class _SelectedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTabIndex =
-        _tabController.watchOnly(context, (ctrl) => ctrl.index);
+    final selectedTabIndex = _tabController.watchOnly(
+      context,
+      (ctrl) => ctrl.index,
+    );
     final variants = _exampleVariants.of(context);
     return variants[selectedTabIndex].widget;
   }
@@ -229,10 +223,7 @@ class _SourceCode extends StatelessWidget {
 }
 
 class _SourceCodeVariantTab extends StatelessWidget {
-  const _SourceCodeVariantTab({
-    super.key,
-    required this.variant,
-  });
+  const _SourceCodeVariantTab({super.key, required this.variant});
 
   final ExampleVariant variant;
 
@@ -259,10 +250,7 @@ class _SourceCodeVariantTab extends StatelessWidget {
 }
 
 class _SourceCodeVariantCode extends StatefulWidget {
-  const _SourceCodeVariantCode({
-    super.key,
-    required this.variant,
-  });
+  const _SourceCodeVariantCode({super.key, required this.variant});
 
   final ExampleVariant variant;
 
@@ -289,36 +277,49 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
     final codeTheme = switch (Theme.of(context).brightness) {
       Brightness.dark => darkCodeThemeFuture,
       Brightness.light => lightCodeThemeFuture,
-    }
-        .watchOnly(context, (snap) => snap.data);
-    final highlighter = codeTheme != null
-        ? Highlighter(language: 'dart', theme: codeTheme)
-        : null;
+    }.watchOnly(context, (snap) => snap.data);
+    final highlighter =
+        codeTheme != null
+            ? Highlighter(language: 'dart', theme: codeTheme)
+            : null;
 
     final exampleDir = _exampleDir.of(context);
     final codeFileName = widget.variant.file;
     final codeFilePath = 'lib/examples/$exampleDir/variants/$codeFileName';
-    final codeFuture = _fileContentFutures[codeFilePath] ??=
-        DefaultAssetBundle.of(context)
+    final codeFuture =
+        _fileContentFutures[codeFilePath] ??= DefaultAssetBundle.of(context)
             .loadString(codeFilePath)
             .then((value) => value.replaceAll(_importsRegexp, '').trim());
     final code = codeFuture.watchOnly(context, (snap) => snap.data);
 
-    final scrollControllersGroup = _scrollControllersGroup
-        .bind(context, LinkedScrollControllerGroup.new, key: codeFilePath);
-    final lineNumbersController = _lineNumbersScrollController
-        .bind(context, scrollControllersGroup.addAndGet, key: codeFilePath);
-    final sourceScrollController = _sourceScrollController
-        .bind(context, scrollControllersGroup.addAndGet, key: codeFilePath);
+    final scrollControllersGroup = _scrollControllersGroup.bind(
+      context,
+      LinkedScrollControllerGroup.new,
+      key: codeFilePath,
+    );
+    final lineNumbersController = _lineNumbersScrollController.bind(
+      context,
+      scrollControllersGroup.addAndGet,
+      key: codeFilePath,
+    );
+    final sourceScrollController = _sourceScrollController.bind(
+      context,
+      scrollControllersGroup.addAndGet,
+      key: codeFilePath,
+    );
 
     if (highlighter == null || code == null) {
       return const SizedBox.shrink();
     }
 
-    const codeStyleDesktop =
-        TextStyle(fontFamily: 'JetBrains Mono', fontSize: 13);
-    const codeStyleMobile =
-        TextStyle(fontFamily: 'JetBrains Mono', fontSize: 10);
+    const codeStyleDesktop = TextStyle(
+      fontFamily: 'JetBrains Mono',
+      fontSize: 13,
+    );
+    const codeStyleMobile = TextStyle(
+      fontFamily: 'JetBrains Mono',
+      fontSize: 10,
+    );
     final codeStyle =
         _isMobileLayout(context) ? codeStyleMobile : codeStyleDesktop;
 
@@ -357,9 +358,7 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
       //
       // https://github.com/flutter/flutter/issues/95958
       // https://github.com/flutter/flutter/issues/122015
-      child = SelectionArea(
-        child: child,
-      );
+      child = SelectionArea(child: child);
     }
 
     return Row(
@@ -369,36 +368,29 @@ class _SourceCodeVariantCodeState extends State<_SourceCodeVariantCode> {
         SizedBox(
           width: _isMobileLayout(context) ? 28 : 32,
           child: ScrollConfiguration(
-            behavior:
-                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            behavior: ScrollConfiguration.of(
+              context,
+            ).copyWith(scrollbars: false),
             child: ListView.builder(
               controller: lineNumbersController,
               itemCount: lineCount,
               padding: const EdgeInsets.symmetric(vertical: padding),
-              itemBuilder: (context, index) => Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '${index + 1}',
-                  style: lineNumberStyle,
-                ),
-              ),
+              itemBuilder:
+                  (context, index) => Align(
+                    alignment: Alignment.centerRight,
+                    child: Text('${index + 1}', style: lineNumberStyle),
+                  ),
             ),
           ),
         ),
-        Expanded(
-          child: child,
-        ),
+        Expanded(child: child),
       ],
     );
   }
 }
 
 class ExampleContainer extends StatelessWidget {
-  const ExampleContainer({
-    super.key,
-    this.onTap,
-    required this.child,
-  });
+  const ExampleContainer({super.key, this.onTap, required this.child});
 
   final VoidCallback? onTap;
   final Widget child;
@@ -416,11 +408,7 @@ class ExampleContainer extends StatelessWidget {
 }
 
 class CounterExample extends StatelessWidget {
-  const CounterExample({
-    super.key,
-    required this.counter,
-    this.onTap,
-  });
+  const CounterExample({super.key, required this.counter, this.onTap});
 
   final int counter;
   final VoidCallback? onTap;
@@ -445,10 +433,7 @@ class CounterExample extends StatelessWidget {
     );
 
     if (onTap != null) {
-      return ExampleContainer(
-        onTap: onTap,
-        child: child,
-      );
+      return ExampleContainer(onTap: onTap, child: child);
     }
 
     return child;

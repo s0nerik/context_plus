@@ -6,11 +6,7 @@ import 'animated_replace.dart';
 final _animate = Ref<bool>();
 
 class DynamicSectionText extends StatelessWidget {
-  const DynamicSectionText(
-    this.text, {
-    super.key,
-    this.animate = true,
-  });
+  const DynamicSectionText(this.text, {super.key, this.animate = true});
 
   /// The text to display.
   ///
@@ -29,17 +25,11 @@ class DynamicSectionText extends StatelessWidget {
           switch (section) {
             _StaticSection(:final value) => Text(value),
             _DynamicSection(:final current, :final next) => AnimatedReplace(
-                duration: _dynamicSectionTransitionDuration,
-                prevChild: Text(
-                  key: ValueKey(current),
-                  current,
-                ),
-                child: Text(
-                  key: ValueKey(next),
-                  next,
-                ),
-              ),
-          }
+              duration: _dynamicSectionTransitionDuration,
+              prevChild: Text(key: ValueKey(current), current),
+              child: Text(key: ValueKey(next), next),
+            ),
+          },
       ],
     );
   }
@@ -53,10 +43,7 @@ final _dynamicSectionIndex = Ref<ValueNotifier<int>>();
 const _dynamicSectionTransitionDuration = Duration(milliseconds: 500);
 const _dynamicSectionChangeInterval = Duration(seconds: 1);
 
-List<_Section> _getSections(
-  BuildContext context, {
-  required String value,
-}) {
+List<_Section> _getSections(BuildContext context, {required String value}) {
   final staticSectionBounds = _staticSectionBounds.bind(context, () {
     final startDynamic = value.indexOf('{');
     final endDynamic = value.lastIndexOf('}');
@@ -81,8 +68,11 @@ List<_Section> _getSections(
       value.substring(staticSectionBounds.$2),
     );
 
-    final dynamicSectionIndex =
-        _dynamicSectionIndex.bind(context, () => ValueNotifier(0), key: value);
+    final dynamicSectionIndex = _dynamicSectionIndex.bind(
+      context,
+      () => ValueNotifier(0),
+      key: value,
+    );
     _dynamicSectionAnimCtrl.bind(context, (vsync) {
       final ctrl = AnimationController(
         vsync: vsync,
@@ -100,10 +90,11 @@ List<_Section> _getSections(
         });
     }, key: value);
 
-    final currentDynamicSection = dynamicSectionVariants[
-        dynamicSectionIndex.watch(context) % dynamicSectionVariants.length];
-    final nextDynamicSection = dynamicSectionVariants[
-        (dynamicSectionIndex.watch(context) + 1) %
+    final currentDynamicSection =
+        dynamicSectionVariants[dynamicSectionIndex.watch(context) %
+            dynamicSectionVariants.length];
+    final nextDynamicSection =
+        dynamicSectionVariants[(dynamicSectionIndex.watch(context) + 1) %
             dynamicSectionVariants.length];
     return [
       _StaticSection(value: staticSection1),
@@ -115,9 +106,7 @@ List<_Section> _getSections(
       _StaticSection(value: staticSection2),
     ];
   }
-  return [
-    _StaticSection(value: value),
-  ];
+  return [_StaticSection(value: value)];
 }
 
 sealed class _Section {}

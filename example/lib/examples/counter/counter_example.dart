@@ -9,11 +9,7 @@ class CounterExample extends StatelessWidget {
 
   static const title = 'Counter';
   static const description = 'Classic counter example.';
-  static const tags = [
-    'Ref.bind()',
-    'Ref.of(context)',
-    'Ref.watch()',
-  ];
+  static const tags = ['Ref.bind()', 'Ref.of(context)', 'Ref.watch()'];
 
   static const urlPath = '/counter_example';
 
@@ -26,16 +22,12 @@ class CounterExample extends StatelessWidget {
         ExampleVariant(
           file: 'context_plus.dart',
           title: 'context_plus',
-          widget: Center(
-            child: context_plus_bind_watch_value.Example(),
-          ),
+          widget: Center(child: context_plus_bind_watch_value.Example()),
         ),
         ExampleVariant(
           file: 'stateful_widget.dart',
           title: 'StatefulWidget',
-          widget: Center(
-            child: stateful_widget.Example(),
-          ),
+          widget: Center(child: stateful_widget.Example()),
         ),
       ],
     );

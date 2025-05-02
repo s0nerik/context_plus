@@ -3,26 +3,74 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordExt178<TListenable0 extends ValueListenable<T1>, T1, T2, TListenable3 extends Listenable, T4> on (TListenable0, Future<T2>, TListenable3, Future<T4>) {
+extension ContextWatchCallbackRecordExt178<
+  TListenable0 extends ValueListenable<T1>,
+  T1,
+  T2,
+  TListenable3 extends Listenable,
+  T4
+>
+    on (TListenable0, Future<T2>, TListenable3, Future<T4>) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(T1, AsyncSnapshot<T2>, TListenable3, AsyncSnapshot<T4>) selector,
   ) {
-    return watchOnly4<R, T1, AsyncSnapshot<T2>, TListenable3, AsyncSnapshot<T4>, T1, T2, TListenable3, T4>(context, selector, $1, $2, $3, $4, $1.value, AsyncSnapshot<T2>.nothing(), $3, AsyncSnapshot<T4>.nothing());
+    return watchOnly4<
+      R,
+      T1,
+      AsyncSnapshot<T2>,
+      TListenable3,
+      AsyncSnapshot<T4>,
+      T1,
+      T2,
+      TListenable3,
+      T4
+    >(
+      context,
+      selector,
+      $1,
+      $2,
+      $3,
+      $4,
+      $1.value,
+      AsyncSnapshot<T2>.nothing(),
+      $3,
+      AsyncSnapshot<T4>.nothing(),
+    );
   }
 
   /// {@macro mass_watch_effect_explanation}
   void watchEffect(
     BuildContext context,
-    void Function(T1, AsyncSnapshot<T2>, TListenable3, AsyncSnapshot<T4>) effect, {
+    void Function(T1, AsyncSnapshot<T2>, TListenable3, AsyncSnapshot<T4>)
+    effect, {
     Object? key,
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect4<T1, AsyncSnapshot<T2>, TListenable3, AsyncSnapshot<T4>, T1, T2, TListenable3, T4>(context, effect, $1, $2, $3, $4, key: key, immediate: immediate, once: once);
+    return watchEffect4<
+      T1,
+      AsyncSnapshot<T2>,
+      TListenable3,
+      AsyncSnapshot<T4>,
+      T1,
+      T2,
+      TListenable3,
+      T4
+    >(
+      context,
+      effect,
+      $1,
+      $2,
+      $3,
+      $4,
+      key: key,
+      immediate: immediate,
+      once: once,
+    );
   }
-  
+
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
     return unwatchEffect4(context, $1, $2, $3, $4, key: key);

@@ -32,36 +32,35 @@ void main() {
     );
   });
 
-  testWidgets(
-    'widget rebuilds each time a Listenable notifies',
-    (widgetTester) async {
-      final changeNotifier = ChangeNotifier();
-      observedListenables = [changeNotifier];
+  testWidgets('widget rebuilds each time a Listenable notifies', (
+    widgetTester,
+  ) async {
+    final changeNotifier = ChangeNotifier();
+    observedListenables = [changeNotifier];
 
-      await widgetTester.pumpWidget(widget);
-      expect(rebuilds, 1);
+    await widgetTester.pumpWidget(widget);
+    expect(rebuilds, 1);
 
-      // No rebuilds yet, because the changeNotifier has_not notified yet.
-      await widgetTester.pumpAndSettle();
-      expect(rebuilds, 1);
+    // No rebuilds yet, because the changeNotifier has_not notified yet.
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 1);
 
-      changeNotifier.notifyListeners();
+    changeNotifier.notifyListeners();
 
-      // Rebuilds once, because the changeNotifier has notified.
-      await widgetTester.pumpAndSettle();
-      expect(rebuilds, 2);
+    // Rebuilds once, because the changeNotifier has notified.
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 2);
 
-      changeNotifier.notifyListeners();
+    changeNotifier.notifyListeners();
 
-      // Rebuilds again, because the changeNotifier has notified again.
-      await widgetTester.pumpAndSettle();
-      expect(rebuilds, 3);
+    // Rebuilds again, because the changeNotifier has notified again.
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 3);
 
-      // No more rebuilds, because the changeNotifier has_not notified again.
-      await widgetTester.pumpAndSettle();
-      expect(rebuilds, 3);
-    },
-  );
+    // No more rebuilds, because the changeNotifier has_not notified again.
+    await widgetTester.pumpAndSettle();
+    expect(rebuilds, 3);
+  });
 
   testWidgets(
     'widget rebuilds only once after each bunch of synchronous change notifications',
@@ -135,8 +134,9 @@ void main() {
     },
   );
 
-  testWidgets('value.watch() handles the GlobalKey re-parenting (1)',
-      (widgetTester) async {
+  testWidgets('value.watch() handles the GlobalKey re-parenting (1)', (
+    widgetTester,
+  ) async {
     final returnChildImmediately = ValueNotifier(true);
     final globalKey = GlobalKey();
     final notifier = _TestChangeNotifier();
@@ -146,16 +146,10 @@ void main() {
         child: Builder(
           builder: (context) {
             if (returnChildImmediately.watch(context)) {
-              return _ReparentedChild(
-                key: globalKey,
-                listenable: notifier,
-              );
+              return _ReparentedChild(key: globalKey, listenable: notifier);
             }
             return SizedBox(
-              child: _ReparentedChild(
-                key: globalKey,
-                listenable: notifier,
-              ),
+              child: _ReparentedChild(key: globalKey, listenable: notifier),
             );
           },
         ),
@@ -172,8 +166,9 @@ void main() {
     expect(notifier.removeListenerCalls, 0);
   });
 
-  testWidgets('value.watch() handles the GlobalKey re-parenting (2)',
-      (widgetTester) async {
+  testWidgets('value.watch() handles the GlobalKey re-parenting (2)', (
+    widgetTester,
+  ) async {
     final returnChildImmediately = ValueNotifier(true);
     final globalKey = GlobalKey();
     final notifier = _TestChangeNotifier();
@@ -185,17 +180,13 @@ void main() {
             if (returnChildImmediately.watch(context)) {
               return SizedBox(
                 key: globalKey,
-                child: _ReparentedChild(
-                  listenable: notifier,
-                ),
+                child: _ReparentedChild(listenable: notifier),
               );
             }
             return Center(
               child: SizedBox(
                 key: globalKey,
-                child: _ReparentedChild(
-                  listenable: notifier,
-                ),
+                child: _ReparentedChild(listenable: notifier),
               ),
             );
           },
@@ -213,8 +204,9 @@ void main() {
     expect(notifier.removeListenerCalls, 0);
   });
 
-  testWidgets('.watch(context) works inside a LayoutBuilder',
-      (widgetTester) async {
+  testWidgets('.watch(context) works inside a LayoutBuilder', (
+    widgetTester,
+  ) async {
     var builds = 0;
     final changeNotifier = ChangeNotifier();
     await widgetTester.pumpWidget(
@@ -237,10 +229,7 @@ void main() {
 }
 
 class _ReparentedChild extends StatelessWidget {
-  const _ReparentedChild({
-    super.key,
-    required this.listenable,
-  });
+  const _ReparentedChild({super.key, required this.listenable});
 
   final Listenable listenable;
 

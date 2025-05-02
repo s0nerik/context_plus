@@ -11,11 +11,7 @@ class AnimationControllerExample extends StatelessWidget {
   static const title = 'AnimationController';
   static const description =
       'Example that shows different ways to initialize and use an AnimationController.';
-  static const tags = [
-    'Ref.bind()',
-    'Ref.watch()',
-    'ValueListenable.watch()',
-  ];
+  static const tags = ['Ref.bind()', 'Ref.watch()', 'ValueListenable.watch()'];
 
   static const urlPath = '/animation_controller_example';
 
@@ -28,23 +24,17 @@ class AnimationControllerExample extends StatelessWidget {
         ExampleVariant(
           file: 'context_plus.dart',
           title: 'context_plus',
-          widget: Center(
-            child: context_plus.Example(),
-          ),
+          widget: Center(child: context_plus.Example()),
         ),
         ExampleVariant(
           file: 'context_watch.dart',
           title: 'context_watch',
-          widget: Center(
-            child: context_watch.Example(),
-          ),
+          widget: Center(child: context_watch.Example()),
         ),
         ExampleVariant(
           file: 'animated_builder.dart',
           title: 'AnimatedBuilder',
-          widget: Center(
-            child: animated_builder.Example(),
-          ),
+          widget: Center(child: animated_builder.Example()),
         ),
       ],
     );

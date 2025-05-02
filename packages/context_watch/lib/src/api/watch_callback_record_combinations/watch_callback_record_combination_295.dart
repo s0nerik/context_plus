@@ -3,13 +3,42 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordExt295<T0, TListenable1 extends ValueListenable<T2>, T2, TListenable3 extends ValueListenable<T4>, T4, T5> on (Stream<T0>, TListenable1, TListenable3, Stream<T5>) {
+extension ContextWatchCallbackRecordExt295<
+  T0,
+  TListenable1 extends ValueListenable<T2>,
+  T2,
+  TListenable3 extends ValueListenable<T4>,
+  T4,
+  T5
+>
+    on (Stream<T0>, TListenable1, TListenable3, Stream<T5>) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(AsyncSnapshot<T0>, T2, T4, AsyncSnapshot<T5>) selector,
   ) {
-    return watchOnly4<R, AsyncSnapshot<T0>, T2, T4, AsyncSnapshot<T5>, T0, T2, T4, T5>(context, selector, $1, $2, $3, $4, AsyncSnapshot<T0>.nothing(), $2.value, $3.value, AsyncSnapshot<T5>.nothing());
+    return watchOnly4<
+      R,
+      AsyncSnapshot<T0>,
+      T2,
+      T4,
+      AsyncSnapshot<T5>,
+      T0,
+      T2,
+      T4,
+      T5
+    >(
+      context,
+      selector,
+      $1,
+      $2,
+      $3,
+      $4,
+      AsyncSnapshot<T0>.nothing(),
+      $2.value,
+      $3.value,
+      AsyncSnapshot<T5>.nothing(),
+    );
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -20,9 +49,28 @@ extension ContextWatchCallbackRecordExt295<T0, TListenable1 extends ValueListena
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect4<AsyncSnapshot<T0>, T2, T4, AsyncSnapshot<T5>, T0, T2, T4, T5>(context, effect, $1, $2, $3, $4, key: key, immediate: immediate, once: once);
+    return watchEffect4<
+      AsyncSnapshot<T0>,
+      T2,
+      T4,
+      AsyncSnapshot<T5>,
+      T0,
+      T2,
+      T4,
+      T5
+    >(
+      context,
+      effect,
+      $1,
+      $2,
+      $3,
+      $4,
+      key: key,
+      immediate: immediate,
+      once: once,
+    );
   }
-  
+
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
     return unwatchEffect4(context, $1, $2, $3, $4, key: key);

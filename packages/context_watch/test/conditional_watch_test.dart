@@ -22,10 +22,7 @@ void main() {
 
       Widget widget({required String inherited}) {
         return ContextWatch.root(
-          child: _TestInheritedWidget(
-            value: inherited,
-            child: builder,
-          ),
+          child: _TestInheritedWidget(value: inherited, child: builder),
         );
       }
 
@@ -103,10 +100,7 @@ void main() {
 
       Widget widget({required String inherited}) {
         return ContextWatch.root(
-          child: _TestInheritedWidget(
-            value: inherited,
-            child: builder,
-          ),
+          child: _TestInheritedWidget(value: inherited, child: builder),
         );
       }
 
@@ -166,10 +160,7 @@ void main() {
 }
 
 class _TestInheritedWidget extends InheritedWidget {
-  const _TestInheritedWidget({
-    required this.value,
-    required super.child,
-  });
+  const _TestInheritedWidget({required this.value, required super.child});
 
   final String value;
 

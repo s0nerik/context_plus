@@ -27,13 +27,15 @@ class _ExampleState extends State<Example> {
     return Column(
       children: [
         _SearchField(
-          onQueryChanged: (query) => setState(() {
-            _query = query;
-            _countriesFuture = CountriesAPI.searchCountries(query);
-          }),
-          onToggleShowOnlyFavorites: () => setState(() {
-            _showOnlyFavorites = !_showOnlyFavorites;
-          }),
+          onQueryChanged:
+              (query) => setState(() {
+                _query = query;
+                _countriesFuture = CountriesAPI.searchCountries(query);
+              }),
+          onToggleShowOnlyFavorites:
+              () => setState(() {
+                _showOnlyFavorites = !_showOnlyFavorites;
+              }),
           showOnlyFavorites: _showOnlyFavorites,
         ),
         Expanded(
@@ -42,13 +44,14 @@ class _ExampleState extends State<Example> {
             countriesFuture: _countriesFuture,
             showOnlyFavorites: _showOnlyFavorites,
             favorites: _favorites,
-            onToggleFavorite: (countryName) => setState(() {
-              if (_favorites.contains(countryName)) {
-                _favorites.remove(countryName);
-              } else {
-                _favorites.add(countryName);
-              }
-            }),
+            onToggleFavorite:
+                (countryName) => setState(() {
+                  if (_favorites.contains(countryName)) {
+                    _favorites.remove(countryName);
+                  } else {
+                    _favorites.add(countryName);
+                  }
+                }),
           ),
         ),
       ],
@@ -76,9 +79,10 @@ class _SearchField extends StatelessWidget {
         hintText: 'Enter country name',
         suffixIcon: IconButton(
           onPressed: onToggleShowOnlyFavorites,
-          icon: showOnlyFavorites
-              ? const Icon(Icons.favorite)
-              : const Icon(Icons.favorite_border),
+          icon:
+              showOnlyFavorites
+                  ? const Icon(Icons.favorite)
+                  : const Icon(Icons.favorite_border),
         ),
       ),
     );
@@ -107,8 +111,9 @@ class _CountriesList extends StatelessWidget {
       builder: (context, countriesSnapshot) {
         if (countriesSnapshot.hasError) {
           return Center(
-            child:
-                Text('Error fetching countries:\n${countriesSnapshot.error}'),
+            child: Text(
+              'Error fetching countries:\n${countriesSnapshot.error}',
+            ),
           );
         }
         if (!countriesSnapshot.hasData) {
@@ -117,20 +122,22 @@ class _CountriesList extends StatelessWidget {
 
         var countries = countriesSnapshot.data ?? const [];
         if (showOnlyFavorites) {
-          countries = countries
-              .where((country) => favorites.contains(country.name))
-              .toList();
+          countries =
+              countries
+                  .where((country) => favorites.contains(country.name))
+                  .toList();
         }
 
         return ListView.builder(
           itemCount: countries.length,
-          itemBuilder: (context, index) => _CountryTile(
-            key: ValueKey(countries[index].name),
-            country: countries[index],
-            isFavorite: favorites.contains(countries[index].name),
-            onToggleFavorite: () => onToggleFavorite(countries[index].name),
-            query: query,
-          ),
+          itemBuilder:
+              (context, index) => _CountryTile(
+                key: ValueKey(countries[index].name),
+                country: countries[index],
+                isFavorite: favorites.contains(countries[index].name),
+                onToggleFavorite: () => onToggleFavorite(countries[index].name),
+                query: query,
+              ),
         );
       },
     );
@@ -154,29 +161,25 @@ class _CountryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: _CountryTileTitle(
-        country: country,
-        query: query,
-      ),
+      title: _CountryTileTitle(country: country, query: query),
       subtitle: country.capital != null ? Text(country.capital!) : null,
-      leading: country.flag != null
-          ? Image.network(country.flag!, width: 48, height: 48)
-          : null,
+      leading:
+          country.flag != null
+              ? Image.network(country.flag!, width: 48, height: 48)
+              : null,
       trailing: IconButton(
         onPressed: onToggleFavorite,
-        icon: isFavorite
-            ? const Icon(Icons.favorite)
-            : const Icon(Icons.favorite_border),
+        icon:
+            isFavorite
+                ? const Icon(Icons.favorite)
+                : const Icon(Icons.favorite_border),
       ),
     );
   }
 }
 
 class _CountryTileTitle extends StatelessWidget {
-  const _CountryTileTitle({
-    required this.country,
-    required this.query,
-  });
+  const _CountryTileTitle({required this.country, required this.query});
 
   final CountryInfo country;
   final String query;
@@ -189,9 +192,7 @@ class _CountryTileTitle extends StatelessWidget {
       words: {
         for (final word in words)
           word: HighlightedWord(
-            textStyle: TextStyle(
-              backgroundColor: Colors.yellow[900],
-            ),
+            textStyle: TextStyle(backgroundColor: Colors.yellow[900]),
           ),
       },
     );

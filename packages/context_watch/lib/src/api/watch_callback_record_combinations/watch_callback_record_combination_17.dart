@@ -3,13 +3,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordExt17<TListenable0 extends Listenable, TListenable1 extends Listenable, TListenable2 extends ValueListenable<T3>, T3> on (TListenable0, TListenable1, TListenable2) {
+extension ContextWatchCallbackRecordExt17<
+  TListenable0 extends Listenable,
+  TListenable1 extends Listenable,
+  TListenable2 extends ValueListenable<T3>,
+  T3
+>
+    on (TListenable0, TListenable1, TListenable2) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(TListenable0, TListenable1, T3) selector,
   ) {
-    return watchOnly3<R, TListenable0, TListenable1, T3, TListenable0, TListenable1, T3>(context, selector, $1, $2, $3, $1, $2, $3.value);
+    return watchOnly3<
+      R,
+      TListenable0,
+      TListenable1,
+      T3,
+      TListenable0,
+      TListenable1,
+      T3
+    >(context, selector, $1, $2, $3, $1, $2, $3.value);
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -20,9 +34,16 @@ extension ContextWatchCallbackRecordExt17<TListenable0 extends Listenable, TList
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect3<TListenable0, TListenable1, T3, TListenable0, TListenable1, T3>(context, effect, $1, $2, $3, key: key, immediate: immediate, once: once);
+    return watchEffect3<
+      TListenable0,
+      TListenable1,
+      T3,
+      TListenable0,
+      TListenable1,
+      T3
+    >(context, effect, $1, $2, $3, key: key, immediate: immediate, once: once);
   }
-  
+
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
     return unwatchEffect3(context, $1, $2, $3, key: key);

@@ -10,10 +10,7 @@ import 'value_provider.dart';
 
 @internal
 class ContextRefRoot extends InheritedWidget {
-  const ContextRefRoot({
-    super.key,
-    required super.child,
-  });
+  const ContextRefRoot({super.key, required super.child});
 
   static InheritedContextRefElement of(BuildContext context) {
     final element =
@@ -37,8 +34,9 @@ class ContextRefRoot extends InheritedWidget {
 @internal
 class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget) {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => _isFirstFrame = false);
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) => _isFirstFrame = false,
+    );
   }
 
   bool _isFirstFrame = true;

@@ -9,8 +9,9 @@ final _state = Ref<_State>();
 
 class _State {
   final query = ValueNotifier('');
-  final countries = AsyncNotifier<List<CountryInfo>>()
-    ..setFuture(CountriesAPI.searchCountries(''));
+  final countries =
+      AsyncNotifier<List<CountryInfo>>()
+        ..setFuture(CountriesAPI.searchCountries(''));
   final showOnlyFavorites = ValueNotifier(false);
   final favorites = ValueNotifier(const <String>{});
 
@@ -29,12 +30,7 @@ class Example extends StatelessWidget {
   Widget build(BuildContext context) {
     _state.bind(context, () => _State());
     return const Column(
-      children: [
-        _SearchField(),
-        Expanded(
-          child: _CountriesList(),
-        ),
-      ],
+      children: [_SearchField(), Expanded(child: _CountriesList())],
     );
   }
 }
@@ -54,11 +50,14 @@ class _SearchField extends StatelessWidget {
         labelText: 'Search',
         hintText: 'Enter country name',
         suffixIcon: IconButton(
-          onPressed: () =>
-              state.showOnlyFavorites.value = !state.showOnlyFavorites.value,
-          icon: state.showOnlyFavorites.watch(context)
-              ? const Icon(Icons.favorite)
-              : const Icon(Icons.favorite_border),
+          onPressed:
+              () =>
+                  state.showOnlyFavorites.value =
+                      !state.showOnlyFavorites.value,
+          icon:
+              state.showOnlyFavorites.watch(context)
+                  ? const Icon(Icons.favorite)
+                  : const Icon(Icons.favorite_border),
         ),
       ),
     );
@@ -86,26 +85,25 @@ class _CountriesList extends StatelessWidget {
     final showOnlyFavorites = state.showOnlyFavorites.watch(context);
     if (showOnlyFavorites) {
       final favorites = state.favorites.watch(context);
-      countries = countries
-          .where((country) => favorites.contains(country.name))
-          .toList();
+      countries =
+          countries
+              .where((country) => favorites.contains(country.name))
+              .toList();
     }
 
     return ListView.builder(
       itemCount: countries.length,
-      itemBuilder: (context, index) => _CountryTile(
-        key: ValueKey(countries[index].name),
-        country: countries[index],
-      ),
+      itemBuilder:
+          (context, index) => _CountryTile(
+            key: ValueKey(countries[index].name),
+            country: countries[index],
+          ),
     );
   }
 }
 
 class _CountryTile extends StatelessWidget {
-  const _CountryTile({
-    super.key,
-    required this.country,
-  });
+  const _CountryTile({super.key, required this.country});
 
   final CountryInfo country;
 
@@ -115,9 +113,10 @@ class _CountryTile extends StatelessWidget {
     return ListTile(
       title: _CountryTileTitle(country: country),
       subtitle: country.capital != null ? Text(country.capital!) : null,
-      leading: country.flag != null
-          ? Image.network(country.flag!, width: 48, height: 48)
-          : null,
+      leading:
+          country.flag != null
+              ? Image.network(country.flag!, width: 48, height: 48)
+              : null,
       trailing: IconButton(
         onPressed: () {
           final favorites = state.favorites.value.toSet();
@@ -128,34 +127,33 @@ class _CountryTile extends StatelessWidget {
           }
           state.favorites.value = favorites;
         },
-        icon: state.favorites.watch(context).contains(country.name)
-            ? const Icon(Icons.favorite)
-            : const Icon(Icons.favorite_border),
+        icon:
+            state.favorites.watch(context).contains(country.name)
+                ? const Icon(Icons.favorite)
+                : const Icon(Icons.favorite_border),
       ),
     );
   }
 }
 
 class _CountryTileTitle extends StatelessWidget {
-  const _CountryTileTitle({
-    required this.country,
-  });
+  const _CountryTileTitle({required this.country});
 
   final CountryInfo country;
 
   @override
   Widget build(BuildContext context) {
     final state = _state.of(context);
-    final words =
-        state.query.watch(context).split(' ').where((word) => word.isNotEmpty);
+    final words = state.query
+        .watch(context)
+        .split(' ')
+        .where((word) => word.isNotEmpty);
     return TextHighlight(
       text: country.name,
       words: {
         for (final word in words)
           word: HighlightedWord(
-            textStyle: TextStyle(
-              backgroundColor: Colors.yellow[900],
-            ),
+            textStyle: TextStyle(backgroundColor: Colors.yellow[900]),
           ),
       },
     );

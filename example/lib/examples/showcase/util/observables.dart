@@ -41,6 +41,6 @@ final _colors = [
 ];
 
 Stream<Color> createColorStream() => Stream.periodic(
-      const Duration(milliseconds: 200),
-      (i) => _colors[i % _colors.length],
-    );
+  const Duration(milliseconds: 200),
+  (i) => _colors[i % _colors.length],
+);

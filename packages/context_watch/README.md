@@ -1,48 +1,43 @@
-# context_watch
-
 ![context_watch.png](https://github.com/s0nerik/context_plus/raw/main/doc/context_watch.png)
+
+> See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
+> 
+> It combines [context_watch](https://pub.dev/packages/context_watch) with [context_ref](https://pub.dev/packages/context_ref) for effortless object propagation and observing.
+> 
+> Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more information and interactive examples.
+
+# context_watch
 
 [![context_watch](https://img.shields.io/pub/v/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/likes/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/points/context_watch)](https://pub.dev/packages/context_watch)
 [![context_watch](https://img.shields.io/pub/dm/context_watch)](https://pub.dev/packages/context_watch)
 
-Subscribe widgets to any observable value using `observable.watch(context)`. No strings attached.
-
-See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
-
-## Features
+This package provides three extension methods on many observable types, such as `Listeanble`, `ValueListenable`, `Stream`, `Future` and their derivatives:
 
 - `.watch(context)` - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
 - `.watchOnly(context, (...) => ...)` - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
 - `.watchEffect(context, (...) => ...)` - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
-- Multi-value observing of up to 4 observables:
+- Multi-value observing of up to 4 values:
 
   ```dart
-  final (value, futureSnap, streamSnap) =
+  final (value, futureSnapshot, streamSnapshot) =
       (valueListenable, future, stream).watch(context);
+                                       // or
+                                       .watchOnly(context, (...) => ...);
+                                       // or
+                                       .watchEffect(context, (...) => ...);
   ```
-  
-  All three methods are available for all combinations of observables.
 
-## Supported observable types
+All methods provide the most intuitive result values for each observed type:
+- `SomeNotifier extends Listenable` -> `SomeNotifier`
+- `SomeValueNotifier extends ValueListenable<T>` -> `T`
+- `Stream<T>` -> `AsyncSnapshot<T>`
+- `Future<T>` -> `AsyncSnapshot<T>`
 
-### Built-in
+Any async data returned synchronously will be available in the `AsyncSnapshot` immediately, without any skipped frames. This includes the initial value of `rxdart`'s `ValueStream`, `SynchronousFuture` and `FutureOr` cases as well as any other use-case behaving the same way.
 
-- `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.):
-- `Stream`/`ValueStream`
-- `Future`/`SynchronousFuture`
-
-## Integrations
-
-| Package                                                                                                   | Pub                                                                                                                            | Description                                                                                                                   |
-|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| [context_watch_bloc](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_bloc)       | [![context_watch_bloc](https://img.shields.io/pub/v/context_watch_bloc)](https://pub.dev/packages/context_watch_bloc)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Bloc` and `Cubit` |
-| [context_watch_mobx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_mobx)       | [![context_watch_mobx](https://img.shields.io/pub/v/context_watch_mobx)](https://pub.dev/packages/context_watch_mobx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Observable`       |
-| [context_watch_getx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_getx)       | [![context_watch_getx](https://img.shields.io/pub/v/context_watch_getx)](https://pub.dev/packages/context_watch_getx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Rx`               |
-| [context_watch_signals](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_signals) | [![context_watch_signals](https://img.shields.io/pub/v/context_watch_signals)](https://pub.dev/packages/context_watch_signals) | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Signal`           |
-
-## Getting started
+## Installation
 
 ```shell
 flutter pub add context_watch
@@ -77,6 +72,23 @@ Just call `watch()` on your observable value and you've got a reactive widget. `
 It doesn't matter where you call `watch()` from or how many times you call it. While in a build phase, it will
 always register the `context` as a listener to the observable value. Whenever the observable notifies of a change,
 the `context` will be marked as needing a rebuild.
+
+## Supported observable types
+
+### Built-in
+
+- `Listenable` (`ChangeNotifier`/`ValueNotifier`/`AnimationController`/`ScrollController`/`TabController` etc.):
+- `Stream`/`ValueStream`
+- `Future`/`SynchronousFuture`
+
+## Integrations
+
+| Package                                                                                                   | Pub                                                                                                                            | Description                                                                                                                   |
+|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| [context_watch_bloc](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_bloc)       | [![context_watch_bloc](https://img.shields.io/pub/v/context_watch_bloc)](https://pub.dev/packages/context_watch_bloc)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Bloc` and `Cubit` |
+| [context_watch_mobx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_mobx)       | [![context_watch_mobx](https://img.shields.io/pub/v/context_watch_mobx)](https://pub.dev/packages/context_watch_mobx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Observable`       |
+| [context_watch_getx](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_getx)       | [![context_watch_getx](https://img.shields.io/pub/v/context_watch_getx)](https://pub.dev/packages/context_watch_getx)          | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Rx`               |
+| [context_watch_signals](https://github.com/s0nerik/context_plus/tree/main/packages/context_watch_signals) | [![context_watch_signals](https://img.shields.io/pub/v/context_watch_signals)](https://pub.dev/packages/context_watch_signals) | `.watch(context)`<br/>`.watchOnly(context, () => ...)`<br/>`.watchEffect(context, () => ...)`<br/><br/>for `Signal`           |
 
 ## Additional information
 

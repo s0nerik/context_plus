@@ -1,3 +1,15 @@
+## 6.0.0
+
+> Note: This release has breaking changes.
+
+> Note: This release requires Dart 3.7.0 or newer
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+   - `TListenable.watch(context)` now returns `TListenable` instead of `void`
+   - `ValueListenable<T>.watchOnly()`/`.watchEffect()` now provide `T` instead of `TListenable` as a value
+
+ - **DOCS**: README improvements
+
 ## 5.1.3
 
  - **FIX**: allow .watch(context) inside LayoutBuilder.

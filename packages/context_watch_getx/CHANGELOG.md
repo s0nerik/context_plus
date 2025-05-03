@@ -1,3 +1,9 @@
+## 4.0.0-rc.4
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
 ## 4.0.0-rc.3
 
  - Update a dependency to the latest release.

@@ -1,3 +1,9 @@
+## 7.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
 ## 6.0.3
 
  - **FIX**: allow .watch(context) inside LayoutBuilder.

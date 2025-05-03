@@ -1,3 +1,10 @@
+## 4.0.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: applied Dart 3.7 formatting.
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
 ## 3.0.3
 
  - Update a dependency to the latest release.

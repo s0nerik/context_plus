@@ -3,6 +3,73 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus` - `v5.0.0`](#context_plus---v500)
+ - [`context_ref` - `v2.0.0`](#context_ref---v200)
+ - [`context_watch` - `v6.0.0`](#context_watch---v600)
+ - [`context_watch_base` - `v7.0.0`](#context_watch_base---v700)
+ - [`context_watch_bloc` - `v4.0.0`](#context_watch_bloc---v400)
+ - [`context_watch_getx` - `v4.0.0-rc.4`](#context_watch_getx---v400-rc4)
+ - [`context_watch_mobx` - `v4.0.0`](#context_watch_mobx---v400)
+ - [`context_watch_signals` - `v4.0.0`](#context_watch_signals---v400)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `context_plus` - `v5.0.0`
+
+ - **REFACTOR**: applied Dart 3.7 formatting.
+ - **DOCS**: Enhance README files for context_plus, context_ref, and context_watch with improved descriptions and examples.
+ - **DOCS**: Update README badges to reflect download metrics for context_plus, context_ref, and context_watch.
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_ref` - `v2.0.0`
+
+ - **REFACTOR**: applied Dart 3.7 formatting.
+ - **DOCS**: Enhance README files for context_plus, context_ref, and context_watch with improved descriptions and examples.
+ - **DOCS**: Update README badges to reflect download metrics for context_plus, context_ref, and context_watch.
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch` - `v6.0.0`
+
+ - **REFACTOR**: applied Dart 3.7 formatting.
+ - **DOCS**: Enhance README files for context_plus, context_ref, and context_watch with improved descriptions and examples.
+ - **DOCS**: Improved README.md.
+ - **DOCS**: Update README badges to reflect download metrics for context_plus, context_ref, and context_watch.
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch_base` - `v7.0.0`
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch_bloc` - `v4.0.0`
+
+ - **REFACTOR**: applied Dart 3.7 formatting.
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch_getx` - `v4.0.0-rc.4`
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch_mobx` - `v4.0.0`
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+#### `context_watch_signals` - `v4.0.0`
+
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+
 ## 2025-03-19
 
 ### Changes

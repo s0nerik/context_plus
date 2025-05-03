@@ -1,3 +1,9 @@
+## 2.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING**: Increased required Dart version to 3.7.0
+
 ## 1.4.4
 
  - **FIX**: allow .bind*() inside LayoutBuilder.

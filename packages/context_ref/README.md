@@ -1,6 +1,13 @@
-# context_ref
-
 ![context_ref.png](https://github.com/s0nerik/context_plus/raw/main/doc/context_ref.png)
+
+> See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
+> 
+> It combines [context_watch](https://pub.dev/packages/context_watch) with [context_ref](https://pub.dev/packages/context_ref) for effortless object propagation and observing.
+> 
+> 
+> Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more information and interactive examples.
+
+# context_ref
 
 [![context_ref](https://img.shields.io/pub/v/context_ref)](https://pub.dev/packages/context_ref)
 [![context_ref](https://img.shields.io/pub/likes/context_ref)](https://pub.dev/packages/context_ref)

@@ -1,6 +1,8 @@
-# [<img src="https://github.com/s0nerik/context_plus/raw/main/example/web/icons/Icon-192.png" alt="icon.png" width="192"/>](https://context-plus.sonerik.dev) <br/> context_plus
+[![context_plus.webp](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)](https://context-plus.sonerik.dev)
 
-[![showcase](https://github.com/s0nerik/context_plus/raw/main/doc/context_plus_anim.webp)](https://context-plus.sonerik.dev)
+> Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more information and interactive examples.
+
+# context_plus
 
 [![context_plus](https://img.shields.io/pub/v/context_plus)](https://pub.dev/packages/context_plus)
 [![context_plus](https://img.shields.io/pub/likes/context_plus)](https://pub.dev/packages/context_plus)
@@ -9,41 +11,27 @@
 
 This package combines [context_ref](https://pub.dev/packages/context_ref) and [context_watch](https://pub.dev/packages/context_watch) into a single, more convenient package.
 
-Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more information and interactive examples.
+It adds `.watch()`, `.watchOnly()`, `.watchEffect()` extension methods on the `Ref`s to supported observable types, allowing you to write
+```dart
+final changeNotifier = changeNotifierRef.watch(context);
+final value = listenableRef.watchOnly(context, (it) => it.someValue);
+streamRef.watchEffect(context, (...) => ...);
+```
+instead of
+```dart
+final changeNotifier = changeNotifierRef.of(context).watch(context);
+final value = listenableRef.of(context).watchOnly(context, (it) => it.someValue);
+streamRef.of(context).watchEffect(context, (...) => ...);
+```
 
 ## Table of Contents
 
-1. [Features](#features)
 1. [Installation](#installation)
+1. [Example](#example)
+1. [Features](#features)
 1. [Supported observable types for `.watch()`](#supported-observable-types)
 1. [3rd party supported observable types for `.watch()` via separate packages](#3rd-party-supported-observable-types)
 1. [API](#api)
-
-<a name="features"></a>
-## Features
-
-- [`Ref<T>`](#api-ref) - a reference to a value of type `T` bound to a `context` or multiple `context`s.
-    - [`.bind(context, () => ...)`](#api-ref-bind) - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
-    - [`.bindLazy(context, () => ...)`](#api-ref-bind-lazy) - same as `.bind()`, but the value is created only when it's first accessed.
-    - [`.bindValue(context, ...)`](#api-ref-bind-value) - bind an already created value to a `context`. The value is not disposed automatically.
-    - [`.of(context)`](#api-ref-of) - get the value bound to the `context` or its nearest ancestor.
-- `Listenable`/`ValueListenable`/`AsyncListenable`/`Future`/`Stream` (and [more](#supported-observable-types)) or `Ref` of any of these types:
-    - [`.watch(context)`](#api-watch) - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
-    - [`.watchOnly(context, (...) => ...)`](#api-watch-only) - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
-    - [`.watchEffect(context, (...) => ...)`](#api-watch-effect) - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
-    - Multi-value observing of up to 4 observables:
-
-      ```dart
-      final (value, futureSnap, streamSnap) =
-          (valueListenable, future, stream).watch(context);
-      // in any order, Refs are also supported
-      final (streamSnap, value, futureSnap) =
-          (streamRef, valueListenableRef, futureRef).watch(context);
-      ```
-      
-      All three methods are available for all combinations of observables and observable Refs.
-      
-      ** *Note*: IDE suggestions for `watch*()` methods on records work only with Dart 3.6 and newer (see [dart-lang/sdk#56572](https://github.com/dart-lang/sdk/issues/56572)).
 
 <a name="installation"></a>
 ## Installation
@@ -66,6 +54,142 @@ Visit [context-plus.sonerik.dev](https://context-plus.sonerik.dev) for more info
     }
     ```
 4. (Optional) Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them.
+
+<a name="example"></a>
+## Example
+
+```dart
+final _userId = Ref<String>;
+final _statusStream = Ref<Stream<UserStatus>>();
+
+class UserSection extends StatelessWidget {
+  const UserSection({
+    required this.userId,
+  });
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    // Bind the userId to a Ref to make it accessible without piping
+    // it through the widget tree as a parameter
+    _userId.bindValue(context, userId);
+    // The stream subscription will be initialized only once, unless
+    // the userId changes.
+    _statusStream.bind(
+      context,
+      () => repository.getStatusStream(userId: userId),
+      key: userId,
+    ).watchEffect(context, (snapshot) {
+      if (snapshot.error) {
+        ScaffoldMessenger.of(context).showSnackBar(...);
+      }
+    });
+
+    // Child widgets can stay const, reducing their unnecessary rebuilds
+    return ...
+             ...
+               ...
+                 child: const _UserStatus()
+                   ...
+                     ...
+                     ...
+                       ...
+                         child: const _UserAvatar()
+                           ...
+  }
+}
+
+class _UserStatus extends StatelessWidget {
+  const _UserStatus();
+
+  @override
+  Widget build(BuildContext context) {
+    // Get user ID from the ref, just as if it was an InheritedWidget
+    final userId = _userId.of(context);
+    // Rebuild the widget whenever the status stream notifies
+    final statusSnapshot = _statusStream.watch(context);
+    ...
+  }
+}
+
+class _UserAvatar extends StatelessWidget {
+  const _UserAvatar();
+
+  static final _opacityAnimController = Ref<AnimationController>();
+  static final _avatarBytesFuture = Ref<Future<Uint8List>>();
+
+  @override
+  Widget build(BuildContext context) {
+    final userId = _userIdRef.of(context);
+
+    // Use Ref to initialize an AnimationController
+    _opacityAnimController.bind(
+      context,
+      (vsync) => AnimationController(vsync, ...),
+      key: userId,
+    );
+
+    // Use Ref to perform a network call and trigger the animation as a result.
+    // Watch the result snapshot right away.
+    final avatarBytesSnapshot = _avatarBytesFuture.bind(
+      context,
+      () async {
+        final bytes = await repository.fetchUserAvatar(userId: userId);
+        if (context.mounted) {
+          // BuildContext is available here, can do UI stuff
+          _opacityAnimController.of(context).forward();
+        }
+        return bytes;
+      },
+      key: userId,
+    ).watch(context);
+
+    if (avatarBytesSnapshot.data != null) {
+      return Image.memory(
+        avatarBytesSnapshot.data!,
+        opacity: _opacityAnimController.of(context),
+      );
+    }
+    ...
+  }
+}
+```
+
+<a name="features"></a>
+## Features
+
+- [`Ref<T>`](#api-ref) - a reference to a value of type `T` bound to a `context` or multiple `context`s.
+    - [`.bind(context, () => ...)`](#api-ref-bind) - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
+    - [`.bindLazy(context, () => ...)`](#api-ref-bind-lazy) - same as `.bind()`, but the value is created only when it's first accessed.
+    - [`.bindValue(context, ...)`](#api-ref-bind-value) - bind an already created value to a `context`. The value is not disposed automatically.
+    - [`.of(context)`](#api-ref-of) - get the value bound to the `context` or its nearest ancestor.
+- `Listenable`/`ValueListenable`/`Future`/`Stream` (and [more](#supported-observable-types)) or `Ref` of any of these types:
+    - [`.watch(context)`](#api-watch) - rebuild the `context` whenever the observable notifies of a change. Returns the current value or `AsyncSnapshot` for corresponding types.
+    - [`.watchOnly(context, (...) => ...)`](#api-watch-only) - rebuild the `context` whenever the observable notifies of a change, but only if selected value has changed.
+    - [`.watchEffect(context, (...) => ...)`](#api-watch-effect) - execute the provided callback whenever the observable notifies of a change *without* rebuilding the `context`.
+    - Multi-value observing of up to 4 values:
+
+      ```dart
+      // Observe multiple values from observable objects
+      final (value, futureSnap, streamSnap) =
+          (valueListenable, future, stream).watch(context);
+                                           // or
+                                           .watchOnly(context, (...) => ...);
+                                           // or
+                                           .watchEffect(context, (...) => ...);
+      // Observe multiple values from Refs to observable objects
+      final (streamSnap, value, futureSnap) =
+          (streamRef, valueListenableRef, futureRef).watch(context);
+                                                    // or
+                                                    .watchOnly(context, (...) => ...);
+                                                    // or
+                                                    .watchEffect(context, (...) => ...);
+      ```
+      
+      All three methods are available for all combinations of observables and observable Refs.
+      
+      ** *Note*: IDE suggestions for `watch*()` methods on records work only with Dart 3.6 and newer (see [dart-lang/sdk#56572](https://github.com/dart-lang/sdk/issues/56572)).
 
 <a name="supported-observable-types"></a>
 ### Supported observable types for `Observable.watch()` and `Ref<Observable>.watch()`:
@@ -188,8 +312,8 @@ T Ref<T>.of(BuildContext context)
 ### `Ref<Observable>.watch()` and `Observable.watch()`
 
 ```dart
-void Listenable.watch(BuildContext context)
-void Ref<Listenable>.watch(BuildContext context)
+TListenable TListenable.watch(BuildContext context)
+TListenable Ref<TListenable>.watch(BuildContext context)
 ```
 - Rebuilds the widget whenever the `Listenable` notifies about changes.
 
@@ -225,8 +349,13 @@ R TListenable.watchOnly<R>(
   BuildContext context,
   R Function(TListenable listenable) selector,
 )
+
+R ValueListenable<T>.watchOnly<R>(
+  BuildContext context,
+  R Function(T value) selector,
+)
 ```
-- Invokes `selector` whenever the `TListenable` notifies about changes.
+- Invokes `selector` whenever the `Listenable` notifies about changes.
 - Rebuilds the widget whenever the `selector` returns a different value.
 - Returns the selected value.
 
@@ -252,6 +381,14 @@ R Stream<T>.watchOnly<R>(
 void TListenable.watchEffect(
   BuildContext context,
   void Function(TListenable listenable) effect, {
+  Object? key,
+  bool immediate = false,
+  bool once = false,
+})
+
+void ValueListenable<T>.watchEffect(
+  BuildContext context,
+  void Function(T value) effect, {
   Object? key,
   bool immediate = false,
   bool once = false,

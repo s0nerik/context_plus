@@ -12,10 +12,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          channel: beta
-          flutter-version: 3.27.0-0.2.pre
+          channel: stable
         # A fork that allows for wasm compilation
-      - uses: TesteurManiak/flutter-gh-pages@7ffcd0a663bf42b8d2fd77245a0159443427ce8e
+      - uses: bluefireteam/flutter-gh-pages@v9
         with:
           workingDir: example
           compileToWasm: true

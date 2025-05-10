@@ -16,7 +16,8 @@ final class _MobxSubscription implements ContextWatchSubscription {
 }
 
 class MobxObservableWatcher extends ContextWatcher<Observable> {
-  MobxObservableWatcher._();
+  MobxObservableWatcher._()
+    : super(ContextWatcherObservableType.mobxObservable);
 
   static final instance = MobxObservableWatcher._();
 
@@ -41,9 +42,13 @@ extension MobxObservableContextWatchExtension<T> on Observable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable<T>(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.mobxObservable,
+        )
+        .watch();
     return value;
   }
 
@@ -59,8 +64,11 @@ extension MobxObservableContextWatchExtension<T> on Observable<T> {
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(value);
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.mobxObservable,
+    );
 
     final selectedValue = selector(value);
     observable.watchOnly(selector, selectedValue);
@@ -97,8 +105,12 @@ extension MobxObservableContextWatchExtension<T> on Observable<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.mobxObservable,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

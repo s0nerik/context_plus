@@ -11,23 +11,60 @@
 
 This package combines [context_ref](https://pub.dev/packages/context_ref) and [context_watch](https://pub.dev/packages/context_watch) into a single, more convenient package.
 
-It adds `.watch()`, `.watchOnly()`, `.watchEffect()` extension methods on the `Ref`s to supported observable types, allowing you to write
-```dart
-final changeNotifier = changeNotifierRef.watch(context);
-final value = listenableRef.watchOnly(context, (it) => it.someValue);
-streamRef.watchEffect(context, (...) => ...);
+It adds `.watch()`, `.watchOnly()`, `.watchEffect()` extension methods on the `Ref`s to supported observable types.
+
+## Example
+
 ```
-instead of
-```dart
-final changeNotifier = changeNotifierRef.of(context).watch(context);
-final value = listenableRef.of(context).watchOnly(context, (it) => it.someValue);
-streamRef.of(context).watchEffect(context, (...) => ...);
+// Create a reference to any object
+final _stream = Ref<Stream>();
+
+class Example extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Bind the stream to this context and observe its state
+    final streamSnapshot = context.use(
+      () => Stream.periodic(const Duration(seconds: 1)),
+      // Optionally, provide a `ref` parameter to bind the stream to it
+      ref: _stream,
+    ).watch(context);
+
+    // ... or bind the stream lazily, so that it is initialized only upon first access via the `Ref`
+    _stream.bindLazy(context, () => Stream.periodic(const Duration(seconds: 1)));
+
+    // ... or bind the pre-existing stream to the `Ref` to expose it to the children
+    _stream.bindValue(context, existingStream);
+
+    return const _Child();
+  }
+}
+
+class _Child extends StatelessWidget {
+  const _Child();
+
+  @override
+  Widget build(BuildContext context) {
+    // Observe the current state of a provided stream easily
+    final streamSnapshot = _stream.watch(context);
+
+    // The same works for most observable types:
+    // - Stream, ValueStream, etc.
+    // - Future, SynchronousFuture, FutureOr, etc.
+    // - Listenable, ValueListenable and their descendants
+    // - 3rd party observable types, such as:
+    //   - `Bloc`, `Cubit` from flutter_bloc
+    //   - `Signal` from signals
+    //   - `Observable` from mobx
+    //   - `Rx` from getx
+
+    ...
+  }
+}
 ```
 
 ## Table of Contents
 
 1. [Installation](#installation)
-1. [Example](#example)
 1. [Features](#features)
 1. [Supported observable types for `.watch()`](#supported-observable-types)
 1. [3rd party supported observable types for `.watch()` via separate packages](#3rd-party-supported-observable-types)
@@ -37,128 +74,43 @@ streamRef.of(context).watchEffect(context, (...) => ...);
 ## Installation
 
 1. Add `context_plus` to your `pubspec.yaml`:
-   ```dart
+   ```bash
    flutter pub add context_plus
    ```
-2. Wrap your app in `ContextPlus.root`:
+1. Wrap your app in `ContextPlus.root`:
     ```dart
     ContextPlus.root(
       child: MaterialApp(...),
     );
     ```
-3. (Optional, but recommended) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages:
+1. (Optional, but recommended) Wrap default error handlers with `ContextPlus.errorWidgetBuilder()` and `ContextPlus.onError()` to get better hot reload related error messages:
     ```dart
     void main() {
       ErrorWidget.builder = ContextPlus.errorWidgetBuilder(ErrorWidget.builder);
       FlutterError.onError = ContextPlus.onError(FlutterError.onError);
     }
     ```
-4. (Optional) Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them.
-
-<a name="example"></a>
-## Example
-
-```dart
-final _userId = Ref<String>;
-final _statusStream = Ref<Stream<UserStatus>>();
-
-class UserSection extends StatelessWidget {
-  const UserSection({
-    required this.userId,
-  });
-
-  final String userId;
-
-  @override
-  Widget build(BuildContext context) {
-    // Bind the userId to a Ref to make it accessible without piping
-    // it through the widget tree as a parameter
-    _userId.bindValue(context, userId);
-    // The stream subscription will be initialized only once, unless
-    // the userId changes.
-    _statusStream.bind(
-      context,
-      () => repository.getStatusStream(userId: userId),
-      key: userId,
-    ).watchEffect(context, (snapshot) {
-      if (snapshot.error) {
-        ScaffoldMessenger.of(context).showSnackBar(...);
-      }
-    });
-
-    // Child widgets can stay const, reducing their unnecessary rebuilds
-    return ...
-             ...
-               ...
-                 child: const _UserStatus()
-                   ...
-                     ...
-                     ...
-                       ...
-                         child: const _UserAvatar()
-                           ...
-  }
-}
-
-class _UserStatus extends StatelessWidget {
-  const _UserStatus();
-
-  @override
-  Widget build(BuildContext context) {
-    // Get user ID from the ref, just as if it was an InheritedWidget
-    final userId = _userId.of(context);
-    // Rebuild the widget whenever the status stream notifies
-    final statusSnapshot = _statusStream.watch(context);
-    ...
-  }
-}
-
-class _UserAvatar extends StatelessWidget {
-  const _UserAvatar();
-
-  static final _opacityAnimController = Ref<AnimationController>();
-  static final _avatarBytesFuture = Ref<Future<Uint8List>>();
-
-  @override
-  Widget build(BuildContext context) {
-    final userId = _userIdRef.of(context);
-
-    // Use Ref to initialize an AnimationController
-    _opacityAnimController.bind(
-      context,
-      (vsync) => AnimationController(vsync, ...),
-      key: userId,
-    );
-
-    // Use Ref to perform a network call and trigger the animation as a result.
-    // Watch the result snapshot right away.
-    final avatarBytesSnapshot = _avatarBytesFuture.bind(
-      context,
-      () async {
-        final bytes = await repository.fetchUserAvatar(userId: userId);
-        if (context.mounted) {
-          // BuildContext is available here, can do UI stuff
-          _opacityAnimController.of(context).forward();
-        }
-        return bytes;
-      },
-      key: userId,
-    ).watch(context);
-
-    if (avatarBytesSnapshot.data != null) {
-      return Image.memory(
-        avatarBytesSnapshot.data!,
-        opacity: _opacityAnimController.of(context),
-      );
-    }
-    ...
-  }
-}
-```
+1. (Optional, but recommended) Add `context_plus_lint` to your `pubspec.yaml`
+    ```bash
+    flutter pub add --dev context_plus_lint
+    flutter pub add --dev custom_lint
+    ```
+    Update the `analysis_options.yaml` to include
+    ```yaml
+    analyzer:
+      plugins:
+        - custom_lint
+    ```
+1. (Optional) Remove `context_ref` and `context_watch` from your `pubspec.yaml` if you have them.
 
 <a name="features"></a>
 ## Features
 
+- `context.use(() => ...)`
+    - Bind an object to the scope of this `BuildContext`, so that it is:
+      - initialized just once per `BuildContext` lifetime (unless the `key` or `ref` parameter value changes)
+      - automatically disposed together with `BuildContext`
+      - accessible by all children via the provided `Ref` (if `ref:` parameter is specified)
 - [`Ref<T>`](#api-ref) - a reference to a value of type `T` bound to a `context` or multiple `context`s.
     - [`.bind(context, () => ...)`](#api-ref-bind) - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
     - [`.bindLazy(context, () => ...)`](#api-ref-bind-lazy) - same as `.bind()`, but the value is created only when it's first accessed.
@@ -219,6 +171,24 @@ class _UserAvatar extends StatelessWidget {
 
 <a name="api"></a>
 ## API
+
+<a name="api-use"></a>
+### `context.use(() => ...)`
+
+```dart
+T BuildContext.use<T>(
+  T Function() create, {
+  void Function(T value)? dispose,
+  Ref<T>? ref,
+  Object? key,
+});
+```
+
+- Creates a value `T` by calling the `create` callback immeditely if `T` wasn't created yet, otherwise just returns the existing `T` value.
+- Keeps `T` alive for the lifespan of a given `BuildContext`.
+- Automatically disposes `T` when `BuildContext` is disposed by calling the `dispose` callback (if provided) or `T.dispose()` method (if callback is not provided).
+- Binds `T` to the `ref`, if provided.
+- Similarly to widgets, `key` parameter allows for updating the value initializer.
 
 <a name="api-ref"></a>
 ### `Ref`

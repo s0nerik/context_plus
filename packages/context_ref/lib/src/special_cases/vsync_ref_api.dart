@@ -118,7 +118,6 @@ extension TabControllerRefAPI<TTabController extends TabController>
   }
 }
 
-final _isTickerEnabled = Ref<ValueNotifier<bool>>();
 ValueProvider<T> _bindWithVsync<T>({
   required Ref<T> ref,
   required BuildContext context,
@@ -126,18 +125,13 @@ ValueProvider<T> _bindWithVsync<T>({
   required void Function(T controller)? dispose,
   required Object? key,
 }) {
-  final shouldEnableTicker = TickerMode.of(context);
-  final isTickerEnabled = _isTickerEnabled.bind(
-    context,
-    () => ValueNotifier(shouldEnableTicker),
-  )..value = shouldEnableTicker;
-
   _SingleTickerProvider? vsync;
-  return ContextRefRoot.of(context).bind(
+  final provider = ContextRefRoot.of(context).bind(
     ref: ref,
     context: context,
     create: () {
-      vsync = _SingleTickerProvider(isTickerEnabled);
+      vsync = _SingleTickerProvider();
+      vsync!.tickerModeNotifier = TickerMode.getNotifier(context);
       return create(vsync!);
     },
     dispose: (controller) {
@@ -150,29 +144,45 @@ ValueProvider<T> _bindWithVsync<T>({
     },
     key: key,
   );
+
+  // allow `vsync` to properly react to `TickerMode` changes
+  vsync?.tickerModeNotifier = TickerMode.getNotifier(context);
+
+  return provider;
 }
 
 class _SingleTickerProvider implements TickerProvider {
-  _SingleTickerProvider(ValueListenable<bool> tickerModeNotifier)
-    : _tickerModeNotifier = tickerModeNotifier {
-    tickerModeNotifier.addListener(_updateTickerMode);
+  Ticker? _ticker;
+
+  ValueListenable<bool>? _tickerModeNotifier;
+  set tickerModeNotifier(ValueListenable<bool> notifier) {
+    if (notifier == _tickerModeNotifier) return;
+
+    _tickerModeNotifier?.removeListener(_updateTickerMode);
+    _tickerModeNotifier = notifier;
+    _tickerModeNotifier!.addListener(_updateTickerMode);
     _updateTickerMode();
   }
 
-  Ticker? _ticker;
-  ValueListenable<bool>? _tickerModeNotifier;
+  void _updateTickerMode() {
+    _ticker?.muted = !_tickerModeNotifier!.value;
+  }
 
   @override
-  Ticker createTicker(TickerCallback onTick) => _ticker ??= Ticker(onTick);
+  Ticker createTicker(TickerCallback onTick) {
+    assert(
+      _ticker == null,
+      'Multiple tickers were requested for the _SingleTickerProvider',
+    );
+    _ticker = Ticker(
+      onTick,
+      debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null,
+    );
+    _updateTickerMode();
+    return _ticker!;
+  }
 
   void dispose() {
     _tickerModeNotifier?.removeListener(_updateTickerMode);
-    _tickerModeNotifier = null;
-  }
-
-  void _updateTickerMode() {
-    if (_ticker != null) {
-      _ticker!.muted = !_tickerModeNotifier!.value;
-    }
   }
 }

@@ -1,44 +1,16 @@
+import 'package:context_watch_base/context_watch_base.dart';
 import 'package:context_watch_base/watch_callback_record_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchCallbackRecordExt196<
-  TListenable0 extends ValueListenable<T1>,
-  T1,
-  T2,
-  TListenable3 extends ValueListenable<T4>,
-  T4,
-  TListenable5 extends Listenable
->
-    on (TListenable0, Stream<T2>, TListenable3, TListenable5) {
+extension ContextWatchCallbackRecordExt196<TListenable0 extends ValueListenable<T1>, T1, T2, TListenable3 extends ValueListenable<T4>, T4, TListenable5 extends Listenable> on (TListenable0, Stream<T2>, TListenable3, TListenable5) {
   /// {@macro mass_watch_only_explanation}
   R watchOnly<R>(
     BuildContext context,
     R Function(T1, AsyncSnapshot<T2>, T4, TListenable5) selector,
   ) {
-    return watchOnly4<
-      R,
-      T1,
-      AsyncSnapshot<T2>,
-      T4,
-      TListenable5,
-      T1,
-      T2,
-      T4,
-      TListenable5
-    >(
-      context,
-      selector,
-      $1,
-      $2,
-      $3,
-      $4,
-      $1.value,
-      AsyncSnapshot<T2>.nothing(),
-      $3.value,
-      $4,
-    );
+    return watchOnly4<R, T1, AsyncSnapshot<T2>, T4, TListenable5, T1, T2, T4, TListenable5>(context, selector, $1, $2, $3, $4, ContextWatcherObservableType.valueListenable, ContextWatcherObservableType.stream, ContextWatcherObservableType.valueListenable, ContextWatcherObservableType.listenable);
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -49,28 +21,9 @@ extension ContextWatchCallbackRecordExt196<
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect4<
-      T1,
-      AsyncSnapshot<T2>,
-      T4,
-      TListenable5,
-      T1,
-      T2,
-      T4,
-      TListenable5
-    >(
-      context,
-      effect,
-      $1,
-      $2,
-      $3,
-      $4,
-      key: key,
-      immediate: immediate,
-      once: once,
-    );
+    return watchEffect4<T1, AsyncSnapshot<T2>, T4, TListenable5, T1, T2, T4, TListenable5>(context, effect, $1, $2, $3, $4, ContextWatcherObservableType.valueListenable, ContextWatcherObservableType.stream, ContextWatcherObservableType.valueListenable, ContextWatcherObservableType.listenable, key: key, immediate: immediate, once: once);
   }
-
+  
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
     return unwatchEffect4(context, $1, $2, $3, $4, key: key);

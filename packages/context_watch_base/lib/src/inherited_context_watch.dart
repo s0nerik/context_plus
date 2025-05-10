@@ -1,42 +1,10 @@
 import 'dart:collection';
 
-import 'package:flutter/scheduler.dart';
+import 'package:context_plus_core/context_plus_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-typedef WatchSelector = Object? Function(Object? value);
-
-abstract interface class ContextWatchSubscription {
-  /// The argument passed to the .watchOnly() and .watchEffect() callbacks.
-  Object? get callbackArgument;
-
-  void cancel();
-}
-
-enum ContextWatchSelectorParameterType {
-  value,
-  observable,
-}
-
-abstract class ContextWatcher<TObservable extends Object> {
-  var _rebuildIfNeeded = InheritedContextWatchElement._neverRebuild;
-
-  bool _canHandle(Object observable) => observable is TObservable;
-
-  /// Triggers a rebuild of the [context] if it is interested in the [observable]
-  /// value change notification.
-  @protected
-  @nonVirtual
-  void rebuildIfNeeded(BuildContext context, Object observable) =>
-      _rebuildIfNeeded(context, observable);
-
-  @protected
-  @useResult
-  ContextWatchSubscription createSubscription<T>(
-    BuildContext context,
-    TObservable observable,
-  );
-}
+import 'context_watcher.dart';
 
 class InheritedContextWatch extends InheritedWidget {
   const InheritedContextWatch({
@@ -45,7 +13,7 @@ class InheritedContextWatch extends InheritedWidget {
     required super.child,
   });
 
-  final List<ContextWatcher> watchers;
+  final List<ContextWatcher?> watchers;
 
   static InheritedContextWatchElement of(BuildContext context) {
     final element =
@@ -69,55 +37,34 @@ class InheritedContextWatch extends InheritedWidget {
 class InheritedContextWatchElement extends InheritedElement {
   InheritedContextWatchElement(super.widget) {
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._rebuildIfNeeded = _rebuildIfNeeded;
+      watcher?.rebuildCallback = _rebuildIfNeeded;
     }
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => _isFirstFrame = false);
-    SchedulerBinding.instance.addPostFrameCallback(_onFrameEnd);
   }
 
-  void _onFrameEnd(_) {
-    for (final context in _potentiallyUnwatchedContexts) {
-      _unwatchContext(context);
-    }
-    _potentiallyUnwatchedContexts.clear();
+  late ElementDataHolder _dataHolder;
 
-    SchedulerBinding.instance.addPostFrameCallback(_onFrameEnd);
-  }
-
-  /// Every time a [watch]'ed observable notifies of a change, the [context]
-  /// which invoked the [watch] method will be added to this set and scheduled
-  /// for rebuild. If after the frame is built, the [context] is not found in
-  /// the set, it means that the [context] still watches some observables and
-  /// should not be unwatched.
-  final _potentiallyUnwatchedContexts = HashSet<BuildContext>.identity();
-
-  bool _isFirstFrame = true;
-
-  final _contextData = HashMap<BuildContext, _ContextData>.identity();
-
-  bool get _isBuildPhase {
-    final phase = SchedulerBinding.instance.schedulerPhase;
-    return phase == SchedulerPhase.persistentCallbacks ||
-        _isFirstFrame && phase == SchedulerPhase.idle;
-  }
-
-  Duration get _currentFrameTimeStamp {
-    if (_isFirstFrame) {
-      return Duration.zero;
-    }
-    return SchedulerBinding.instance.currentFrameTimeStamp;
+  @override
+  void rebuild({bool force = false}) {
+    _dataHolder = ElementDataHolder.of(this);
+    super.rebuild(force: force);
   }
 
   @override
   void updated(covariant InheritedContextWatch oldWidget) {
     super.updated(oldWidget);
     for (final watcher in oldWidget.watchers) {
-      watcher._rebuildIfNeeded = _neverRebuild;
+      watcher?.rebuildCallback = InternalContextWatcherAPI.neverRebuild;
     }
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._rebuildIfNeeded = _rebuildIfNeeded;
+      watcher?.rebuildCallback = _rebuildIfNeeded;
     }
+  }
+
+  _ContextData _getOrCreateContextData(Element element) {
+    final container = _dataHolder.getContainer(element);
+    var contextData = container.get<_ContextData>();
+    contextData ??= container.set(_ContextData());
+    return contextData;
   }
 
   /// Returns the [ContextWatchObservable] for the given [observable]
@@ -126,39 +73,37 @@ class InheritedContextWatchElement extends InheritedElement {
   /// When called within a build phase, automatically creates a
   /// [ContextWatchSubscription].
   @nonVirtual
-  ContextWatchObservable? getOrCreateObservable<T>(
+  ContextWatchObservable getOrCreateObservable<T>(
     BuildContext context,
     Object observable,
+    ContextWatcherObservableType type,
   ) {
-    final contextData = _fetchContextDataForWatch(context);
-    if (contextData == null) {
-      return null;
+    assert(
+      context.debugDoingBuild ||
+          (context.widget is LayoutBuilder &&
+              ContextPlusFrameInfo.isBuildPhase),
+      'Calling watch*() outside the build() method of a widget is not allowed.',
+    );
+
+    final contextData = _getOrCreateContextData(context as Element);
+    if (contextData.lastFrameId != ContextPlusFrameInfo.currentFrameId) {
+      // It's a new frame, so let's clear all selectors as they might've changed
+      for (final observableData in contextData.observables.values) {
+        observableData._prepareForRebuild();
+      }
+      contextData.lastFrameId = ContextPlusFrameInfo.currentFrameId;
     }
 
     var observableData = contextData.observables[observable];
     if (observableData == null) {
-      final subscription =
-          _watcherFor(observable).createSubscription<T>(context, observable);
+      final watcher = (widget as InheritedContextWatch).watchers[type.index];
+      assert(watcher != null, 'No ContextWatcher found for ${type.name}');
+      final subscription = watcher!.createSubscription<T>(context, observable);
       observableData = ContextWatchObservable._(subscription);
       contextData.observables[observable] = observableData;
     }
-    observableData._lastFrame = contextData.lastFrame;
+    observableData.lastFrameId = ContextPlusFrameInfo.currentFrameId;
     return observableData;
-  }
-
-  @pragma('vm:prefer-inline')
-  ContextWatcher _watcherFor(Object observable) {
-    final watchers = (widget as InheritedContextWatch).watchers;
-    final length = watchers.length;
-    for (var i = 0; i < length; i++) {
-      final watcher = watchers[i];
-      if (watcher._canHandle(observable)) {
-        return watcher;
-      }
-    }
-    throw UnsupportedError(
-      'No ContextWatcher found for ${observable.runtimeType}',
-    );
   }
 
   @nonVirtual
@@ -167,98 +112,38 @@ class InheritedContextWatchElement extends InheritedElement {
     Object observable,
     Object effectKey,
   ) {
-    final contextData = _contextData[context];
-    if (contextData == null) {
-      return;
-    }
-    final observableData = contextData.observables[observable];
-    if (observableData == null) {
-      return;
-    }
-    observableData._unwatchEffect(effectKey);
-  }
-
-  _ContextData? _fetchContextDataForWatch(BuildContext context) {
-    assert(
-      context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
-      'Calling watch*() outside the build() method of a widget is not allowed.',
-    );
-
-    // Make [context] dependent on this element so that we can get notified
-    // when the [context] is removed from the tree.
-    context.dependOnInheritedElement(this);
-
-    if (!_isBuildPhase) {
-      // Don't update subscriptions outside of the widget's build() method
-      return null;
-    }
-
-    _potentiallyUnwatchedContexts.remove(context);
-
-    final contextData = _contextData[context] ??= _ContextData();
-    final frame = _currentFrameTimeStamp;
-
-    if (contextData.lastFrame != frame) {
-      // It's a new frame, so let's clear all selectors as they might've changed
-      for (final observableData in contextData.observables.values) {
-        observableData._prepareForRebuild();
-      }
-      contextData.lastFrame = frame;
-    }
-    return contextData;
-  }
-
-  @override
-  void removeDependent(Element dependent) {
-    // This method is called when the [dependent] is deactivated, but not
-    // yet unmounted. The element can be reactivated during the same fame.
-    // So, let's not dispose the context data immediately, but rather wait
-    // until the end of the frame to see if the element is reactivated.
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (!dependent.mounted) {
-        _unwatchContext(dependent);
-      }
-    });
-    super.removeDependent(dependent);
+    final contextData = _getOrCreateContextData(context as Element);
+    contextData.observables[observable]?._unwatchEffect(effectKey);
   }
 
   @override
   void unmount() {
-    for (final contextData in _contextData.values) {
-      for (final observableData in contextData.observables.values) {
-        observableData.subscription.cancel();
-      }
-    }
-    _contextData.clear();
     for (final watcher in (widget as InheritedContextWatch).watchers) {
-      watcher._rebuildIfNeeded = _neverRebuild;
+      watcher?.rebuildCallback = InternalContextWatcherAPI.neverRebuild;
     }
     super.unmount();
   }
 
-  static void _neverRebuild(BuildContext context, Object observable) {}
-
   void _rebuildIfNeeded(BuildContext context, Object observable) {
-    if (!context.mounted) {
-      _unwatchContext(context);
+    final contextDataContainer = _dataHolder.getContainerIfExists(
+      context as Element,
+    );
+    if (contextDataContainer == null) {
       return;
     }
 
-    final contextData = _contextData[context];
+    final contextData = contextDataContainer.get<_ContextData>();
     if (contextData == null) {
-      _unwatchContext(context);
       return;
     }
 
     final observableData = contextData.observables[observable];
     if (observableData == null) {
-      _unwatch(contextData, observable);
       return;
     }
 
-    if (contextData.lastFrame != observableData._lastFrame) {
-      _unwatch(contextData, observable);
+    if (contextData.lastFrameId != observableData.lastFrameId) {
+      contextData.unwatch(observable);
       return;
     }
 
@@ -267,61 +152,28 @@ class InheritedContextWatchElement extends InheritedElement {
     /// If either `watch()` was used during the last build, or the selected
     /// values changed, we need to rebuild
     if (observableData._isWatchedEntirely || selectedValuesChanged) {
-      _scheduleRebuild(context as Element);
-    }
-  }
-
-  @pragma('vm:prefer-inline')
-  void _scheduleRebuild(Element element) {
-    if (_isBuildPhase) {
-      // If we are in the build phase, we can't rebuild immediately, because
-      // it would break the build. Instead, we need to schedule a post-frame
-      // callback to rebuild the context.
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (element.mounted) {
-          _doScheduleRebuild(element);
-        }
-      });
-    } else {
-      // If we are not in the build phase, we can rebuild immediately.
-      _doScheduleRebuild(element);
-    }
-  }
-
-  @pragma('vm:prefer-inline')
-  void _doScheduleRebuild(Element element) {
-    // Let's add the element to the list of potentially unwatched contexts,
-    // so that we can unwatch it after the requested frame is built if
-    // no `watch()` calls are detected.
-    _potentiallyUnwatchedContexts.add(element);
-    element.markNeedsBuild();
-  }
-
-  void _unwatch(
-    _ContextData contextData,
-    Object observable,
-  ) {
-    final observableData = contextData.observables.remove(observable);
-    observableData?.subscription.cancel();
-  }
-
-  void _unwatchContext(BuildContext context) {
-    final contextData = _contextData.remove(context);
-    if (contextData == null) {
-      return;
-    }
-
-    for (final observableData in contextData.observables.values) {
-      observableData.subscription.cancel();
+      _dataHolder.scheduleRebuild(context);
     }
   }
 }
 
-final class _ContextData {
-  Duration lastFrame = const Duration(microseconds: -1);
+final class _ContextData implements ElementData {
+  int lastFrameId = ContextPlusFrameInfo.currentFrameId;
 
   /// Observable -> ContextWatchObservable
   final observables = HashMap<Object, ContextWatchObservable>.identity();
+
+  void unwatch(Object observable) {
+    final observableData = observables.remove(observable);
+    observableData?.subscription.cancel();
+  }
+
+  @override
+  void dispose() {
+    for (final observableData in observables.values) {
+      observableData.subscription.cancel();
+    }
+  }
 }
 
 final class ContextWatchObservable {
@@ -329,7 +181,7 @@ final class ContextWatchObservable {
 
   final ContextWatchSubscription subscription;
 
-  Duration _lastFrame = const Duration(microseconds: -1);
+  late int lastFrameId;
 
   /// Whether the observable was watched for any possible change via [watch]
   bool _isWatchedEntirely = false;
@@ -358,10 +210,7 @@ final class ContextWatchObservable {
   }
 
   @pragma('vm:prefer-inline')
-  void watchOnly(
-    Function selector,
-    Object? selectedValue,
-  ) {
+  void watchOnly(Function selector, Object? selectedValue) {
     final oldLength = _selectorsAndEffects.length;
     _selectorsAndEffects.length += 3;
     _selectorsAndEffects[oldLength] = true;
@@ -399,7 +248,8 @@ final class ContextWatchObservable {
       }
       _keyedEffectStates[key] = _effectBitmask(
         once: once,
-        wasInvoked: shouldInvoke ||
+        wasInvoked:
+            shouldInvoke ||
             effectBitmask != null && _effectBitmaskWasInvoked(effectBitmask),
       );
     }
@@ -422,7 +272,8 @@ final class ContextWatchObservable {
     final length = _selectorsAndEffects.length;
     final callbackArg = subscription.callbackArgument;
     for (var i = 0; i < length; i += 3) {
-      selectedValuesChanged = _invokeSelectorOrEffect(
+      selectedValuesChanged =
+          _invokeSelectorOrEffect(
             _selectorsAndEffects[i] as bool,
             _selectorsAndEffects[i + 1] as Function,
             _selectorsAndEffects[i + 2],
@@ -459,15 +310,17 @@ final class ContextWatchObservable {
         return false;
       }
       func(arg);
-      _keyedEffectStates[effectKey] =
-          _updateEffectBitmaskWithInvoked(effectBitmask);
+      _keyedEffectStates[effectKey] = _updateEffectBitmaskWithInvoked(
+        effectBitmask,
+      );
       return false;
     }
 
     func(arg);
     if (!wasInvoked) {
-      _keyedEffectStates[effectKey] =
-          _updateEffectBitmaskWithInvoked(effectBitmask);
+      _keyedEffectStates[effectKey] = _updateEffectBitmaskWithInvoked(
+        effectBitmask,
+      );
     }
     return false;
   }
@@ -480,10 +333,7 @@ final class ContextWatchObservable {
 }
 
 @pragma('vm:prefer-inline')
-int _effectBitmask({
-  required bool once,
-  required bool wasInvoked,
-}) {
+int _effectBitmask({required bool once, required bool wasInvoked}) {
   var bitmask = once ? 1 : 0;
   bitmask |= wasInvoked ? 2 : 0;
   return bitmask;

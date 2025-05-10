@@ -16,7 +16,7 @@ final class _SignalsSubscription implements ContextWatchSubscription {
 }
 
 class SignalContextWatcher extends ContextWatcher<ReadonlySignal> {
-  SignalContextWatcher._();
+  SignalContextWatcher._() : super(ContextWatcherObservableType.signal);
 
   static final instance = SignalContextWatcher._();
 
@@ -43,9 +43,13 @@ extension SignalContextWatchExtension<T> on ReadonlySignal<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable<T>(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.signal,
+        )
+        .watch();
     return value;
   }
 
@@ -61,8 +65,11 @@ extension SignalContextWatchExtension<T> on ReadonlySignal<T> {
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(value);
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.signal,
+    );
 
     final selectedValue = selector(value);
     observable.watchOnly(selector, selectedValue);
@@ -99,8 +106,12 @@ extension SignalContextWatchExtension<T> on ReadonlySignal<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.signal,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

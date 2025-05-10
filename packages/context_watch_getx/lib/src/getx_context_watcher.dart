@@ -23,7 +23,7 @@ final class _GetxSubscription implements ContextWatchSubscription {
 }
 
 class GetxContextWatcher extends ContextWatcher<Rx> {
-  GetxContextWatcher._();
+  GetxContextWatcher._() : super(ContextWatcherObservableType.getxRx);
 
   static final instance = GetxContextWatcher._();
 
@@ -50,9 +50,13 @@ extension GetxContextWatchExtension<T> on Rx<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable<T>(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.getxRx,
+        )
+        .watch();
     return value;
   }
 
@@ -68,8 +72,11 @@ extension GetxContextWatchExtension<T> on Rx<T> {
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(value);
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.getxRx,
+    );
 
     final selectedValue = selector(value);
     observable.watchOnly(selector, selectedValue);
@@ -106,8 +113,12 @@ extension GetxContextWatchExtension<T> on Rx<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.getxRx,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

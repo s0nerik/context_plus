@@ -14,19 +14,60 @@
 [![context_ref](https://img.shields.io/pub/points/context_ref)](https://pub.dev/packages/context_ref)
 [![context_ref](https://img.shields.io/pub/dm/context_ref)](https://pub.dev/packages/context_ref)
 
-A more convenient `InheritedWidget` alternative.
+A convenient way of providing objects scoped to a `BuildContext` and propagating them further down the tree.
 
-See [context_plus](https://pub.dev/packages/context_plus) for the ultimate convenience.
+## Example
 
-## Features
+```
+// Create a reference to an object
+final _stream = Ref<Stream>();
 
-- `Ref<T>` - a reference to a value of type `T` bound to a `context` or multiple `context`s.
-  - `.bind(context, () => Value())` - create and bind value to a `context`. Automatically `dispose()` the value upon `context` disposal.
-  - `.bindLazy(context, () => Value())` - same as `.bind()`, but the value is created only when it's first accessed.
-  - `.bindValue(context, value)` - bind an already created value to a `context`. The value is not disposed automatically.
-  - `.of(context)` - get the value bound to the `context` or its nearest ancestor.
+class Example extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Bind an object to the scope of this BuildContext, so that it is:
+    // - initialized just once
+    // - automatically disposed together with the context
+    // - accessible by all children via the `Ref`
+    final stream = _stream.bind(context, () => Stream.periodic(const Duration(seconds: 1)));
+    
+    // ... or bind it lazily, so that the object is initialized only upon first access via `Ref`
+    _stream.bindLazy(context, () => Stream.periodic(const Duration(seconds: 1)));
 
-## Getting started
+    // ... or bind the pre-existing object to the `Ref` to expose it to the children
+    _stream.bindValue(context, existingStream);
+
+    // ... or just use the object within the scope of this BuildContext, without
+    //     necessarily binding it to a `Ref`
+    final stream = context.use(
+      () => Stream.periodic(const Duration(seconds: 1)),
+      // Optionally, provide a `ref` parameter to bind the object to it
+      ref: _stream,
+    );
+
+    // ... use context.vsync whenever a TickerProvider is needed. 
+    final animCtrl = context.use(
+      () => AnimationController(vsync: context.vsync, duration: duration),
+    );
+
+    return const _Child();
+  }
+}
+
+class _Child extends StatelessWidget {
+  const _Child();
+
+  @override
+  Widget build(BuildContext context) {
+    final stream = _stream.of(context);
+    // ... or use context_plus to observe the state of a bound object easily
+    final streamSnapshot = _stream.watch(context);
+    ...
+  }
+}
+```
+
+## Installation
 
 ```shell
 flutter pub add context_ref
@@ -49,7 +90,44 @@ void main() {
 
 ## Usage
 
-Initialize and propagate a value down the widget tree:
+### Initialize and use some object within the scope of this `BuildContext`:
+
+```dart
+class Example extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final stream = context.use(() => Stream.periodic(const Duration(seconds: 1)));
+    // Use StreamBuilder or context_watch to observe the current state of the stream
+    ...
+  }
+}
+```
+
+<a name="use-parameter-combinations"></a>
+Each object `use()`'d within a given `BuildContext` is assigned the following key: `(Type, Ref?, Key?)`. This key must be unique within the `build` method.
+
+So,
+```dart
+final stream1 = context.use(() async* { yield 1; });
+final stream2 = context.use(() async* { yield 'hello'; });
+final future1 = context.use(() async => 'Hey');
+final future2 = context.use(() async => 0.0);
+final notifier1 = context.use(() => ValueNotifier(0));
+final notifier2 = context.use(() => ValueNotifier('Hey'));
+```
+
+will just work, while
+
+```dart
+final notifier1 = context.use(() => ValueNotifier(1));
+final notifier2 = context.use(() => ValueNotifier(2));
+```
+
+would ask you to provide a unique `key`, `ref` (or their combination) to one of the `use()` calls.
+
+Use [context_plus_lint](https://pub.dev/packages/context_plus_lint) to learn about the need to specify a key for the `use()` call before even running the code.
+
+### Initialize and propagate a value down the widget tree:
 
 ```dart
 final _state = Ref<_State>();
@@ -82,7 +160,7 @@ class _Child extends StatelessWidget {
 }
 ```
 
-Provide an already-initialized value down the tree:
+### Provide an already-initialized value down the tree:
 
 ```dart
 final _params = Ref<Params>();
@@ -114,5 +192,3 @@ class _Child extends StatelessWidget {
   }
 }
 ```
-
-For more examples, see the [example](https://github.com/s0nerik/context_plus/raw/main/example).

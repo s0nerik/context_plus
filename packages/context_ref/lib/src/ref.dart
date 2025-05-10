@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'context_ref_root.dart';
+import 'context_ticker_provider.dart';
 import 'value_provider.dart';
 
 /// A read-only reference to a value that can be bound to a [BuildContext].
@@ -13,14 +14,14 @@ abstract class ReadOnlyRef<T> {
   final _providers = HashMap<Element, ValueProvider<T>>.identity();
 
   final _dependents = HashSet<Element>.identity();
-  var _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
+  var _dependentProvidersCache = HashMap<Element, ValueProvider<T>?>.identity();
 }
 
 @internal
 extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   HashMap<Element, ValueProvider<T>> get providers => _providers;
   HashSet<Element> get dependents => _dependents;
-  HashMap<Element, ValueProvider<T>> get dependentProvidersCache =>
+  HashMap<Element, ValueProvider<T>?> get dependentProvidersCache =>
       _dependentProvidersCache;
 
   ValueProvider<T> getOrCreateProvider(Element element) {
@@ -31,7 +32,7 @@ extension InternalReadOnlyRefAPI<T> on ReadOnlyRef<T> {
 
     final provider = ValueProvider<T>();
     _providers[element] = provider;
-    _dependentProvidersCache = HashMap<Element, ValueProvider<T>>.identity();
+    _dependentProvidersCache = HashMap.identity();
     return provider;
   }
 }
@@ -48,7 +49,19 @@ class Ref<T> extends ReadOnlyRef<T> {
 
 extension ReadOnlyRefAPI<T> on ReadOnlyRef<T> {
   /// Get the value of this [Ref] from the given [context].
-  T of(BuildContext context) => ContextRefRoot.of(context).get(context, this);
+  T of(BuildContext context) {
+    final provider = ContextRefRoot.of(context).get<T>(context, this);
+    assert(
+      provider != null,
+      'Ref<$T> is not bound. You probably forgot to bind it in a parent context.',
+    );
+    return provider!.value;
+  }
+
+  T? maybeOf(BuildContext context) {
+    final provider = ContextRefRoot.of(context).get<T>(context, this);
+    return provider?.value;
+  }
 }
 
 extension RefAPI<T> on Ref<T> {
@@ -77,7 +90,13 @@ extension RefAPI<T> on Ref<T> {
       dispose: dispose,
       key: key,
     );
-    return provider.value;
+    final value = provider.value;
+
+    // allow `context.vsync` to properly react to `TickerMode` changes
+    contextTickerProviders[context]
+        ?.tickerModeNotifier = TickerMode.getNotifier(context);
+
+    return value;
   }
 
   /// Same as [bind] but [create] is called lazily, i.e. only when the value
@@ -95,6 +114,10 @@ extension RefAPI<T> on Ref<T> {
       dispose: dispose,
       key: key,
     );
+
+    // allow `context.vsync` to properly react to `TickerMode` changes
+    contextTickerProviders[context]
+        ?.tickerModeNotifier = TickerMode.getNotifier(context);
   }
 
   /// Bind a value to this [Ref] for this and all descendant [BuildContext]s.

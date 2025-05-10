@@ -25,6 +25,8 @@ class ContextWatchStreamSubscription implements ContextWatchSubscription {
 
 @internal
 class StreamContextWatcher extends ContextWatcher<Stream> {
+  StreamContextWatcher() : super(ContextWatcherObservableType.stream);
+
   @override
   ContextWatchSubscription createSubscription<T>(
     BuildContext context,

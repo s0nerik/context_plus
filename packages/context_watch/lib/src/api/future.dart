@@ -13,8 +13,11 @@ extension FutureContextWatchExtension<T> on Future<T> {
   AsyncSnapshot<T> watch(BuildContext context) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return AsyncSnapshot<T>.nothing();
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.future,
+    );
 
     observable.watch();
 
@@ -37,8 +40,11 @@ extension FutureContextWatchExtension<T> on Future<T> {
   ) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(AsyncSnapshot<T>.nothing());
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.future,
+    );
 
     final subscription = observable.subscription as FutureSubscription;
     final selectedValue = selector(subscription.snapshot as AsyncSnapshot<T>);
@@ -76,8 +82,12 @@ extension FutureContextWatchExtension<T> on Future<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.future,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

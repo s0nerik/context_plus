@@ -24,6 +24,8 @@ class FutureSubscription implements ContextWatchSubscription {
 
 @internal
 class FutureContextWatcher extends ContextWatcher<Future> {
+  FutureContextWatcher() : super(ContextWatcherObservableType.future);
+
   @override
   ContextWatchSubscription createSubscription<T>(
     BuildContext context,

@@ -12,7 +12,6 @@ class _Benchmark {
   _Benchmark({
     required ObservableType dataType,
     required ListenerType listenerType,
-    int singleObservableSubscriptionsCount = 500,
     int tilesCount = 500,
     int observablesPerTile = 2,
     this.minimumMillis = 2000, // ignore: unused_element_parameter
@@ -20,10 +19,11 @@ class _Benchmark {
   }) : benchmark = BenchmarkScreen(
          observableType: dataType,
          listenerType: listenerType,
-         singleObservableSubscriptionsCount: singleObservableSubscriptionsCount,
          tilesCount: tilesCount,
          observablesPerTile: observablesPerTile,
          tileObservableNotifyInterval: const Duration(milliseconds: 10),
+         tileNotificationJitterMin: Duration.zero,
+         tileNotificationJitterMax: const Duration(milliseconds: 10),
          runOnStart: false,
          showPerformanceOverlay: false,
          visualize: false,
@@ -33,7 +33,24 @@ class _Benchmark {
   final int minimumMillis;
   final int warmupMillis;
 
-  late double resultMicroseconds;
+  final frameTimes = List<int?>.filled(100000, null);
+
+  List<int> get validFrameTimes => frameTimes.whereType<int>().toList();
+  List<int> get trimmedFrameTimes => validFrameTimes.sublist(
+    (validFrameTimes.length * 0.02).round(),
+    validFrameTimes.length - (validFrameTimes.length * 0.02).round(),
+  );
+
+  int get worstFrameTime => validFrameTimes.reduce((a, b) => a > b ? a : b);
+  int get bestFrameTime => validFrameTimes.reduce((a, b) => a < b ? a : b);
+
+  int get worstTrimmedFrameTime =>
+      trimmedFrameTimes.reduce((a, b) => a > b ? a : b);
+  int get bestTrimmedFrameTime =>
+      trimmedFrameTimes.reduce((a, b) => a < b ? a : b);
+
+  int get averageFrameTime =>
+      trimmedFrameTimes.reduce((a, b) => a + b) ~/ trimmedFrameTimes.length;
 }
 
 // Run this with `flutter run --profile benchmarks/benchmark_context_watch.dart`
@@ -59,25 +76,20 @@ main() async {
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
           LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
 
-      // Warmup
-      var elapsedWarmup = 0;
-      final warmupStopwatch = Stopwatch()..start();
-      while (elapsedWarmup < benchmark.warmupMillis * 1000) {
-        await tester.pumpBenchmark(frameDuration);
-        elapsedWarmup = warmupStopwatch.elapsedMicroseconds;
-      }
-
       // Benchmark
       final minimumMicros = benchmark.minimumMillis * 1000;
+      final stopwatch = Stopwatch();
+      late int endMicros;
       var iter = 0;
-      var elapsed = 0;
-      final stopwatch = Stopwatch()..start();
-      while (elapsed < minimumMicros) {
+      do {
+        final start = stopwatch.elapsedMicroseconds;
+        stopwatch.start();
         await tester.pumpBenchmark(frameDuration);
-        elapsed = stopwatch.elapsedMicroseconds;
+        stopwatch.stop();
+        endMicros = stopwatch.elapsedMicroseconds;
+        benchmark.frameTimes[iter] = endMicros - start;
         iter++;
-      }
-      benchmark.resultMicroseconds = elapsed / iter;
+      } while (endMicros < minimumMicros);
 
       // Teardown
       LiveTestWidgetsFlutterBinding.instance.framePolicy =
@@ -87,75 +99,40 @@ main() async {
     });
   }
 
-  final tileBenchmarks =
-      [1, 10, 100, 200, 500, 750, 1000, 5000, 10000, 20000]
-          .expand(
-            (tilesCount) => [
-              _Benchmark(
-                dataType: ObservableType.stream,
-                listenerType: ListenerType.contextWatch,
-                singleObservableSubscriptionsCount: 0,
-                tilesCount: tilesCount,
-              ),
-              _Benchmark(
-                dataType: ObservableType.stream,
-                listenerType: ListenerType.streamBuilder,
-                singleObservableSubscriptionsCount: 0,
-                tilesCount: tilesCount,
-              ),
-              _Benchmark(
-                dataType: ObservableType.valueListenable,
-                listenerType: ListenerType.contextWatch,
-                singleObservableSubscriptionsCount: 0,
-                tilesCount: tilesCount,
-              ),
-              _Benchmark(
-                dataType: ObservableType.valueListenable,
-                listenerType: ListenerType.valueListenableBuilder,
-                singleObservableSubscriptionsCount: 0,
-                tilesCount: tilesCount,
-              ),
-            ],
-          )
-          .toList();
-  final singleObservableBenchmarks =
-      [1, 10, 100, 200, 500, 750, 1000]
-          .expand(
-            (singleObservableSubscriptionsCount) => [
-              _Benchmark(
-                dataType: ObservableType.stream,
-                listenerType: ListenerType.contextWatch,
-                singleObservableSubscriptionsCount:
-                    singleObservableSubscriptionsCount,
-                tilesCount: 0,
-              ),
-              _Benchmark(
-                dataType: ObservableType.stream,
-                listenerType: ListenerType.streamBuilder,
-                singleObservableSubscriptionsCount:
-                    singleObservableSubscriptionsCount,
-                tilesCount: 0,
-              ),
-              _Benchmark(
-                dataType: ObservableType.valueListenable,
-                listenerType: ListenerType.contextWatch,
-                singleObservableSubscriptionsCount:
-                    singleObservableSubscriptionsCount,
-                tilesCount: 0,
-              ),
-              _Benchmark(
-                dataType: ObservableType.valueListenable,
-                listenerType: ListenerType.valueListenableBuilder,
-                singleObservableSubscriptionsCount:
-                    singleObservableSubscriptionsCount,
-                tilesCount: 0,
-              ),
-            ],
-          )
-          .toList();
-  final benchmarks = [...tileBenchmarks, ...singleObservableBenchmarks];
+  final benchmarks = [
+    for (final tilesCount in [1, 10, 100, 1000])
+      for (final obsPerTile in [1, 10, 100]) ...[
+        // _Benchmark(
+        //   dataType: ObservableType.stream,
+        //   listenerType: ListenerType.contextWatch,
+        //   tilesCount: tilesCount,
+        //   observablesPerTile: obsPerTile,
+        // ),
+        // _Benchmark(
+        //   dataType: ObservableType.stream,
+        //   listenerType: ListenerType.streamBuilder,
+        //   tilesCount: tilesCount,
+        //   observablesPerTile: obsPerTile,
+        // ),
+        _Benchmark(
+          dataType: ObservableType.valueListenable,
+          listenerType: ListenerType.contextWatch,
+          tilesCount: tilesCount,
+          observablesPerTile: obsPerTile,
+        ),
+        _Benchmark(
+          dataType: ObservableType.valueListenable,
+          listenerType: ListenerType.valueListenableBuilder,
+          tilesCount: tilesCount,
+          observablesPerTile: obsPerTile,
+        ),
+      ],
+  ];
 
   for (final benchmark in benchmarks) {
+    // Let the GC do its job
+    await Future.delayed(const Duration(seconds: 2));
+    // Run the benchmark
     await runBenchmark(benchmark);
   }
 
@@ -181,26 +158,7 @@ main() async {
 
     final tilesCount = benchmark.tilesCount;
     final observablesPerTile = benchmark.observablesPerTile;
-    final singleObservableSubscriptionsCount =
-        benchmark.singleObservableSubscriptionsCount;
-    final totalSubscriptionsCount =
-        tilesCount * observablesPerTile + singleObservableSubscriptionsCount;
-
-    final String benchmarkDescription;
-    if (tilesCount == 0 && singleObservableSubscriptionsCount > 0) {
-      benchmarkDescription =
-          '$singleObservableSubscriptionsCount single stream subscriptions';
-    } else if (tilesCount > 0 && singleObservableSubscriptionsCount == 0) {
-      benchmarkDescription =
-          '$tilesCount tiles * $observablesPerTile observables';
-    } else {
-      benchmarkDescription =
-          '$tilesCount tiles * $observablesPerTile observables + $singleObservableSubscriptionsCount global subscriptions';
-    }
-    final totalSubsSummary = '$totalSubscriptionsCount total subs';
-
-    final contextWatchTime = contextWatchResult.resultMicroseconds;
-    final otherTime = otherResult.resultMicroseconds;
+    final totalSubscriptionsCount = tilesCount * observablesPerTile;
 
     final contextWatchName = benchmark.listenerType.displayName(
       benchmark.observableType,
@@ -209,17 +167,40 @@ main() async {
       otherBenchmark.observableType,
     );
 
+    final contextWatchTime = contextWatchResult.averageFrameTime;
+    final contextWatchTimeStr = '${contextWatchTime.toStringAsFixed(2)}μs';
+
+    final otherTime = otherResult.averageFrameTime;
+    final otherTimeStr = '${otherTime.toStringAsFixed(2)}μs';
+
+    final contextWatchWorstTime = contextWatchResult.worstFrameTime;
+    final contextWatchWorstTimeStr =
+        '${contextWatchWorstTime.toStringAsFixed(2)}μs';
+
+    final contextWatchWorstTrimmedTime =
+        contextWatchResult.worstTrimmedFrameTime;
+    final contextWatchWorstTrimmedTimeStr =
+        '${contextWatchWorstTrimmedTime.toStringAsFixed(2)}μs';
+
+    final otherWorstTrimmedTime = otherResult.worstTrimmedFrameTime;
+    final otherWorstTrimmedTimeStr =
+        '${otherWorstTrimmedTime.toStringAsFixed(2)}μs';
+
+    final otherWorstTime = otherResult.worstFrameTime;
+    final otherWorstTimeStr = '${otherWorstTime.toStringAsFixed(2)}μs';
+
+    final frameTimesStr =
+        '$contextWatchTimeStr/frame ($contextWatchWorstTimeStr / $contextWatchWorstTrimmedTimeStr) vs $otherTimeStr/frame ($otherWorstTimeStr / $otherWorstTrimmedTimeStr)';
+
     final ratio = contextWatchTime / otherTime;
     final ratioStr = '${ratio.toStringAsFixed(2)}x';
-    final contextWatchTimeStr = '${contextWatchTime.toStringAsFixed(2)}μs';
-    final otherTimeStr = '${otherTime.toStringAsFixed(2)}μs';
-    final frameTimesStr = '$contextWatchTimeStr/frame vs $otherTimeStr/frame';
 
     _printRow(
       summary: '$contextWatchName vs $otherName',
       ratio: ratioStr,
-      totalSubscriptions: totalSubsSummary,
-      subscriptionsDescription: benchmarkDescription,
+      totalSubscriptions: '$totalSubscriptionsCount total subs',
+      subscriptionsDescription:
+          '$tilesCount tiles * $observablesPerTile observables',
       frameTimes: frameTimesStr,
     );
   }
@@ -239,7 +220,7 @@ void _printRow({
       ratio.padRight(7),
       totalSubscriptions.padRight(20),
       subscriptionsDescription.padRight(32),
-      frameTimes.padRight(42),
+      frameTimes,
     ].join('    '),
   );
 }

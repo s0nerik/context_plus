@@ -23,7 +23,8 @@ final class _BlocSubscription implements ContextWatchSubscription {
 }
 
 class BlocContextWatcher extends ContextWatcher<StateStreamable> {
-  BlocContextWatcher._();
+  BlocContextWatcher._()
+    : super(ContextWatcherObservableType.blocStateStreamable);
 
   static final instance = BlocContextWatcher._();
 
@@ -50,9 +51,13 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable<T>(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.blocStateStreamable,
+        )
+        .watch();
     return state;
   }
 
@@ -68,8 +73,11 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(state);
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.blocStateStreamable,
+    );
 
     final selectedValue = selector(state);
     observable.watchOnly(selector, selectedValue);
@@ -106,8 +114,12 @@ extension BlocContextWatchExtension<T> on StateStreamable<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.blocStateStreamable,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

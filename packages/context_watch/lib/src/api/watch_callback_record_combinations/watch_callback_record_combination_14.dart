@@ -1,3 +1,4 @@
+import 'package:context_watch_base/context_watch_base.dart';
 import 'package:context_watch_base/watch_callback_record_util.dart';
 import 'package:flutter/widgets.dart';
 
@@ -8,14 +9,7 @@ extension ContextWatchCallbackRecordExt14<T0, T1> on (Stream<T0>, Future<T1>) {
     BuildContext context,
     R Function(AsyncSnapshot<T0>, AsyncSnapshot<T1>) selector,
   ) {
-    return watchOnly2<R, AsyncSnapshot<T0>, AsyncSnapshot<T1>, T0, T1>(
-      context,
-      selector,
-      $1,
-      $2,
-      AsyncSnapshot<T0>.nothing(),
-      AsyncSnapshot<T1>.nothing(),
-    );
+    return watchOnly2<R, AsyncSnapshot<T0>, AsyncSnapshot<T1>, T0, T1>(context, selector, $1, $2, ContextWatcherObservableType.stream, ContextWatcherObservableType.future);
   }
 
   /// {@macro mass_watch_effect_explanation}
@@ -26,17 +20,9 @@ extension ContextWatchCallbackRecordExt14<T0, T1> on (Stream<T0>, Future<T1>) {
     bool immediate = false,
     bool once = false,
   }) {
-    return watchEffect2<AsyncSnapshot<T0>, AsyncSnapshot<T1>, T0, T1>(
-      context,
-      effect,
-      $1,
-      $2,
-      key: key,
-      immediate: immediate,
-      once: once,
-    );
+    return watchEffect2<AsyncSnapshot<T0>, AsyncSnapshot<T1>, T0, T1>(context, effect, $1, $2, ContextWatcherObservableType.stream, ContextWatcherObservableType.future, key: key, immediate: immediate, once: once);
   }
-
+  
   /// {@macro mass_unwatch_effect_explanation}
   void unwatchEffect(BuildContext context, {required Object key}) {
     return unwatchEffect2(context, $1, $2, key: key);

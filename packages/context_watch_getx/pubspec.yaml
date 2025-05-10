@@ -18,7 +18,7 @@ dependencies:
   flutter:
     sdk: flutter
   context_watch_base: ^7.0.0
-  get: ^5.0.0-release-candidate-9.3.2
+  get: ^4.7.2
 
 dev_dependencies:
   flutter_test:

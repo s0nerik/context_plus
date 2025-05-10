@@ -4,22 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchRecordRefExt47<
-  TListenable0 extends ValueListenable<T1>,
-  T1,
-  T2,
-  T3
->
-    on
-        (
-          context_ref.ReadOnlyRef<TListenable0>,
-          context_ref.ReadOnlyRef<Stream<T2>>,
-          context_ref.ReadOnlyRef<Stream<T3>>,
-        ) {
+extension ContextWatchRecordRefExt47<TListenable0 extends ValueListenable<T1>, T1, T2, T3> on (context_ref.ReadOnlyRef<TListenable0>, context_ref.ReadOnlyRef<Stream<T2>>, context_ref.ReadOnlyRef<Stream<T3>>) {
   /// {@macro mass_watch_explanation}
-  (T1, AsyncSnapshot<T2>, AsyncSnapshot<T3>) watch(BuildContext context) => (
-    $1.of(context).watch(context),
-    $2.of(context).watch(context),
-    $3.of(context).watch(context),
-  );
+  (T1, AsyncSnapshot<T2>, AsyncSnapshot<T3>) watch(BuildContext context) =>
+      ($1.of(context).watch(context), $2.of(context).watch(context), $3.of(context).watch(context),);
 }

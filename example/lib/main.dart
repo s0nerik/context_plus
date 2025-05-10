@@ -62,7 +62,7 @@ class _AppState extends State<_App> {
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
           ),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(
             color: const Color(0xFF1D1E21),
             clipBehavior: Clip.hardEdge,
             shape: RoundedRectangleBorder(

@@ -39,13 +39,14 @@ def _watchOnly_default_selector_arg(param_index: int, placeholder_index: int, ge
         raise AssertionError(f'Unknown generic_in: {generic_in}')
 
 class RecordTypeCombination:
-    def __init__(self, index: int, param_types: list[tuple[str, str, str]]):
+    def __init__(self, index: int, param_types: list[tuple[str, str, str, str]]):
         self.index = index
 
         self.generic_types = [] # "on" types
         self.types_in = []      # "on" types without `extends` section
         self.types_out = []     # Returned value types
         self.obs_types = []     # Types to be used as a generic parameter for `getOrCreateObservable` call
+        self.context_watcher_observable_types = [] # ContextWatcherObservableType enum values
 
         self.record_params = [f'${i + 1}' for i in range(len(param_types))]
         self.record_params_str = ', '.join(self.record_params)
@@ -57,12 +58,13 @@ class RecordTypeCombination:
 
         param_index = 0
         placeholder_index = 0
-        for generic_in, type_out, obs_type in param_types:
+        for generic_in, type_out, obs_type, context_watcher_observable_type in param_types:
             type_in = generic_in.split(' extends ')[0]
 
             self.types_in.append(_replace_placeholders(type_in, placeholder_index))
             self.types_out.append(_replace_placeholders(type_out, placeholder_index))
             self.obs_types.append(_replace_placeholders(obs_type, placeholder_index))
+            self.context_watcher_observable_types.append(context_watcher_observable_type)
 
             type_in_generic = _extract_type_generic(type_in)
             if type_in_generic is not None and _contains_placeholders(type_in_generic):
@@ -99,6 +101,7 @@ class RecordTypeCombination:
         self.types_in_str = ', '.join(self.types_in)
         self.types_out_str = ', '.join(self.types_out)
         self.obs_types_str = ', '.join(self.obs_types)
+        self.context_watcher_observable_types_str = ', '.join(self.context_watcher_observable_types)
         self.default_selector_values_str = ', '.join(default_selector_values)
         self.default_selector_values_of_context_str = ', '.join(default_selector_values_of_context)
 
@@ -106,12 +109,12 @@ class RecordTypeCombination:
         return f'RecordTypeCombination{self.index}{self.generic_types_str} on ({self.types_in_str}) -> ({self.types_out_str})' + '\n' + '\n'.join([f'getOrCreateObservable<{i}>(...)' for i in self.obs_types]) + '\n'
 
     @staticmethod
-    def generate(min_params=2, max_params=4, types: list[tuple[str, str, str]] = [
-        # "on" type,                                             returned value type,     getOrCreateObservable generic type
-        ('TListenable{{i}} extends Listenable',                  'TListenable{{i}}',      'TListenable{{i}}'),
-        ('TListenable{{i}} extends ValueListenable<T{{i + 1}}>', 'T{{i + 1}}',            'T{{i + 1}}'),
-        ('Future<T{{i}}>',                                       'AsyncSnapshot<T{{i}}>', 'T{{i}}'),
-        ('Stream<T{{i}}>',                                       'AsyncSnapshot<T{{i}}>', 'T{{i}}'),
+    def generate(min_params=2, max_params=4, types: list[tuple[str, str, str, str]] = [
+        # "on" type,                                             returned value type,     getOrCreateObservable generic type   ContextWatcherObservableType
+        ('TListenable{{i}} extends Listenable',                  'TListenable{{i}}',      'TListenable{{i}}',                  'ContextWatcherObservableType.listenable'),
+        ('TListenable{{i}} extends ValueListenable<T{{i + 1}}>', 'T{{i + 1}}',            'T{{i + 1}}',                        'ContextWatcherObservableType.valueListenable'),
+        ('Future<T{{i}}>',                                       'AsyncSnapshot<T{{i}}>', 'T{{i}}',                            'ContextWatcherObservableType.future'),
+        ('Stream<T{{i}}>',                                       'AsyncSnapshot<T{{i}}>', 'T{{i}}',                            'ContextWatcherObservableType.stream'),
     ]) -> Iterable['RecordTypeCombination']:
         index = 0
         for r in range(min_params, max_params + 1):

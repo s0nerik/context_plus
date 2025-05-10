@@ -7,6 +7,8 @@ import 'src/context_ref_root.dart';
 import 'src/hot_reload.dart';
 import 'src/ref.dart';
 
+export 'src/context_ticker_provider.dart' show ContextTickerProviderExt;
+export 'src/context_use.dart';
 export 'src/ref.dart' hide InternalReadOnlyRefAPI;
 export 'src/special_cases/vsync_ref_api.dart';
 

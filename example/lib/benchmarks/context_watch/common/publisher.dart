@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -16,6 +17,8 @@ sealed class Publisher {
     required this.observableCount,
     required this.initialDelay,
     required this.interval,
+    required this.jitterMin,
+    required this.jitterMax,
   });
 
   factory Publisher({
@@ -23,6 +26,8 @@ sealed class Publisher {
     required int observableCount,
     required Duration initialDelay,
     required Duration interval,
+    required Duration jitterMin,
+    required Duration jitterMax,
   }) {
     switch (observableType) {
       case ObservableType.future:
@@ -33,42 +38,56 @@ sealed class Publisher {
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.valueStream:
         return ValueStreamPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.valueListenable:
         return ValueNotifierPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.signal:
         return SignalPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.mobxObservable:
         return MobxObservablePublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.cubit:
         return CubitPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
       case ObservableType.getRx:
         return GetxPublisher(
           observableCount: observableCount,
           initialDelay: initialDelay,
           interval: interval,
+          jitterMin: jitterMin,
+          jitterMax: jitterMax,
         );
     }
   }
@@ -76,11 +95,19 @@ sealed class Publisher {
   final int observableCount;
   final Duration initialDelay;
   final Duration interval;
+  final Duration jitterMin;
+  final Duration jitterMax;
+
+  final _random = Random(DateTime.now().microsecondsSinceEpoch);
+
+  @protected
+  Duration get jitter =>
+      jitterMin + (jitterMax - jitterMin) * _random.nextDouble();
 
   bool _isDisposed = false;
 
   @protected
-  void publish(int index);
+  Future<void> publish(int index);
 
   @nonVirtual
   Future<void> publishWhileMounted(BuildContext context) async {
@@ -89,7 +116,7 @@ sealed class Publisher {
       await Future.delayed(initialDelay);
     }
     while (context.mounted && !_isDisposed) {
-      publish(index);
+      await publish(index);
       index++;
       await Future.delayed(interval);
     }
@@ -110,6 +137,8 @@ final class StreamPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -124,8 +153,10 @@ final class StreamPublisher extends Publisher {
   late final List<Stream<int>> streams;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final controller in _streamControllers) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       controller.add(index);
     }
   }
@@ -143,6 +174,8 @@ final class ValueStreamPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final streams = <Stream<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -157,8 +190,10 @@ final class ValueStreamPublisher extends Publisher {
   late final List<Stream<int>> streams;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final subject in _subjects) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       subject.add(index);
     }
   }
@@ -176,6 +211,8 @@ final class ValueNotifierPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final valueListenables = <ValueListenable<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -190,8 +227,10 @@ final class ValueNotifierPublisher extends Publisher {
   late final List<ValueListenable<int>> valueListenables;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final notifier in _valueNotifiers) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       notifier.value = index;
     }
   }
@@ -209,6 +248,8 @@ final class SignalPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final signals = <sgnls.Signal<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -223,8 +264,10 @@ final class SignalPublisher extends Publisher {
   late final List<sgnls.ReadonlySignal<int>> signals;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final signal in _signals) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       signal.value = index;
     }
   }
@@ -238,6 +281,8 @@ final class MobxObservablePublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final observables = <mobx.Observable<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -252,8 +297,10 @@ final class MobxObservablePublisher extends Publisher {
   late final List<mobx.Observable<int>> observables;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final observable in _observables) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       mobx.runInAction(() {
         observable.value = index;
       });
@@ -275,6 +322,8 @@ final class CubitPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final cubits = <_IntCubit>[];
     for (var i = 0; i < observableCount; i++) {
@@ -289,8 +338,10 @@ final class CubitPublisher extends Publisher {
   late final List<bloc.Cubit<int>> cubits;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final cubit in _cubits) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       cubit.set(index);
     }
   }
@@ -308,6 +359,8 @@ final class GetxPublisher extends Publisher {
     required super.observableCount,
     required super.initialDelay,
     required super.interval,
+    required super.jitterMin,
+    required super.jitterMax,
   }) : super._() {
     final observables = <getx.Rx<int>>[];
     for (var i = 0; i < observableCount; i++) {
@@ -322,8 +375,10 @@ final class GetxPublisher extends Publisher {
   late final List<getx.Rx<int>> observables;
 
   @override
-  void publish(int index) {
+  Future<void> publish(int index) async {
     for (final rxObservable in _observables) {
+      await Future.delayed(jitter);
+      if (_isDisposed) break;
       rxObservable.value = index;
     }
   }

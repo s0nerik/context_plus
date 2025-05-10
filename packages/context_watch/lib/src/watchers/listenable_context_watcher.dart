@@ -23,6 +23,8 @@ class ContextWatchListenableSubscription implements ContextWatchSubscription {
 
 @internal
 class ListenableContextWatcher extends ContextWatcher<Listenable> {
+  ListenableContextWatcher() : super(ContextWatcherObservableType.listenable);
+
   @override
   ContextWatchSubscription createSubscription<T>(
     BuildContext context,

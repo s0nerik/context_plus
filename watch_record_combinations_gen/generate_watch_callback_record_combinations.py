@@ -15,7 +15,7 @@ extension ContextWatchCallbackRecordExt{c.index}{c.generic_types_str} on ({c.typ
     BuildContext context,
     R Function({c.types_out_str}) selector,
   ) {{
-    return watchOnly{len(c.types_out)}<R, {c.types_out_str}, {c.obs_types_str}>(context, selector, {c.record_params_str}, {c.default_selector_values_str});
+    return watchOnly{len(c.types_out)}<R, {c.types_out_str}, {c.obs_types_str}>(context, selector, {c.record_params_str}, {c.context_watcher_observable_types_str});
   }}
 
   /// {{@macro mass_watch_effect_explanation}}
@@ -26,7 +26,7 @@ extension ContextWatchCallbackRecordExt{c.index}{c.generic_types_str} on ({c.typ
     bool immediate = false,
     bool once = false,
   }}) {{
-    return watchEffect{len(c.types_out)}<{c.types_out_str}, {c.obs_types_str}>(context, effect, {c.record_params_str}, key: key, immediate: immediate, once: once);
+    return watchEffect{len(c.types_out)}<{c.types_out_str}, {c.obs_types_str}>(context, effect, {c.record_params_str}, {c.context_watcher_observable_types_str}, key: key, immediate: immediate, once: once);
   }}
   
   /// {{@macro mass_unwatch_effect_explanation}}
@@ -50,6 +50,7 @@ def file_name(i):
 for i, ext in enumerate(extensions):
     with open(f'{dir_path}/{file_name(i)}', 'w+') as file:
         # Order of imports is important, don't change it
+        file.write("import 'package:context_watch_base/context_watch_base.dart';\n")
         file.write("import 'package:context_watch_base/watch_callback_record_util.dart';\n")
         if 'ValueListenable' in ext:
             file.write("import 'package:flutter/foundation.dart';\n")

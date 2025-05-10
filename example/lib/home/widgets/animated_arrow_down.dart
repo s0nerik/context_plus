@@ -6,14 +6,11 @@ import 'package:flutter/material.dart';
 class AnimatedArrowDown extends StatelessWidget {
   const AnimatedArrowDown({super.key});
 
-  static final _animCtrl = Ref<AnimationController>();
-
   @override
   Widget build(BuildContext context) {
-    final animCtrl = _animCtrl.bind(
-      context,
-      (vsync) => AnimationController(
-        vsync: vsync,
+    final animCtrl = context.use(
+      () => AnimationController(
+        vsync: context.vsync,
         duration: const Duration(seconds: 2),
       )..repeat(),
     );

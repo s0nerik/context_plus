@@ -4,14 +4,8 @@ import '../future.dart';
 import '../stream.dart';
 
 /// More convenient API for watching multiple values at once.
-extension ContextWatchRecordExt318<T0, T1, T2, T3>
-    on (Stream<T0>, Future<T1>, Stream<T2>, Future<T3>) {
+extension ContextWatchRecordExt318<T0, T1, T2, T3> on (Stream<T0>, Future<T1>, Stream<T2>, Future<T3>) {
   /// {@macro mass_watch_explanation}
-  (AsyncSnapshot<T0>, AsyncSnapshot<T1>, AsyncSnapshot<T2>, AsyncSnapshot<T3>)
-  watch(BuildContext context) => (
-    $1.watch(context),
-    $2.watch(context),
-    $3.watch(context),
-    $4.watch(context),
-  );
+  (AsyncSnapshot<T0>, AsyncSnapshot<T1>, AsyncSnapshot<T2>, AsyncSnapshot<T3>) watch(BuildContext context) =>
+      ($1.watch(context), $2.watch(context), $3.watch(context), $4.watch(context),);
 }

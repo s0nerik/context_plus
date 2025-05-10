@@ -8,18 +8,6 @@ import 'common/publisher.dart';
 class BenchmarkScreen extends StatefulWidget {
   const BenchmarkScreen({
     super.key,
-    this.singleObservableSubscriptionsCount = 100,
-    this.singleObservableNotifyInterval = const Duration(milliseconds: 1),
-    this.singleObservableSubscriptionCountOptions = const {
-      0,
-      1,
-      10,
-      100,
-      200,
-      500,
-      750,
-      1000,
-    },
     this.tilesCount = 500,
     this.tileCountOptions = const {
       0,
@@ -42,11 +30,9 @@ class BenchmarkScreen extends StatefulWidget {
     this.showPerformanceOverlay = true,
     this.visualize = true,
     this.tileObservableNotifyInterval = const Duration(milliseconds: 48),
+    this.tileNotificationJitterMin = const Duration(milliseconds: 1),
+    this.tileNotificationJitterMax = const Duration(milliseconds: 10),
   });
-
-  final int singleObservableSubscriptionsCount;
-  final Duration singleObservableNotifyInterval;
-  final Set<int> singleObservableSubscriptionCountOptions;
 
   final int tilesCount;
   final Set<int> tileCountOptions;
@@ -62,6 +48,8 @@ class BenchmarkScreen extends StatefulWidget {
   final bool visualize;
 
   final Duration tileObservableNotifyInterval;
+  final Duration tileNotificationJitterMin;
+  final Duration tileNotificationJitterMax;
 
   static const title = 'Value observing benchmark';
   static const description =
@@ -77,8 +65,6 @@ class BenchmarkScreen extends StatefulWidget {
 class _BenchmarkScreenState extends State<BenchmarkScreen> {
   var _bodyKey = UniqueKey();
 
-  late var _singleObservableSubscriptionsCount =
-      widget.singleObservableSubscriptionsCount;
   late var _tilesCount = widget.tilesCount;
   late var _observablesPerTile = widget.observablesPerTile;
 
@@ -87,25 +73,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
   late var _runBenchmark = widget.runOnStart;
 
   late var _visualize = widget.visualize;
-
-  late Publisher _commonPublisher;
-
-  @override
-  void initState() {
-    super.initState();
-    _commonPublisher = Publisher(
-      observableType: _observableType,
-      observableCount: 1,
-      initialDelay: Duration.zero,
-      interval: widget.tileObservableNotifyInterval,
-    )..publishWhileMounted(context);
-  }
-
-  @override
-  void dispose() {
-    _commonPublisher.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +95,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               alignment: WrapAlignment.start,
               crossAxisAlignment: WrapCrossAlignment.start,
               children: [
-                _buildSingleObservableSubscriptionsSelector(),
                 _buildTilesCountSelector(),
                 _buildObservablesPerTileSelector(),
                 _buildObservableTypeSelector(),
@@ -148,14 +114,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                         child: Text('Press "Start" to run benchmark'),
                       ),
             ),
-            if (_runBenchmark)
-              for (var i = 0; i < _singleObservableSubscriptionsCount; i++)
-                Observer(
-                  key: ValueKey(i),
-                  publisher: _commonPublisher,
-                  listenerType: _listenerType,
-                  visualize: false,
-                ),
             const SizedBox(height: 32),
             if (widget.showPerformanceOverlay) _buildPerformanceOverlay(),
           ],
@@ -187,33 +145,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildSingleObservableSubscriptionsSelector() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('Single observable subscriptions:'),
-        const SizedBox(width: 8),
-        DropdownButton<int>(
-          isDense: true,
-          value: _singleObservableSubscriptionsCount,
-          onChanged:
-              (value) => setState(() {
-                _singleObservableSubscriptionsCount = value!;
-                _bodyKey = UniqueKey();
-              }),
-          items: [
-            for (final singleObservableSubscriptionsCount
-                in widget.singleObservableSubscriptionCountOptions)
-              DropdownMenuItem(
-                value: singleObservableSubscriptionsCount,
-                child: Text(singleObservableSubscriptionsCount.toString()),
-              ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -282,13 +213,6 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               (value) => setState(() {
                 _listenerType = value!.listenerTypes.first;
                 _observableType = value;
-                _commonPublisher.dispose();
-                _commonPublisher = Publisher(
-                  observableType: _observableType,
-                  observableCount: _singleObservableSubscriptionsCount,
-                  initialDelay: Duration.zero,
-                  interval: widget.tileObservableNotifyInterval,
-                )..publishWhileMounted(context);
                 _bodyKey = UniqueKey();
               }),
           items: [
@@ -332,9 +256,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
-        'Total\u{00A0}subscriptions:\u{00A0}${_singleObservableSubscriptionsCount + _tilesCount * _observablesPerTile}\n'
-        '$_singleObservableSubscriptionsCount\u{00A0}single\u{00A0}observable\u{00A0}subscriptions '
-        '+ $_tilesCount\u{00A0}tiles\u{00A0}*\u{00A0}$_observablesPerTile\u{00A0}observables\u{00A0}',
+        'Total\u{00A0}subscriptions:\u{00A0}${_tilesCount * _observablesPerTile}\n'
+        '$_tilesCount\u{00A0}tiles\u{00A0}*\u{00A0}$_observablesPerTile\u{00A0}observables\u{00A0}',
         style: const TextStyle(fontSize: 12),
       ),
     );
@@ -404,6 +327,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
         visualize: _visualize,
         observablesPerTile: _observablesPerTile,
         observableNotifyInterval: widget.tileObservableNotifyInterval,
+        notificationJitterMin: widget.tileNotificationJitterMin,
+        notificationJitterMax: widget.tileNotificationJitterMax,
       ),
     );
   }
@@ -428,6 +353,8 @@ class _Tile extends StatelessWidget {
     required this.observablesPerTile,
     required this.visualize,
     required this.observableNotifyInterval,
+    required this.notificationJitterMin,
+    required this.notificationJitterMax,
   });
 
   final int index;
@@ -436,6 +363,8 @@ class _Tile extends StatelessWidget {
   final int observablesPerTile;
   final bool visualize;
   final Duration observableNotifyInterval;
+  final Duration notificationJitterMin;
+  final Duration notificationJitterMax;
 
   @override
   Widget build(BuildContext context) {
@@ -446,6 +375,8 @@ class _Tile extends StatelessWidget {
       observableNotifyInterval: observableNotifyInterval,
       observableType: observableType,
       observablesPerTile: observablesPerTile,
+      notificationJitterMin: notificationJitterMin,
+      notificationJitterMax: notificationJitterMax,
       builder:
           (context, publisher) => Observer(
             publisher: publisher,
@@ -463,11 +394,15 @@ class _PublisherProvider extends StatefulWidget {
     required this.observableNotifyInterval,
     required this.observableType,
     required this.observablesPerTile,
+    required this.notificationJitterMin,
+    required this.notificationJitterMax,
     required this.builder,
   });
 
   final Duration initialDelay;
   final Duration observableNotifyInterval;
+  final Duration notificationJitterMin;
+  final Duration notificationJitterMax;
   final ObservableType observableType;
   final int observablesPerTile;
   final Widget Function(BuildContext context, Publisher publisher) builder;
@@ -482,6 +417,8 @@ class _PublisherProviderState extends State<_PublisherProvider> {
     observableCount: widget.observablesPerTile,
     initialDelay: widget.initialDelay,
     interval: widget.observableNotifyInterval,
+    jitterMin: widget.notificationJitterMin,
+    jitterMax: widget.notificationJitterMax,
   )..publishWhileMounted(context);
 
   @override

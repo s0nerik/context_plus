@@ -12,9 +12,13 @@ extension ListenableContextWatchExtension<TListenable extends Listenable>
   /// It is safe to call this method multiple times within the same build
   /// method.
   TListenable watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.listenable,
+        )
+        .watch();
     return this;
   }
 
@@ -31,10 +35,11 @@ extension ListenableContextWatchExtension<TListenable extends Listenable>
     BuildContext context,
     R Function(TListenable listenable) selector,
   ) {
-    final observable = InheritedContextWatch.of(
+    final observable = InheritedContextWatch.of(context).getOrCreateObservable(
       context,
-    ).getOrCreateObservable(context, this);
-    if (observable == null) return selector(this);
+      this,
+      ContextWatcherObservableType.listenable,
+    );
 
     final selectedValue = selector(this);
     observable.watchOnly(selector, selectedValue);
@@ -71,8 +76,12 @@ extension ListenableContextWatchExtension<TListenable extends Listenable>
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable(
+          context,
+          this,
+          ContextWatcherObservableType.listenable,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be
@@ -97,9 +106,13 @@ extension ValueListenableContextWatchExtension<
   /// It is safe to call this method multiple times within the same build
   /// method.
   T watch(BuildContext context) {
-    InheritedContextWatch.of(
-      context,
-    ).getOrCreateObservable<T>(context, this)?.watch();
+    InheritedContextWatch.of(context)
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.valueListenable,
+        )
+        .watch();
     return value;
   }
 
@@ -115,8 +128,11 @@ extension ValueListenableContextWatchExtension<
   R watchOnly<R>(BuildContext context, R Function(T value) selector) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(value);
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.valueListenable,
+    );
 
     final selectedValue = selector(value);
     observable.watchOnly(selector, selectedValue);
@@ -153,7 +169,11 @@ extension ValueListenableContextWatchExtension<
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.valueListenable,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 }

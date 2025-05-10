@@ -1,7 +1,7 @@
 import 'dart:collection';
 
+import 'package:context_plus_core/context_plus_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -9,12 +9,27 @@ import 'ref.dart';
 import 'value_provider.dart';
 
 @internal
-class ContextRefRoot extends InheritedWidget {
-  const ContextRefRoot({super.key, required super.child});
+class ContextRefRoot extends StatelessWidget {
+  const ContextRefRoot({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (ElementDataHolder.maybeOf(context) == null) {
+      return ElementDataHolder.scope(
+        child: InheritedContextRefRoot(child: child),
+      );
+    }
+    return InheritedContextRefRoot(child: child);
+  }
 
   static InheritedContextRefElement of(BuildContext context) {
     final element =
-        context.getElementForInheritedWidgetOfExactType<ContextRefRoot>()
+        context
+                .getElementForInheritedWidgetOfExactType<
+                  InheritedContextRefRoot
+                >()
             as InheritedContextRefElement?;
     assert(
       element != null,
@@ -22,6 +37,11 @@ class ContextRefRoot extends InheritedWidget {
     );
     return element!;
   }
+}
+
+@internal
+class InheritedContextRefRoot extends InheritedWidget {
+  const InheritedContextRefRoot({super.key, required super.child});
 
   @override
   InheritedContextRefElement createElement() =>
@@ -34,23 +54,52 @@ class ContextRefRoot extends InheritedWidget {
 @internal
 class InheritedContextRefElement extends InheritedElement {
   InheritedContextRefElement(super.widget) {
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) => _isFirstFrame = false,
-    );
+    ContextPlusFrameInfo.ensureFrameTracking();
+    ContextPlusFrameInfo.registerPostFrameCallback(_onPostFrame);
   }
 
-  bool _isFirstFrame = true;
+  late ElementDataHolder _dataHolder;
 
-  bool get _isBuildPhase {
-    final phase = SchedulerBinding.instance.schedulerPhase;
-    return phase == SchedulerPhase.persistentCallbacks ||
-        _isFirstFrame && phase == SchedulerPhase.idle;
+  final _hooksUsedLastFrame = HashSet<ElementHooks>();
+  void _onPostFrame() {
+    for (final hooks in _hooksUsedLastFrame) {
+      hooks._onPostFrame();
+    }
+    _hooksUsedLastFrame.clear();
   }
 
-  final _refs = HashMap<Element, HashSet<ReadOnlyRef>>.identity();
-  void _addRef(Element element, ReadOnlyRef ref) {
-    final refs = _refs[element] ??= HashSet<ReadOnlyRef>.identity();
-    refs.add(ref);
+  @override
+  void rebuild({bool force = false}) {
+    _dataHolder = ElementDataHolder.of(this);
+    super.rebuild(force: force);
+  }
+
+  final _debugFrameBindingsByContext = Expando<HashMap<Ref, int>>(
+    'debugFrameBindings',
+  );
+
+  bool _debugCheckAndRecordBinding(BuildContext context, Ref ref) {
+    final bindingsForContext =
+        _debugFrameBindingsByContext[context] ??= HashMap<Ref, int>.identity();
+    final frameIdWhenLastBound = bindingsForContext[ref];
+
+    final currentFrame = ContextPlusFrameInfo.currentFrameId;
+
+    bool currentBindIsNewInThisFrame;
+    if (frameIdWhenLastBound == currentFrame) {
+      currentBindIsNewInThisFrame = false; // Duplicate in this frame
+    } else {
+      currentBindIsNewInThisFrame = true; // New in this frame (or first time)
+      bindingsForContext[ref] = currentFrame; // Record it for this frame
+    }
+    return currentBindIsNewInThisFrame;
+  }
+
+  _RefElementData _getOrCreateElementData(Element element) {
+    final container = _dataHolder.getContainer(element);
+    var data = container.get<_RefElementData>();
+    data ??= container.set(_RefElementData(element: element));
+    return data;
   }
 
   ValueProvider<T> bind<T>({
@@ -59,18 +108,22 @@ class InheritedContextRefElement extends InheritedElement {
     required T Function() create,
     required void Function(T value)? dispose,
     required Object? key,
+    bool debugBypassMultipleBindsCheck = false,
   }) {
     assert(context is Element);
     assert(
       context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
+          (context.widget is LayoutBuilder &&
+              ContextPlusFrameInfo.isBuildPhase),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
+    assert(
+      _debugCheckAndRecordBinding(context, ref) ||
+          debugBypassMultipleBindsCheck,
+      'Ref may not be bound to the same BuildContext more than once in a single build()',
+    );
 
-    // Make [context] dependent on this element so that we can get notified
-    // when the [context] is removed from the tree.
-    context.dependOnInheritedElement(this);
-    _addRef(context as Element, ref);
+    _getOrCreateElementData(context as Element).addProvidedRef(ref);
 
     final provider = ref.getOrCreateProvider(context);
     final didChangeKey = !_isSameKey(provider.key, key);
@@ -83,7 +136,7 @@ class InheritedContextRefElement extends InheritedElement {
     if (didChangeKey) {
       for (final element in ref.dependents) {
         if (element.mounted) {
-          _scheduleRebuild(element);
+          _dataHolder.scheduleRebuild(element);
         }
       }
     }
@@ -98,14 +151,11 @@ class InheritedContextRefElement extends InheritedElement {
     assert(context is Element);
     assert(
       context.debugDoingBuild ||
-          (context.widget is LayoutBuilder && _isBuildPhase),
+          (context.widget is LayoutBuilder &&
+              ContextPlusFrameInfo.isBuildPhase),
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
-
-    // Make [context] dependent on this element so that we can get notified
-    // when the [context] is removed from the tree.
-    context.dependOnInheritedElement(this);
-    _addRef(context as Element, ref);
+    _getOrCreateElementData(context as Element).addProvidedRef(ref);
 
     final provider = ref.getOrCreateProvider(context);
     provider.creator = null;
@@ -114,94 +164,166 @@ class InheritedContextRefElement extends InheritedElement {
       provider.value = value;
       for (final element in ref.dependents) {
         if (element.mounted) {
-          _scheduleRebuild(element);
+          _dataHolder.scheduleRebuild(element);
         }
       }
     }
     return provider;
   }
 
-  T get<T>(BuildContext context, ReadOnlyRef<T> ref) {
+  ValueProvider<T>? get<T>(BuildContext context, ReadOnlyRef<T> ref) {
     assert(context is Element);
-
-    // Make [context] dependent on this element so that we can get notified
-    // when the [context] is removed from the tree.
-    context.dependOnInheritedElement(this);
-    _addRef(context as Element, ref);
+    _dataHolder.getContainer(context as Element);
 
     ref.dependents.add(context);
 
-    var provider =
-        ref.dependentProvidersCache[context] ?? ref.providers[context];
-    if (provider == null) {
-      context.visitAncestorElements((element) {
-        final p = ref.providers[element];
-        if (p != null) {
-          provider = p;
-          ref.dependentProvidersCache[context] = p;
-          return false;
-        }
-        return true;
-      });
+    if (ref.providers.isEmpty) {
+      return null;
     }
-    assert(
-      provider != null,
-      '$ref is not bound. You probably forgot to call Ref.bind() on a parent context.',
-    );
 
-    return provider!.value;
-  }
+    if (ref.dependentProvidersCache.containsKey(context)) {
+      return ref.dependentProvidersCache[context];
+    }
 
-  @override
-  void removeDependent(Element dependent) {
-    // This method is called when the [dependent] is deactivated, but not
-    // yet unmounted. The element can be reactivated during the same fame.
-    // So, let's not dispose the context data immediately, but rather wait
-    // until the end of the frame to see if the element is reactivated.
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (!dependent.mounted) {
-        _disposeContextData(dependent);
+    if (ref.providers.containsKey(context)) {
+      return ref.providers[context];
+    }
+
+    ValueProvider<T>? provider;
+    context.visitAncestorElements((element) {
+      final p = ref.providers[element];
+      if (p != null) {
+        provider = p;
+        ref.dependentProvidersCache[context] = p;
+        return false;
       }
+      return true;
     });
-    super.removeDependent(dependent);
+    if (provider == null) {
+      ref.dependentProvidersCache[context] = null;
+    }
+    return provider;
   }
 
-  void _disposeContextData(BuildContext context) {
-    final refs = _refs.remove(context);
-    for (final ref in refs ?? const <ReadOnlyRef>[]) {
-      final provider = ref.providers.remove(context);
-      if (provider != null) {
-        _disposeProvider(provider);
-      }
-      ref.dependents.remove(context);
-      ref.dependentProvidersCache.remove(context);
-    }
+  ElementHooks hooks(BuildContext context) {
+    final hooks = _getOrCreateElementData(context as Element).hooks;
+    _hooksUsedLastFrame.add(hooks);
+    return hooks;
   }
 
   @override
   void unmount() {
-    for (final element in _refs.keys.toList(growable: false)) {
-      _disposeContextData(element);
-    }
+    ContextPlusFrameInfo.unregisterPostFrameCallback(_onPostFrame);
     super.unmount();
   }
 }
 
-@pragma('vm:prefer-inline')
-void _scheduleRebuild(Element element) {
-  if (SchedulerBinding.instance.schedulerPhase ==
-      SchedulerPhase.persistentCallbacks) {
-    // If we are in the persistent callbacks phase, we need to defer
-    // the rebuild to the next frame to avoid calling setState() during
-    // the build phase.
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (element.mounted) {
-        element.markNeedsBuild();
+class _RefElementData implements ElementData {
+  _RefElementData({required this.element});
+
+  final Element element;
+
+  HashSet<ReadOnlyRef>? _providedRefs;
+  void addProvidedRef(ReadOnlyRef ref) {
+    _providedRefs ??= HashSet<ReadOnlyRef>.identity();
+    _providedRefs!.add(ref);
+  }
+
+  ElementHooks? _hooks;
+  @pragma('dart2js:tryInline')
+  @pragma('vm:prefer-inline')
+  @pragma('wasm:prefer-inline')
+  ElementHooks get hooks => _hooks ??= ElementHooks();
+
+  @override
+  void dispose() {
+    for (final ref in _providedRefs ?? const <ReadOnlyRef>{}) {
+      final provider = ref.providers.remove(element);
+      if (provider != null) {
+        _disposeProvider(provider);
       }
-    });
-  } else {
-    // Otherwise, we can rebuild immediately.
-    element.markNeedsBuild();
+      ref.dependents.remove(element);
+      ref.dependentProvidersCache.remove(element);
+    }
+    _hooks?._dispose();
+  }
+}
+
+@internal
+typedef ElementHookKey = (Type, Ref?, Object? /* key */);
+
+@internal
+class ElementHooks {
+  static ElementHookKey _key<T>({Object? key, Ref? ref}) {
+    if (ref != null) {
+      if (key != null) return (T, ref, key);
+      return (T, ref, null);
+    }
+    if (key != null) return (T, null, key);
+    return (T, null, null);
+  }
+
+  final _providers = HashMap<ElementHookKey, ValueProvider>();
+
+  var _isDisposed = false;
+  final _keysUsedLastFrame = HashSet<ElementHookKey>();
+
+  // Cache the callback closure to avoid re-creating it each frame.
+  void _onPostFrame() {
+    if (_isDisposed) return;
+
+    // Empty `_keysUsedLastFrame` means that `context.use()` was never called on this
+    // `BuildContext` in the last frame.
+    //
+    // This may happen if either:
+    // - All `context.use()` calls got removed from the build method during the last frame.
+    // - The `BuildContext` wasn't rebuilt during the last frame.
+    if (_keysUsedLastFrame.isNotEmpty &&
+        _keysUsedLastFrame.length < _providers.length) {
+      final keysToDispose = <ElementHookKey>{};
+      for (final key in _providers.keys) {
+        if (!_keysUsedLastFrame.contains(key)) {
+          keysToDispose.add(key);
+        }
+      }
+      for (final key in keysToDispose) {
+        final provider = _providers.remove(key);
+        provider!.dispose();
+      }
+    }
+    _keysUsedLastFrame.clear();
+  }
+
+  T use<T>({
+    required T Function() create,
+    required void Function(T value)? dispose,
+    required Ref? ref,
+    required Object? key,
+  }) {
+    final providerKey = _key<T>(key: key, ref: ref);
+    assert(
+      !_keysUsedLastFrame.contains(providerKey),
+      'Each context.use() call for a given BuildContext must have a different combination of return type, `key` and `ref` parameters. See https://pub.dev/packages/context_ref#use-parameter-combinations for more details.',
+    );
+    _keysUsedLastFrame.add(providerKey);
+
+    var provider = _providers[providerKey] as ValueProvider<T>?;
+    if (provider != null) {
+      return provider.value;
+    }
+
+    provider =
+        _providers[providerKey] =
+            ValueProvider<T>()
+              ..creator = create
+              ..disposer = dispose;
+
+    return provider.value;
+  }
+
+  void _dispose() {
+    _isDisposed = true;
+    _providers.forEach((_, provider) => _disposeProvider(provider));
   }
 }
 

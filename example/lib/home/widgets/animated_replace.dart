@@ -15,14 +15,12 @@ class AnimatedReplace extends StatelessWidget {
   final Duration duration;
   final Curve curve;
 
-  static final _animCtrl = Ref<AnimationController>();
-
   @override
   Widget build(BuildContext context) {
-    final animCtrl = _animCtrl.bind(
-      context,
-      (vsync) =>
-          AnimationController(vsync: vsync, duration: duration)..forward(),
+    final animCtrl = context.use(
+      () =>
+          AnimationController(vsync: context.vsync, duration: duration)
+            ..forward(),
       key: (prevChild.key, child.key, duration),
     );
     final anim = CurvedAnimation(parent: animCtrl, curve: curve);

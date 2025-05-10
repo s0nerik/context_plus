@@ -25,6 +25,9 @@ class ContextWatchValueListenableSubscription<T>
 
 @internal
 class ValueListenableContextWatcher extends ContextWatcher<ValueListenable> {
+  ValueListenableContextWatcher()
+    : super(ContextWatcherObservableType.valueListenable);
+
   @override
   ContextWatchSubscription createSubscription<T>(
     BuildContext context,

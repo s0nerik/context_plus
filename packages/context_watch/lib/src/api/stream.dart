@@ -17,8 +17,11 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   AsyncSnapshot<T> watch(BuildContext context) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return AsyncSnapshot<T>.nothing();
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.stream,
+    );
 
     observable.watch();
 
@@ -43,8 +46,11 @@ extension StreamContextWatchExtension<T> on Stream<T> {
   ) {
     final observable = InheritedContextWatch.of(
       context,
-    ).getOrCreateObservable<T>(context, this);
-    if (observable == null) return selector(AsyncSnapshot<T>.nothing());
+    ).getOrCreateObservable<T>(
+      context,
+      this,
+      ContextWatcherObservableType.stream,
+    );
 
     final subscription =
         observable.subscription as ContextWatchStreamSubscription;
@@ -83,8 +89,12 @@ extension StreamContextWatchExtension<T> on Stream<T> {
     bool once = false,
   }) {
     InheritedContextWatch.of(context)
-        .getOrCreateObservable<T>(context, this)
-        ?.watchEffect(effect, key: key, immediate: immediate, once: once);
+        .getOrCreateObservable<T>(
+          context,
+          this,
+          ContextWatcherObservableType.stream,
+        )
+        .watchEffect(effect, key: key, immediate: immediate, once: once);
   }
 
   /// Remove the effect with the given [key] from the list of effects to be

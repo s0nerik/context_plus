@@ -3,6 +3,8 @@ import 'package:context_watch/context_watch.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'test_utils.dart';
+
 void main() {
   setUp(() {
     _counterRef = Ref<int>();
@@ -436,6 +438,7 @@ void main() {
       expect(_CounterWidget.widgetBuilds, 3);
     },
   );
+
   testWidgets(
     'Ref.of(context) gets the value from the closest parent context, including the current one',
     (widgetTester) async {
@@ -636,6 +639,35 @@ void main() {
     await widgetTester.pumpAndSettle();
     expect(disposeCalls, 0);
   });
+
+  testWidgets(
+    'Ref may not be bound to the same BuildContext more than once in a single build()',
+    (tester) async {
+      final ref = Ref<Object>();
+
+      // The pumpWidget call is expected to cause an assertion error.
+      await pumpWidget(tester, (context) {
+        ref.bind(context, () => Object());
+        // This second bind call should throw.
+        ref.bind(context, () => Object());
+        return const SizedBox.shrink();
+      });
+      final exception = tester.takeException();
+      expect(exception, isA<AssertionError>());
+      expect(
+        (exception as AssertionError).message,
+        'Ref may not be bound to the same BuildContext more than once in a single build()',
+      );
+
+      await pumpWidget(tester, (context) {
+        // This should not throw.
+        context.use(() => Object());
+        return const SizedBox.shrink();
+      });
+      final exception2 = tester.takeException();
+      expect(exception2, isNull);
+    },
+  );
 }
 
 class _TestChangeNotifier extends ChangeNotifier {

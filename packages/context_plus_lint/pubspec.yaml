@@ -1,6 +1,8 @@
 name: context_plus_lint
 description: Custom lint rules for context_plus
 version: 1.0.0
+homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
+repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus_lint
 
 environment:
   sdk: '>=3.7.0 <4.0.0'

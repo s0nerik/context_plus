@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-23
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus_lint` - `v1.0.1`](#context_plus_lint---v101)
+
+---
+
+#### `context_plus_lint` - `v1.0.1`
+
+ - **FIX**: fix trailing comma handling inside `context_use_unique_key` auto-fix for single-parameter .use() calls.
+
+
 ## 2025-05-22
 
 ### Changes

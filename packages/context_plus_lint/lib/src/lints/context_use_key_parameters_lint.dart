@@ -179,21 +179,20 @@ class _Fix extends DartFix {
         if (arguments.isEmpty) {
           textToInsert = newKeyArgumentSource;
         } else {
-          final argListSource = invocationNode.argumentList.toSource();
-          String contentBetweenParens = "";
-          if (argListSource.length > 2) {
-            contentBetweenParens =
-                argListSource
-                    .substring(1, argListSource.length - 1)
-                    .trimRight();
-          }
+          // Check for trailing comma by examining the text between the last argument and closing parenthesis
+          final source = resolver.source.contents.data;
+          final lastArg = arguments.last;
+          final textBetween = source.substring(
+            lastArg.end,
+            invocationNode.argumentList.rightParenthesis.offset,
+          );
 
-          if (contentBetweenParens.endsWith(',')) {
+          final hasTrailingComma = textBetween.contains(',');
+
+          if (hasTrailingComma) {
             textToInsert = " $newKeyArgumentSource";
           } else {
-            // Handles both no-comma and empty-but-has-whitespace cases correctly
-            textToInsert =
-                "${contentBetweenParens.isEmpty ? '' : ', '}$newKeyArgumentSource";
+            textToInsert = ", $newKeyArgumentSource";
           }
         }
         fileEditBuilder.addSimpleInsertion(insertOffset, textToInsert);

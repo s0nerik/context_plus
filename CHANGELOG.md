@@ -11,6 +11,28 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`context_watch_getx` - `v5.0.0`](#context_watch_getx---v500)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `context_watch_getx` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
+
+## 2025-05-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`context_plus_core` - `v1.0.0`](#context_plus_core---v100)
  - [`context_plus_lint` - `v1.0.0`](#context_plus_lint---v100)
  - [`context_watch_getx` - `v4.0.0`](#context_watch_getx---v400)

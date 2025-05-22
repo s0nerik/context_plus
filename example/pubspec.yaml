@@ -41,7 +41,7 @@ dependencies:
 
   # GetX
   get: ^4.7.2
-  context_watch_getx: ^4.0.0
+  context_watch_getx: ^5.0.0
 
 dev_dependencies:
   flutter_test:

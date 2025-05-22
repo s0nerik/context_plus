@@ -1,3 +1,10 @@
+## 5.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: context.use().
+ - **BREAKING** **FEAT**: watch*() on Listenable/ValueListenable is even more convenient now!
+
 ## 4.0.0
 
  - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.

@@ -1,6 +1,6 @@
 name: context_plus_core
 description: "A common dependency for all context_plus-related packages"
-version: 1.0.0-rc.1
+version: 1.0.0
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 

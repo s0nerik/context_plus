@@ -1,6 +1,6 @@
 name: context_plus_lint
 description: Custom lint rules for context_plus
-version: 1.0.0-rc.1
+version: 1.0.0
 
 environment:
   sdk: '>=3.7.0 <4.0.0'

@@ -2,7 +2,7 @@ name: context_plus
 description: |
   Convenient value propagation and observing for Flutter. Utilize existing
   reactive value types more easily and with less boilerplate.
-version: 5.0.0
+version: 6.0.0
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus
 topics:
@@ -18,9 +18,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_ref: ^2.0.0
-  context_watch: ^6.0.0
-  context_watch_base: ^7.0.0
+  context_ref: ^3.0.0
+  context_watch: ^7.0.0
+  context_watch_base: ^8.0.0
 
 dev_dependencies:
   flutter_test:

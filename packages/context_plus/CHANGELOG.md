@@ -1,3 +1,9 @@
+## 6.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: context.use().
+
 ## 5.0.0
 
 > Note: This release has breaking changes.

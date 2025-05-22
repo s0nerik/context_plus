@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus_core` - `v1.0.0`](#context_plus_core---v100)
+ - [`context_plus_lint` - `v1.0.0`](#context_plus_lint---v100)
+ - [`context_watch_getx` - `v4.0.0`](#context_watch_getx---v400)
+ - [`context_plus` - `v6.0.0`](#context_plus---v600)
+ - [`context_ref` - `v3.0.0`](#context_ref---v300)
+ - [`context_watch` - `v7.0.0`](#context_watch---v700)
+ - [`context_watch_base` - `v8.0.0`](#context_watch_base---v800)
+ - [`context_watch_bloc` - `v5.0.0`](#context_watch_bloc---v500)
+ - [`context_watch_mobx` - `v5.0.0`](#context_watch_mobx---v500)
+ - [`context_watch_signals` - `v5.0.0`](#context_watch_signals---v500)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+Packages graduated to a stable release (see pre-releases prior to the stable version for changelog entries):
+
+ - `context_plus_core` - `v1.0.0`
+ - `context_plus_lint` - `v1.0.0`
+ - `context_watch_getx` - `v4.0.0`
+
+---
+
+#### `context_plus_core` - `v1.0.0`
+
+#### `context_plus_lint` - `v1.0.0`
+
+#### `context_watch_getx` - `v4.0.0`
+
+#### `context_plus` - `v6.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_ref` - `v3.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_watch` - `v7.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_watch_base` - `v8.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_watch_bloc` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_watch_mobx` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+#### `context_watch_signals` - `v5.0.0`
+
+ - **BREAKING** **FEAT**: context.use().
+
+
 ## 2025-05-03
 
 ### Changes

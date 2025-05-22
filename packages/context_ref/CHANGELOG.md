@@ -1,8 +1,14 @@
 ## 3.0.0
 
-> Note: This release has breaking changes.
+> Note: There are no breaking API changes this release.
+> 
+> This is a major release mostly because of significant internal changes.
 
- - **BREAKING** **FEAT**: context.use().
+Easy to use, universal hooks are here!
+
+ - **FEAT**: `context.use()`
+ - **FEAT**: Added `context.vsync` to be used together with `context.use()` for accessing a `TickerProvider` instance for this context.
+ - **REFACTOR**: Significant internal code changes aimed at maximizing the performance and unifying the logic for attaching data to a `BuildContext` among all `context_*` packages.
 
 ## 2.0.0
 

@@ -1,8 +1,10 @@
 ## 7.0.0
 
-> Note: This release has breaking changes.
+> Note: There are no breaking API changes apart from a couple tiny changes to the way custom `ContextWatcher`s are defined.
+> 
+> If you don't use any custom `ContextWatcher`s - upgrading the package shouldn't break anything for you.
 
- - **BREAKING** **FEAT**: context.use().
+ - **REFACTOR**: Significant internal code changes aimed at maximizing the performance and unifying the logic for attaching data to a `BuildContext` among all `context_*` packages.
 
 ## 6.0.0
 

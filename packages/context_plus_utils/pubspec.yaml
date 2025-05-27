@@ -1,6 +1,6 @@
 name: context_plus_utils
 description: "A collection of utilities based on context_plus, tailored for various use cases"
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus_utils
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_plus_utils
 
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_plus: ^6.0.1
+  context_plus: ^6.0.2
   context_plus_core: ^1.0.0
   meta: ^1.9.1
 

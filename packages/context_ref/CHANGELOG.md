@@ -1,3 +1,7 @@
+## 3.2.0
+
+ - **FEAT**: `context.inheritRefBindingsFrom(otherContext)`.
+
 ## 3.1.0
 
  - **FEAT**: added ability to suppress the "no rebinds" policy for a specific `Ref.bind` or `Ref.bindLazy` call using `allowRebind` parameter.

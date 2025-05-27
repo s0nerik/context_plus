@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_plus: ^6.0.1
+  context_plus: ^6.0.2
   async_listenable: ^1.2.0
   rxdart: ^0.28.0
   syntax_highlight: ^0.4.0

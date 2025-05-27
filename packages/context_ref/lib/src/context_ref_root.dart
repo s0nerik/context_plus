@@ -172,7 +172,8 @@ class InheritedContextRefElement extends InheritedElement {
 
   ValueProvider<T>? get<T>(BuildContext context, ReadOnlyRef<T> ref) {
     assert(context is Element);
-    _dataHolder.getContainer(context as Element);
+    final elementData =
+        _dataHolder.getContainer(context as Element).get<_RefElementData>();
 
     ref.dependents.add(context);
 
@@ -198,9 +199,16 @@ class InheritedContextRefElement extends InheritedElement {
       }
       return true;
     });
-    if (provider == null) {
-      ref.dependentProvidersCache[context] = null;
+    if (provider != null) {
+      return provider;
     }
+
+    final inheritedElement = elementData?.inheritedElement?.target;
+    if (inheritedElement != null) {
+      return get<T>(inheritedElement, ref);
+    }
+
+    ref.dependentProvidersCache[context] = null;
     return provider;
   }
 
@@ -208,6 +216,12 @@ class InheritedContextRefElement extends InheritedElement {
     final hooks = _getOrCreateElementData(context as Element).hooks;
     _hooksUsedLastFrame.add(hooks);
     return hooks;
+  }
+
+  void setInheritedElement(Element element, Element inheritedElement) {
+    _getOrCreateElementData(element).inheritedElement = WeakReference<Element>(
+      inheritedElement,
+    );
   }
 
   @override
@@ -222,7 +236,10 @@ class _RefElementData implements ElementData {
 
   final Element element;
 
+  WeakReference<Element>? inheritedElement;
+
   HashSet<ReadOnlyRef>? _providedRefs;
+  Set<ReadOnlyRef> get providedRefs => _providedRefs ?? const <ReadOnlyRef>{};
   void addProvidedRef(ReadOnlyRef ref) {
     _providedRefs ??= HashSet<ReadOnlyRef>.identity();
     _providedRefs!.add(ref);

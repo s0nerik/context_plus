@@ -24,7 +24,7 @@ extension ContextTickerProviderExt on BuildContext {
         contextTickerProviders[this] = null;
       },
       key: null,
-      debugBypassMultipleBindsCheck: true,
+      allowRebind: true,
     );
     return provider.value;
   }

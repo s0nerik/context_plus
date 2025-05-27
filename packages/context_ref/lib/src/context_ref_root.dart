@@ -78,7 +78,7 @@ class InheritedContextRefElement extends InheritedElement {
     'debugFrameBindings',
   );
 
-  bool _debugCheckAndRecordBinding(BuildContext context, Ref ref) {
+  bool _debugEnsureNoRebinds(BuildContext context, Ref ref) {
     final bindingsForContext =
         _debugFrameBindingsByContext[context] ??= HashMap<Ref, int>.identity();
     final frameIdWhenLastBound = bindingsForContext[ref];
@@ -108,7 +108,7 @@ class InheritedContextRefElement extends InheritedElement {
     required T Function() create,
     required void Function(T value)? dispose,
     required Object? key,
-    bool debugBypassMultipleBindsCheck = false,
+    bool allowRebind = false,
   }) {
     assert(context is Element);
     assert(
@@ -118,8 +118,7 @@ class InheritedContextRefElement extends InheritedElement {
       'Calling bind*() outside the build() method of a widget is not allowed.',
     );
     assert(
-      _debugCheckAndRecordBinding(context, ref) ||
-          debugBypassMultipleBindsCheck,
+      _debugEnsureNoRebinds(context, ref) || allowRebind,
       'Ref may not be bound to the same BuildContext more than once in a single build()',
     );
 

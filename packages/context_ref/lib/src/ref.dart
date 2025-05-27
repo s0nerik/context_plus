@@ -77,11 +77,18 @@ extension RefAPI<T> on Ref<T> {
   ///
   /// [key] is used to identify the value. If [key] changes, the old value
   /// will be disposed and a new value will be created.
+  ///
+  /// [allowRebind] allows calling [bind] for the same [context] and [key]
+  /// multiple times per frame. This is prohibited by default to avoid
+  /// accidentally re-binding the value to a different value, but can be
+  /// useful for writing utility functions that depend on a [Ref] and
+  /// can be called multiple times per build.
   T bind(
     BuildContext context,
     T Function() create, {
     void Function(T value)? dispose,
     Object? key,
+    bool allowRebind = false,
   }) {
     final provider = ContextRefRoot.of(context).bind(
       context: context,
@@ -89,6 +96,7 @@ extension RefAPI<T> on Ref<T> {
       create: create,
       dispose: dispose,
       key: key,
+      allowRebind: allowRebind,
     );
     final value = provider.value;
 
@@ -106,6 +114,7 @@ extension RefAPI<T> on Ref<T> {
     T Function() create, {
     void Function(T value)? dispose,
     Object? key,
+    bool allowRebind = false,
   }) {
     ContextRefRoot.of(context).bind(
       context: context,
@@ -113,6 +122,7 @@ extension RefAPI<T> on Ref<T> {
       create: create,
       dispose: dispose,
       key: key,
+      allowRebind: allowRebind,
     );
 
     // allow `context.vsync` to properly react to `TickerMode` changes

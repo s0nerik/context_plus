@@ -1,3 +1,7 @@
+## 6.0.1
+
+ - Update a dependency to the latest release.
+
 ## 6.0.0
 
 > Note: There are no breaking API changes apart from a couple tiny changes to the way custom `ContextWatcher`s are defined.

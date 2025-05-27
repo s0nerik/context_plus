@@ -1,6 +1,6 @@
 name: context_ref
 description: A hassle-free way to provide and retrieve values for a BuildContext
-version: 3.0.0
+version: 3.1.0
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_ref
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_ref
 topics:

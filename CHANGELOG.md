@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`context_plus_utils` - `v1.0.0`](#context_plus_utils---v100)
+
+Packages with other changes:
+
+ - [`context_ref` - `v3.1.0`](#context_ref---v310)
+ - [`context_plus` - `v6.0.1`](#context_plus---v601)
+
+Packages graduated to a stable release (see pre-releases prior to the stable version for changelog entries):
+
+ - `context_plus_utils` - `v1.0.0`
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v6.0.1`
+
+---
+
+#### `context_plus_utils` - `v1.0.0`
+
+#### `context_ref` - `v3.1.0`
+
+ - **FEAT**: added ability to suppress the "no rebinds" policy for a specific `Ref.bind` or `Ref.bindLazy` call using `allowRebind` parameter.
+
+
 ## 2025-05-23
 
 ### Changes

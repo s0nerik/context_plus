@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-10
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_ref` - `v3.2.1`](#context_ref---v321)
+ - [`context_plus` - `v6.0.3`](#context_plus---v603)
+ - [`context_plus_utils` - `v1.0.2`](#context_plus_utils---v102)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus` - `v6.0.3`
+ - `context_plus_utils` - `v1.0.2`
+
+---
+
+#### `context_ref` - `v3.2.1`
+
+ - **FIX**: context.use()-based Ref binding fix.
+
+
 ## 2025-05-28
 
 ### Changes

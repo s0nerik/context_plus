@@ -1,3 +1,7 @@
+## 3.2.1
+
+ - **FIX**: context.use()-based Ref binding fix.
+
 ## 3.2.0
 
  - **FEAT**: `context.inheritRefBindingsFrom(otherContext)`.

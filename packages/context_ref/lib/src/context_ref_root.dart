@@ -311,9 +311,10 @@ class ElementHooks {
   }
 
   T use<T>({
+    required BuildContext context,
     required T Function() create,
     required void Function(T value)? dispose,
-    required Ref? ref,
+    required Ref<T>? ref,
     required Object? key,
   }) {
     final providerKey = _key<T>(key: key, ref: ref);
@@ -334,7 +335,11 @@ class ElementHooks {
               ..creator = create
               ..disposer = dispose;
 
-    return provider.value;
+    final value = provider.value;
+    if (ref != null) {
+      ref.bindValue(context, value);
+    }
+    return value;
   }
 
   void _dispose() {

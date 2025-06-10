@@ -8,12 +8,18 @@ extension ContextUseAPI on BuildContext {
   T use<T>(
     T Function() create, {
     void Function(T value)? dispose,
-    Ref? ref,
+    Ref<T>? ref,
     Object? key,
   }) {
-    final value = ContextRefRoot.of(
-      this,
-    ).hooks(this).use<T>(create: create, dispose: dispose, ref: ref, key: key);
+    final value = ContextRefRoot.of(this)
+        .hooks(this)
+        .use<T>(
+          context: this,
+          create: create,
+          dispose: dispose,
+          ref: ref,
+          key: key,
+        );
 
     // allow `context.vsync` to properly react to `TickerMode` changes
     contextTickerProviders[this]?.tickerModeNotifier = TickerMode.getNotifier(
@@ -26,7 +32,7 @@ extension ContextUseAPI on BuildContext {
   T call<T>(
     T Function() create, {
     void Function(T value)? dispose,
-    Ref? ref,
+    Ref<T>? ref,
     Object? key,
   }) => use<T>(create, dispose: dispose, ref: ref, key: key);
 }

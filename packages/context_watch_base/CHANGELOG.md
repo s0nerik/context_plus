@@ -1,3 +1,7 @@
+## 8.0.1
+
+ - **FIX**: better handling of change notifications during dispose.
+
 ## 8.0.0
 
 > Note: This release has breaking changes.

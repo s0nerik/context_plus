@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_watch_base` - `v8.0.1`](#context_watch_base---v801)
+ - [`context_watch` - `v7.0.1`](#context_watch---v701)
+ - [`context_watch_getx` - `v5.0.1`](#context_watch_getx---v501)
+ - [`context_watch_mobx` - `v5.0.1`](#context_watch_mobx---v501)
+ - [`context_plus` - `v6.0.4`](#context_plus---v604)
+ - [`context_watch_bloc` - `v5.0.1`](#context_watch_bloc---v501)
+ - [`context_watch_signals` - `v5.0.1`](#context_watch_signals---v501)
+ - [`context_plus_utils` - `v1.0.3`](#context_plus_utils---v103)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_watch` - `v7.0.1`
+ - `context_watch_getx` - `v5.0.1`
+ - `context_watch_mobx` - `v5.0.1`
+ - `context_plus` - `v6.0.4`
+ - `context_watch_bloc` - `v5.0.1`
+ - `context_watch_signals` - `v5.0.1`
+ - `context_plus_utils` - `v1.0.3`
+
+---
+
+#### `context_watch_base` - `v8.0.1`
+
+ - **FIX**: better handling of change notifications during dispose.
+
+
 ## 2025-06-10
 
 ### Changes

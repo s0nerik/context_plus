@@ -125,6 +125,10 @@ class InheritedContextWatchElement extends InheritedElement {
   }
 
   void _rebuildIfNeeded(BuildContext context, Object observable) {
+    if (!context.mounted) {
+      return;
+    }
+
     final contextDataContainer = _dataHolder.getContainerIfExists(
       context as Element,
     );

@@ -47,7 +47,7 @@ packages:
       path: "../context_plus"
       relative: true
     source: path
-    version: "6.0.3"
+    version: "6.0.4"
   context_plus_core:
     dependency: "direct main"
     description:
@@ -68,14 +68,14 @@ packages:
       path: "../context_watch"
       relative: true
     source: path
-    version: "7.0.0"
+    version: "7.0.1"
   context_watch_base:
     dependency: "direct overridden"
     description:
       path: "../context_watch_base"
       relative: true
     source: path
-    version: "8.0.0"
+    version: "8.0.1"
   fake_async:
     dependency: transitive
     description:

@@ -119,14 +119,14 @@ packages:
       path: "../packages/context_plus"
       relative: true
     source: path
-    version: "6.0.4"
+    version: "6.0.5"
   context_plus_core:
     dependency: "direct overridden"
     description:
       path: "../packages/context_plus_core"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.1"
   context_plus_lint:
     dependency: "direct dev"
     description:
@@ -140,49 +140,49 @@ packages:
       path: "../packages/context_ref"
       relative: true
     source: path
-    version: "3.2.1"
+    version: "3.2.2"
   context_watch:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch"
       relative: true
     source: path
-    version: "7.0.1"
+    version: "7.0.2"
   context_watch_base:
     dependency: "direct overridden"
     description:
       path: "../packages/context_watch_base"
       relative: true
     source: path
-    version: "8.0.1"
+    version: "8.0.2"
   context_watch_bloc:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_bloc"
       relative: true
     source: path
-    version: "5.0.1"
+    version: "5.0.2"
   context_watch_getx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_getx"
       relative: true
     source: path
-    version: "5.0.1"
+    version: "5.0.2"
   context_watch_mobx:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_mobx"
       relative: true
     source: path
-    version: "5.0.1"
+    version: "5.0.2"
   context_watch_signals:
     dependency: "direct main"
     description:
       path: "../packages/context_watch_signals"
       relative: true
     source: path
-    version: "5.0.1"
+    version: "5.0.2"
   convert:
     dependency: transitive
     description:

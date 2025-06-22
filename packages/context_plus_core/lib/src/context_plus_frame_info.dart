@@ -38,9 +38,15 @@ abstract final class ContextPlusFrameInfo {
   @pragma('dart2js:tryInline')
   @pragma('vm:prefer-inline')
   @pragma('wasm:prefer-inline')
+  static bool get isWarmupFrame =>
+      _currentFrameId == -1 &&
+      SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle;
+
+  @pragma('dart2js:tryInline')
+  @pragma('vm:prefer-inline')
+  @pragma('wasm:prefer-inline')
   static bool get isBuildPhase {
     final phase = SchedulerBinding.instance.schedulerPhase;
-    return phase == SchedulerPhase.persistentCallbacks ||
-        _currentFrameId == -1 && phase == SchedulerPhase.idle;
+    return phase == SchedulerPhase.persistentCallbacks || isWarmupFrame;
   }
 }

@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus_core` - `v1.0.1`](#context_plus_core---v101)
+ - [`context_ref` - `v3.2.2`](#context_ref---v322)
+ - [`context_watch` - `v7.0.2`](#context_watch---v702)
+ - [`context_plus_utils` - `v1.0.4`](#context_plus_utils---v104)
+ - [`context_watch_base` - `v8.0.2`](#context_watch_base---v802)
+ - [`context_plus` - `v6.0.5`](#context_plus---v605)
+ - [`context_watch_mobx` - `v5.0.2`](#context_watch_mobx---v502)
+ - [`context_watch_getx` - `v5.0.2`](#context_watch_getx---v502)
+ - [`context_watch_bloc` - `v5.0.2`](#context_watch_bloc---v502)
+ - [`context_watch_signals` - `v5.0.2`](#context_watch_signals---v502)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_watch` - `v7.0.2`
+ - `context_plus_utils` - `v1.0.4`
+ - `context_watch_base` - `v8.0.2`
+ - `context_plus` - `v6.0.5`
+ - `context_watch_mobx` - `v5.0.2`
+ - `context_watch_getx` - `v5.0.2`
+ - `context_watch_bloc` - `v5.0.2`
+ - `context_watch_signals` - `v5.0.2`
+
+---
+
+#### `context_plus_core` - `v1.0.1`
+
+ - **REFACTOR**: ContextPlusFrameInfo.isWarmupFrame.
+ - **FIX**: don't pre-increment ContextPlusFrameInfo.currentFrameId for a warmup frame.
+
+#### `context_ref` - `v3.2.2`
+
+ - **FIX**: fixed Ref re-binding assertions for a warmup frame in newer Flutter versions.
+
+
 ## 2025-06-15
 
 ### Changes

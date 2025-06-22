@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_plus: ^6.0.4
+  context_plus: ^6.0.5
   async_listenable: ^1.2.0
   rxdart: ^0.28.0
   syntax_highlight: ^0.4.0
@@ -28,20 +28,20 @@ dependencies:
 
   # Signals
   signals_flutter: ^6.0.2
-  context_watch_signals: ^5.0.1
+  context_watch_signals: ^5.0.2
 
   # MobX
   mobx: ^2.5.0
   flutter_mobx: ^2.3.0
-  context_watch_mobx: ^5.0.1
+  context_watch_mobx: ^5.0.2
 
   # Bloc
   flutter_bloc: ^9.0.0
-  context_watch_bloc: ^5.0.1
+  context_watch_bloc: ^5.0.2
 
   # GetX
   get: ^4.7.2
-  context_watch_getx: ^5.0.1
+  context_watch_getx: ^5.0.2
 
 dev_dependencies:
   flutter_test:

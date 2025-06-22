@@ -1,3 +1,7 @@
+## 3.2.2
+
+ - **FIX**: fixed Ref re-binding assertions for a warmup frame in newer Flutter versions.
+
 ## 3.2.1
 
  - **FIX**: context.use()-based Ref binding fix.

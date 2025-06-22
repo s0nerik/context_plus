@@ -1,6 +1,6 @@
 name: context_watch_getx
 description: "context_watch adapter for 'get' package"
-version: 5.0.1
+version: 5.0.2
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 topics:
@@ -17,7 +17,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  context_watch_base: ^8.0.1
+  context_watch_base: ^8.0.2
   get: ^4.7.2
 
 dev_dependencies:

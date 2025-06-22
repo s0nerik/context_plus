@@ -4,7 +4,7 @@ abstract final class ContextPlusFrameInfo {
   static void ensureFrameTracking() {
     if (_isInitialized) return;
     _isInitialized = true;
-    _onEndFrameCallback(null);
+    SchedulerBinding.instance.addPostFrameCallback(_onEndFrameCallback);
   }
 
   static final _postFrameCallbacks = <void Function()>[];

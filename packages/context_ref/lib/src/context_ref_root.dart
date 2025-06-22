@@ -74,11 +74,15 @@ class InheritedContextRefElement extends InheritedElement {
     super.rebuild(force: force);
   }
 
-  final _debugFrameBindingsByContext = Expando<HashMap<Ref, int>>(
+  late final _debugFrameBindingsByContext = Expando<HashMap<Ref, int>>(
     'debugFrameBindings',
   );
 
   bool _debugEnsureNoRebinds(BuildContext context, Ref ref) {
+    if (ContextPlusFrameInfo.isWarmupFrame) {
+      return true;
+    }
+
     final bindingsForContext =
         _debugFrameBindingsByContext[context] ??= HashMap<Ref, int>.identity();
     final frameIdWhenLastBound = bindingsForContext[ref];
@@ -284,9 +288,17 @@ class ElementHooks {
   var _isDisposed = false;
   final _keysUsedLastFrame = HashSet<ElementHookKey>();
 
+  // Same as `_keysUsedLastFrame` but for debug build assertions only.
+  late final _debugKeysUsedLastFrame = HashSet<ElementHookKey>();
+
   // Cache the callback closure to avoid re-creating it each frame.
   void _onPostFrame() {
     if (_isDisposed) return;
+
+    assert(() {
+      _debugKeysUsedLastFrame.clear();
+      return true;
+    }());
 
     // Empty `_keysUsedLastFrame` means that `context.use()` was never called on this
     // `BuildContext` in the last frame.
@@ -319,7 +331,9 @@ class ElementHooks {
   }) {
     final providerKey = _key<T>(key: key, ref: ref);
     assert(
-      !_keysUsedLastFrame.contains(providerKey),
+      // Warmup frames are don't trigger the post-frame callback. So, the check can't be performed for such frames.
+      ContextPlusFrameInfo.isWarmupFrame ||
+          _debugKeysUsedLastFrame.add(providerKey),
       'Each context.use() call for a given BuildContext must have a different combination of return type, `key` and `ref` parameters. See https://pub.dev/packages/context_ref#use-parameter-combinations for more details.',
     );
     _keysUsedLastFrame.add(providerKey);

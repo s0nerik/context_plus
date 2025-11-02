@@ -112,6 +112,18 @@ final class _InheritedElementDataHolderElement extends InheritedElement {
   final _dataContainers = Expando<ElementDataContainer>();
 
   void _onPostFrame() {
+    if (!mounted) {
+      ContextPlusFrameInfo.unregisterPostFrameCallback(_onPostFrame);
+      _flaggedElements.forEach((element, flags) {
+        final container = _dataContainers[element];
+        if (container != null && !element.mounted) {
+          container.dispose();
+          _dataContainers[element] = null;
+        }
+      });
+      return;
+    }
+
     final nextFlaggedElements = HashMap<Element, int>();
     _flaggedElements.forEach((element, flags) {
       final container = _dataContainers[element]!;
@@ -189,11 +201,5 @@ final class _InheritedElementDataHolderElement extends InheritedElement {
     _flaggedElements[dependent] =
         _flaggedElements[dependent] ?? 0 | _flagDidDeactivate;
     super.removeDependent(dependent);
-  }
-
-  @override
-  void unmount() {
-    super.unmount();
-    ContextPlusFrameInfo.unregisterPostFrameCallback(_onPostFrame);
   }
 }

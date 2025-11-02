@@ -1,3 +1,7 @@
+## 6.0.6
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
 ## 6.0.5
 
  - Update a dependency to the latest release.

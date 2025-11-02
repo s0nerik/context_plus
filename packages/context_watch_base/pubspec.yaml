@@ -1,6 +1,6 @@
 name: context_watch_base
 description: "A common dependency for all context_watch-related packages"
-version: 8.0.2
+version: 8.0.3
 homepage: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 repository: https://github.com/s0nerik/context_plus/tree/main/packages/context_watch
 
@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.9.1
-  context_plus_core: ^1.0.1
+  context_plus_core: ^1.0.2
 
 dev_dependencies:
   flutter_test:

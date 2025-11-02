@@ -1,3 +1,7 @@
+## 3.2.3
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
 ## 3.2.2
 
  - **FIX**: fixed Ref re-binding assertions for a warmup frame in newer Flutter versions.

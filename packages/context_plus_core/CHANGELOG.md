@@ -1,3 +1,7 @@
+## 1.0.2
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
 ## 1.0.1
 
  - **REFACTOR**: ContextPlusFrameInfo.isWarmupFrame.

@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-11-02
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`context_plus` - `v6.0.6`](#context_plus---v606)
+ - [`context_plus_core` - `v1.0.2`](#context_plus_core---v102)
+ - [`context_ref` - `v3.2.3`](#context_ref---v323)
+ - [`context_plus_utils` - `v1.0.5`](#context_plus_utils---v105)
+ - [`context_watch_base` - `v8.0.3`](#context_watch_base---v803)
+ - [`context_watch` - `v7.0.3`](#context_watch---v703)
+ - [`context_watch_mobx` - `v5.0.3`](#context_watch_mobx---v503)
+ - [`context_watch_getx` - `v5.0.3`](#context_watch_getx---v503)
+ - [`context_watch_bloc` - `v5.0.3`](#context_watch_bloc---v503)
+ - [`context_watch_signals` - `v5.0.3`](#context_watch_signals---v503)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `context_plus_utils` - `v1.0.5`
+ - `context_watch_base` - `v8.0.3`
+ - `context_watch` - `v7.0.3`
+ - `context_watch_mobx` - `v5.0.3`
+ - `context_watch_getx` - `v5.0.3`
+ - `context_watch_bloc` - `v5.0.3`
+ - `context_watch_signals` - `v5.0.3`
+
+---
+
+#### `context_plus` - `v6.0.6`
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
+#### `context_plus_core` - `v1.0.2`
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
+#### `context_ref` - `v3.2.3`
+
+ - **FIX**: dispose all binding when root widget is removed from the tree. Fixes #27.
+
+
 ## 2025-06-22
 
 ### Changes

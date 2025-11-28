@@ -1,10 +1,12 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:example/examples/showcase/showcase_example.dart';
-import 'package:example/home/showcase/showcase.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
+import 'package:example/other/ballistic_override_scroll_physics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:indent/indent.dart';
 import 'package:url_router/url_router.dart';
@@ -19,70 +21,145 @@ import '../examples/derived_state/derived_state_example.dart';
 import '../examples/nested_scopes/nested_scopes_example.dart';
 import '../examples/rainbow/rainbow_example.dart';
 import '../other/context_watch_hot_reload_test_screen.dart';
+import 'showcase/package_showcase.dart';
+import 'showcase/src/code.dart';
+import 'widgets/sliver_extra_extent_viewport.dart';
 
 const _horizontalMargin = 24.0;
 const _gap = _horizontalMargin;
 
 final _scrollController = Ref<ScrollController>();
-final _isShowcaseCompleted = Ref<ValueNotifier<bool>>();
+final _codeAnimationController = Ref<CodeAnimationController>();
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = _scrollController.bind(context, ScrollController.new);
-    final isShowcaseCompleted = _isShowcaseCompleted.bind(
+    const showcaseExtraScrollViewports = 6.0;
+
+    final height = MediaQuery.sizeOf(context).height;
+    final showcaseExtraScrollHeight = height * showcaseExtraScrollViewports;
+
+    late final ScrollController scrollController;
+    late final CodeAnimationController codeAnimationController;
+
+    void correctScrollPosition() {
+      final pos = scrollController.position;
+      if (pos.pixels >= showcaseExtraScrollHeight) return;
+      pos.correctPixels(codeAnimationController.value * showcaseExtraScrollHeight);
+    }
+
+    scrollController = _scrollController.bind(context, ScrollController.new)
+      ..watchEffect(context, (ctrl) {
+        codeAnimationController.value = (ctrl.offset / showcaseExtraScrollHeight).clamp(0.0, 1.0);
+      });
+    codeAnimationController = _codeAnimationController.bind(context, CodeAnimationController.new)
+      ..watchEffect(context, (_) {
+        if (codeAnimationController.status == AnimationStatus.completed) return;
+        correctScrollPosition();
+      });
+
+    final springSimulationRequest =
+        context.use(
+          () => ValueNotifier<(int reqId, ScrollDirection direction, double velocity)?>(null),
+          key: 'springSimulationRequest',
+        )..watchEffect(context, (request) {
+          if (request == null) return;
+          if (!scrollController.hasClients) return;
+
+          final (_, direction, velocity) = request;
+          final targetStep = switch (direction) {
+            .forward => codeAnimationController.currentStep.floor(),
+            .reverse => codeAnimationController.currentStep.ceil(),
+            .idle => codeAnimationController.currentStep.round(),
+          };
+
+          if (velocity == 0) {
+            codeAnimationController.animateToStep(targetStep);
+            return;
+          }
+
+          codeAnimationController.animateWith(
+            SpringSimulation(
+              // SpringDescription(mass: 1, stiffness: 50, damping: 15),
+              // SpringDescription(mass: 1, stiffness: 25, damping: 10),
+              SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
+              codeAnimationController.value,
+              targetStep / (Code.steps - 1),
+              velocity / showcaseExtraScrollHeight,
+              snapToEnd: true,
+            ),
+          );
+        });
+
+    Simulation? showcaseBallisticSimulation(_, double velocity) {
+      if (!scrollController.hasClients) return null;
+      final direction = scrollController.position.userScrollDirection;
+      if (direction == ScrollDirection.idle) return null;
+
+      final reqId = springSimulationRequest.value?.$1 ?? 0;
+      springSimulationRequest.value = (reqId + 1, direction, velocity);
+      return null;
+    }
+
+    final scrolledThroughShowcase = scrollController.watchOnly(
       context,
-      () => ValueNotifier(false),
+      (ctrl) => ctrl.hasClients && ctrl.offset >= showcaseExtraScrollHeight,
     );
+    final scrolledBeyondShowcase = scrollController.watchOnly(
+      context,
+      (ctrl) => ctrl.hasClients && ctrl.offset >= showcaseExtraScrollHeight + height,
+    );
+
+    final introCompleted = context.use(() => ValueNotifier(false), key: 'introCompleted');
+    final introSkipped = context.use(() => ValueNotifier(false), key: 'introSkipped');
     return Scaffold(
-      body: SingleChildScrollView(
-        controller: controller,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _ShowcasePage(),
-            if (isShowcaseCompleted.watch(context))
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
+      body: CustomScrollView(
+        controller: scrollController,
+        physics: !introCompleted.watch(context)
+            ? const NeverScrollableScrollPhysics()
+            : !scrolledThroughShowcase
+            ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
+            : null,
+        clipBehavior: Clip.none,
+        slivers: [
+          SliverExtraExtentViewport(
+            viewport: height,
+            extraViewports: showcaseExtraScrollViewports,
+            child: TickerMode(
+              enabled: !scrolledBeyondShowcase,
+              child: PackageShowcase(
+                homeScrollController: scrollController,
+                codeAnimationController: codeAnimationController,
+                onIntroComplete: () {
+                  introCompleted.value = true;
+                },
+                onIntroSkip: () {
+                  introCompleted.value = true;
+                  introSkipped.value = true;
+                  codeAnimationController.value = 1;
+                  correctScrollPosition();
+                },
+                onCodeShowcaseAppeared: () {
+                  if (!introSkipped.value) {
+                    codeAnimationController.animateToStep(Code.steps - 1);
+                  }
+                },
+              ),
+            ),
+          ),
+          if (introCompleted.watch(context))
+            SliverToBoxAdapter(
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _SetupSection(),
-                    _ExamplesSection(),
-                    _DemonstrationsSection(),
-                    Gap(_gap),
-                  ],
+                  children: [_SetupSection(), _ExamplesSection(), _DemonstrationsSection(), Gap(_gap)],
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ShowcasePage extends StatelessWidget {
-  const _ShowcasePage();
-
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final allowAnimations = _scrollController.watchOnly(
-      context,
-      (ctrl) => ctrl.offset < height,
-    );
-    return SizedBox(
-      height: height,
-      child: TickerMode(
-        enabled: allowAnimations,
-        child: Showcase(
-          homeScrollController: _scrollController.of(context),
-          onCompleted: () => _isShowcaseCompleted.of(context).value = true,
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -105,42 +182,34 @@ class _SetupSection extends StatelessWidget {
 
     final displayStep1AndStep2InRow =
         MediaQuery.sizeOf(context).width >=
-        _horizontalMargin +
-            _SetupStep1.minWidth +
-            _gap +
-            _SetupStep2.minWidth +
-            _horizontalMargin;
+        _horizontalMargin + _SetupStep1.minWidth + _gap + _SetupStep2.minWidth + _horizontalMargin;
 
     return _Section(
       header: const _SectionHeader(title: 'Setup'),
-      child:
-          displayAsRow
-              ? const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _SetupStep1(),
-                  Gap(_gap),
-                  _SetupStep2(),
-                  Gap(_gap),
-                  Flexible(child: _SetupStep3()),
-                ],
-              )
-              : Column(
-                crossAxisAlignment:
-                    displayStep1AndStep2InRow
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.stretch,
-                children: [
-                  if (displayStep1AndStep2InRow)
-                    const Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [_SetupStep1(), Gap(_gap), _SetupStep2()],
-                    )
-                  else ...const [_SetupStep1(), Gap(_gap), _SetupStep2()],
-                  const Gap(_gap),
-                  const _SetupStep3(),
-                ],
-              ),
+      child: displayAsRow
+          ? const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SetupStep1(),
+                Gap(_gap),
+                _SetupStep2(),
+                Gap(_gap),
+                Flexible(child: _SetupStep3()),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: displayStep1AndStep2InRow ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
+              children: [
+                if (displayStep1AndStep2InRow)
+                  const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [_SetupStep1(), Gap(_gap), _SetupStep2()],
+                  )
+                else ...const [_SetupStep1(), Gap(_gap), _SetupStep2()],
+                const Gap(_gap),
+                const _SetupStep3(),
+              ],
+            ),
     );
   }
 }
@@ -154,18 +223,15 @@ class _SetupStep1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final version =
-        _contextPlusVersion
-            .bind(context, () async {
-              final yamlString = await DefaultAssetBundle.of(
-                context,
-              ).loadString('pubspec.yaml');
-              final yaml = loadYaml(yamlString);
-              final version = yaml['dependencies']['context_plus'] as String;
-              return version;
-            })
-            .watch(context)
-            .data;
+    final version = _contextPlusVersion
+        .bind(context, () async {
+          final yamlString = await DefaultAssetBundle.of(context).loadString('pubspec.yaml');
+          final yaml = loadYaml(yamlString);
+          final version = yaml['dependencies']['context_plus'] as String;
+          return version;
+        })
+        .watch(context)
+        .data;
 
     return _SetupStep(
       index: '1',
@@ -245,7 +311,9 @@ class _SetupStep3 extends StatelessWidget {
       FlutterError.onError = ContextPlus.onError(FlutterError.onError);
       runApp(...);
     }
-  '''.unindent().trim();
+  '''
+          .unindent()
+          .trim();
 
   static final _midWidthCode =
       '''
@@ -256,7 +324,9 @@ class _SetupStep3 extends StatelessWidget {
           ContextPlus.onError(FlutterError.onError);
       runApp(...);
     }
-  '''.unindent().trim();
+  '''
+          .unindent()
+          .trim();
 
   static final _minWidthCode =
       '''
@@ -271,23 +341,21 @@ class _SetupStep3 extends StatelessWidget {
           );
       runApp(...);
     }
-  '''.unindent().trim();
+  '''
+          .unindent()
+          .trim();
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final code =
-            constraints.maxWidth >= maxWidth
-                ? _copyableCode
-                : constraints.maxWidth >= midWidth
-                ? _midWidthCode
-                : _minWidthCode;
+        final code = constraints.maxWidth >= maxWidth
+            ? _copyableCode
+            : constraints.maxWidth >= midWidth
+            ? _midWidthCode
+            : _minWidthCode;
         return ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: minWidth,
-            maxWidth: maxWidth,
-          ),
+          constraints: const BoxConstraints(minWidth: minWidth, maxWidth: maxWidth),
           child: _SetupStep(
             index: '3',
             child: Column(
@@ -296,23 +364,14 @@ class _SetupStep3 extends StatelessWidget {
                   textAlign: TextAlign.center,
                   TextSpan(
                     children: [
-                      TextSpan(
-                        text:
-                            '(Optional, but recommended) Wrap default error handlers with ',
-                      ),
+                      TextSpan(text: '(Optional, but recommended) Wrap default error handlers with '),
                       WidgetSpan(
                         child: CodeQuote(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              CodeType(
-                                type: 'ContextPlus',
-                                style: CodeStyle.vsCode,
-                              ),
-                              CodeFunctionCall(
-                                name: 'errorWidgetBuilder',
-                                style: CodeStyle.vsCode,
-                              ),
+                              CodeType(type: 'ContextPlus', style: CodeStyle.vsCode),
+                              CodeFunctionCall(name: 'errorWidgetBuilder', style: CodeStyle.vsCode),
                             ],
                           ),
                         ),
@@ -323,31 +382,20 @@ class _SetupStep3 extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              CodeType(
-                                type: 'ContextPlus',
-                                style: CodeStyle.vsCode,
-                              ),
-                              CodeFunctionCall(
-                                name: 'onError',
-                                style: CodeStyle.vsCode,
-                              ),
+                              CodeType(type: 'ContextPlus', style: CodeStyle.vsCode),
+                              CodeFunctionCall(name: 'onError', style: CodeStyle.vsCode),
                             ],
                           ),
                         ),
                       ),
                       TextSpan(
-                        text:
-                            ' to get more user-friendly error messages when known hot reload-preventing errors occur',
+                        text: ' to get more user-friendly error messages when known hot reload-preventing errors occur',
                       ),
                     ],
                   ),
                 ),
                 const Gap(24),
-                CodeMultilineQuote(
-                  fileName: 'lib/main.dart',
-                  code: code,
-                  copyableCode: _copyableCode,
-                ),
+                CodeMultilineQuote(fileName: 'lib/main.dart', code: code, copyableCode: _copyableCode),
               ],
             ),
           ),
@@ -377,11 +425,7 @@ class _SetupStep extends StatelessWidget {
         clipBehavior: Clip.none,
         fit: StackFit.passthrough,
         children: [
-          Positioned(
-            top: -8,
-            left: -8,
-            child: Text('#$index', style: indexStyle),
-          ),
+          Positioned(top: -8, left: -8, child: Text('#$index', style: indexStyle)),
           Padding(
             padding: const EdgeInsets.all(16),
             child: IntrinsicWidth(child: child),
@@ -400,8 +444,7 @@ class _ExamplesSection extends StatelessWidget {
     return _Section(
       header: const _SectionHeader(
         title: 'Examples',
-        subtitle:
-            'All examples provide pure Flutter implementations as well for comparison',
+        subtitle: 'All examples provide pure Flutter implementations as well for comparison',
       ),
       child: Wrap(
         spacing: _gap,
@@ -420,8 +463,7 @@ class _ExamplesSection extends StatelessWidget {
             tags: CounterExample.tags,
           ),
           _ExampleCard(
-            onPressed:
-                () => context.url = CounterWithPropagationExample.urlPath,
+            onPressed: () => context.url = CounterWithPropagationExample.urlPath,
             title: const Text(CounterWithPropagationExample.title),
             description: const Text(CounterWithPropagationExample.description),
             tags: CounterWithPropagationExample.tags,
@@ -481,12 +523,9 @@ class _DemonstrationsSection extends StatelessWidget {
           ),
           if (kDebugMode)
             _ExampleCard(
-              onPressed:
-                  () => context.url = ContextWatchHotReloadTestScreen.urlPath,
+              onPressed: () => context.url = ContextWatchHotReloadTestScreen.urlPath,
               title: const Text(ContextWatchHotReloadTestScreen.title),
-              description: const Text(
-                ContextWatchHotReloadTestScreen.description,
-              ),
+              description: const Text(ContextWatchHotReloadTestScreen.description),
               tags: ContextWatchHotReloadTestScreen.tags,
             ),
         ],
@@ -538,9 +577,9 @@ class _SectionHeader extends StatelessWidget {
           if (subtitle != null) ...[
             Text(
               subtitle!,
-              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ],
@@ -550,12 +589,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _ExampleCard extends StatelessWidget {
-  const _ExampleCard({
-    required this.title,
-    this.description,
-    this.tags = const <String>[],
-    required this.onPressed,
-  });
+  const _ExampleCard({required this.title, this.description, this.tags = const <String>[], required this.onPressed});
 
   final Widget title;
   final Widget? description;
@@ -577,15 +611,10 @@ class _ExampleCard extends StatelessWidget {
               children: [
                 DefaultTextStyle(
                   style: Theme.of(context).textTheme.titleLarge!,
-                  textHeightBehavior: const TextHeightBehavior(
-                    leadingDistribution: TextLeadingDistribution.even,
-                  ),
+                  textHeightBehavior: const TextHeightBehavior(leadingDistribution: TextLeadingDistribution.even),
                   child: title,
                 ),
-                if (description != null) ...[
-                  const SizedBox(height: 8),
-                  description!,
-                ],
+                if (description != null) ...[const SizedBox(height: 8), description!],
                 if (tags.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Wrap(
@@ -593,11 +622,7 @@ class _ExampleCard extends StatelessWidget {
                     runSpacing: 8,
                     children: [
                       for (final tag in tags)
-                        Chip(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          label: Text(tag),
-                        ),
+                        Chip(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, label: Text(tag)),
                     ],
                   ),
                 ],

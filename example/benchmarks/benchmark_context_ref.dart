@@ -37,7 +37,7 @@ class _Benchmark {
 }
 
 // Run this with `flutter run --profile benchmarks/benchmark_context_ref.dart`
-main() async {
+Future<void> main() async {
   assert(false); // fail in debug mode
 
   LiveTestWidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,8 @@
 import 'package:context_plus/context_plus.dart';
 import 'package:flutter/widgets.dart';
 
+import 'replace_transition.dart';
+
 class AnimatedReplace extends StatelessWidget {
   const AnimatedReplace({
     super.key,
@@ -23,44 +25,20 @@ class AnimatedReplace extends StatelessWidget {
             ..forward(),
       key: (prevChild.key, child.key, duration),
     );
-    final anim = CurvedAnimation(parent: animCtrl, curve: curve);
+    final anim = context.use(
+      () => CurvedAnimation(parent: animCtrl, curve: curve),
+      key: (animCtrl, curve),
+    );
+
     return ClipRect(
       child: AnimatedSize(
         duration: duration,
         curve: curve,
         alignment: Alignment.centerLeft,
-        child: Stack(
-          alignment: Alignment.centerLeft,
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              key: const Key('prev'),
-              left: 0,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0),
-                  end: const Offset(0, -1),
-                ).animate(anim),
-                child: FadeTransition(
-                  opacity: Tween<double>(begin: 1, end: 0).animate(anim),
-                  child: prevChild,
-                ),
-              ),
-            ),
-            Positioned(
-              key: const Key('current'),
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 1),
-                  end: const Offset(0, 0),
-                ).animate(anim),
-                child: FadeTransition(
-                  opacity: Tween<double>(begin: 0, end: 1).animate(anim),
-                  child: child,
-                ),
-              ),
-            ),
-          ],
+        child: ReplaceTransition(
+          animation: anim,
+          prevChild: prevChild,
+          child: child,
         ),
       ),
     );

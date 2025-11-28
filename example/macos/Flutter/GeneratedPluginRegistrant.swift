@@ -5,8 +5,12 @@
 import FlutterMacOS
 import Foundation
 
-import rive_common
+import device_info_plus
+import irondash_engine_context
+import super_native_extensions
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  RivePlugin.register(with: registry.registrar(forPlugin: "RivePlugin"))
+  DeviceInfoPlusMacosPlugin.register(with: registry.registrar(forPlugin: "DeviceInfoPlusMacosPlugin"))
+  IrondashEngineContextPlugin.register(with: registry.registrar(forPlugin: "IrondashEngineContextPlugin"))
+  SuperNativeExtensionsPlugin.register(with: registry.registrar(forPlugin: "SuperNativeExtensionsPlugin"))
 }

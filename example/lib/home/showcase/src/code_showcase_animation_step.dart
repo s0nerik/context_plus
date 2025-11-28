@@ -9,25 +9,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
+import 'code.dart';
 import 'copyable_widget_span.dart';
 import 'custom_selectable_rich_text.dart';
-import 'showcase_rive_animation.dart';
 
 class CodeShowcaseProgressStep extends StatelessWidget {
   const CodeShowcaseProgressStep({
     super.key,
     required this.showcaseCtrl,
     required this.expandCtrl,
-    required this.keyframe,
+    required this.step,
     required this.isMobileLayout,
     this.translateY,
     this.opacity,
     this.descriptionVisibilityFactor,
   });
 
-  final ShowcaseRiveController showcaseCtrl;
+  final CodeAnimationController showcaseCtrl;
   final AnimationController? expandCtrl;
-  final ShowcaseKeyframe keyframe;
+  final int step;
   final bool isMobileLayout;
   final double? translateY;
   final double? opacity;
@@ -36,10 +36,7 @@ class CodeShowcaseProgressStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var expandProgress = expandCtrl?.watch(context);
-    expandProgress =
-        expandProgress != null
-            ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0)
-            : null;
+    expandProgress = expandProgress != null ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0) : null;
 
     return Transform.translate(
       offset: translateY != null ? Offset(0, translateY!) : Offset.zero,
@@ -48,20 +45,14 @@ class CodeShowcaseProgressStep extends StatelessWidget {
         child: _Layout(
           onTap: () {
             if (isMobileLayout && expandCtrl != null) {
-              expandCtrl!.isDismissed
-                  ? expandCtrl!.forward()
-                  : expandCtrl!.reverse();
+              expandCtrl!.isDismissed ? expandCtrl!.forward() : expandCtrl!.reverse();
               return;
             }
-
-            if (showcaseCtrl.currentKeyframe != keyframe) {
-              showcaseCtrl.animateToKeyframe(keyframe);
-            }
+            showcaseCtrl.animateToStep(step);
           },
-          title: _titles[keyframe]!,
-          description: _descriptions[keyframe]!,
-          descriptionVisibilityFactor:
-              expandProgress ?? descriptionVisibilityFactor ?? 1,
+          title: _titles[step]!,
+          description: _descriptions[step]!,
+          descriptionVisibilityFactor: expandProgress ?? descriptionVisibilityFactor ?? 1,
           isMobileLayout: isMobileLayout,
         ),
       ),
@@ -69,18 +60,8 @@ class CodeShowcaseProgressStep extends StatelessWidget {
   }
 }
 
-const _titles = {
-  ShowcaseKeyframe.vanillaFlutter: _vanillaFlutterTitle,
-  ShowcaseKeyframe.ref: _refTitle,
-  ShowcaseKeyframe.bind: _bindTitle,
-  ShowcaseKeyframe.watch: _watchTitle,
-};
-const _descriptions = {
-  ShowcaseKeyframe.vanillaFlutter: _vanillaFlutterDescription,
-  ShowcaseKeyframe.ref: _refDescription,
-  ShowcaseKeyframe.bind: _bindDescription,
-  ShowcaseKeyframe.watch: _watchDescription,
-};
+const _titles = {0: _vanillaFlutterTitle, 1: _refTitle, 2: _bindTitle, 3: _watchTitle};
+const _descriptions = {0: _vanillaFlutterDescription, 1: _refDescription, 2: _bindDescription, 3: _watchDescription};
 
 const _vanillaFlutterTitle = TextSpan(
   children: [
@@ -96,7 +77,9 @@ const _vanillaFlutterTitle = TextSpan(
     ),
     TextSpan(text: '  '),
     TextSpan(text: 'Meet '),
-    WidgetSpan(child: CodeQuote(child: CodeType(type: 'context_plus'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeType(type: 'context_plus')),
+    ),
     TextSpan(text: '!'),
   ],
 );
@@ -134,7 +117,9 @@ const _refTitle = TextSpan(
     ),
     TextSpan(text: '  '),
     TextSpan(text: 'Create a '),
-    WidgetSpan(child: CodeQuote(child: CodeType(type: 'Ref'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeType(type: 'Ref')),
+    ),
   ],
 );
 const _refDescription = TextSpan(
@@ -142,7 +127,9 @@ const _refDescription = TextSpan(
     CopyableWidgetSpan(
       index: 0,
       plainText: '`Ref<T>`',
-      child: CodeQuote(child: CodeType(type: 'Ref', genericTypes: ['T'])),
+      child: CodeQuote(
+        child: CodeType(type: 'Ref', genericTypes: ['T']),
+      ),
     ),
     TextSpan(text: ' is a reference to a value of type '),
     CopyableWidgetSpan(
@@ -164,9 +151,7 @@ const _refDescription = TextSpan(
       plainText: '`InheritedWidget`',
       child: CodeQuote(child: CodeType(type: 'InheritedWidget')),
     ),
-    TextSpan(
-      text: ' with a single value property and provides a conventional ',
-    ),
+    TextSpan(text: ' with a single value property and provides a conventional '),
     CopyableWidgetSpan(
       index: 4,
       plainText: '`.of(context)`',
@@ -183,10 +168,7 @@ const _refDescription = TextSpan(
       index: 5,
       plainText: '`Ref<AnyObservableType>`',
       child: CodeQuote(
-        child: CodeType(
-          type: 'Ref',
-          genericTypes: ['{Stream|Future|Listenable|ValueListenable}'],
-        ),
+        child: CodeType(type: 'Ref', genericTypes: ['{Stream|Future|Listenable|ValueListenable}']),
       ),
     ),
     TextSpan(text: ' also provides\n'),
@@ -258,9 +240,13 @@ const _bindTitle = TextSpan(
       ),
     ),
     TextSpan(text: '  '),
-    WidgetSpan(child: CodeQuote(child: CodeFunctionCall(name: 'bind'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeFunctionCall(name: 'bind')),
+    ),
     TextSpan(text: ' it to a '),
-    WidgetSpan(child: CodeQuote(child: CodeType(type: 'BuildContext'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeType(type: 'BuildContext')),
+    ),
   ],
 );
 const _bindDescription = TextSpan(
@@ -276,7 +262,10 @@ const _bindDescription = TextSpan(
             CodeType(type: 'Ref'),
             CodeFunctionCall(
               name: 'bind',
-              params: [CodeParameter(name: 'context'), Text('() => ...')],
+              params: [
+                CodeParameter(name: 'context'),
+                Text('() => ...'),
+              ],
             ),
           ],
         ),
@@ -337,10 +326,7 @@ const _bindDescription = TextSpan(
         plainText: '`key`',
         child: CodeQuote(child: CodeParameter(name: 'key')),
       ),
-      TextSpan(
-        text:
-            ' parameter allows for updating the value initializer when needed.',
-      ),
+      TextSpan(text: ' parameter allows for updating the value initializer when needed.'),
     ],
     TextSpan(text: '\n\n'),
     CopyableWidgetSpan(
@@ -354,7 +340,10 @@ const _bindDescription = TextSpan(
             CodeType(type: 'Ref'),
             CodeFunctionCall(
               name: 'bindValue',
-              params: [CodeParameter(name: 'context'), Text('...')],
+              params: [
+                CodeParameter(name: 'context'),
+                Text('...'),
+              ],
             ),
           ],
         ),
@@ -364,7 +353,10 @@ const _bindDescription = TextSpan(
     ...[
       _bulletPoint,
       TextSpan(text: 'Binds the '),
-      TextSpan(text: 'value', style: TextStyle(fontWeight: FontWeight.bold)),
+      TextSpan(
+        text: 'value',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       TextSpan(text: ' to the '),
       CopyableWidgetSpan(
         index: 7,
@@ -376,16 +368,16 @@ const _bindDescription = TextSpan(
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
-      TextSpan(
-        text:
-            'Whenever the value changes, the dependent widgets will be automatically rebuilt.',
-      ),
+      TextSpan(text: 'Whenever the value changes, the dependent widgets will be automatically rebuilt.'),
     ],
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
       TextSpan(text: 'Values provided this way are '),
-      TextSpan(text: 'not', style: TextStyle(fontStyle: FontStyle.italic)),
+      TextSpan(
+        text: 'not',
+        style: TextStyle(fontStyle: FontStyle.italic),
+      ),
       TextSpan(text: ' disposed automatically.'),
     ],
     TextSpan(text: '\n\n'),
@@ -427,17 +419,20 @@ const _watchTitle = TextSpan(
       ),
     ),
     TextSpan(text: '  '),
-    WidgetSpan(child: CodeQuote(child: CodeFunctionCall(name: 'watch'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeFunctionCall(name: 'watch')),
+    ),
     TextSpan(text: ' it from a '),
-    WidgetSpan(child: CodeQuote(child: CodeType(type: 'BuildContext'))),
+    WidgetSpan(
+      child: CodeQuote(child: CodeType(type: 'BuildContext')),
+    ),
   ],
 );
 const _watchDescription = TextSpan(
   children: [
     CopyableWidgetSpan(
       index: 0,
-      plainText:
-          '`<Observable>.watch(context)` or `Ref<Observable>.watch(context)`',
+      plainText: '`<Observable>.watch(context)` or `Ref<Observable>.watch(context)`',
       child: Padding(
         padding: EdgeInsets.only(bottom: 4),
         child: Wrap(
@@ -459,12 +454,7 @@ const _watchDescription = TextSpan(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CodeType(
-                    type: 'Ref',
-                    genericTypes: [
-                      '{Stream|Future|Listenable|ValueListenable}',
-                    ],
-                  ),
+                  CodeType(type: 'Ref', genericTypes: ['{Stream|Future|Listenable|ValueListenable}']),
                   CodeFunctionCall(
                     name: 'watch',
                     params: [CodeParameter(name: 'context')],
@@ -488,12 +478,7 @@ const _watchDescription = TextSpan(
       TextSpan(text: ' whenever the observable value notifies of changes.'),
     ],
     TextSpan(text: '\n'),
-    ...[
-      _bulletPoint,
-      TextSpan(
-        text: 'Provides the same data as the corresponding builder widget.',
-      ),
-    ],
+    ...[_bulletPoint, TextSpan(text: 'Provides the same data as the corresponding builder widget.')],
     TextSpan(text: '\n'),
     ...[
       _bulletPoint,
@@ -503,9 +488,7 @@ const _watchDescription = TextSpan(
         plainText: '`.watchOnly(context)`',
         child: CodeQuote(child: CodeFunctionCall(name: 'watchOnly')),
       ),
-      TextSpan(
-        text: ', which rebuilds the widget only if the selected value changes.',
-      ),
+      TextSpan(text: ', which rebuilds the widget only if the selected value changes.'),
     ],
     TextSpan(text: '\n'),
     ...[
@@ -516,10 +499,7 @@ const _watchDescription = TextSpan(
         plainText: '`.watchEffect(context, ...)`',
         child: CodeQuote(child: CodeFunctionCall(name: 'watchEffect')),
       ),
-      TextSpan(
-        text:
-            " to register a callback for a value change, which never triggers a rebuild.",
-      ),
+      TextSpan(text: " to register a callback for a value change, which never triggers a rebuild."),
     ],
     TextSpan(text: '\n\n'),
     ...[
@@ -540,11 +520,7 @@ const _watchDescription = TextSpan(
       CopyableWidgetSpan(
         index: 4,
         plainText: '`<Observable>Builder`',
-        child: CodeQuote(
-          child: CodeType(
-            type: '{Stream|Future|Listenable|ValueListenable}Builder',
-          ),
-        ),
+        child: CodeQuote(child: CodeType(type: '{Stream|Future|Listenable|ValueListenable}Builder')),
       ),
       TextSpan(text: '!'),
     ],
@@ -573,10 +549,7 @@ class _Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleMargin =
-        isMobileLayout
-            ? const EdgeInsets.symmetric(horizontal: 8)
-            : const EdgeInsets.only(top: 0);
+    final titleMargin = isMobileLayout ? const EdgeInsets.symmetric(horizontal: 8) : const EdgeInsets.only(top: 0);
 
     final displayShadow = isMobileLayout;
 
@@ -584,12 +557,10 @@ class _Layout extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (displayShadow)
-          const SizedBox(height: 56, child: BackgroundGradient()),
+        if (displayShadow) const SizedBox(height: 56, child: BackgroundGradient()),
         Material(
           clipBehavior: Clip.none,
-          color:
-              displayShadow ? BackgroundGradient.endColor : Colors.transparent,
+          color: displayShadow ? BackgroundGradient.endColor : Colors.transparent,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -604,14 +575,10 @@ class _Layout extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    isMobileLayout
-                        ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
-                        : const EdgeInsets.only(left: 34),
-                child: _Description(
-                  descriptionVisibilityFactor: descriptionVisibilityFactor,
-                  description: description,
-                ),
+                padding: isMobileLayout
+                    ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
+                    : const EdgeInsets.only(left: 34),
+                child: _Description(descriptionVisibilityFactor: descriptionVisibilityFactor, description: description),
               ),
             ],
           ),
@@ -645,9 +612,7 @@ class _Title extends StatelessWidget {
           children: [
             Expanded(
               child: DefaultTextStyle.merge(
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium!.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
                 child: Text.rich(title),
               ),
             ),
@@ -673,38 +638,30 @@ class _Title extends StatelessWidget {
 }
 
 class _Description extends StatelessWidget {
-  const _Description({
-    required this.descriptionVisibilityFactor,
-    required this.description,
-  });
+  const _Description({required this.descriptionVisibilityFactor, required this.description});
 
   final double descriptionVisibilityFactor;
   final TextSpan description;
 
   @override
   Widget build(BuildContext context) {
-    if (descriptionVisibilityFactor == 0) {
-      return const SizedBox.shrink();
-    }
-
+    const opacityCurve = Curves.easeIn;
     return ClipRect(
       child: Align(
         alignment: Alignment.topLeft,
         widthFactor: 1,
         heightFactor: descriptionVisibilityFactor,
         child: Opacity(
-          opacity: descriptionVisibilityFactor,
+          opacity: opacityCurve.transform(descriptionVisibilityFactor),
           child: LowEmphasisCard(
             margin: const EdgeInsets.only(top: 8, bottom: 8),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               child: DefaultTextStyle(
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
                 child: TickerMode(
-                  enabled: descriptionVisibilityFactor == 1,
+                  enabled: descriptionVisibilityFactor >= 0.9,
                   child: CustomSelectableRichText(description),
                 ),
               ),

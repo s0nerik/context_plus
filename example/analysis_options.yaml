@@ -8,3 +8,6 @@ analyzer:
 
 custom_lint:
   debug: true
+
+formatter:  
+  page_width: 120

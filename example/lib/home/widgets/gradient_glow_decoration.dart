@@ -208,7 +208,7 @@ class _GradientGlowPainter extends BoxPainter {
         ..style = .fill
         ..strokeWidth = blurRadius
         ..shader = _createRotatingGradient(rect.center, rect, rotation)
-        ..maskFilter = MaskFilter.blur(.outer, blurRadius),
+        ..imageFilter = ui.ImageFilter.blur(sigmaX: blurRadius, sigmaY: blurRadius),
     );
 
     // Draw a thin border line with borderOpacity
@@ -217,8 +217,7 @@ class _GradientGlowPainter extends BoxPainter {
       Paint()
         ..style = .stroke
         ..strokeWidth = borderWidth
-        ..color = const Color(0xFFFFFFFF).withValues(alpha: borderOpacity)
-        ..blendMode = BlendMode.softLight,
+        ..shader = _createRotatingGradient(rect.center, rect, rotation, opacity: borderOpacity),
     );
 
     // Draw background if provided
@@ -233,7 +232,9 @@ class _GradientGlowPainter extends BoxPainter {
   }
 
   /// Creates a gradient shader that rotates around a center point.
-  ui.Gradient _createRotatingGradient(Offset center, Rect bounds, double rotation) {
+  ui.Gradient _createRotatingGradient(Offset center, Rect bounds, double rotation, {double? opacity}) {
+    opacity ??= this.opacity;
+
     final colorStops = <double>[];
     final gradientColors = <Color>[];
 

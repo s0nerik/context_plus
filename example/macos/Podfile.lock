@@ -2,15 +2,12 @@ PODS:
   - FlutterMacOS (1.0.0)
   - irondash_engine_context (0.0.1):
     - FlutterMacOS
-  - rive_common (0.0.1):
-    - FlutterMacOS
   - super_native_extensions (0.0.1):
     - FlutterMacOS
 
 DEPENDENCIES:
   - FlutterMacOS (from `Flutter/ephemeral`)
   - irondash_engine_context (from `Flutter/ephemeral/.symlinks/plugins/irondash_engine_context/macos`)
-  - rive_common (from `Flutter/ephemeral/.symlinks/plugins/rive_common/macos`)
   - super_native_extensions (from `Flutter/ephemeral/.symlinks/plugins/super_native_extensions/macos`)
 
 EXTERNAL SOURCES:
@@ -18,15 +15,12 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   irondash_engine_context:
     :path: Flutter/ephemeral/.symlinks/plugins/irondash_engine_context/macos
-  rive_common:
-    :path: Flutter/ephemeral/.symlinks/plugins/rive_common/macos
   super_native_extensions:
     :path: Flutter/ephemeral/.symlinks/plugins/super_native_extensions/macos
 
 SPEC CHECKSUMS:
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   irondash_engine_context: 893c7d96d20ce361d7e996f39d360c4c2f9869ba
-  rive_common: ea79040f86acf053a2d5a75a2506175ee39796a5
   super_native_extensions: c2795d6d9aedf4a79fae25cb6160b71b50549189
 
 PODFILE CHECKSUM: 5bc6a71ad752a68d2b4bce2aeb96d0f7aab52719

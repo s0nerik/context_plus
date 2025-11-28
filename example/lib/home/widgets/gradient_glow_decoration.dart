@@ -202,65 +202,40 @@ class _GradientGlowPainter extends BoxPainter {
     final rect = offset & size;
     final rrect = borderRadius.toRRect(rect);
 
-    // Blur radius based on opacity or provided value
-    final effectiveBlurRadius = blurRadius;
-    final strokeWidth = effectiveBlurRadius * 0.6;
-
-    // Create an outer RRect offset outward for the glow path
-    final glowOffset = effectiveBlurRadius * 0.3;
-    final outerRect = rect.inflate(glowOffset);
-    final outerRrect = borderRadius.toRRect(outerRect);
-
-    // Create gradient shader that rotates around the shape
-    // Calculate center relative to canvas origin (before any clipping)
-    final center = rect.center;
-    final bounds = outerRect.inflate(effectiveBlurRadius * 2);
-
-    // Create a sweep gradient centered on the shape
-    // We'll use a custom shader that maps angle to color
-    final gradient = _createRotatingGradient(center, bounds, rotation);
-
-    // Create the glow path (outer perimeter)
-    final glowPath = Path()..addRRect(outerRrect);
-
-    // Draw the glow with gradient and blur
-    final paint = Paint()
-      ..style = .stroke
-      ..strokeWidth = strokeWidth
-      ..shader = gradient
-      ..maskFilter = MaskFilter.blur(.normal, effectiveBlurRadius);
-
-    canvas.drawPath(glowPath, paint);
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..style = .fill
+        ..strokeWidth = blurRadius
+        ..shader = _createRotatingGradient(rect.center, rect, rotation)
+        ..maskFilter = MaskFilter.blur(.outer, blurRadius),
+    );
 
     // Draw a thin border line with borderOpacity
-    final borderPath = Path()..addRRect(rrect.inflate(borderWidth / 2));
-    final borderGradient = _createRotatingGradient(center, bounds, rotation, effectiveOpacity: borderOpacity);
-    final borderPaint = Paint()
-      ..style = .stroke
-      ..strokeWidth = borderWidth
-      ..shader = borderGradient;
-
-    canvas.drawPath(borderPath, borderPaint);
+    canvas.drawRRect(
+      rrect.inflate(borderWidth / 2),
+      Paint()
+        ..style = .stroke
+        ..strokeWidth = borderWidth
+        ..color = const Color(0xFFFFFFFF).withValues(alpha: borderOpacity)
+        ..blendMode = BlendMode.softLight,
+    );
 
     // Draw background if provided
     if (backgroundColor != null) {
-      final backgroundPaint = Paint()
-        ..color = backgroundColor!
-        ..style = .fill;
-      canvas.drawRRect(rrect, backgroundPaint);
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..color = backgroundColor!
+          ..style = .fill,
+      );
     }
   }
 
   /// Creates a gradient shader that rotates around a center point.
-  ui.Gradient _createRotatingGradient(Offset center, Rect bounds, double rotation, {double? effectiveOpacity}) {
-    // Create color stops for the gradient
-    // We need to map the angle around the shape to colors
+  ui.Gradient _createRotatingGradient(Offset center, Rect bounds, double rotation) {
     final colorStops = <double>[];
     final gradientColors = <Color>[];
-
-    // Generate color stops based on the number of colors
-    // Apply opacity to colors (use provided effectiveOpacity or default to opacity)
-    final opacityToUse = effectiveOpacity ?? opacity;
 
     // Use Catmull-Rom spline for smooth color transition
     const samplesPerSegment = 8;
@@ -289,14 +264,14 @@ class _GradientGlowPainter extends BoxPainter {
         final b = catmullRom(p0.b, p1.b, p2.b, p3.b, t).clamp(0.0, 1.0);
 
         gradientColors.add(
-          Color.fromARGB((opacityToUse * 255).round(), (r * 255).round(), (g * 255).round(), (b * 255).round()),
+          Color.fromARGB((opacity * 255).round(), (r * 255).round(), (g * 255).round(), (b * 255).round()),
         );
       }
     }
 
     // Add the first color at the end for seamless loop
     colorStops.add(1.0);
-    gradientColors.add(colors[0].withValues(alpha: opacityToUse));
+    gradientColors.add(colors[0].withValues(alpha: opacity));
 
     // Create a sweep gradient that rotates
     // Flutter's sweep gradient starts at 0 radians (3 o'clock, right side)

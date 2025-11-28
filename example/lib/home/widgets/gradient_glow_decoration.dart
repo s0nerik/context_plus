@@ -202,14 +202,6 @@ class _GradientGlowPainter extends BoxPainter {
     final rect = offset & size;
     final rrect = borderRadius.toRRect(rect);
 
-    // Draw background if provided
-    if (backgroundColor != null) {
-      final backgroundPaint = Paint()
-        ..color = backgroundColor!
-        ..style = PaintingStyle.fill;
-      canvas.drawRRect(rrect, backgroundPaint);
-    }
-
     // Blur radius based on opacity or provided value
     final effectiveBlurRadius = blurRadius;
     final strokeWidth = effectiveBlurRadius * 0.6;
@@ -228,40 +220,35 @@ class _GradientGlowPainter extends BoxPainter {
     // We'll use a custom shader that maps angle to color
     final gradient = _createRotatingGradient(center, bounds, rotation);
 
-    // Save canvas state
-    canvas.save();
-
-    // Clip to exclude the interior of the container
-    final outerClipRect = Rect.fromLTWH(-10000, -10000, 20000, 20000);
-    final outerClipPath = Path()..addRect(outerClipRect);
-    final innerClipPath = Path()..addRRect(rrect);
-    final clipPath = Path.combine(PathOperation.difference, outerClipPath, innerClipPath);
-    canvas.clipPath(clipPath, doAntiAlias: false);
-
     // Create the glow path (outer perimeter)
     final glowPath = Path()..addRRect(outerRrect);
 
     // Draw the glow with gradient and blur
     final paint = Paint()
-      ..style = PaintingStyle.stroke
+      ..style = .stroke
       ..strokeWidth = strokeWidth
       ..shader = gradient
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, effectiveBlurRadius);
+      ..maskFilter = MaskFilter.blur(.normal, effectiveBlurRadius);
 
     canvas.drawPath(glowPath, paint);
 
     // Draw a thin border line with borderOpacity
-    final borderPath = Path()..addRRect(rrect);
+    final borderPath = Path()..addRRect(rrect.inflate(borderWidth / 2));
     final borderGradient = _createRotatingGradient(center, bounds, rotation, effectiveOpacity: borderOpacity);
     final borderPaint = Paint()
-      ..style = PaintingStyle.stroke
+      ..style = .stroke
       ..strokeWidth = borderWidth
       ..shader = borderGradient;
 
     canvas.drawPath(borderPath, borderPaint);
 
-    // Restore canvas state
-    canvas.restore();
+    // Draw background if provided
+    if (backgroundColor != null) {
+      final backgroundPaint = Paint()
+        ..color = backgroundColor!
+        ..style = .fill;
+      canvas.drawRRect(rrect, backgroundPaint);
+    }
   }
 
   /// Creates a gradient shader that rotates around a center point.

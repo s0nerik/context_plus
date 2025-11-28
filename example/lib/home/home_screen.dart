@@ -82,9 +82,9 @@ class HomeScreen extends StatelessWidget {
 
           codeAnimationController.animateWith(
             SpringSimulation(
-              // SpringDescription(mass: 1, stiffness: 50, damping: 15),
-              // SpringDescription(mass: 1, stiffness: 25, damping: 10),
-              SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
+              // const SpringDescription(mass: 1, stiffness: 50, damping: 15),
+              // const SpringDescription(mass: 1, stiffness: 25, damping: 10),
+              const SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
               codeAnimationController.value,
               targetStep / (Code.steps - 1),
               velocity / showcaseExtraScrollHeight,

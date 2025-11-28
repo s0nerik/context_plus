@@ -278,7 +278,7 @@ class _GradientGlowPainter extends BoxPainter {
     // Flutter's sweep gradient starts at 0 radians (3 o'clock, right side)
     // To start at the top (12 o'clock), we need to offset by -π/2
     const startAngle = -math.pi / 2;
-    final endAngle = startAngle + 2 * math.pi;
+    const endAngle = startAngle + 2 * math.pi;
 
     final matrix = Matrix4.identity()
       ..translateByDouble(center.dx, center.dy, 0, 1)

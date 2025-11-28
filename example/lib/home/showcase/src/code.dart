@@ -19,7 +19,7 @@ class CodeAnimationController extends AnimationController {
   double get currentStep => (value * (Code.steps - 1)).clamp(0, Code.steps - 1);
 
   double stepProgress(int step) {
-    final totalSegments = Code.steps - 1;
+    const totalSegments = Code.steps - 1;
     if (totalSegments <= 0) {
       return step == 0 ? 1.0 : 0.0;
     }
@@ -225,7 +225,7 @@ class _Code extends StatelessWidget {
     (start, end) = (3, 3);
     final logoColorStreamTransitionInterval = watchContextIntervals.sub(start, end);
 
-    return Column(
+    final code = Column(
       mainAxisSize: .min,
       crossAxisAlignment: .start,
       children: [
@@ -242,7 +242,7 @@ class _Code extends StatelessWidget {
             .opacity(tween: (1, 0), interval: inheritedStateClassOpacityFadeInterval),
             .height(tween: (1, 0), interval: inheritedStateClassHeightCollapseInterval),
           ],
-          children: [
+          children: const [
             Row(
               children: [
                 _Identifier('class', .keyword),
@@ -304,10 +304,10 @@ class _Code extends StatelessWidget {
             CodeTransition(
               anim: controller,
               config: [.width(tween: (1, 0), interval: inheritedStateScaleControllerIndentWidthCollapseInterval)],
-              child: _Identifier('  ', .other),
+              child: const _Identifier('  ', .other),
             ),
-            _Identifier('final', .keyword),
-            _Identifier(' ', .other),
+            const _Identifier('final', .keyword),
+            const _Identifier(' ', .other),
             ReverseFlexTransition(
               animation: controller,
               curveOffset: 0.05,
@@ -323,7 +323,7 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionScaleControllerAssignmentOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionScaleControllerAssignmentSlideInterval),
                       ],
-                      child: _Identifier('= ', .other),
+                      child: const _Identifier('= ', .other),
                     ),
                     CodeRowTransition(
                       anim: controller,
@@ -332,9 +332,9 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionScaleControllerRefTypeOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionScaleControllerRefTypeSlideInterval),
                       ],
-                      children: [_Identifier('Ref', .callable), _Identifier('<', .other)],
+                      children: const [_Identifier('Ref', .callable), _Identifier('<', .other)],
                     ),
-                    _Identifier('AnimationController', .type),
+                    const _Identifier('AnimationController', .type),
                     CodeRowTransition(
                       anim: controller,
                       config: [
@@ -342,11 +342,11 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionScaleControllerRefTypeOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionScaleControllerRefTypeSlideInterval),
                       ],
-                      children: [_Identifier('>()', .other)],
+                      children: const [_Identifier('>()', .other)],
                     ),
                   ],
                 ),
-                _Identifier(' ', .other),
+                const _Identifier(' ', .other),
                 Row(
                   children: [
                     CodeRowTransition(
@@ -355,14 +355,14 @@ class _Code extends StatelessWidget {
                         .width(tween: (0, 1), interval: refDefinitionScaleControllerVariableUnderscoreWidthInterval),
                         .height(tween: (0, 1), interval: refDefinitionScaleControllerVariableUnderscoreHeightInterval),
                       ],
-                      children: [_Identifier('_', .variable)],
+                      children: const [_Identifier('_', .variable)],
                     ),
-                    _Identifier('scaleController', .variable),
+                    const _Identifier('scaleController', .variable),
                   ],
                 ),
               ],
             ),
-            _Identifier(';', .other),
+            const _Identifier(';', .other),
           ],
         ),
         // _colorStream,
@@ -371,10 +371,10 @@ class _Code extends StatelessWidget {
             CodeTransition(
               anim: controller,
               config: [.width(tween: (1, 0), interval: inheritedStateColorStreamIndentWidthCollapseInterval)],
-              child: _Identifier('  ', .other),
+              child: const _Identifier('  ', .other),
             ),
-            _Identifier('final', .keyword),
-            _Identifier(' ', .other),
+            const _Identifier('final', .keyword),
+            const _Identifier(' ', .other),
             ReverseFlexTransition(
               animation: controller,
               curveOffset: 0.05,
@@ -390,7 +390,7 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionColorStreamAssignmentOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionColorStreamAssignmentSlideInterval),
                       ],
-                      child: _Identifier('= ', .other),
+                      child: const _Identifier('= ', .other),
                     ),
                     CodeRowTransition(
                       anim: controller,
@@ -399,12 +399,12 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionColorStreamRefTypeOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionColorStreamRefTypeSlideInterval),
                       ],
-                      children: [_Identifier('Ref', .callable), _Identifier('<', .other)],
+                      children: const [_Identifier('Ref', .callable), _Identifier('<', .other)],
                     ),
-                    _Identifier('Stream', .type),
-                    _Identifier('<', .other),
-                    _Identifier('Color', .type),
-                    _Identifier('>', .other),
+                    const _Identifier('Stream', .type),
+                    const _Identifier('<', .other),
+                    const _Identifier('Color', .type),
+                    const _Identifier('>', .other),
                     CodeRowTransition(
                       anim: controller,
                       config: [
@@ -412,11 +412,11 @@ class _Code extends StatelessWidget {
                         .opacity(tween: (0, 1), interval: refDefinitionColorStreamRefTypeOpacityInterval),
                         .slide(tween: ((0, 1), (0, 0)), interval: refDefinitionColorStreamRefTypeSlideInterval),
                       ],
-                      children: [_Identifier('>()', .other)],
+                      children: const [_Identifier('>()', .other)],
                     ),
                   ],
                 ),
-                _Identifier(' ', .other),
+                const _Identifier(' ', .other),
                 Row(
                   children: [
                     CodeRowTransition(
@@ -425,14 +425,14 @@ class _Code extends StatelessWidget {
                         .width(tween: (0, 1), interval: refDefinitionColorStreamVariableUnderscoreWidthInterval),
                         .height(tween: (0, 1), interval: refDefinitionColorStreamVariableUnderscoreHeightInterval),
                       ],
-                      children: [_Identifier('_', .variable)],
+                      children: const [_Identifier('_', .variable)],
                     ),
-                    _Identifier('colorStream', .variable),
+                    const _Identifier('colorStream', .variable),
                   ],
                 ),
               ],
             ),
-            _Identifier(';', .other),
+            const _Identifier(';', .other),
           ],
         ),
         // inherited widget methods
@@ -442,7 +442,7 @@ class _Code extends StatelessWidget {
             .opacity(tween: (1, 0), interval: inheritedStateMethodsOpacityFadeInterval),
             .height(tween: (1, 0), interval: inheritedStateMethodsHeightCollapseInterval),
           ],
-          children: [
+          children: const [
             _Identifier('', .other),
             _Identifier('  @override', .annotation),
             Row(
@@ -507,7 +507,7 @@ class _Code extends StatelessWidget {
             _Identifier('}', .other),
           ],
         ),
-        _Identifier('', .other),
+        const _Identifier('', .other),
         //
         // ***************************************************
         //
@@ -518,24 +518,24 @@ class _Code extends StatelessWidget {
         // class Example extends StatelessWidget {
         Row(
           children: [
-            _Identifier('class', .keyword),
-            _Identifier(' ', .other),
-            _Identifier('Example', .type),
-            _Identifier(' ', .other),
-            _Identifier('extends', .keyword),
-            _Identifier(' ', .other),
+            const _Identifier('class', .keyword),
+            const _Identifier(' ', .other),
+            const _Identifier('Example', .type),
+            const _Identifier(' ', .other),
+            const _Identifier('extends', .keyword),
+            const _Identifier(' ', .other),
             ReplaceTransition(
               animation: controller,
               interval: exampleWidgetTypeTransitionInterval,
-              prevChild: _Identifier('StatefulWidget', .type),
-              child: _Identifier('StatelessWidget', .type),
+              prevChild: const _Identifier('StatefulWidget', .type),
+              child: const _Identifier('StatelessWidget', .type),
             ),
-            _Identifier(' ', .other),
-            _Identifier('{', .other),
+            const _Identifier(' ', .other),
+            const _Identifier('{', .other),
           ],
         ),
         // const Example({super.key});
-        Row(
+        const Row(
           children: [
             _Identifier('  const', .keyword),
             _Identifier(' ', .other),
@@ -547,7 +547,7 @@ class _Code extends StatelessWidget {
             _Identifier('});', .other),
           ],
         ),
-        _Identifier('', .other),
+        const _Identifier('', .other),
         ReverseFlexTransition(
           animation: controller,
           curveOffset: -0.1,
@@ -566,7 +566,7 @@ class _Code extends StatelessWidget {
                     .opacity(tween: (1, 0), interval: exampleStateCodeCreateStateOpacityFadeInterval),
                     .height(tween: (1, 0), interval: exampleStateCodeCreateStateHeightCollapseInterval),
                   ],
-                  children: [
+                  children: const [
                     _Identifier('  @override', .annotation),
                     Row(
                       children: [
@@ -610,7 +610,7 @@ class _Code extends StatelessWidget {
                     CodeRowTransition(
                       anim: controller,
                       config: [.width(tween: (0, 1), interval: exampleStateCodeVariableIndentWidthExpandInterval)],
-                      children: [_Identifier('    ', .other)],
+                      children: const [_Identifier('    ', .other)],
                     ),
                     // variable declarations
                     Column(
@@ -635,24 +635,24 @@ class _Code extends StatelessWidget {
                                 ReplaceTransition(
                                   animation: controller,
                                   interval: exampleStateCodeColorStreamVariableReplaceTransitionInterval,
-                                  prevChild: _Identifier('  ', .other),
-                                  child: _Identifier('', .other),
+                                  prevChild: const _Identifier('  ', .other),
+                                  child: const _Identifier('', .other),
                                 ),
-                                _Identifier('late final', .keyword),
-                                _Identifier(' ', .other),
-                                _Identifier('Stream', .type),
-                                _Identifier('<', .other),
-                                _Identifier('Color', .type),
-                                _Identifier('>', .other),
-                                _Identifier(' ', .other),
+                                const _Identifier('late final', .keyword),
+                                const _Identifier(' ', .other),
+                                const _Identifier('Stream', .type),
+                                const _Identifier('<', .other),
+                                const _Identifier('Color', .type),
+                                const _Identifier('>', .other),
+                                const _Identifier(' ', .other),
                               ],
                             ),
-                            _Identifier('_colorStream', .variable),
+                            const _Identifier('_colorStream', .variable),
                             ReplaceTransition(
                               animation: controller,
                               interval: exampleStateCodeColorStreamBindMethodReplaceTransitionInterval,
-                              prevChild: _Identifier(' = ', .other),
-                              child: Row(
+                              prevChild: const _Identifier(' = ', .other),
+                              child: const Row(
                                 children: [
                                   _Identifier('.', .other),
                                   _Identifier('bind', .callable),
@@ -662,14 +662,14 @@ class _Code extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            _Identifier('createColorStream', .callable),
+                            const _Identifier('createColorStream', .callable),
                             ReplaceTransition(
                               animation: controller,
                               interval: exampleStateCodeColorStreamBindMethodReplaceTransitionClosingInterval,
-                              prevChild: _Identifier('(', .other),
-                              child: _Identifier('', .other),
+                              prevChild: const _Identifier('(', .other),
+                              child: const _Identifier('', .other),
                             ),
-                            _Identifier(');', .other),
+                            const _Identifier(');', .other),
                           ],
                         ),
                         // _scaleController = ...
@@ -695,21 +695,21 @@ class _Code extends StatelessWidget {
                                     ReplaceTransition(
                                       animation: controller,
                                       interval: exampleStateCodeScaleControllerVariableReplaceTransitionInterval,
-                                      prevChild: _Identifier('  ', .other),
-                                      child: _Identifier('', .other),
+                                      prevChild: const _Identifier('  ', .other),
+                                      child: const _Identifier('', .other),
                                     ),
-                                    _Identifier('late final ', .keyword),
-                                    _Identifier('AnimationController', .type),
-                                    _Identifier(' ', .other),
+                                    const _Identifier('late final ', .keyword),
+                                    const _Identifier('AnimationController', .type),
+                                    const _Identifier(' ', .other),
                                   ],
                                 ),
-                                _Identifier('_scaleController', .variable),
+                                const _Identifier('_scaleController', .variable),
                                 // = ... / .bind(
                                 ReplaceTransition(
                                   animation: controller,
                                   interval: exampleStateCodeScaleControllerBindMethodReplaceTransitionInterval,
-                                  prevChild: _Identifier(' = ', .other),
-                                  child: Row(
+                                  prevChild: const _Identifier(' = ', .other),
+                                  child: const Row(
                                     children: [
                                       _Identifier('.', .other),
                                       _Identifier('bind', .callable),
@@ -730,7 +730,7 @@ class _Code extends StatelessWidget {
                                 ),
                               ],
                               children: [
-                                _Identifier('', .other),
+                                const _Identifier('', .other),
                                 CodeRowTransition(
                                   anim: controller,
                                   config: [
@@ -743,7 +743,7 @@ class _Code extends StatelessWidget {
                                       interval: exampleStateCodeContextParameterSlideInInterval,
                                     ),
                                   ],
-                                  children: [_Identifier('  context', .variable), _Identifier(',', .other)],
+                                  children: const [_Identifier('  context', .variable), _Identifier(',', .other)],
                                 ),
                                 CodeRowTransition(
                                   anim: controller,
@@ -757,7 +757,7 @@ class _Code extends StatelessWidget {
                                       interval: exampleStateCodeVsyncParameterSlideInInterval,
                                     ),
                                   ],
-                                  children: [
+                                  children: const [
                                     _Identifier('  ', .other),
                                     _Identifier('(', .other),
                                     _Identifier('vsync', .variable),
@@ -789,7 +789,7 @@ class _Code extends StatelessWidget {
                                       interval: exampleStateCodeAnimationControllerColumnSlideInterval,
                                     ),
                                   ],
-                                  children: [_Identifier('', .other), _Identifier('', .other)],
+                                  children: const [_Identifier('', .other), _Identifier('', .other)],
                                 ),
                                 // late final AnimationController _scaleController = AnimationController(
                                 Row(
@@ -805,11 +805,11 @@ class _Code extends StatelessWidget {
                                       child: ReplaceTransition(
                                         animation: controller,
                                         interval: exampleStateCodeAnimationControllerIndentReplaceTransitionInterval,
-                                        prevChild: _Identifier(
+                                        prevChild: const _Identifier(
                                           '                                                    ',
                                           .other,
                                         ),
-                                        child: _Identifier('      ', .other),
+                                        child: const _Identifier('      ', .other),
                                       ),
                                     ),
                                     CodeTransition(
@@ -820,10 +820,10 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeAnimationControllerIndentWidthExpandInterval,
                                         ),
                                       ],
-                                      child: _Identifier('             ', .other),
+                                      child: const _Identifier('             ', .other),
                                     ),
-                                    _Identifier('AnimationController', .callable),
-                                    _Identifier('(', .other),
+                                    const _Identifier('AnimationController', .callable),
+                                    const _Identifier('(', .other),
                                   ],
                                 ),
                                 //   vsync: this,
@@ -837,7 +837,7 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeVsyncParameterIndentWidthCollapseInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
                                     CodeTransition(
                                       anim: controller,
@@ -847,17 +847,17 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeVsyncParameterIndentWidthExpandInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
-                                    _Identifier('  vsync', .variable),
-                                    _Identifier(': ', .other),
+                                    const _Identifier('  vsync', .variable),
+                                    const _Identifier(': ', .other),
                                     ReplaceTransition(
                                       animation: controller,
                                       interval: exampleStateCodeVsyncParameterReplaceTransitionInterval,
-                                      prevChild: _Identifier('this', .keyword),
-                                      child: _Identifier('vsync', .variable),
+                                      prevChild: const _Identifier('this', .keyword),
+                                      child: const _Identifier('vsync', .variable),
                                     ),
-                                    _Identifier(',', .other),
+                                    const _Identifier(',', .other),
                                   ],
                                 ),
                                 //   duration: const Duration(seconds: 1),
@@ -871,7 +871,7 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeDurationParameterIndentWidthCollapseInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
                                     CodeTransition(
                                       anim: controller,
@@ -881,17 +881,17 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeDurationParameterIndentWidthExpandInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
-                                    _Identifier('  duration', .variable),
-                                    _Identifier(': ', .other),
-                                    _Identifier('const ', .keyword),
-                                    _Identifier('Duration', .callable),
-                                    _Identifier('(', .other),
-                                    _Identifier('seconds', .variable),
-                                    _Identifier(': ', .other),
-                                    _Identifier('1', .number),
-                                    _Identifier('),', .other),
+                                    const _Identifier('  duration', .variable),
+                                    const _Identifier(': ', .other),
+                                    const _Identifier('const ', .keyword),
+                                    const _Identifier('Duration', .callable),
+                                    const _Identifier('(', .other),
+                                    const _Identifier('seconds', .variable),
+                                    const _Identifier(': ', .other),
+                                    const _Identifier('1', .number),
+                                    const _Identifier('),', .other),
                                   ],
                                 ),
                                 // )..repeat(min: 0.5, max: 1, reverse: true),
@@ -905,7 +905,7 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeRepeatParameterIndentWidthCollapseInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
                                     CodeTransition(
                                       anim: controller,
@@ -915,23 +915,23 @@ class _Code extends StatelessWidget {
                                           interval: exampleStateCodeRepeatParameterIndentWidthExpandInterval,
                                         ),
                                       ],
-                                      child: _Identifier('  ', .other),
+                                      child: const _Identifier('  ', .other),
                                     ),
-                                    _Identifier(')..', .other),
-                                    _Identifier('repeat', .callable),
-                                    _Identifier('(', .other),
-                                    _Identifier('min', .variable),
-                                    _Identifier(': ', .other),
-                                    _Identifier('0.5', .number),
-                                    _Identifier(', ', .other),
-                                    _Identifier('max', .variable),
-                                    _Identifier(': ', .other),
-                                    _Identifier('1', .number),
-                                    _Identifier(', ', .other),
-                                    _Identifier('reverse', .variable),
-                                    _Identifier(': ', .other),
-                                    _Identifier('true', .keyword),
-                                    _Identifier('),', .other),
+                                    const _Identifier(')..', .other),
+                                    const _Identifier('repeat', .callable),
+                                    const _Identifier('(', .other),
+                                    const _Identifier('min', .variable),
+                                    const _Identifier(': ', .other),
+                                    const _Identifier('0.5', .number),
+                                    const _Identifier(', ', .other),
+                                    const _Identifier('max', .variable),
+                                    const _Identifier(': ', .other),
+                                    const _Identifier('1', .number),
+                                    const _Identifier(', ', .other),
+                                    const _Identifier('reverse', .variable),
+                                    const _Identifier(': ', .other),
+                                    const _Identifier('true', .keyword),
+                                    const _Identifier('),', .other),
                                   ],
                                 ),
                                 // );
@@ -942,7 +942,7 @@ class _Code extends StatelessWidget {
                                     .height(tween: (0, 1), interval: exampleStateCodeSemicolonHeightExpandInterval),
                                     .opacity(tween: (0, 1), interval: exampleStateCodeSemicolonOpacityExpandInterval),
                                   ],
-                                  child: _Identifier(');', .other),
+                                  child: const _Identifier(');', .other),
                                 ),
                               ],
                             ),
@@ -959,7 +959,7 @@ class _Code extends StatelessWidget {
                     .opacity(tween: (1, 0), interval: exampleStateCodeDisposeOpacityFadeInterval),
                     .height(tween: (1, 0), interval: exampleStateCodeDisposeHeightCollapseInterval),
                   ],
-                  children: [
+                  children: const [
                     _Identifier('', .other),
                     _Identifier('  @override', .annotation),
                     Row(
@@ -992,7 +992,7 @@ class _Code extends StatelessWidget {
                 ),
               ],
             ),
-            Column(
+            const Column(
               crossAxisAlignment: .start,
               children: [
                 // build
@@ -1016,14 +1016,14 @@ class _Code extends StatelessWidget {
         // build body
         Stack(
           children: [
-            _Identifier('    return ', .keyword),
+            const _Identifier('    return ', .keyword),
             CodeColumnTransition(
               anim: controller,
               config: [
                 .opacity(tween: (1, 0), interval: exampleStateCodeBuildReturnInheritedStateOpacityFadeInterval),
                 .height(tween: (1, 0), interval: exampleStateCodeBuildReturnInheritedStateHeightCollapseInterval),
               ],
-              children: [
+              children: const [
                 Row(
                   children: [
                     _Identifier('           ', .keyword),
@@ -1060,24 +1060,24 @@ class _Code extends StatelessWidget {
                     .opacity(tween: (1, 0), interval: exampleStateCodeBuildReturnAnimatedLogoOpacityFadeInterval),
                     .height(tween: (1, 0), interval: exampleStateCodeBuildReturnAnimatedLogoHeightCollapseInterval),
                   ],
-                  children: [_Identifier('', .other), _Identifier('', .other), _Identifier('', .other)],
+                  children: const [_Identifier('', .other), _Identifier('', .other), _Identifier('', .other)],
                 ),
                 Row(
                   children: [
                     ReplaceTransition(
                       animation: controller,
                       interval: exampleStateCodeBuildReturnAnimatedLogoIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('             ', .other),
-                      child: _Identifier('           ', .other),
+                      prevChild: const _Identifier('             ', .other),
+                      child: const _Identifier('           ', .other),
                     ),
-                    _Identifier('const ', .keyword),
-                    _Identifier('_AnimatedFlutterLogo', .callable),
-                    _Identifier('()', .other),
+                    const _Identifier('const ', .keyword),
+                    const _Identifier('_AnimatedFlutterLogo', .callable),
+                    const _Identifier('()', .other),
                     ReplaceTransition(
                       animation: controller,
                       interval: exampleStateCodeBuildReturnAnimatedLogoCommaReplaceTransitionInterval,
-                      prevChild: _Identifier(',', .other),
-                      child: _Identifier(';', .other),
+                      prevChild: const _Identifier(',', .other),
+                      child: const _Identifier(';', .other),
                     ),
                   ],
                 ),
@@ -1085,9 +1085,9 @@ class _Code extends StatelessWidget {
             ),
           ],
         ),
-        _Identifier('  }', .other),
-        _Identifier('}', .other),
-        _Identifier('', .other),
+        const _Identifier('  }', .other),
+        const _Identifier('}', .other),
+        const _Identifier('', .other),
         //
         // ***************************************************
         //
@@ -1096,7 +1096,7 @@ class _Code extends StatelessWidget {
         // ***************************************************
         //
         // class _AnimatedFlutterLogo extends StatelessWidget {
-        Row(
+        const Row(
           children: [
             _Identifier('class', .keyword),
             _Identifier(' ', .other),
@@ -1110,7 +1110,7 @@ class _Code extends StatelessWidget {
           ],
         ),
         // const _AnimatedFlutterLogo();
-        Row(
+        const Row(
           children: [
             _Identifier('  const', .keyword),
             _Identifier(' ', .other),
@@ -1118,11 +1118,11 @@ class _Code extends StatelessWidget {
             _Identifier('();', .other),
           ],
         ),
-        _Identifier('', .other),
+        const _Identifier('', .other),
         // @override
-        _Identifier('  @override', .annotation),
+        const _Identifier('  @override', .annotation),
         // Widget build(BuildContext context) {
-        Row(
+        const Row(
           children: [
             _Identifier('  Widget', .type),
             _Identifier(' ', .other),
@@ -1137,7 +1137,7 @@ class _Code extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            _Identifier('    return ', .keyword),
+            const _Identifier('    return ', .keyword),
             // old, removed code
             CodeColumnTransition(
               anim: controller,
@@ -1145,7 +1145,7 @@ class _Code extends StatelessWidget {
                 .opacity(tween: (1, 0), interval: logoOldCodeOpacityFadeInterval),
                 .height(tween: (1, 0), interval: logoOldCodeHeightCollapseInterval),
               ],
-              children: [
+              children: const [
                 Row(
                   children: [
                     _Identifier('           ', .other),
@@ -1228,7 +1228,7 @@ class _Code extends StatelessWidget {
                     .height(tween: (1, 0), interval: logoOldCodeColumnHeightCollapseInterval),
                     .opacity(tween: (1, 0), interval: logoOldCodeColumnOpacityCollapseInterval),
                   ],
-                  children: [
+                  children: const [
                     _Identifier('', .other),
                     _Identifier('', .other),
                     _Identifier('', .other),
@@ -1240,13 +1240,13 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeTransformIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('                                        ', .other),
-                      child: _Identifier('           ', .other),
+                      prevChild: const _Identifier('                                        ', .other),
+                      child: const _Identifier('           ', .other),
                     ),
-                    _Identifier('Transform', .callable),
-                    _Identifier('.', .other),
-                    _Identifier('scale', .callable),
-                    _Identifier('(', .other),
+                    const _Identifier('Transform', .callable),
+                    const _Identifier('.', .other),
+                    const _Identifier('scale', .callable),
+                    const _Identifier('(', .other),
                   ],
                 ),
                 Row(
@@ -1254,16 +1254,16 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeScaleIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('          ', .other),
-                      child: _Identifier('      ', .other),
+                      prevChild: const _Identifier('          ', .other),
+                      child: const _Identifier('      ', .other),
                     ),
-                    _Identifier('scale', .variable),
-                    _Identifier(': ', .other),
+                    const _Identifier('scale', .variable),
+                    const _Identifier(': ', .other),
                     ReplaceTransition(
                       animation: controller,
                       interval: logoScaleVariableTransitionInterval,
-                      prevChild: Row(children: [_Identifier('scale', .variable), _Identifier(',', .other)]),
-                      child: Row(
+                      prevChild: const Row(children: [_Identifier('scale', .variable), _Identifier(',', .other)]),
+                      child: const Row(
                         children: [
                           _Identifier('_scaleController', .variable),
                           _Identifier('.', .other),
@@ -1282,13 +1282,13 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeChildIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('          ', .other),
-                      child: _Identifier('      ', .other),
+                      prevChild: const _Identifier('          ', .other),
+                      child: const _Identifier('      ', .other),
                     ),
-                    _Identifier('child', .variable),
-                    _Identifier(': ', .other),
-                    _Identifier('FlutterLogo', .callable),
-                    _Identifier('(', .other),
+                    const _Identifier('child', .variable),
+                    const _Identifier(': ', .other),
+                    const _Identifier('FlutterLogo', .callable),
+                    const _Identifier('(', .other),
                   ],
                 ),
                 Row(
@@ -1296,13 +1296,13 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeSizeIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('            ', .other),
-                      child: _Identifier('        ', .other),
+                      prevChild: const _Identifier('            ', .other),
+                      child: const _Identifier('        ', .other),
                     ),
-                    _Identifier('size', .variable),
-                    _Identifier(': ', .other),
-                    _Identifier('200', .number),
-                    _Identifier(',', .other),
+                    const _Identifier('size', .variable),
+                    const _Identifier(': ', .other),
+                    const _Identifier('200', .number),
+                    const _Identifier(',', .other),
                   ],
                 ),
                 Row(
@@ -1310,15 +1310,15 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeStyleIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('            ', .other),
-                      child: _Identifier('        ', .other),
+                      prevChild: const _Identifier('            ', .other),
+                      child: const _Identifier('        ', .other),
                     ),
-                    _Identifier('style', .variable),
-                    _Identifier(': ', .other),
-                    _Identifier('FlutterLogoStyle', .type),
-                    _Identifier('.', .other),
-                    _Identifier('stacked', .enumItem),
-                    _Identifier(',', .other),
+                    const _Identifier('style', .variable),
+                    const _Identifier(': ', .other),
+                    const _Identifier('FlutterLogoStyle', .type),
+                    const _Identifier('.', .other),
+                    const _Identifier('stacked', .enumItem),
+                    const _Identifier(',', .other),
                   ],
                 ),
                 Row(
@@ -1326,16 +1326,16 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeTextColorIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('            ', .other),
-                      child: _Identifier('        ', .other),
+                      prevChild: const _Identifier('            ', .other),
+                      child: const _Identifier('        ', .other),
                     ),
-                    _Identifier('textColor', .variable),
-                    _Identifier(': ', .other),
+                    const _Identifier('textColor', .variable),
+                    const _Identifier(': ', .other),
                     ReplaceTransition(
                       animation: controller,
                       interval: logoColorStreamTransitionInterval,
-                      prevChild: _Identifier('colorSnapshot', .variable),
-                      child: Row(
+                      prevChild: const _Identifier('colorSnapshot', .variable),
+                      child: const Row(
                         children: [
                           _Identifier('_colorStream', .variable),
                           _Identifier('.', .other),
@@ -1346,13 +1346,13 @@ class _Code extends StatelessWidget {
                         ],
                       ),
                     ),
-                    _Identifier('.', .other),
-                    _Identifier('data', .instanceVariable),
-                    _Identifier(' ?? ', .other),
-                    _Identifier('Colors', .type),
-                    _Identifier('.', .other),
-                    _Identifier('transparent', .enumItem),
-                    _Identifier(',', .other),
+                    const _Identifier('.', .other),
+                    const _Identifier('data', .instanceVariable),
+                    const _Identifier(' ?? ', .other),
+                    const _Identifier('Colors', .type),
+                    const _Identifier('.', .other),
+                    const _Identifier('transparent', .enumItem),
+                    const _Identifier(',', .other),
                   ],
                 ),
                 Row(
@@ -1360,10 +1360,10 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeClosingParenIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('          ', .other),
-                      child: _Identifier('      ', .other),
+                      prevChild: const _Identifier('          ', .other),
+                      child: const _Identifier('      ', .other),
                     ),
-                    _Identifier('),', .other),
+                    const _Identifier('),', .other),
                   ],
                 ),
                 Row(
@@ -1371,15 +1371,15 @@ class _Code extends StatelessWidget {
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeClosingParenSecondIndentReplaceTransitionInterval,
-                      prevChild: _Identifier('        ', .other),
-                      child: _Identifier('    ', .other),
+                      prevChild: const _Identifier('        ', .other),
+                      child: const _Identifier('    ', .other),
                     ),
-                    _Identifier(')', .other),
+                    const _Identifier(')', .other),
                     ReplaceTransition(
                       animation: controller,
                       interval: logoOldCodeClosingParenCommaReplaceTransitionInterval,
-                      prevChild: _Identifier(',', .other),
-                      child: _Identifier(';', .other),
+                      prevChild: const _Identifier(',', .other),
+                      child: const _Identifier(';', .other),
                     ),
                   ],
                 ),
@@ -1387,10 +1387,12 @@ class _Code extends StatelessWidget {
             ),
           ],
         ),
-        _Identifier('  }', .other),
-        _Identifier('}', .other),
+        const _Identifier('  }', .other),
+        const _Identifier('}', .other),
       ],
     );
+
+    return RepaintBoundary(child: code);
   }
 }
 
@@ -1404,19 +1406,21 @@ class _Identifier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: switch (type) {
-        .keyword => const TextStyle(color: Colors.red),
-        .type => const TextStyle(color: Colors.lightBlueAccent),
-        .variable => const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
-        .callable => const TextStyle(color: Colors.lightGreen),
-        .instanceVariable => const TextStyle(color: Colors.orange),
-        .annotation => const TextStyle(color: Colors.yellowAccent),
-        .number => const TextStyle(color: Colors.purpleAccent),
-        .enumItem => const TextStyle(color: Colors.blue),
-        .other => const TextStyle(color: Colors.white),
-      },
+    return UnconstrainedBox(
+      child: Text(
+        text,
+        style: switch (type) {
+          .keyword => const TextStyle(color: Colors.red),
+          .type => const TextStyle(color: Colors.lightBlueAccent),
+          .variable => const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
+          .callable => const TextStyle(color: Colors.lightGreen),
+          .instanceVariable => const TextStyle(color: Colors.orange),
+          .annotation => const TextStyle(color: Colors.yellowAccent),
+          .number => const TextStyle(color: Colors.purpleAccent),
+          .enumItem => const TextStyle(color: Colors.blue),
+          .other => const TextStyle(color: Colors.white),
+        },
+      ),
     );
   }
 }

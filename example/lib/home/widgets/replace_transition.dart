@@ -25,24 +25,32 @@ class ReplaceTransition extends StatelessWidget {
       anim = context.useIntervalAnimation(animation, interval!);
     }
 
-    return _ReplaceTransitionRenderObjectWidget(
-      animation: anim,
-      prevPositionAnim: context.useOffsetTweenAnimation(key: 'prevPositionAnim', anim, tween: ((0, 0), (0, -1))),
-      prevOpacityAnim: context.useDoubleTweenAnimation(
-        key: 'prevOpacityAnim',
-        anim,
-        tween: (1, 0),
-        interval: (0, 0.75),
+    return RepaintBoundary(
+      child: UnconstrainedBox(
+        child: _ReplaceTransitionRenderObjectWidget(
+          animation: anim,
+          prevPositionAnim: context.useOffsetTweenAnimation(key: 'prevPositionAnim', anim, tween: ((0, 0), (0, -1))),
+          prevOpacityAnim: context.useDoubleTweenAnimation(
+            key: 'prevOpacityAnim',
+            anim,
+            tween: (1, 0),
+            interval: (0, 0.75),
+          ),
+          currentPositionAnim: context.useOffsetTweenAnimation(
+            key: 'currentPositionAnim',
+            anim,
+            tween: ((0, 1), (0, 0)),
+          ),
+          currentOpacityAnim: context.useDoubleTweenAnimation(
+            key: 'currentOpacityAnim',
+            anim,
+            tween: (0, 1),
+            interval: (0.25, 1),
+          ),
+          prevChild: prevChild,
+          child: child,
+        ),
       ),
-      currentPositionAnim: context.useOffsetTweenAnimation(key: 'currentPositionAnim', anim, tween: ((0, 1), (0, 0))),
-      currentOpacityAnim: context.useDoubleTweenAnimation(
-        key: 'currentOpacityAnim',
-        anim,
-        tween: (0, 1),
-        interval: (0.25, 1),
-      ),
-      prevChild: prevChild,
-      child: child,
     );
   }
 }

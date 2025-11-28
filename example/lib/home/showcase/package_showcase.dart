@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/code_showcase.dart';
 import 'package:example/home/showcase/intro.dart';
@@ -23,36 +25,35 @@ class PackageShowcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isIntroCompleted = context.use(() => ValueNotifier(false));
-    return CustomPaint(
-      isComplex: true,
-      willChange: false,
-      painter: const _BlueprintPainter(),
-      child: SafeArea(
-        child: Stack(
-          clipBehavior: Clip.none,
-          fit: StackFit.expand,
-          children: [
-            if (!isIntroCompleted.watch(context))
-              Intro(
-                onComplete: () {
-                  isIntroCompleted.value = true;
-                  onIntroComplete();
-                },
-                onSkip: () {
-                  isIntroCompleted.value = true;
-                  onIntroSkip();
-                },
-              )
-            else
-              CodeShowcase(
-                homeScrollController: homeScrollController,
-                codeAnimationController: codeAnimationController,
-                onAppeared: onCodeShowcaseAppeared,
-              ),
-          ],
-        ),
-      ),
+    final isIntroCompleted = context.use(() {
+      scheduleMicrotask(onIntroComplete);
+      return ValueNotifier(true);
+    });
+    return Stack(
+      clipBehavior: Clip.none,
+      fit: StackFit.expand,
+      children: [
+        const RepaintBoundary(child: CustomPaint(willChange: false, isComplex: true, painter: _BlueprintPainter())),
+        if (!isIntroCompleted.watch(context))
+          Intro(
+            onComplete: () {
+              isIntroCompleted.value = true;
+              onIntroComplete();
+            },
+            onSkip: () {
+              isIntroCompleted.value = true;
+              onIntroSkip();
+            },
+          )
+        else
+          SafeArea(
+            child: CodeShowcase(
+              homeScrollController: homeScrollController,
+              codeAnimationController: codeAnimationController,
+              onAppeared: onCodeShowcaseAppeared,
+            ),
+          ),
+      ],
     );
   }
 }

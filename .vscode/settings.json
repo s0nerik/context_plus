@@ -1,5 +1,3 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/stable",
-  "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.autoImportCompletions": true
+  "dart.flutterSdkPath": ".fvm/flutter_sdk"
 }

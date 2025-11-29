@@ -33,6 +33,6 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          npx wrangler pages publish example/build/web --project-name context-plus --branch main
+          npx wrangler pages deploy example/build/web --project-name context-plus --branch main

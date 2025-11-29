@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:context_plus/context_plus.dart';
 import 'package:example/examples/showcase/showcase_example.dart';
 import 'package:example/home/widgets/code_quote.dart';
@@ -129,7 +131,6 @@ class HomeScreen extends StatelessWidget {
               child: CodeShowcase(
                 homeScrollController: scrollController,
                 codeAnimationController: codeAnimationController,
-                onAppeared: () => codeAnimationController.animateToStep(Code.steps - 1),
               ),
             ),
           ),

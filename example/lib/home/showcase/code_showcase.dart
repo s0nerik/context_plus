@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/code.dart';
-import 'package:example/other/double_precision_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -14,53 +13,24 @@ import 'src/background_gradient.dart';
 import 'src/code_showcase_animation_step.dart';
 
 final _codeAnimCtrl = Ref<CodeAnimationController>();
-
-final _appearCtrl = Ref<AnimationController>();
-
 final _mobileExpandShowcaseStepDescriptionCtrl = Ref<AnimationController?>();
-
-final _showcaseLayout = Ref<_ShowcaseLayout>();
-
 final _homeScrollController = Ref<ScrollController>();
-final _hasScrolled = Ref<ValueNotifier<bool>>();
+final _showcaseLayout = Ref<_ShowcaseLayout>();
 
 enum _ShowcaseLayout { desktop, smallerDesktop, mobile }
 
 class CodeShowcase extends StatelessWidget {
-  const CodeShowcase({
-    super.key,
-    required this.homeScrollController,
-    required this.codeAnimationController,
-    required this.onAppeared,
-  });
+  const CodeShowcase({super.key, required this.homeScrollController, required this.codeAnimationController});
 
   final ScrollController homeScrollController;
   final CodeAnimationController codeAnimationController;
-  final VoidCallback onAppeared;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
 
     _codeAnimCtrl.bindValue(context, codeAnimationController);
-
-    final hasScrolled = _hasScrolled.bind(context, () => ValueNotifier(false));
-    _homeScrollController.bindValue(context, homeScrollController).watchEffect(context, (ctrl) {
-      if (ctrl.offset > 120) hasScrolled.value = true;
-    });
-
-    const appearDuration = Duration(seconds: 1);
-    _appearCtrl.bind(
-      context,
-      (vsync) => AnimationController(vsync: vsync, duration: appearDuration)
-        ..animateTo(1)
-        ..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            onAppeared();
-          }
-        }),
-      key: appearDuration,
-    );
+    _homeScrollController.bindValue(context, homeScrollController);
     _showcaseLayout.bindValue(
       context,
       width >= 1280
@@ -168,32 +138,28 @@ class _CodeAnimation extends StatelessWidget {
       key: gradientDuration,
     );
 
-    return _AppearAnimation(
-      beginAt: 0,
-      endAt: 0.75,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Builder(
-          builder: (context) => DecoratedBox(
-            decoration: GradientGlowDecoration(
-              backgroundColor: Colors.black,
-              colors: const [
-                Colors.red,
-                Colors.orange,
-                Colors.yellow,
-                Colors.green,
-                Colors.blue,
-                Colors.indigo,
-                Colors.purple,
-              ],
-              borderOpacity: 0.25,
-              opacity: 0.25 + codeAnimCtrl.watch(context) * 0.25,
-              blurRadius: 64,
-              rotation: gradientAnim.watch(context) * math.pi * 2,
-              borderRadius: const .all(.circular(16)),
-            ),
-            child: code,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Builder(
+        builder: (context) => DecoratedBox(
+          decoration: GradientGlowDecoration(
+            backgroundColor: Colors.black,
+            colors: const [
+              Colors.red,
+              Colors.orange,
+              Colors.yellow,
+              Colors.green,
+              Colors.blue,
+              Colors.indigo,
+              Colors.purple,
+            ],
+            borderOpacity: 0.25,
+            opacity: 0.25 + codeAnimCtrl.watch(context) * 0.25,
+            blurRadius: 64,
+            rotation: gradientAnim.watch(context) * math.pi * 2,
+            borderRadius: const .all(.circular(16)),
           ),
+          child: code,
         ),
       ),
     );
@@ -209,15 +175,11 @@ class _DesktopCodeAnimationStepButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      child: _AppearAnimation(
-        beginAt: 0.25,
-        endAt: 1,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [for (var step = 0; step < Code.steps; step++) _DesktopCodeAnimationStepButton(step: step)],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [for (var step = 0; step < Code.steps; step++) _DesktopCodeAnimationStepButton(step: step)],
       ),
     );
   }
@@ -250,20 +212,16 @@ class _MobileCodeAnimationStepButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AppearAnimation(
-      beginAt: 0.25,
-      endAt: 1,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12, bottom: 12),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var step = 0; step < Code.steps; step++) ...[
-              _MobileCodeAnimationStepButton(step: step),
-              if (step < Code.steps - 1) const Gap(8),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, bottom: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var step = 0; step < Code.steps; step++) ...[
+            _MobileCodeAnimationStepButton(step: step),
+            if (step < Code.steps - 1) const Gap(8),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -320,29 +278,25 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
     final codeAnimCtrl = _codeAnimCtrl.of(context)..watch(context);
     final expandCtrl = _mobileExpandShowcaseStepDescriptionCtrl.of(context);
 
-    return _AppearAnimation(
-      beginAt: 0.5,
-      endAt: 1,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          for (var step = 0; step < Code.steps; step++)
-            IgnorePointer(
-              ignoring: codeAnimCtrl.stepProgress(step) < 0.5,
-              child: CodeShowcaseProgressStep(
-                key: ValueKey(step),
-                showcaseCtrl: codeAnimCtrl,
-                expandCtrl: expandCtrl,
-                step: step,
-                isMobileLayout: true,
-                descriptionVisibilityFactor: 0,
-                opacity: codeAnimCtrl.stepProgress(step),
-                translateY: 16 + (-16 * codeAnimCtrl.stepProgress(step)),
-              ),
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        for (var step = 0; step < Code.steps; step++)
+          IgnorePointer(
+            ignoring: codeAnimCtrl.stepProgress(step) < 0.5,
+            child: CodeShowcaseProgressStep(
+              key: ValueKey(step),
+              showcaseCtrl: codeAnimCtrl,
+              expandCtrl: expandCtrl,
+              step: step,
+              isMobileLayout: true,
+              descriptionVisibilityFactor: 0,
+              opacity: codeAnimCtrl.stepProgress(step),
+              translateY: 16 + (-16 * codeAnimCtrl.stepProgress(step)),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
@@ -352,35 +306,31 @@ class _ShortPackageDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AppearAnimation(
-      beginAt: 0.75,
-      endAt: 1,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: DefaultTextStyle.merge(
-              style: Theme.of(context).textTheme.titleLarge!,
-              child: const Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                children: [
-                  Text('Bind and observe values for a '),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CodeQuote(child: CodeType(type: 'BuildContext')),
-                      Text(', conveniently.'),
-                    ],
-                  ),
-                ],
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: DefaultTextStyle.merge(
+            style: Theme.of(context).textTheme.titleLarge!,
+            child: const Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                Text('Bind and observe values for a '),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CodeQuote(child: CodeType(type: 'BuildContext')),
+                    Text(', conveniently.'),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -392,12 +342,11 @@ class _ScrollDownArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = _codeAnimCtrl.of(context);
     final isShowcaseCompleted = ctrl.watchOnly(context, (_) => ctrl.reachedLastStep);
-    final hasScrolled = _hasScrolled.watch(context);
     final height = MediaQuery.sizeOf(context).height;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeOut,
-      opacity: isShowcaseCompleted && !hasScrolled ? 1 : 0,
+      opacity: isShowcaseCompleted ? 0 : 1,
       child: GestureDetector(
         onTap: () => _homeScrollController
             .of(context)
@@ -407,26 +356,3 @@ class _ScrollDownArrow extends StatelessWidget {
     );
   }
 }
-
-// region Utils
-
-class _AppearAnimation extends StatelessWidget {
-  const _AppearAnimation({required this.beginAt, required this.endAt, required this.child});
-
-  final double beginAt;
-  final double endAt;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final curve = Interval(beginAt, endAt, curve: Curves.linearToEaseOut);
-    final opacity = curve.transform(_appearCtrl.watch(context)).clamp(0.0, 1.0).toPrecision(2);
-    final translateY = (curve.transform(1 - opacity) * 16);
-    return Transform.translate(
-      offset: Offset(0, translateY),
-      child: Opacity(opacity: opacity, child: child),
-    );
-  }
-}
-
-// endregion

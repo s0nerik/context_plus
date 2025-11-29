@@ -25,7 +25,7 @@ jobs:
       # Add headers for Cloudflare Pages
       - name: Add COOP/COEP headers
         run: |
-          echo '/*\n  Cross-Origin-Opener-Policy: same-origin\n  Cross-Origin-Embedder-Policy: require-corp' > example/build/web/_headers
+          echo '/*\n  Cross-Origin-Opener-Policy: same-origin\n  Cross-Origin-Embedder-Policy: credentialless' > example/build/web/_headers
 
       # Deploy using Wrangler CLI
       - name: Install Wrangler

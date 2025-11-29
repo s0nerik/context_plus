@@ -114,39 +114,33 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
+      body: CustomScrollView(
+        controller: scrollController,
+        physics: !scrolledThroughShowcase
+            ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
+            : null,
         clipBehavior: Clip.none,
-        fit: StackFit.expand,
-        children: [
-          CustomScrollView(
-            controller: scrollController,
-            physics: !scrolledThroughShowcase
-                ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
-                : null,
-            clipBehavior: Clip.none,
-            slivers: [
-              SliverExtraExtentViewport(
-                viewport: height,
-                extraViewports: showcaseExtraScrollViewports,
-                child: TickerMode(
-                  enabled: !scrolledBeyondShowcase,
-                  child: CodeShowcase(
-                    homeScrollController: scrollController,
-                    codeAnimationController: codeAnimationController,
-                    onAppeared: () => codeAnimationController.animateToStep(Code.steps - 1),
-                  ),
-                ),
+        slivers: [
+          SliverExtraExtentViewport(
+            viewport: height,
+            extraViewports: showcaseExtraScrollViewports,
+            child: TickerMode(
+              enabled: !scrolledBeyondShowcase,
+              child: CodeShowcase(
+                homeScrollController: scrollController,
+                codeAnimationController: codeAnimationController,
+                onAppeared: () => codeAnimationController.animateToStep(Code.steps - 1),
               ),
-              SliverToBoxAdapter(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [_SetupSection(), _ExamplesSection(), _DemonstrationsSection(), Gap(_gap)],
-                  ),
-                ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [_SetupSection(), _ExamplesSection(), _DemonstrationsSection(), Gap(_gap)],
               ),
-            ],
+            ),
           ),
         ],
       ),

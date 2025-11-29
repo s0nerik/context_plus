@@ -11,7 +11,6 @@ import 'package:gap/gap.dart';
 
 import 'code.dart';
 import 'copyable_widget_span.dart';
-import 'custom_selectable_rich_text.dart';
 
 class CodeShowcaseProgressStep extends StatelessWidget {
   const CodeShowcaseProgressStep({
@@ -651,23 +650,22 @@ class _Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const opacityCurve = Curves.easeIn;
-    return ClipRect(
-      child: Align(
-        alignment: Alignment.topLeft,
-        widthFactor: 1,
-        heightFactor: descriptionVisibilityFactor,
-        child: Opacity(
-          opacity: opacityCurve.transform(descriptionVisibilityFactor),
-          child: LowEmphasisCard(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              child: DefaultTextStyle(
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
-                child: TickerMode(
-                  enabled: descriptionVisibilityFactor >= 0.9,
-                  child: CustomSelectableRichText(description),
+    return IgnorePointer(
+      child: ClipRect(
+        child: Align(
+          alignment: Alignment.topLeft,
+          widthFactor: 1,
+          heightFactor: descriptionVisibilityFactor,
+          child: Opacity(
+            opacity: opacityCurve.transform(descriptionVisibilityFactor),
+            child: LowEmphasisCard(
+              margin: const EdgeInsets.only(top: 8, bottom: 8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                child: DefaultTextStyle(
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
+                  child: TickerMode(enabled: descriptionVisibilityFactor >= 0.9, child: Text.rich(description)),
                 ),
               ),
             ),

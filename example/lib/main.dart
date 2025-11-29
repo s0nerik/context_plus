@@ -58,10 +58,7 @@ class _AppState extends State<_App> {
         theme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: Colors.black,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.black,
-            foregroundColor: Colors.white,
-          ),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.black, foregroundColor: Colors.white),
           cardTheme: CardThemeData(
             color: const Color(0xFF1D1E21),
             clipBehavior: Clip.hardEdge,
@@ -75,9 +72,7 @@ class _AppState extends State<_App> {
             style: ButtonStyle(
               foregroundColor: WidgetStateProperty.all(Colors.white),
               overlayColor: WidgetStateProperty.all(Colors.white12),
-              side: WidgetStateProperty.all(
-                const BorderSide(color: Colors.white24),
-              ),
+              side: WidgetStateProperty.all(const BorderSide(color: Colors.white24)),
             ),
           ),
           snackBarTheme: const SnackBarThemeData(
@@ -97,12 +92,21 @@ class _AppState extends State<_App> {
               foregroundColor: Colors.grey,
               selectedForegroundColor: Colors.white,
               backgroundColor: Colors.black.withValues(alpha: 0.85),
-              selectedBackgroundColor: const Color(
-                0xFF353535,
-              ).withValues(alpha: 0.85),
+              selectedBackgroundColor: const Color(0xFF353535).withValues(alpha: 0.85),
               side: const BorderSide(color: Colors.white24),
             ),
           ),
+        ),
+        builder: (context, child) => Stack(
+          clipBehavior: Clip.none,
+          fit: StackFit.expand,
+          children: [
+            if (!kIsWeb)
+              const RepaintBoundary(
+                child: CustomPaint(willChange: false, isComplex: true, painter: _BlueprintPainter()),
+              ),
+            child!,
+          ],
         ),
       ),
     );
@@ -117,6 +121,35 @@ class _UrlRouteParser extends RouteInformationParser<String> {
       SynchronousFuture(routeInformation.uri.toString());
 
   @override
-  RouteInformation? restoreRouteInformation(String configuration) =>
-      RouteInformation(uri: Uri.parse(configuration));
+  RouteInformation? restoreRouteInformation(String configuration) => RouteInformation(uri: Uri.parse(configuration));
+}
+
+class _BlueprintPainter extends CustomPainter {
+  const _BlueprintPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0x03FFFFFF)
+      ..strokeWidth = 1;
+
+    const step = 16.0;
+    for (var x = 0.0; x < size.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+
+    paint.color = const Color(0x04FFFFFF);
+    for (var x = 0.0; x < size.width; x += step * 4) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += step * 4) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

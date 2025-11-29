@@ -21,7 +21,7 @@ import '../examples/derived_state/derived_state_example.dart';
 import '../examples/nested_scopes/nested_scopes_example.dart';
 import '../examples/rainbow/rainbow_example.dart';
 import '../other/context_watch_hot_reload_test_screen.dart';
-import 'showcase/package_showcase.dart';
+import 'showcase/code_showcase.dart';
 import 'showcase/src/code.dart';
 import 'widgets/sliver_extra_extent_viewport.dart';
 
@@ -112,53 +112,42 @@ class HomeScreen extends StatelessWidget {
       (ctrl) => ctrl.hasClients && ctrl.offset >= showcaseExtraScrollHeight + height,
     );
 
-    final introCompleted = context.use(() => ValueNotifier(false), key: 'introCompleted');
-    final introSkipped = context.use(() => ValueNotifier(false), key: 'introSkipped');
     return Scaffold(
-      body: CustomScrollView(
-        controller: scrollController,
-        physics: !introCompleted.watch(context)
-            ? const NeverScrollableScrollPhysics()
-            : !scrolledThroughShowcase
-            ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
-            : null,
+      backgroundColor: Colors.transparent,
+      body: Stack(
         clipBehavior: Clip.none,
-        slivers: [
-          SliverExtraExtentViewport(
-            viewport: height,
-            extraViewports: showcaseExtraScrollViewports,
-            child: TickerMode(
-              enabled: !scrolledBeyondShowcase,
-              child: PackageShowcase(
-                homeScrollController: scrollController,
-                codeAnimationController: codeAnimationController,
-                onIntroComplete: () {
-                  introCompleted.value = true;
-                },
-                onIntroSkip: () {
-                  introCompleted.value = true;
-                  introSkipped.value = true;
-                  codeAnimationController.value = 1;
-                  correctScrollPosition();
-                },
-                onCodeShowcaseAppeared: () {
-                  if (!introSkipped.value) {
-                    codeAnimationController.animateToStep(Code.steps - 1);
-                  }
-                },
-              ),
-            ),
-          ),
-          if (introCompleted.watch(context))
-            SliverToBoxAdapter(
-              child: DecoratedBox(
-                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [_SetupSection(), _ExamplesSection(), _DemonstrationsSection(), Gap(_gap)],
+        fit: StackFit.expand,
+        children: [
+          CustomScrollView(
+            controller: scrollController,
+            physics: !scrolledThroughShowcase
+                ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
+                : null,
+            clipBehavior: Clip.none,
+            slivers: [
+              SliverExtraExtentViewport(
+                viewport: height,
+                extraViewports: showcaseExtraScrollViewports,
+                child: TickerMode(
+                  enabled: !scrolledBeyondShowcase,
+                  child: CodeShowcase(
+                    homeScrollController: scrollController,
+                    codeAnimationController: codeAnimationController,
+                    onAppeared: () => codeAnimationController.animateToStep(Code.steps - 1),
+                  ),
                 ),
               ),
-            ),
+              SliverToBoxAdapter(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [_SetupSection(), _ExamplesSection(), _DemonstrationsSection(), Gap(_gap)],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

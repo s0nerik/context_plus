@@ -328,15 +328,18 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         children: [
           for (var step = 0; step < Code.steps; step++)
-            CodeShowcaseProgressStep(
-              key: ValueKey(step),
-              showcaseCtrl: codeAnimCtrl,
-              expandCtrl: expandCtrl,
-              step: step,
-              isMobileLayout: true,
-              descriptionVisibilityFactor: 0,
-              opacity: codeAnimCtrl.stepProgress(step),
-              translateY: 16 + (-16 * codeAnimCtrl.stepProgress(step)),
+            IgnorePointer(
+              ignoring: codeAnimCtrl.stepProgress(step) < 0.5,
+              child: CodeShowcaseProgressStep(
+                key: ValueKey(step),
+                showcaseCtrl: codeAnimCtrl,
+                expandCtrl: expandCtrl,
+                step: step,
+                isMobileLayout: true,
+                descriptionVisibilityFactor: 0,
+                opacity: codeAnimCtrl.stepProgress(step),
+                translateY: 16 + (-16 * codeAnimCtrl.stepProgress(step)),
+              ),
             ),
         ],
       ),

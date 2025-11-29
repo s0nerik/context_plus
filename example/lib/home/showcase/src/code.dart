@@ -37,23 +37,31 @@ class CodeAnimationController extends AnimationController {
     return 1 - distance;
   }
 
-  int? _targetStep;
+  Object? _currentAnimateToStepToken;
   Future<void> animateToStep(int step) {
     assert(step >= 0 && step <= Code.steps - 1, 'step must be between 0 and Code.steps - 1');
 
-    if (_targetStep == step) return Future.value();
+    final token = Object();
+    _currentAnimateToStepToken = token;
 
     final currStep = currentStep.toInt();
     if ((currStep - step).abs() <= 1) {
       const fullDuration = Duration(milliseconds: 1000);
       final progressLeft = (currentStep - step).abs();
       final duration = fullDuration * progressLeft;
-      return super.animateTo(step / (Code.steps - 1), duration: duration)
-        ..whenCompleteOrCancel(() => _targetStep = null);
+      return super.animateTo(step / (Code.steps - 1), duration: duration)..whenCompleteOrCancel(() {
+        _currentAnimateToStepToken = null;
+      });
     } else if (currStep < step) {
-      return animateToStep(currStep + 1).then((_) => animateToStep(step));
+      return animateToStep(currStep + 1).then((_) {
+        if (_currentAnimateToStepToken != token || _currentAnimateToStepToken == null) return Future.value();
+        return animateToStep(step);
+      });
     } else {
-      return animateToStep(currStep - 1).then((_) => animateToStep(step));
+      return animateToStep(currStep - 1).then((_) {
+        if (_currentAnimateToStepToken != token || _currentAnimateToStepToken == null) return Future.value();
+        return animateToStep(step);
+      });
     }
   }
 

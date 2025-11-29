@@ -7,7 +7,6 @@ import 'package:example/home/widgets/low_emphasis_card.dart';
 import 'package:example/other/ballistic_override_scroll_physics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:indent/indent.dart';
@@ -52,9 +51,24 @@ class HomeScreen extends StatelessWidget {
       pos.correctPixels(codeAnimationController.value * showcaseExtraScrollHeight);
     }
 
+    double codeAnimToScrollOffset(double codeAnim) =>
+        (codeAnim * showcaseExtraScrollHeight).clamp(0.0, showcaseExtraScrollHeight);
+    double scrollOffsetToCodeAnim(double scrollOffset) => (scrollOffset / showcaseExtraScrollHeight).clamp(0.0, 1.0);
+
     scrollController = _scrollController.bind(context, ScrollController.new)
       ..watchEffect(context, (ctrl) {
-        codeAnimationController.value = (ctrl.offset / showcaseExtraScrollHeight).clamp(0.0, 1.0);
+        final prevScrollOffset = codeAnimToScrollOffset(codeAnimationController.value);
+
+        const minOffsetDelta = 10.0;
+
+        var newScrollOffset = ctrl.offset;
+        final offsetDiff = newScrollOffset - prevScrollOffset;
+        if (offsetDiff.abs() < minOffsetDelta) {
+          newScrollOffset = (prevScrollOffset + offsetDiff.sign * minOffsetDelta).clamp(0.0, showcaseExtraScrollHeight);
+        }
+
+        final newCodeAnim = scrollOffsetToCodeAnim(newScrollOffset);
+        codeAnimationController.value = newCodeAnim;
       });
     codeAnimationController = _codeAnimationController.bind(context, CodeAnimationController.new)
       ..watchEffect(context, (_) {
@@ -77,22 +91,24 @@ class HomeScreen extends StatelessWidget {
             .idle => codeAnimationController.currentStep.round(),
           };
 
-          if (velocity == 0) {
-            codeAnimationController.animateToStep(targetStep);
-            return;
-          }
+          codeAnimationController.animateToStep(targetStep);
 
-          codeAnimationController.animateWith(
-            SpringSimulation(
-              // const SpringDescription(mass: 1, stiffness: 50, damping: 15),
-              // const SpringDescription(mass: 1, stiffness: 25, damping: 10),
-              const SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
-              codeAnimationController.value,
-              targetStep / (Code.steps - 1),
-              velocity / showcaseExtraScrollHeight,
-              snapToEnd: true,
-            ),
-          );
+          // if (velocity == 0) {
+          //   codeAnimationController.animateToStep(targetStep);
+          //   return;
+          // }
+
+          // codeAnimationController.animateWith(
+          //   SpringSimulation(
+          //     // const SpringDescription(mass: 1, stiffness: 50, damping: 15),
+          //     // const SpringDescription(mass: 1, stiffness: 25, damping: 10),
+          //     const SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
+          //     codeAnimationController.value,
+          //     targetStep / (Code.steps - 1),
+          //     velocity / showcaseExtraScrollHeight,
+          //     snapToEnd: true,
+          //   ),
+          // );
         });
 
     Simulation? showcaseBallisticSimulation(_, double velocity) {

@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:context_plus/context_plus.dart';
 import 'package:example/home/showcase/src/background_gradient.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
+import 'package:example/other/const_tween.dart';
 import 'package:example/other/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,48 +11,61 @@ import 'package:gap/gap.dart';
 import 'code.dart';
 import 'copyable_widget_span.dart';
 
+final _codeAnimCtrl = Ref<CodeAnimationController>();
+final _mobileExpandCtrl = Ref<AnimationController?>();
+
 class CodeShowcaseProgressStep extends StatelessWidget {
   const CodeShowcaseProgressStep({
     super.key,
-    required this.showcaseCtrl,
+    required this.codeAnimCtrl,
     required this.expandCtrl,
     required this.step,
     required this.isMobileLayout,
-    this.translateY,
-    this.opacity,
-    this.descriptionVisibilityFactor,
   });
 
-  final CodeAnimationController showcaseCtrl;
+  final CodeAnimationController codeAnimCtrl;
   final AnimationController? expandCtrl;
   final int step;
   final bool isMobileLayout;
-  final double? translateY;
-  final double? opacity;
-  final double? descriptionVisibilityFactor;
 
   @override
   Widget build(BuildContext context) {
-    var expandProgress = expandCtrl?.watch(context);
-    expandProgress = expandProgress != null ? Curves.easeInOut.transform(expandProgress).clamp(0.0, 1.0) : null;
+    _codeAnimCtrl.bindValue(context, codeAnimCtrl);
+    _mobileExpandCtrl.bindValue(context, expandCtrl);
 
-    return Transform.translate(
-      offset: translateY != null ? Offset(0, translateY!) : Offset.zero,
-      child: Opacity(
-        opacity: opacity ?? 1,
-        child: _Layout(
-          onTap: () {
-            if (isMobileLayout && expandCtrl != null) {
-              expandCtrl!.isDismissed ? expandCtrl!.forward() : expandCtrl!.reverse();
-              return;
-            }
-            showcaseCtrl.animateToStep(step);
-          },
-          title: _titles[step]!,
-          description: _descriptions[step]!,
-          descriptionVisibilityFactor: expandProgress ?? descriptionVisibilityFactor ?? 1,
-          isMobileLayout: isMobileLayout,
-        ),
+    return AnimatedBuilder(
+      animation: codeAnimCtrl,
+      builder: (context, child) {
+        final stepProgress = codeAnimCtrl.stepProgress(step);
+        final opacity = isMobileLayout ? stepProgress : stepProgress.clamp(0.5, 1.0);
+        return Opacity(opacity: opacity, child: child!);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (isMobileLayout) const SizedBox(height: 56, child: BackgroundGradient()),
+          Material(
+            clipBehavior: Clip.none,
+            color: isMobileLayout ? BackgroundGradient.endColor : Colors.transparent,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: isMobileLayout ? const EdgeInsets.symmetric(horizontal: 8) : EdgeInsets.zero,
+                  child: _Title(step: step, isMobileLayout: isMobileLayout),
+                ),
+                Padding(
+                  padding: isMobileLayout
+                      ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
+                      : const EdgeInsets.only(left: 34),
+                  child: _Description(step: step),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -531,85 +543,30 @@ const _bulletPoint = TextSpan(
   style: TextStyle(fontWeight: FontWeight.bold),
 );
 
-class _Layout extends StatelessWidget {
-  const _Layout({
-    required this.title,
-    required this.description,
-    required this.descriptionVisibilityFactor,
-    required this.onTap,
-    required this.isMobileLayout,
-  });
-
-  final InlineSpan title;
-  final TextSpan description;
-  final double descriptionVisibilityFactor;
-  final VoidCallback onTap;
-  final bool isMobileLayout;
-
-  @override
-  Widget build(BuildContext context) {
-    final titleMargin = isMobileLayout ? const EdgeInsets.symmetric(horizontal: 8) : const EdgeInsets.only(top: 0);
-
-    final displayShadow = isMobileLayout;
-
-    return RepaintBoundary(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (displayShadow) const SizedBox(height: 56, child: BackgroundGradient()),
-          Material(
-            clipBehavior: Clip.none,
-            color: displayShadow ? BackgroundGradient.endColor : Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: titleMargin,
-                  child: _Title(
-                    onTap: onTap,
-                    title: title,
-                    isMobileLayout: isMobileLayout,
-                    descriptionVisibilityFactor: descriptionVisibilityFactor,
-                  ),
-                ),
-                Padding(
-                  padding: isMobileLayout
-                      ? const EdgeInsets.only(left: 16, right: 16, bottom: 8)
-                      : const EdgeInsets.only(left: 34),
-                  child: _Description(
-                    descriptionVisibilityFactor: descriptionVisibilityFactor,
-                    description: description,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _Title extends StatelessWidget {
-  const _Title({
-    required this.title,
-    required this.onTap,
-    required this.isMobileLayout,
-    required this.descriptionVisibilityFactor,
-  });
+  const _Title({required this.step, required this.isMobileLayout});
 
-  final InlineSpan title;
-  final VoidCallback onTap;
+  final int step;
   final bool isMobileLayout;
-  final double descriptionVisibilityFactor;
 
   @override
   Widget build(BuildContext context) {
+    const turnsTween = ConstTween<double>(begin: 0, end: 1 / 2);
+
+    final expandCtrl = _mobileExpandCtrl.of(context);
+    final isExpanded = expandCtrl?.watchOnly(context, (value) => value > 0.5);
+
     return InkWell(
       borderRadius: BorderRadius.circular(8),
-      onTap: onTap,
+      onTap: () {
+        if (isMobileLayout && expandCtrl != null) {
+          expandCtrl.isDismissed ? expandCtrl.forward() : expandCtrl.reverse();
+          return;
+        }
+
+        final codeAnimCtrl = _codeAnimCtrl.of(context);
+        codeAnimCtrl.animateToStep(step);
+      },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -617,17 +574,15 @@ class _Title extends StatelessWidget {
             Expanded(
               child: DefaultTextStyle.merge(
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
-                child: Text.rich(title),
+                child: Text.rich(_titles[step]!),
               ),
             ),
             if (isMobileLayout) ...[
               const Gap(8),
-              Transform.rotate(
-                angle: descriptionVisibilityFactor * 0.5 * 2 * pi,
+              RotationTransition(
+                turns: turnsTween.animate(expandCtrl!),
                 child: SvgIcon(
-                  descriptionVisibilityFactor > 0.5
-                      ? 'assets/svg/icon_arrow_collapse.svg'
-                      : 'assets/svg/icon_arrow_expand.svg',
+                  isExpanded! ? 'assets/svg/icon_arrow_collapse.svg' : 'assets/svg/icon_arrow_expand.svg',
                   color: Colors.white,
                   size: 20,
                 ),
@@ -642,32 +597,39 @@ class _Title extends StatelessWidget {
 }
 
 class _Description extends StatelessWidget {
-  const _Description({required this.descriptionVisibilityFactor, required this.description});
+  const _Description({required this.step});
 
-  final double descriptionVisibilityFactor;
-  final TextSpan description;
+  final int step;
 
   @override
   Widget build(BuildContext context) {
     const opacityCurve = Curves.easeIn;
-    return IgnorePointer(
-      child: ClipRect(
-        child: Align(
-          alignment: Alignment.topLeft,
-          widthFactor: 1,
-          heightFactor: descriptionVisibilityFactor,
-          child: Opacity(
-            opacity: opacityCurve.transform(descriptionVisibilityFactor),
-            child: LowEmphasisCard(
-              margin: const EdgeInsets.only(top: 8, bottom: 8),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                child: DefaultTextStyle(
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
-                  child: TickerMode(enabled: descriptionVisibilityFactor >= 0.9, child: Text.rich(description)),
-                ),
-              ),
+
+    final codeAnimCtrl = _codeAnimCtrl.of(context);
+
+    return ClipRect(
+      child: AnimatedBuilder(
+        animation: codeAnimCtrl,
+        builder: (context, child) {
+          final stepProgress = codeAnimCtrl.stepProgress(step);
+          return Align(
+            alignment: Alignment.topLeft,
+            widthFactor: 1,
+            heightFactor: stepProgress,
+            child: Opacity(
+              opacity: opacityCurve.transform(stepProgress),
+              child: TickerMode(enabled: stepProgress >= 0.9, child: child!),
+            ),
+          );
+        },
+        child: LowEmphasisCard(
+          margin: const EdgeInsets.only(top: 8, bottom: 8),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            child: DefaultTextStyle(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
+              child: Text.rich(_descriptions[step]!),
             ),
           ),
         ),

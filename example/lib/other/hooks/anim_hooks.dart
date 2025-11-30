@@ -24,12 +24,7 @@ extension AnimHooks on BuildContext {
   }) {
     Animation<double>? curvedAnim;
     if (interval != null) {
-      curvedAnim = useIntervalAnimation(
-        parent,
-        interval,
-        curve: curve,
-        key: key,
-      );
+      curvedAnim = useIntervalAnimation(parent, interval, curve: curve, key: key);
     }
     final anim = curvedAnim ?? parent;
     return use(
@@ -47,20 +42,12 @@ extension AnimHooks on BuildContext {
   }) {
     Animation<double>? curvedAnim;
     if (interval != null) {
-      curvedAnim = useIntervalAnimation(
-        parent,
-        interval,
-        curve: curve,
-        key: key,
-      );
+      curvedAnim = useIntervalAnimation(parent, interval, curve: curve, key: key);
     }
     final anim = curvedAnim ?? parent;
     return use(
       key: ('useOffsetTweenAnimation', anim, tween, interval, curve, key),
-      () => Tween(
-        begin: Offset(tween.$1.$1, tween.$1.$2),
-        end: Offset(tween.$2.$1, tween.$2.$2),
-      ).animate(anim),
+      () => Tween(begin: Offset(tween.$1.$1, tween.$1.$2), end: Offset(tween.$2.$1, tween.$2.$2)).animate(anim),
     );
   }
 }

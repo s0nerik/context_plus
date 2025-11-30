@@ -6,12 +6,7 @@ import 'package:flutter/widgets.dart';
 /// The child is fully visible when scroll offset is 0 to [extraViewports] * [viewport], and scrolls away
 /// when scroll offset changes from [extraViewports] * [viewport] to ([extraViewports] + 1) * [viewport].
 class SliverExtraExtentViewport extends SingleChildRenderObjectWidget {
-  const SliverExtraExtentViewport({
-    super.key,
-    required this.viewport,
-    this.extraViewports = 1.0,
-    required super.child,
-  });
+  const SliverExtraExtentViewport({super.key, required this.viewport, this.extraViewports = 1.0, required super.child});
 
   final double viewport;
   final double extraViewports;
@@ -98,11 +93,14 @@ class RenderSliverExtraExtentViewport extends RenderSliver with RenderObjectWith
     final double cacheExtent = remainingExtent;
     final double maxPaintExtent = viewportHeight;
 
+    // Clamp paintExtent to remainingPaintExtent to avoid floating-point precision issues
+    final double clampedPaintExtent = paintExtent.clamp(0.0, constraints.remainingPaintExtent);
+
     geometry = SliverGeometry(
       scrollExtent: totalExtent,
-      paintExtent: paintExtent.clamp(0.0, maxPaintExtent),
+      paintExtent: clampedPaintExtent,
       cacheExtent: cacheExtent,
-      maxPaintExtent: maxPaintExtent,
+      maxPaintExtent: maxPaintExtent.clamp(0.0, constraints.remainingPaintExtent),
       hasVisualOverflow: scrollOffset > scrollAwayStart && scrollOffset < totalExtent,
     );
 
@@ -167,4 +165,3 @@ class RenderSliverExtraExtentViewport extends RenderSliver with RenderObjectWith
     transform.translateByDouble(0, -_paintOffset, 0, 1);
   }
 }
-

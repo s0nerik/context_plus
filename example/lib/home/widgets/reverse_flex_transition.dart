@@ -114,7 +114,7 @@ class _RenderReverseFlexTransition extends RenderFlex {
     _animation.removeListener(_handleAnimationChanged);
     _animation = value;
     _animation.addListener(_handleAnimationChanged);
-    markNeedsLayout();
+    markNeedsPaint(); // Animation change only needs repaint, not relayout
   }
 
   final List<RenderBox> _visualChildren = <RenderBox>[];
@@ -127,7 +127,7 @@ class _RenderReverseFlexTransition extends RenderFlex {
 
   void _handleAnimationChanged() {
     if (!attached) return;
-    markNeedsLayout();
+    markNeedsPaint(); // Only repaint, don't relayout - positions are computed in paint
   }
 
   bool get _shouldFlipMainAxis {
@@ -143,7 +143,7 @@ class _RenderReverseFlexTransition extends RenderFlex {
   void performLayout() {
     super.performLayout();
     _recomputeChildOffsets();
-    _applyAnimatedOffsets();
+    // Note: animated offsets are applied during paint, not layout
   }
 
   void _recomputeChildOffsets() {
@@ -264,14 +264,31 @@ class _RenderReverseFlexTransition extends RenderFlex {
     };
   }
 
-  void _applyAnimatedOffsets() {
+  @override
+  void paint(PaintingContext context, Offset offset) {
     if (_visualChildren.isEmpty) {
       return;
     }
     for (final child in _visualChildren) {
-      final FlexParentData parentData = child.parentData! as FlexParentData;
-      parentData.offset = _currentChildOffset(child);
+      final animatedOffset = _currentChildOffset(child);
+      context.paintChild(child, offset + animatedOffset);
     }
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    for (final child in _visualChildren.reversed) {
+      final animatedOffset = _currentChildOffset(child);
+      final bool isHit = result.addWithPaintOffset(
+        offset: animatedOffset,
+        position: position,
+        hitTest: (BoxHitTestResult result, Offset transformed) {
+          return child.hitTest(result, position: transformed);
+        },
+      );
+      if (isHit) return true;
+    }
+    return false;
   }
 
   @override

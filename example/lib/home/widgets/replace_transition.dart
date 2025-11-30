@@ -205,7 +205,12 @@ class _ReplaceTransitionRenderBox extends RenderBox
     final alpha = (opacity.clamp(0.0, 1.0) * 255).round();
     if (alpha <= 0) return;
     final childOffset = parentOffset + _fractionalOffsetToPixels(fractionalOffset, childSize);
-    context.pushOpacity(childOffset, alpha, (context, offset) => context.paintChild(child, offset));
+    // Skip opacity layer when fully opaque - major optimization for Flutter Web
+    if (alpha >= 255) {
+      context.paintChild(child, childOffset);
+    } else {
+      context.pushOpacity(childOffset, alpha, (context, offset) => context.paintChild(child, offset));
+    }
   }
 
   Size _lerpSize(Size a, Size b) => Size.lerp(a, b, _animation.value) ?? Size.zero;

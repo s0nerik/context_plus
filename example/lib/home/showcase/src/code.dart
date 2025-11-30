@@ -1,73 +1,143 @@
-import 'package:context_plus/context_plus.dart';
 import 'package:example/home/widgets/replace_transition.dart';
 import 'package:example/home/widgets/reverse_flex_transition.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
+import 'package:flutter/rendering.dart';
 
 import 'code_transition.dart';
 
 class CodeAnimationController extends AnimationController {
-  CodeAnimationController(TickerProvider vsync) : super(vsync: vsync) {
-    addListener(_onProgress);
+  CodeAnimationController(
+    TickerProvider vsync,
+    ScrollController scrollController, {
+    required double startScrollOffset,
+    required double endScrollOffset,
+  }) : assert(startScrollOffset < endScrollOffset, 'startScrollOffset must be less than endScrollOffset'),
+       _scrollController = scrollController,
+       _startScrollOffset = startScrollOffset,
+       _endScrollOffset = endScrollOffset,
+       _stepScrollAmount = (endScrollOffset - startScrollOffset) / Code.lastStep,
+       super(vsync: vsync) {
+    _scrollController.addListener(_onScroll);
+  }
+
+  final ScrollController _scrollController;
+  final double _startScrollOffset;
+  double _endScrollOffset;
+  double _stepScrollAmount;
+
+  set endScrollOffset(double newEndScrollOffset) {
+    if (newEndScrollOffset == _endScrollOffset) return;
+
+    _scrollController.position.correctBy(newEndScrollOffset - _endScrollOffset);
+    _endScrollOffset = newEndScrollOffset;
+    _stepScrollAmount = (newEndScrollOffset - _startScrollOffset) / Code.lastStep;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final offset = _scrollController.offset;
+    _reachedLastStep = _reachedLastStep || offset >= _endScrollOffset;
+
+    if (offset <= _startScrollOffset) {
+      if (value != 0.0) value = 0.0;
+      return;
+    }
+
+    if (offset >= _endScrollOffset) {
+      if (value != 1.0) value = 1.0;
+      return;
+    }
+
+    final totalScrollOffset = _endScrollOffset - _startScrollOffset;
+    final newAnimValue = ((offset - _startScrollOffset) / totalScrollOffset).clamp(0.0, 1.0);
+    if (value != newAnimValue) value = newAnimValue;
   }
 
   bool _reachedLastStep = false;
   bool get reachedLastStep => _reachedLastStep;
-  void _onProgress() {
-    _reachedLastStep = _reachedLastStep || value * Code.steps >= Code.steps - 1;
-  }
 
-  double get currentStep => (value * (Code.steps - 1)).clamp(0, Code.steps - 1);
+  double get currentStep => (value * Code.lastStep).clamp(0.0, Code.lastStep.toDouble());
 
   double stepProgress(int step) {
-    const totalSegments = Code.steps - 1;
-    if (totalSegments <= 0) {
-      return step == 0 ? 1.0 : 0.0;
-    }
-
-    final controllerSpan = upperBound - lowerBound;
-    final clampedSpan = controllerSpan == 0 ? 1.0 : controllerSpan;
-    // Map the controller value to the step space so each step eases in/out smoothly.
-    final normalizedValue = ((value - lowerBound) / clampedSpan).clamp(0.0, 1.0);
-    final stepPosition = normalizedValue * totalSegments;
-    final distance = (stepPosition - step).abs();
-
-    if (distance >= 1) {
-      return 0.0;
-    }
-    return 1 - distance;
+    final distance = (value * Code.lastStep - step).abs();
+    return (1 - distance).clamp(0.0, 1.0);
   }
 
-  Object? _currentAnimateToStepToken;
-  Future<void> animateToStep(int step) {
-    assert(step >= 0 && step <= Code.steps - 1, 'step must be between 0 and Code.steps - 1');
+  (double targetAnimValue, double targetScroll, Duration animDuration) _calculateAnimation(int step) {
+    final targetScrollOffset = _startScrollOffset + step * _stepScrollAmount;
+    final scrollOffsetAmount = (targetScrollOffset - _scrollController.offset).abs();
+    final scrollStepsAmount = scrollOffsetAmount / _stepScrollAmount;
+    final scrollDuration = const Duration(seconds: 1) * scrollStepsAmount;
+    final targetAnimValue = ((targetScrollOffset - _startScrollOffset) / (_endScrollOffset - _startScrollOffset)).clamp(
+      0.0,
+      1.0,
+    );
+    return (targetAnimValue, targetScrollOffset, scrollDuration);
+  }
 
-    final token = Object();
-    _currentAnimateToStepToken = token;
+  void animateToStep(int step) {
+    assert(step >= 0 && step <= Code.lastStep, 'step must be between 0 and Code.lastStep');
+    if (_scrollController.offset > _endScrollOffset || _scrollController.offset < _startScrollOffset) return;
 
-    final currStep = currentStep.toInt();
-    if ((currStep - step).abs() <= 1) {
-      const fullDuration = Duration(milliseconds: 1000);
-      final progressLeft = (currentStep - step).abs();
-      final duration = fullDuration * progressLeft;
-      return super.animateTo(step / (Code.steps - 1), duration: duration)..whenCompleteOrCancel(() {
-        _currentAnimateToStepToken = null;
-      });
-    } else if (currStep < step) {
-      return animateToStep(currStep + 1).then((_) {
-        if (_currentAnimateToStepToken != token || _currentAnimateToStepToken == null) return Future.value();
-        return animateToStep(step);
-      });
-    } else {
-      return animateToStep(currStep - 1).then((_) {
-        if (_currentAnimateToStepToken != token || _currentAnimateToStepToken == null) return Future.value();
-        return animateToStep(step);
-      });
-    }
+    final (targetAnimValue, targetScrollOffset, scrollDuration) = _calculateAnimation(step);
+    _scrollController.animateTo(targetScrollOffset, duration: scrollDuration, curve: Curves.linear);
   }
 
   @override
   TickerFuture animateTo(double target, {Duration? duration, Curve curve = Curves.linear}) {
-    throw UnimplementedError('animateToStep is not supported for CodeAnimationController');
+    throw UnsupportedError('animateToStep is not supported for CodeAnimationController');
+  }
+}
+
+class CodeAnimationScrollPhysics extends ScrollPhysics {
+  const CodeAnimationScrollPhysics({super.parent, required this.controller});
+
+  final CodeAnimationController controller;
+
+  @override
+  CodeAnimationScrollPhysics applyTo(ScrollPhysics? ancestor) =>
+      CodeAnimationScrollPhysics(controller: controller, parent: buildParent(ancestor));
+
+  @override
+  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+    final startScrollOffset = controller._startScrollOffset;
+    final endScrollOffset = controller._endScrollOffset;
+
+    if (position is! ScrollPosition) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    if (position.pixels <= startScrollOffset) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    if (position.pixels >= endScrollOffset) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+
+    final totalScrollOffset = endScrollOffset - startScrollOffset;
+
+    final currentStep = (position.pixels - startScrollOffset) / totalScrollOffset * Code.lastStep;
+    final targetStep = switch (position.userScrollDirection) {
+      ScrollDirection.reverse => currentStep.ceil(),
+      ScrollDirection.forward => currentStep.floor(),
+      _ => currentStep.round(),
+    };
+    final targetOffset = startScrollOffset + targetStep * totalScrollOffset / Code.lastStep;
+
+    return SpringSimulation(
+      const SpringDescription(mass: 1, stiffness: 50, damping: 15),
+      // const SpringDescription(mass: 1, stiffness: 25, damping: 10),
+      // const SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
+      position.pixels,
+      targetOffset,
+      velocity,
+      snapToEnd: true,
+    );
   }
 }
 
@@ -77,12 +147,10 @@ class Code extends StatelessWidget {
   final CodeAnimationController controller;
 
   static const steps = 4;
-  static final _animController = Ref<CodeAnimationController>();
+  static const lastStep = steps - 1;
 
   @override
   Widget build(BuildContext context) {
-    _animController.bindValue(context, controller);
-
     return DefaultTextStyle.merge(
       style: const TextStyle(fontFamily: 'JetBrains Mono', fontSize: 9, letterSpacing: 0.6),
       child: _Code(controller: controller),
@@ -1415,19 +1483,21 @@ class _Identifier extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UnconstrainedBox(
-      child: Text(
-        text,
-        style: switch (type) {
-          .keyword => const TextStyle(color: Colors.red),
-          .type => const TextStyle(color: Colors.lightBlueAccent),
-          .variable => const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
-          .callable => const TextStyle(color: Colors.lightGreen),
-          .instanceVariable => const TextStyle(color: Colors.orange),
-          .annotation => const TextStyle(color: Colors.yellowAccent),
-          .number => const TextStyle(color: Colors.purpleAccent),
-          .enumItem => const TextStyle(color: Colors.blue),
-          .other => const TextStyle(color: Colors.white),
-        },
+      child: RepaintBoundary(
+        child: Text(
+          text,
+          style: switch (type) {
+            .keyword => const TextStyle(color: Colors.red),
+            .type => const TextStyle(color: Colors.lightBlueAccent),
+            .variable => const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
+            .callable => const TextStyle(color: Colors.lightGreen),
+            .instanceVariable => const TextStyle(color: Colors.orange),
+            .annotation => const TextStyle(color: Colors.yellowAccent),
+            .number => const TextStyle(color: Colors.purpleAccent),
+            .enumItem => const TextStyle(color: Colors.blue),
+            .other => const TextStyle(color: Colors.white),
+          },
+        ),
       ),
     );
   }

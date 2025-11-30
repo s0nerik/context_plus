@@ -14,7 +14,6 @@ import 'src/code_showcase_animation_step.dart';
 
 final _codeAnimCtrl = Ref<CodeAnimationController>();
 final _mobileExpandShowcaseStepDescriptionCtrl = Ref<AnimationController?>();
-final _homeScrollController = Ref<ScrollController>();
 final _showcaseLayout = Ref<_ShowcaseLayout>();
 
 enum _ShowcaseLayout { desktop, smallerDesktop, mobile }
@@ -30,7 +29,6 @@ class CodeShowcase extends StatelessWidget {
     final width = MediaQuery.sizeOf(context).width;
 
     _codeAnimCtrl.bindValue(context, codeAnimationController);
-    _homeScrollController.bindValue(context, homeScrollController);
     _showcaseLayout.bindValue(
       context,
       width >= 1280
@@ -169,7 +167,7 @@ class _CodeAnimation extends StatelessWidget {
 class _DesktopCodeAnimationStepButtons extends StatelessWidget {
   const _DesktopCodeAnimationStepButtons();
 
-  static const width = 330.0;
+  static const width = 332.0;
 
   @override
   Widget build(BuildContext context) {
@@ -179,30 +177,16 @@ class _DesktopCodeAnimationStepButtons extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [for (var step = 0; step < Code.steps; step++) _DesktopCodeAnimationStepButton(step: step)],
+        children: [
+          for (var step = 0; step < Code.steps; step++)
+            CodeShowcaseProgressStep(
+              codeAnimCtrl: _codeAnimCtrl.of(context),
+              expandCtrl: null,
+              isMobileLayout: false,
+              step: step,
+            ),
+        ],
       ),
-    );
-  }
-}
-
-class _DesktopCodeAnimationStepButton extends StatelessWidget {
-  const _DesktopCodeAnimationStepButton({required this.step});
-
-  final int step;
-
-  @override
-  Widget build(BuildContext context) {
-    final ctrl = _codeAnimCtrl.of(context);
-    final progress = ctrl.watchOnly(context, (_) => ctrl.stepProgress(step));
-    final opacity = 1 / 3 + 2 / 3 * progress;
-
-    return CodeShowcaseProgressStep(
-      showcaseCtrl: _codeAnimCtrl.of(context),
-      expandCtrl: null,
-      isMobileLayout: false,
-      step: step,
-      opacity: opacity,
-      descriptionVisibilityFactor: progress,
     );
   }
 }
@@ -283,18 +267,12 @@ class _MobileCodeAnimationStepDescription extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       children: [
         for (var step = 0; step < Code.steps; step++)
-          IgnorePointer(
-            ignoring: codeAnimCtrl.stepProgress(step) < 0.5,
-            child: CodeShowcaseProgressStep(
-              key: ValueKey(step),
-              showcaseCtrl: codeAnimCtrl,
-              expandCtrl: expandCtrl,
-              step: step,
-              isMobileLayout: true,
-              descriptionVisibilityFactor: 0,
-              opacity: codeAnimCtrl.stepProgress(step),
-              translateY: 16 + (-16 * codeAnimCtrl.stepProgress(step)),
-            ),
+          CodeShowcaseProgressStep(
+            key: ValueKey(step),
+            codeAnimCtrl: codeAnimCtrl,
+            expandCtrl: expandCtrl,
+            step: step,
+            isMobileLayout: true,
           ),
       ],
     );
@@ -342,17 +320,11 @@ class _ScrollDownArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = _codeAnimCtrl.of(context);
     final isShowcaseCompleted = ctrl.watchOnly(context, (_) => ctrl.reachedLastStep);
-    final height = MediaQuery.sizeOf(context).height;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeOut,
       opacity: isShowcaseCompleted ? 0 : 1,
-      child: GestureDetector(
-        onTap: () => _homeScrollController
-            .of(context)
-            .animateTo(height, duration: const Duration(milliseconds: 500), curve: Curves.easeOut),
-        child: const AnimatedArrowDown(),
-      ),
+      child: const AnimatedArrowDown(),
     );
   }
 }

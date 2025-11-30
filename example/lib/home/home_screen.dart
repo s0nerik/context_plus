@@ -4,10 +4,8 @@ import 'package:context_plus/context_plus.dart';
 import 'package:example/examples/showcase/showcase_example.dart';
 import 'package:example/home/widgets/code_quote.dart';
 import 'package:example/home/widgets/low_emphasis_card.dart';
-import 'package:example/other/ballistic_override_scroll_physics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:indent/indent.dart';
 import 'package:url_router/url_router.dart';
@@ -42,89 +40,17 @@ class HomeScreen extends StatelessWidget {
     final height = MediaQuery.sizeOf(context).height;
     final showcaseExtraScrollHeight = height * showcaseExtraScrollViewports;
 
-    late final ScrollController scrollController;
-    late final CodeAnimationController codeAnimationController;
-
-    void correctScrollPosition() {
-      final pos = scrollController.position;
-      if (pos.pixels >= showcaseExtraScrollHeight) return;
-      pos.correctPixels(codeAnimationController.value * showcaseExtraScrollHeight);
-    }
-
-    double codeAnimToScrollOffset(double codeAnim) =>
-        (codeAnim * showcaseExtraScrollHeight).clamp(0.0, showcaseExtraScrollHeight);
-    double scrollOffsetToCodeAnim(double scrollOffset) => (scrollOffset / showcaseExtraScrollHeight).clamp(0.0, 1.0);
-
-    scrollController = _scrollController.bind(context, ScrollController.new)
-      ..watchEffect(context, (ctrl) {
-        final prevScrollOffset = codeAnimToScrollOffset(codeAnimationController.value);
-
-        const minOffsetDelta = 10.0;
-
-        var newScrollOffset = ctrl.offset;
-        final offsetDiff = newScrollOffset - prevScrollOffset;
-        if (offsetDiff.abs() < minOffsetDelta) {
-          newScrollOffset = (prevScrollOffset + offsetDiff.sign * minOffsetDelta).clamp(0.0, showcaseExtraScrollHeight);
-        }
-
-        final newCodeAnim = scrollOffsetToCodeAnim(newScrollOffset);
-        codeAnimationController.value = newCodeAnim;
-      });
-    codeAnimationController = _codeAnimationController.bind(context, CodeAnimationController.new)
-      ..watchEffect(context, (_) {
-        if (codeAnimationController.status == AnimationStatus.completed) return;
-        correctScrollPosition();
-      });
-
-    final springSimulationRequest =
-        context.use(
-          () => ValueNotifier<(int reqId, ScrollDirection direction, double velocity)?>(null),
-          key: 'springSimulationRequest',
-        )..watchEffect(context, (request) {
-          if (request == null) return;
-          if (!scrollController.hasClients) return;
-
-          final (_, direction, velocity) = request;
-          final targetStep = switch (direction) {
-            .forward => codeAnimationController.currentStep.floor(),
-            .reverse => codeAnimationController.currentStep.ceil(),
-            .idle => codeAnimationController.currentStep.round(),
-          };
-
-          codeAnimationController.animateToStep(targetStep);
-
-          // if (velocity == 0) {
-          //   codeAnimationController.animateToStep(targetStep);
-          //   return;
-          // }
-
-          // codeAnimationController.animateWith(
-          //   SpringSimulation(
-          //     // const SpringDescription(mass: 1, stiffness: 50, damping: 15),
-          //     // const SpringDescription(mass: 1, stiffness: 25, damping: 10),
-          //     const SpringDescription(mass: 1, stiffness: 15, damping: 7.5),
-          //     codeAnimationController.value,
-          //     targetStep / (Code.steps - 1),
-          //     velocity / showcaseExtraScrollHeight,
-          //     snapToEnd: true,
-          //   ),
-          // );
-        });
-
-    Simulation? showcaseBallisticSimulation(_, double velocity) {
-      if (!scrollController.hasClients) return null;
-      final direction = scrollController.position.userScrollDirection;
-      if (direction == ScrollDirection.idle) return null;
-
-      final reqId = springSimulationRequest.value?.$1 ?? 0;
-      springSimulationRequest.value = (reqId + 1, direction, velocity);
-      return null;
-    }
-
-    final scrolledThroughShowcase = scrollController.watchOnly(
+    final scrollController = _scrollController.bind(context, ScrollController.new);
+    final codeAnimationController = _codeAnimationController.bind(
       context,
-      (ctrl) => ctrl.hasClients && ctrl.offset >= showcaseExtraScrollHeight,
-    );
+      (vsync) => CodeAnimationController(
+        vsync,
+        scrollController,
+        startScrollOffset: 0,
+        endScrollOffset: showcaseExtraScrollHeight,
+      ),
+    )..endScrollOffset = showcaseExtraScrollHeight;
+
     final scrolledBeyondShowcase = scrollController.watchOnly(
       context,
       (ctrl) => ctrl.hasClients && ctrl.offset >= showcaseExtraScrollHeight + height,
@@ -134,10 +60,8 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
         controller: scrollController,
-        physics: !scrolledThroughShowcase
-            ? BallisticOverrideScrollPhysics(onCreateBallisticSimulation: () => showcaseBallisticSimulation)
-            : null,
         clipBehavior: Clip.none,
+        physics: CodeAnimationScrollPhysics(controller: codeAnimationController),
         slivers: [
           SliverExtraExtentViewport(
             viewport: height,

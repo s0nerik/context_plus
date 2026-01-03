@@ -1482,20 +1482,21 @@ class _Identifier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const size = 16.0;
     return UnconstrainedBox(
       child: RepaintBoundary(
         child: Text(
           text,
           style: switch (type) {
-            .keyword => const TextStyle(color: Colors.red),
-            .type => const TextStyle(color: Colors.lightBlueAccent),
-            .variable => const TextStyle(color: Colors.orange, fontWeight: FontWeight.w700),
-            .callable => const TextStyle(color: Colors.lightGreen),
-            .instanceVariable => const TextStyle(color: Colors.orange),
-            .annotation => const TextStyle(color: Colors.yellowAccent),
-            .number => const TextStyle(color: Colors.purpleAccent),
-            .enumItem => const TextStyle(color: Colors.blue),
-            .other => const TextStyle(color: Colors.white),
+            .keyword => const TextStyle(fontSize: size, color: Colors.red),
+            .type => const TextStyle(fontSize: size, color: Colors.lightBlueAccent),
+            .variable => const TextStyle(fontSize: size, color: Colors.orange, fontWeight: FontWeight.w700),
+            .callable => const TextStyle(fontSize: size, color: Colors.lightGreen),
+            .instanceVariable => const TextStyle(fontSize: size, color: Colors.orange),
+            .annotation => const TextStyle(fontSize: size, color: Colors.yellowAccent),
+            .number => const TextStyle(fontSize: size, color: Colors.purpleAccent),
+            .enumItem => const TextStyle(fontSize: size, color: Colors.blue),
+            .other => const TextStyle(fontSize: size, color: Colors.white),
           },
         ),
       ),

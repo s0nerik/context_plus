@@ -1,8 +1,0 @@
-# melos_managed_dependency_overrides: context_watch,context_watch_base,context_plus_core
-dependency_overrides:
-  context_plus_core:
-    path: ../context_plus_core
-  context_watch:
-    path: ../context_watch
-  context_watch_base:
-    path: ../context_watch_base

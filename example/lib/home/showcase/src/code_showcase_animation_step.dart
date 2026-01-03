@@ -605,34 +605,36 @@ class _Description extends StatelessWidget {
   Widget build(BuildContext context) {
     const opacityCurve = Curves.easeIn;
 
-    final codeAnimCtrl = _codeAnimCtrl.of(context);
+    final child = LowEmphasisCard(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
+          child: Text.rich(_descriptions[step]!),
+        ),
+      ),
+    );
 
     return ClipRect(
-      child: AnimatedBuilder(
-        animation: codeAnimCtrl,
-        builder: (context, child) {
-          final stepProgress = codeAnimCtrl.stepProgress(step);
+      child: Builder(
+        builder: (context) {
+          final codeAnimCtrl = _codeAnimCtrl.of(context)..watch(context);
+          final mobileExpandCtrl = _mobileExpandCtrl.of(context)?..watch(context);
+
+          final expandProgress = mobileExpandCtrl?.value ?? 1;
+          final stepProgress = codeAnimCtrl.stepProgress(step) * expandProgress;
           return Align(
             alignment: Alignment.topLeft,
             widthFactor: 1,
             heightFactor: stepProgress,
             child: Opacity(
               opacity: opacityCurve.transform(stepProgress),
-              child: TickerMode(enabled: stepProgress >= 0.9, child: child!),
+              child: TickerMode(enabled: stepProgress >= 0.9, child: child),
             ),
           );
         },
-        child: LowEmphasisCard(
-          margin: const EdgeInsets.only(top: 8, bottom: 8),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            child: DefaultTextStyle(
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[300]),
-              child: Text.rich(_descriptions[step]!),
-            ),
-          ),
-        ),
       ),
     );
   }

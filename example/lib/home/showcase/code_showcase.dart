@@ -60,8 +60,8 @@ class _DesktopView extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Positioned(
-          top: 24,
-          bottom: 88,
+          top: 48,
+          bottom: 96,
           left: 24,
           right: 24,
           child: Row(
@@ -95,7 +95,7 @@ class _MobileView extends StatelessWidget {
     return const Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(left: 12, right: 12, top: 110, bottom: 120, child: _CodeAnimation()),
+        Positioned(left: 24, right: 24, top: 100, bottom: 120, child: Align(child: _CodeAnimation())),
         Positioned(
           left: 0,
           right: 0,
@@ -125,9 +125,12 @@ class _CodeAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final codeAnimCtrl = _codeAnimCtrl.of(context);
-    final code = Padding(
-      padding: const .all(16),
-      child: Code(controller: codeAnimCtrl),
+    final code = FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Padding(
+        padding: const .all(16),
+        child: Code(controller: codeAnimCtrl),
+      ),
     );
 
     const gradientDuration = Duration(seconds: 5);
@@ -136,29 +139,27 @@ class _CodeAnimation extends StatelessWidget {
       key: gradientDuration,
     );
 
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Builder(
-        builder: (context) => DecoratedBox(
-          decoration: GradientGlowDecoration(
-            backgroundColor: Colors.black,
-            colors: const [
-              Colors.red,
-              Colors.orange,
-              Colors.yellow,
-              Colors.green,
-              Colors.blue,
-              Colors.indigo,
-              Colors.purple,
-            ],
-            borderOpacity: 0.25,
-            opacity: 0.25 + codeAnimCtrl.watch(context) * 0.25,
-            blurRadius: 64,
-            rotation: gradientAnim.watch(context) * math.pi * 2,
-            borderRadius: const .all(.circular(16)),
-          ),
-          child: code,
+    return Builder(
+      builder: (context) => DecoratedBox(
+        decoration: GradientGlowDecoration(
+          backgroundColor: Colors.black,
+          colors: const [
+            Colors.red,
+            Colors.orange,
+            Colors.yellow,
+            Colors.green,
+            Colors.blue,
+            Colors.indigo,
+            Colors.purple,
+          ],
+          borderWidth: 8,
+          borderOpacity: 0.1 + codeAnimCtrl.watch(context) * 0.15,
+          opacity: 0.1 + codeAnimCtrl.watch(context) * 0.4,
+          blurRadius: 64,
+          rotation: gradientAnim.watch(context) * math.pi * 2,
+          borderRadius: const .all(.circular(12)),
         ),
+        child: code,
       ),
     );
   }

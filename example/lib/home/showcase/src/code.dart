@@ -19,12 +19,14 @@ class CodeAnimationController extends AnimationController {
        _stepScrollAmount = (endScrollOffset - startScrollOffset) / Code.lastStep,
        super(vsync: vsync) {
     _scrollController.addListener(_onScroll);
+    addListener(_syncScrollToAnimValue);
   }
 
   final ScrollController _scrollController;
   final double _startScrollOffset;
   double _endScrollOffset;
   double _stepScrollAmount;
+  bool _syncingScrollFromAnim = false;
 
   set endScrollOffset(double newEndScrollOffset) {
     if (newEndScrollOffset == _endScrollOffset) return;
@@ -37,10 +39,12 @@ class CodeAnimationController extends AnimationController {
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
+    removeListener(_syncScrollToAnimValue);
     super.dispose();
   }
 
   void _onScroll() {
+    if (_syncingScrollFromAnim) return;
     final offset = _scrollController.offset;
     _reachedLastStep = _reachedLastStep || offset >= _endScrollOffset;
 
@@ -57,6 +61,21 @@ class CodeAnimationController extends AnimationController {
     final totalScrollOffset = _endScrollOffset - _startScrollOffset;
     final newAnimValue = ((offset - _startScrollOffset) / totalScrollOffset).clamp(0.0, 1.0);
     if (value != newAnimValue) value = newAnimValue;
+  }
+
+  void _syncScrollToAnimValue() {
+    if (!_syncingScrollFromAnim) return;
+    if (!_scrollController.hasClients) return;
+
+    final targetScrollOffset = _startScrollOffset + value * (_endScrollOffset - _startScrollOffset);
+    final position = _scrollController.position;
+    final clampedTarget = targetScrollOffset.clamp(position.minScrollExtent, position.maxScrollExtent);
+
+    _reachedLastStep = _reachedLastStep || clampedTarget >= _endScrollOffset;
+
+    // Avoid thrashing the scroll position for tiny floating point changes.
+    if ((position.pixels - clampedTarget).abs() < 0.5) return;
+    _scrollController.jumpTo(clampedTarget);
   }
 
   bool _reachedLastStep = false;
@@ -83,10 +102,30 @@ class CodeAnimationController extends AnimationController {
 
   void animateToStep(int step) {
     assert(step >= 0 && step <= Code.lastStep, 'step must be between 0 and Code.lastStep');
+    if (!_scrollController.hasClients) return;
     if (_scrollController.offset > _endScrollOffset || _scrollController.offset < _startScrollOffset) return;
 
     final (targetAnimValue, targetScrollOffset, scrollDuration) = _calculateAnimation(step);
-    _scrollController.animateTo(targetScrollOffset, duration: scrollDuration, curve: Curves.linear);
+
+    // IMPORTANT:
+    // Using ScrollController.animateTo() puts Scrollable into a driven scroll activity,
+    // which temporarily ignores pointer events for the whole scrollable. That makes
+    // the showcase step titles feel "unclickable" during the animation.
+    //
+    // Instead, we animate THIS controller's value and "sync" the scroll offset using
+    // jumpTo() each tick. This keeps the scrollable interactive (no global IgnorePointer),
+    // while still producing a smooth scroll/animation.
+    stop(canceled: true);
+    _syncingScrollFromAnim = true;
+    super.animateTo(targetAnimValue, duration: scrollDuration, curve: Curves.linear).whenCompleteOrCancel(() {
+      _syncingScrollFromAnim = false;
+      if (!_scrollController.hasClients) return;
+      final position = _scrollController.position;
+      final clampedTarget = targetScrollOffset.clamp(position.minScrollExtent, position.maxScrollExtent);
+      if ((position.pixels - clampedTarget).abs() >= 0.5) {
+        _scrollController.jumpTo(clampedTarget);
+      }
+    });
   }
 
   @override
